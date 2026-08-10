@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+@theme {
+  --color-apex-bg: #0E1116;
+  --color-apex-bg-secondary: #151A21;
+  --color-apex-surface: #1B222C;
+  --color-apex-hover: #242D39;
+  --color-apex-border: #2C3643;
+  --color-apex-divider: #3A4655;
+  --color-apex-text: #F5F7FA;
+  --color-apex-text-secondary: #B5BDC8;
+  --color-apex-muted: #7C8796;
+  --color-apex-disabled: #596272;
+  --color-apex-accent: #5EA8FF;
+  --color-apex-success: #22C55E;
+  --color-apex-danger: #EF4444;
+  --color-apex-warning: #F59E0B;
+  --color-apex-info: #38BDF8;
+  --color-apex-ai: #8B5CF6;
+
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --radius-panel: 12px;
+  --radius-btn: 10px;
+}
+
+@layer base {
+  body {
+    background-color: #0E1116;
+    color: #F5F7FA;
+    font-family: 'Inter', system-ui, sans-serif;
+    overflow-x: hidden;
+    user-select: none;
+    color-scheme: dark;
+  }
+}
+
+/* Institutional Clean Scrollbars */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0E1116;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2C3643;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3A4655;
+}
+
+/* Subtle panel elevation & workstation shadows */
+.workstation-panel {
+  background-color: #1B222C;
+  border: 1px solid #2C3643;
+  border-radius: 12px;
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.03), 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.subtle-divider {
+  border-color: #2C3643;
+}
+
+/* Fast 150ms-200ms smooth transitions */
+.transition-apex {
+  transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
