@@ -228,7 +228,7 @@ class BacktestEngine:
 
             # ── Indicator snapshot (cached every 4 bars) ──────────────────────
             history_slice = symbol_histories[sym]
-            if sym not in last_snapshots or idx % 4 == 0:
+            if sym not in last_snapshots or len(history_slice) % 4 == 0:
                 snap = IndicatorEngine.calculate_snapshot(history_slice)
                 if snap:
                     last_snapshots[sym] = snap
@@ -267,7 +267,6 @@ class BacktestEngine:
             if current_candle.timestamp.day != current_day:
                 current_day = current_candle.timestamp.day
                 risk_engine.start_new_day(equity)
-                prop_rules.start_new_day(equity)
 
             # ── Update active trades & check exits ────────────────────────────
             for trade in list(active_trades):
@@ -372,13 +371,34 @@ class BacktestEngine:
                     trade.is_active = False
                     active_trades.remove(trade)
 
-            # ── Track minimum equity within current challenge ─────────────────
-            # Used for per-challenge max DD calculation.
-            challenge_min_equity = min(challenge_min_equity, equity)
+            # ── Calculate Unrealized Floating PnL for Active Trades ──────────────
+            unrealized_pnl = 0.0
+            for trade in active_trades:
+                if trade.is_active:
+                    if trade.side == "BUY":
+                        unrealized_pnl += (current_candle.close - trade.entry_price) * trade.size
+                    else:
+                        unrealized_pnl += (trade.entry_price - current_candle.close) * trade.size
+            floating_equity = balance + unrealized_pnl
 
-            # ── Prop Firm State Machine ───────────────────────────────────────
+            # ── Funding fee deduction at 00:00, 08:00, 16:00 UTC (8-hour timestamps) ──
+            if self.config.execution.enable_funding_fee and current_candle.timestamp.minute == 0 and current_candle.timestamp.hour in (0, 8, 16):
+                for trade in active_trades:
+                    if trade.is_active:
+                        pos_notional = current_candle.close * trade.size
+                        funding_rate = self.config.execution.funding_rate_8h
+                        funding_cost = pos_notional * funding_rate if trade.side == "BUY" else -pos_notional * funding_rate
+                        trade.accumulated_funding += funding_cost
+                        balance -= funding_cost
+                        equity -= funding_cost
+                        portfolio_equity -= funding_cost
+
+            # ── Track minimum equity within current challenge ─────────────────
+            challenge_min_equity = min(challenge_min_equity, floating_equity)
+
+            # ── Prop Firm State Machine (FTMO Prague Timezone + Floating Equity) ──
             if self.config.mode == EngineMode.PROP_FIRM:
-                prop_state = prop_rules.update(balance, equity, idx, "")
+                prop_state = prop_rules.update(balance, equity, floating_equity, idx, current_candle.timestamp)
 
                 if prop_state.stage in (PropStage.FAILED_DAILY_DD, PropStage.FAILED_TOTAL_DD):
                     failed_challenges  += 1
@@ -438,7 +458,7 @@ class BacktestEngine:
             # Actual fill will occur at the OPEN of the next bar for this symbol.
             can_generate = (
                 ind_snapshot is not None
-                and idx % 4 == 0
+                and len(symbol_histories[sym]) % 4 == 0
                 and len(active_trades) < self.config.risk.max_open_positions
                 and sym not in pending_signals  # don't stack pending signals
             )
@@ -476,7 +496,7 @@ class BacktestEngine:
                                 "entryPrice": t.entry_price,
                                 "sl": t.stop_loss,
                                 "size": t.size,
-                                "leverage": 20.0
+                                "leverage": float(self.config.prop_rules.symbol_leverage_map.get(t.symbol, self.config.prop_rules.default_leverage))
                             }
                             for t in active_trades if t.is_active
                         ]
@@ -488,7 +508,7 @@ class BacktestEngine:
                                 "entryPrice": psig.entry_price,
                                 "sl": psig.stop_loss,
                                 "size": punits,
-                                "leverage": 20.0
+                                "leverage": float(self.config.prop_rules.symbol_leverage_map.get(psig.symbol, self.config.prop_rules.default_leverage))
                             }
                             for (psig, punits) in pending_signals.values()
                         ]
@@ -593,7 +613,8 @@ class BacktestEngine:
                 commissions=symbol_comms[s],
                 initial_capital=initial_cap,
                 years=years,
-                prop_max_dd_pct=None                   # per-symbol: use portfolio DD
+                prop_max_dd_pct=None,          # per-symbol: use portfolio DD
+                skip_pnl_check=True            # per-symbol PnL ≠ portfolio equity delta
             )
 
         # ── Prop summary ──────────────────────────────────────────────────────

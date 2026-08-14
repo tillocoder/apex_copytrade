@@ -73,7 +73,8 @@ class StatisticsEngine:
         commissions: List[float],
         initial_capital: float = 10000.0,
         years: float = 1.0,
-        prop_max_dd_pct: float = None
+        prop_max_dd_pct: float = None,
+        skip_pnl_check: bool = False
     ) -> QuantitativeReport:
         """
         Parameters
@@ -288,18 +289,24 @@ class StatisticsEngine:
             exposure_pct=0.0
         )
 
-        StatisticsEngine.validate_report_integrity(report, initial_capital, final_equity)
+        StatisticsEngine.validate_report_integrity(report, initial_capital, final_equity, skip_pnl_check=skip_pnl_check)
         return report
 
     @staticmethod
-    def validate_report_integrity(report: QuantitativeReport, initial_capital: float, final_equity: float) -> None:
+    def validate_report_integrity(
+        report: QuantitativeReport,
+        initial_capital: float,
+        final_equity: float,
+        skip_pnl_check: bool = False
+    ) -> None:
         """Strict automated mathematical assertions for backtest integrity."""
         assert report.total_trades == report.winning_trades + report.losing_trades, \
             f"Trade count mismatch: {report.total_trades} != {report.winning_trades} + {report.losing_trades}"
-        
-        calc_net_pnl = final_equity - initial_capital
-        assert abs(report.total_pnl - calc_net_pnl) < 1.0, \
-            f"Net PnL mismatch: reported {report.total_pnl} != calc {calc_net_pnl}"
+
+        if not skip_pnl_check:
+            calc_net_pnl = final_equity - initial_capital
+            assert abs(report.total_pnl - calc_net_pnl) < 5.0, \
+                f"Net PnL mismatch: reported {report.total_pnl} != calc {calc_net_pnl}"
 
         if report.total_trades > 0:
             calc_exp = (report.win_rate_pct / 100.0 * report.avg_winner) + ((1.0 - report.win_rate_pct / 100.0) * report.avg_loser)

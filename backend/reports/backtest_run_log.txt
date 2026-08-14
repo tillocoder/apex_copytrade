@@ -1,0 +1,225 @@
+=================================================================
+  APEX QUANT ENGINE — 1-YEAR REAL BACKTEST
+  Date: 2026-08-13 15:50
+  Symbols: BTC/USDT, ETH/USDT, SOL/USDT
+  Period: 2024-08-13 → 2025-08-13
+  Account: $10,000 FTMO Prop Firm Evaluation
+  Leverage: 2x (FTMO Crypto Standard)
+  Risk/Trade: 1.5% ($150 on $10K)
+=================================================================
+
+[STEP 1] Loading 1-Year M15 Real Historical Data...
+  [CACHE HIT] BTC/USDT — Loading cached 1-year M15 data...
+  [CACHE HIT] ETH/USDT — Loading cached 1-year M15 data...
+  [CACHE HIT] SOL/USDT — Loading cached 1-year M15 data...
+
+[DATA] Total: 105,192 M15 bars across 3 symbols
+  BTC/USDT: 35,064 bars  (2025-08-13 → 2026-08-13)
+  ETH/USDT: 35,064 bars  (2025-08-13 → 2026-08-13)
+  SOL/USDT: 35,064 bars  (2025-08-13 → 2026-08-13)
+
+[STEP 2] Running Prop Firm Evaluation Backtest (Mode 1)...
+  [OK] Prop Firm backtest complete.
+[STEP 3] Running 1,000-Simulation Monte Carlo Stress Test...
+  [OK] Monte Carlo complete.
+[STEP 4] Running Portfolio Compounding Mode (Mode 2)...
+  [OK] Portfolio compounding backtest complete.
+
+
+=========================================================
+A. HISTORICAL BACKTEST RESULTS (DETERMINISTIC 1-YEAR)
+=========================================================
+Net Profit:                    $583.55
+Gross Profit:                  $3,725.31
+Gross Loss:                    $3,141.76
+Total Trades:                  148
+Win Rate:                      56.76%
+Profit Factor:                 1.19
+Sharpe Ratio:                  1.03
+Sortino Ratio:                 0.75
+Calmar Ratio:                  1.4
+Ulcer Index:                   0.0
+CAGR:                          5.84%
+Recovery Factor:               1.4
+System Quality Number (SQN):   1.0
+Kelly Fraction:                8.89%
+Max Overall Drawdown:          4.17%
+Max Daily Drawdown:            1.43%
+Average Holding Time:          4.0 M15 bars (1.0 hrs)
+Average R-Multiple:            0.08 R
+Trade Expectancy ($):          $3.94
+Average Winner:                $44.35
+Average Loser:                 $-49.09
+Largest Winner:                $73.56
+Largest Loser:                 $-66.52
+Longest Win / Loss Streak:     10 / 7
+Market Exposure:               0.0%
+
+---------------------------------------------------------
+MULTI-SYMBOL PERFORMANCE BREAKDOWN
+---------------------------------------------------------
+[SOL/USDT]
+  Trades:                      74
+  Win Rate:                    48.65%
+  Profit Factor:               0.84
+  Net Profit:                  $-296.94
+  Max Drawdown:                7.13%
+[ETH/USDT]
+  Trades:                      32
+  Win Rate:                    62.5%
+  Profit Factor:               1.54
+  Net Profit:                  $318.51
+  Max Drawdown:                7.13%
+[BTC/USDT]
+  Trades:                      42
+  Win Rate:                    66.67%
+  Profit Factor:               1.84
+  Net Profit:                  $561.98
+  Max Drawdown:                7.13%
+
+=========================================================
+B. PROP FIRM BACKTEST SUMMARY (HISTORICAL SEQUENCE)
+=========================================================
+Stage 1 Passed:                1
+Stage 2 Passed:                0
+Completed Challenges:          0
+Failed Challenges:             0
+Challenge Success Rate:        0.0%
+Average Days per Challenge:    14.0
+Max Consecutive Failures:      0
+Longest Winning Challenge Streak: 0
+Longest Losing Challenge Streak:  0
+Monthly Challenge Passes:      0.00
+Yearly Funded Accounts:        0
+
+=========================================================
+C. MONTE CARLO ROBUSTNESS (PROBABILISTIC 1,000 SIMULATIONS)
+=========================================================
+Simulations Executed:          1000
+Stage 1 Pass Probability:      51.7%
+Stage 2 Pass Probability:      31.53%
+Combined Challenge Pass Prob:  16.3%
+Probability of Drawdown Breach:1.2%
+Probability of Account Survival:98.8%
+Avg Trading Days to Pass S1:   45.5
+Avg Trading Days to Pass S2:   23.3
+5th Percentile Equity:         $9,458.81
+50th Percentile Equity (Median):$10,190.66
+95th Percentile Equity:        $10,614.69
+Worst Simulation Equity:       $8,956.92
+Best Simulation Equity:        $10,787.24
+Average Final Equity:          $10,158.13
+Expected Value:                +1.58%
+Risk of Ruin:                  1.2%
+Expected Drawdown:             5.41%
+
+=========================================================
+D. WALK-FORWARD ANALYSIS & OUT-OF-SAMPLE (OOS) VALIDATION
+=========================================================
+Evaluated WFA Windows:        3
+Avg In-Sample Sharpe:          2.18
+Avg Out-of-Sample Sharpe:      0.89
+Overfitting Efficiency Ratio:  0.41 (OVERFITTED)
+  Window 1: IS Sharpe=1.58 (59.46% WR) | OOS Sharpe=2.25 (62.16% WR) | Eff=1.42
+  Window 2: IS Sharpe=2.25 (62.16% WR) | OOS Sharpe=2.71 (62.16% WR) | Eff=1.2
+  Window 3: IS Sharpe=2.71 (62.16% WR) | OOS Sharpe=-2.3 (43.24% WR) | Eff=-0.85
+
+=========================================================
+E. AUTOMATIC REPORT VALIDATION & SANITY CHECKS
+=========================================================
+✓ Completed Challenges equals Stage 2 Passed.
+✓ Challenge Success Rate matches Completed / (Completed + Failed).
+✓ Historical statistics never use Monte Carlo values.
+✓ Monte Carlo statistics never overwrite historical values.
+✓ Portfolio totals equal BTC + ETH totals.
+✓ All statistical sanity thresholds passed.
+=========================================================
+   ALL INTERNAL CONSISTENCY CHECKS PASSED SUCCESSFULLY   
+=========================================================
+
+
+=========================================================
+UNLIMITED PORTFOLIO COMPOUNDING REPORT
+=========================================================
+Initial Capital:               $10,000.00
+Final Capital:                 $10,563.37
+Net Realized Profit:           $563.37
+Portfolio CAGR:                5.64%
+Total Trades:                  148
+Win Rate:                      56.76%
+Profit Factor:                 1.17
+Sharpe Ratio:                  0.96
+Sortino Ratio:                 0.7
+Calmar Ratio:                  28.58
+Ulcer Index:                   0.0
+Max Overall Drawdown:          0.2%
+Recovery Factor:               28.58
+System Quality Number (SQN):   0.93
+Average Winner:                $45.73
+Average Loser:                 $-51.21
+Largest Winner:                $73.55
+Largest Loser:                 $-66.34
+
+---------------------------------------------------------
+MULTI-SYMBOL PORTFOLIO BREAKDOWN
+---------------------------------------------------------
+[SOL/USDT]
+  Trades:                      74
+  Win Rate:                    48.65%
+  Profit Factor:               0.83
+  Net Profit:                  $-344.54
+  Max Drawdown:                7.71%
+[ETH/USDT]
+  Trades:                      32
+  Win Rate:                    62.5%
+  Profit Factor:               1.56
+  Net Profit:                  $338.37
+  Max Drawdown:                7.71%
+[BTC/USDT]
+  Trades:                      42
+  Win Rate:                    66.67%
+  Profit Factor:               1.81
+  Net Profit:                  $569.54
+  Max Drawdown:                7.71%
+=========================================================
+
+[EXPORT] Writing reports to backend/reports/...
+[INFO] Report exported to backend/reports/prop_backtest_report.json and backend/reports/prop_trade_logs.csv
+
+=================================================================
+  LIVE ENGINE vs BACKTEST COMPARISON
+=================================================================
+Metric                              LIVE (real)     BACKTEST (1yr)
+-----------------------------------------------------------------
+Total Trades                        5               148
+Win Rate                            0.0%            56.76%
+Net PnL                             $-488.34         $+583.55
+Max Drawdown                        4.88%           4.17%
+Profit Factor                       N/A             1.19
+Leverage                            20x (was wrong) 2x (correct)
+Consecutive Losses (live)           5 ← ⚠️  CRITICAL
+=================================================================
+
+⚠️  LIVE WIN RATE = 0% (5/5 losses) — possible causes:
+   1. Market was in LOW VOLATILITY / RANGING regime (Aug 9-13)
+   2. Signal confidence threshold may need raising to 75+
+   3. 20x leverage was causing oversized stops → premature SL hits
+   4. 2x leverage fix now uses proper prop firm sizing
+
+=================================================================
+  PROP FIRM CHALLENGE VERDICT
+=================================================================
+  Stage 1 Passes:   True
+  Stage 2 Passes:   False
+  Challenges Done:  0
+  Challenges Failed:0
+  Max Drawdown:     4.17%  (limit: 10%)
+  Net Profit:       $583.55
+
+  🟡 VERDICT: Stage 1 pass — Stage 2 needs more work
+=================================================================
+[EXPORT] Trade log: backend/reports/full_trade_log_1year.csv (148 entries)
+
+=================================================================
+  BACKTEST COMPLETE — See backend/reports/ for full exports
+=================================================================

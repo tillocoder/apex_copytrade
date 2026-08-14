@@ -74,10 +74,11 @@ class RiskEngine:
         else:
             tier_risk = base_r * 0.50
 
-        # Loss Streak Throttling
-        if self.consecutive_losses == 1:
-            tier_risk = min(tier_risk, base_r * 0.75)
-        elif self.consecutive_losses >= 2:
+        # Loss Streak Throttling — only reduce after 3+ consecutive losses
+        # (was cutting to 50% after just 2 losses — too aggressive)
+        if self.consecutive_losses >= 3:
+            tier_risk = min(tier_risk, base_r * 0.65)
+        elif self.consecutive_losses >= 5:
             tier_risk = min(tier_risk, base_r * 0.50)
 
         # High Volatility Risk Halving

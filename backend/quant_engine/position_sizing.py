@@ -118,7 +118,7 @@ class PositionSizingEngine:
         remaining_risk_usd = max(0.0, portfolio_risk_cap_usd - existing_risk_usd)
         cap3_size = remaining_risk_usd / effective_unit_loss
 
-        # 7. Initial Margin Utilization Cap (Max 45% Initial Margin = $4,500 on $10k)
+        # 7. Initial Margin Utilization Cap (Max 80% portfolio margin = $8,000 on $10k)
         max_margin_capacity_usd = current_equity * prop_rules.max_margin_utilization_pct
         effective_leverage = float(prop_rules.symbol_leverage_map.get(symbol, prop_rules.default_leverage))
         
@@ -129,6 +129,12 @@ class PositionSizingEngine:
         remaining_margin_capacity = max(0.0, max_margin_capacity_usd - existing_margin_used)
         cap4_size = (remaining_margin_capacity * effective_leverage) / entry_price
 
+        # 6. Per-Position Margin Cap (Max 15% equity per position = $1,500 on $10k)
+        # Prevents a single position from dominating account margin.
+        # e.g. SOL with 0.5% SL -> raw_size=394, raw_notional=$30K -> margin=$15K (150% of $10K!) -> capped.
+        max_pos_margin = current_equity * prop_rules.max_position_margin_pct
+        cap6_size = (max_pos_margin * effective_leverage) / entry_price
+
         # 8. Maintenance Margin Safety Guard
         max_maint_margin_allowed = current_equity * 0.80
         existing_maint_margin = sum(
@@ -138,8 +144,8 @@ class PositionSizingEngine:
         remaining_maint_capacity = max(0.0, max_maint_margin_allowed - existing_maint_margin)
         cap5_size = remaining_maint_capacity / (entry_price * prop_rules.maintenance_margin_rate)
 
-        # 9. Multi-Cap Consolidation & Step Rounding
-        unrounded_size = min(raw_size, cap1_size, cap2_size, cap3_size, cap4_size, cap5_size)
+        # 9. Multi-Cap Consolidation & Step Rounding (6 active caps)
+        unrounded_size = min(raw_size, cap1_size, cap2_size, cap3_size, cap4_size, cap5_size, cap6_size)
 
         if step_size > 0:
             final_size = math.floor(unrounded_size / step_size) * step_size
@@ -150,13 +156,13 @@ class PositionSizingEngine:
 
         # 10. Rejection Guard Verifications
         if remaining_portfolio_notional <= 0:
-            return reject("RISK_REJECT: Maximum total portfolio exposure cap exceeded ($80,000)", {})
+            return reject("RISK_REJECT: Maximum total portfolio exposure cap exceeded ($30,000)", {})
 
         if remaining_risk_usd <= 0:
-            return reject("RISK_REJECT: Maximum portfolio aggregate risk cap exceeded ($400)", {})
+            return reject("RISK_REJECT: Maximum portfolio aggregate risk cap exceeded ($300)", {})
 
         if remaining_margin_capacity <= 0:
-            return reject("MARGIN_REJECT: Maximum margin utilization exceeded ($4,500)", {})
+            return reject("MARGIN_REJECT: Maximum margin utilization exceeded ($8,000)", {})
 
         if remaining_maint_capacity <= 0:
             return reject("MARGIN_REJECT: Maintenance margin safety limit exceeded", {})

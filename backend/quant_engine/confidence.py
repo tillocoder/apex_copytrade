@@ -110,8 +110,24 @@ class ConfidenceEngine:
             sell_score += 5
             sell_reasons.append("[+5] Liquidity Raid / Sweep of equal highs")
 
+        # ── 5. Confluence Bonus: Structure + Trend + Regime all aligned (+5 pts) ──
+        # Only highest-quality setups where all 3 factors agree get this bonus.
+        if (buy_score >= 50 and
+                structure.is_bos_bullish and
+                trend.direction == "BULLISH" and trend.is_aligned and
+                regime.regime in (MarketRegime.STRONG_TREND_BULL, MarketRegime.EXPANSION_BREAKOUT)):
+            buy_score += 5
+            buy_reasons.append("[+5] Triple Confluence: Structure + Trend + Regime")
+
+        if (sell_score >= 50 and
+                structure.is_bos_bearish and
+                trend.direction == "BEARISH" and trend.is_aligned and
+                regime.regime in (MarketRegime.STRONG_TREND_BEAR, MarketRegime.EXPANSION_BREAKOUT)):
+            sell_score += 5
+            sell_reasons.append("[+5] Triple Confluence: Structure + Trend + Regime")
+
         # ── Final Decision ────────────────────────────────────────────────────
-        buy_score = min(100.0, buy_score)
+        buy_score  = min(100.0, buy_score)
         sell_score = min(100.0, sell_score)
 
         if buy_score >= sell_score and buy_score >= 50.0:

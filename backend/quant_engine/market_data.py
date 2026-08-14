@@ -26,8 +26,9 @@ class SymbolSpec:
     base_volatility: float
 
 SYMBOL_SPECS = {
-    "BTC/USDT": SymbolSpec("BTC/USDT", start_price=65000.0, min_qty=0.001, qty_step=0.001, tick_size=0.1, commission_pct=0.0004, base_volatility=0.0025),
-    "ETH/USDT": SymbolSpec("ETH/USDT", start_price=3500.0, min_qty=0.01, qty_step=0.01, tick_size=0.01, commission_pct=0.0004, base_volatility=0.0035)
+    "BTC/USDT": SymbolSpec("BTC/USDT", start_price=65000.0, min_qty=0.001, qty_step=0.001, tick_size=0.1,   commission_pct=0.0004, base_volatility=0.0025),
+    "ETH/USDT": SymbolSpec("ETH/USDT", start_price=3500.0,  min_qty=0.01,  qty_step=0.01,  tick_size=0.01,  commission_pct=0.0004, base_volatility=0.0035),
+    "SOL/USDT": SymbolSpec("SOL/USDT", start_price=150.0,   min_qty=0.1,   qty_step=0.1,   tick_size=0.001, commission_pct=0.0004, base_volatility=0.0030),
 }
 
 class MarketDataEngine:

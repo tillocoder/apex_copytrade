@@ -1,0 +1,71 @@
+{
+  "risk_profiles": {
+    "CONSERVATIVE (0.50% risk)": {
+      "net_pnl": 5666.98,
+      "win_rate": 63.22,
+      "pf": 1.97,
+      "max_dd": 5.92,
+      "daily_dd": 1.54,
+      "completed": 4,
+      "stage1": 4,
+      "stage2": 4,
+      "trades": 329,
+      "longest_loss_streak": 13
+    },
+    "BALANCED     (0.75% risk)": {
+      "net_pnl": 8085.76,
+      "win_rate": 62.58,
+      "pf": 1.89,
+      "max_dd": 2.98,
+      "daily_dd": 2.12,
+      "completed": 5,
+      "stage1": 6,
+      "stage2": 5,
+      "trades": 326,
+      "longest_loss_streak": 13
+    },
+    "AGGRESSIVE   (1.00% risk)": {
+      "net_pnl": 8072.83,
+      "win_rate": 62.58,
+      "pf": 1.87,
+      "max_dd": 3.37,
+      "daily_dd": 2.14,
+      "completed": 5,
+      "stage1": 6,
+      "stage2": 5,
+      "trades": 326,
+      "longest_loss_streak": 13
+    }
+  },
+  "train_results": {
+    "trades": 201,
+    "win_rate": 64.68,
+    "pf": 2.06,
+    "pnl": 5631.34,
+    "max_dd": 2.97
+  },
+  "oos_results": {
+    "trades": 123,
+    "win_rate": 58.54,
+    "pf": 1.68,
+    "pnl": 2144.14,
+    "max_dd": 6.36,
+    "daily_dd": 2.93,
+    "completed_challenges": 1
+  },
+  "mc_10k": {
+    "p5": 0,
+    "p25": 1,
+    "median": 2,
+    "p75": 3,
+    "p95": 4,
+    "avg": 2.12,
+    "prob_ge1": 94.7,
+    "prob_ge2": 71.1,
+    "prob_ge3": 35.5,
+    "prob_ge4": 9.8,
+    "prob_ge5": 1.1,
+    "ruin_prob": 5.28,
+    "p95_max_dd": 7.91
+  }
+}

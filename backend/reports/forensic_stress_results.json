@@ -1,0 +1,156 @@
+{
+  "A) Baseline (Normal)": {
+    "avg_pass": 2.15,
+    "med_pass": 2,
+    "pass_5_plus_prob": 1.7,
+    "pass_1_plus_prob": 94.3,
+    "ruin_prob": 5.25,
+    "avg_max_dd": 5.48,
+    "p95_max_dd": 8.29,
+    "med_pnl": 7985.69,
+    "worst_pnl": 7985.69
+  },
+  "B) 2x Slippage (2 bps)": {
+    "avg_pass": 2.13,
+    "med_pass": 2,
+    "pass_5_plus_prob": 0.3,
+    "pass_1_plus_prob": 93.7,
+    "ruin_prob": 5.18,
+    "avg_max_dd": 5.75,
+    "p95_max_dd": 8.99,
+    "med_pnl": 7922.83,
+    "worst_pnl": 7922.83
+  },
+  "C) 3x Slippage (3 bps)": {
+    "avg_pass": 2.13,
+    "med_pass": 2,
+    "pass_5_plus_prob": 0.7,
+    "pass_1_plus_prob": 94.3,
+    "ruin_prob": 5.13,
+    "avg_max_dd": 5.64,
+    "p95_max_dd": 8.03,
+    "med_pnl": 7859.97,
+    "worst_pnl": 7859.97
+  },
+  "D) 5x Slippage (5 bps)": {
+    "avg_pass": 2.05,
+    "med_pass": 2,
+    "pass_5_plus_prob": 0.3,
+    "pass_1_plus_prob": 92.0,
+    "ruin_prob": 4.97,
+    "avg_max_dd": 5.83,
+    "p95_max_dd": 8.5,
+    "med_pnl": 7734.24,
+    "worst_pnl": 7734.24
+  },
+  "E) Win Rate -5% (57.6%)": {
+    "avg_pass": 1.49,
+    "med_pass": 1,
+    "pass_5_plus_prob": 0.0,
+    "pass_1_plus_prob": 87.7,
+    "ruin_prob": 4.03,
+    "avg_max_dd": 6.52,
+    "p95_max_dd": 9.79,
+    "med_pnl": 5966.77,
+    "worst_pnl": 5966.77
+  },
+  "F) Win Rate -10% (52.6%)": {
+    "avg_pass": 1.0,
+    "med_pass": 1,
+    "pass_5_plus_prob": 0.0,
+    "pass_1_plus_prob": 73.0,
+    "ruin_prob": 3.07,
+    "avg_max_dd": 7.56,
+    "p95_max_dd": 11.28,
+    "med_pnl": 4274.25,
+    "worst_pnl": 4274.25
+  },
+  "G) Avg Loss +20%": {
+    "avg_pass": 1.74,
+    "med_pass": 2,
+    "pass_5_plus_prob": 0.7,
+    "pass_1_plus_prob": 91.3,
+    "ruin_prob": 4.08,
+    "avg_max_dd": 7.73,
+    "p95_max_dd": 11.43,
+    "med_pnl": 6112.43,
+    "worst_pnl": 6112.43
+  },
+  "H) Avg Loss +30%": {
+    "avg_pass": 1.44,
+    "med_pass": 1,
+    "pass_5_plus_prob": 0.0,
+    "pass_1_plus_prob": 85.7,
+    "ruin_prob": 3.62,
+    "avg_max_dd": 8.68,
+    "p95_max_dd": 12.58,
+    "med_pnl": 5175.79,
+    "worst_pnl": 5175.79
+  },
+  "I) Loss Streaks x2": {
+    "avg_pass": 0.13,
+    "med_pass": 0,
+    "pass_5_plus_prob": 0.0,
+    "pass_1_plus_prob": 13.3,
+    "ruin_prob": 1.14,
+    "avg_max_dd": 14.08,
+    "p95_max_dd": 16.73,
+    "med_pnl": -1380.63,
+    "worst_pnl": -1380.63
+  },
+  "J) BTC/ETH Lockstep Correlation": {
+    "avg_pass": 2.08,
+    "med_pass": 2,
+    "pass_5_plus_prob": 1.0,
+    "pass_1_plus_prob": 96.0,
+    "ruin_prob": 5.21,
+    "avg_max_dd": 5.59,
+    "p95_max_dd": 8.21,
+    "med_pnl": 7985.69,
+    "worst_pnl": 7985.69
+  },
+  "K) Random 20% Trade Removal": {
+    "avg_pass": 1.95,
+    "med_pass": 2,
+    "pass_5_plus_prob": 0.3,
+    "pass_1_plus_prob": 94.3,
+    "ruin_prob": 5.81,
+    "avg_max_dd": 4.89,
+    "p95_max_dd": 7.34,
+    "med_pnl": 7209.88,
+    "worst_pnl": 7209.88
+  },
+  "L) Worst 10 Trades Added": {
+    "avg_pass": 1.87,
+    "med_pass": 2,
+    "pass_5_plus_prob": 0.7,
+    "pass_1_plus_prob": 93.0,
+    "ruin_prob": 4.39,
+    "avg_max_dd": 6.48,
+    "p95_max_dd": 9.64,
+    "med_pnl": 6914.24,
+    "worst_pnl": 6914.24
+  },
+  "M) Fees 2x (0.08% per side)": {
+    "avg_pass": 1.91,
+    "med_pass": 2,
+    "pass_5_plus_prob": 1.3,
+    "pass_1_plus_prob": 91.0,
+    "ruin_prob": 5.08,
+    "avg_max_dd": 5.92,
+    "p95_max_dd": 9.15,
+    "med_pnl": 7496.69,
+    "worst_pnl": 7496.69
+  },
+  "N) Combined Fees 2x + Slippage 3x": {
+    "avg_pass": 1.92,
+    "med_pass": 2,
+    "pass_5_plus_prob": 0.0,
+    "pass_1_plus_prob": 91.3,
+    "ruin_prob": 4.83,
+    "avg_max_dd": 5.93,
+    "p95_max_dd": 9.18,
+    "med_pnl": 7370.97,
+    "worst_pnl": 7370.97
+  }
+}

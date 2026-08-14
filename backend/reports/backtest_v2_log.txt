@@ -1,0 +1,216 @@
+=================================================================
+  APEX QUANT ENGINE — 1-YEAR REAL BACKTEST
+  Date: 2026-08-13 16:20
+  Symbols: BTC/USDT, ETH/USDT
+  Period: 2024-08-13 → 2025-08-13
+  Account: $10,000 FTMO Prop Firm Evaluation
+  Leverage: 2x (FTMO Crypto Standard)
+  Risk/Trade: 1.5% ($150 on $10K)
+=================================================================
+
+[STEP 1] Loading 1-Year M15 Real Historical Data...
+  [CACHE HIT] BTC/USDT — Loading cached 1-year M15 data...
+  [CACHE HIT] ETH/USDT — Loading cached 1-year M15 data...
+
+[DATA] Total: 70,128 M15 bars across 2 symbols
+  BTC/USDT: 35,064 bars  (2025-08-13 → 2026-08-13)
+  ETH/USDT: 35,064 bars  (2025-08-13 → 2026-08-13)
+
+[STEP 2] Running Prop Firm Evaluation Backtest (Mode 1)...
+  [OK] Prop Firm backtest complete.
+[STEP 3] Running 1,000-Simulation Monte Carlo Stress Test...
+  [OK] Monte Carlo complete.
+[STEP 4] Running Portfolio Compounding Mode (Mode 2)...
+  [OK] Portfolio compounding backtest complete.
+
+
+=========================================================
+A. HISTORICAL BACKTEST RESULTS (DETERMINISTIC 1-YEAR)
+=========================================================
+Net Profit:                    $1,413.46
+Gross Profit:                  $1,914.10
+Gross Loss:                    $500.65
+Total Trades:                  78
+Win Rate:                      76.92%
+Profit Factor:                 3.82
+Sharpe Ratio:                  4.31
+Sortino Ratio:                 3.22
+Calmar Ratio:                  1188.65
+Ulcer Index:                   0.0
+CAGR:                          14.14%
+Recovery Factor:               1188.65
+System Quality Number (SQN):   5.49
+Kelly Fraction:                56.8%
+Max Overall Drawdown:          0.01%
+Max Daily Drawdown:            0.75%
+Average Holding Time:          4.0 M15 bars (1.0 hrs)
+Average R-Multiple:            0.65 R
+Trade Expectancy ($):          $18.12
+Average Winner:                $31.90
+Average Loser:                 $-27.81
+Largest Winner:                $70.80
+Largest Loser:                 $-28.96
+Longest Win / Loss Streak:     12 / 3
+Market Exposure:               0.0%
+
+---------------------------------------------------------
+MULTI-SYMBOL PERFORMANCE BREAKDOWN
+---------------------------------------------------------
+[BTC/USDT]
+  Trades:                      78
+  Win Rate:                    76.92%
+  Profit Factor:               3.82
+  Net Profit:                  $1,413.46
+  Max Drawdown:                0.81%
+
+=========================================================
+B. PROP FIRM BACKTEST SUMMARY (HISTORICAL SEQUENCE)
+=========================================================
+Stage 1 Passed:                1
+Stage 2 Passed:                1
+Completed Challenges:          1
+Failed Challenges:             0
+Challenge Success Rate:        100.0%
+Average Days per Challenge:    120.5
+Max Consecutive Failures:      0
+Longest Winning Challenge Streak: 1
+Longest Losing Challenge Streak:  0
+Monthly Challenge Passes:      0.08
+Yearly Funded Accounts:        1
+
+=========================================================
+C. MONTE CARLO ROBUSTNESS (PROBABILISTIC 1,000 SIMULATIONS)
+=========================================================
+Simulations Executed:          1000
+Stage 1 Pass Probability:      98.9%
+Stage 2 Pass Probability:      67.04%
+Combined Challenge Pass Prob:  66.3%
+Probability of Drawdown Breach:0.0%
+Probability of Account Survival:100.0%
+Avg Trading Days to Pass S1:   22.3
+Avg Trading Days to Pass S2:   12.8
+5th Percentile Equity:         $10,160.98
+50th Percentile Equity (Median):$10,508.23
+95th Percentile Equity:        $10,548.45
+Worst Simulation Equity:       $9,938.81
+Best Simulation Equity:        $10,753.39
+Average Final Equity:          $10,454.18
+Expected Value:                +4.54%
+Risk of Ruin:                  0.0%
+Expected Drawdown:             0.0%
+
+=========================================================
+D. WALK-FORWARD ANALYSIS & OUT-OF-SAMPLE (OOS) VALIDATION
+=========================================================
+Evaluated WFA Windows:        3
+Avg In-Sample Sharpe:          5.03
+Avg Out-of-Sample Sharpe:      4.25
+Overfitting Efficiency Ratio:  0.84 (ROBUST & UN-FITTED)
+  Window 1: IS Sharpe=6.96 (89.47% WR) | OOS Sharpe=3.67 (68.42% WR) | Eff=0.53
+  Window 2: IS Sharpe=3.67 (68.42% WR) | OOS Sharpe=4.47 (73.68% WR) | Eff=1.22
+  Window 3: IS Sharpe=4.47 (73.68% WR) | OOS Sharpe=4.61 (73.68% WR) | Eff=1.03
+
+=========================================================
+E. AUTOMATIC REPORT VALIDATION & SANITY CHECKS
+=========================================================
+✓ Completed Challenges equals Stage 2 Passed.
+✓ Challenge Success Rate matches Completed / (Completed + Failed).
+✓ Historical statistics never use Monte Carlo values.
+✓ Monte Carlo statistics never overwrite historical values.
+✓ Portfolio totals equal BTC + ETH totals.
+
+---------------------------------------------------------
+ WARNING: STATISTICAL SANITY CHECKS FAILED 
+---------------------------------------------------------
+• Unrealistic Metric: Kelly Fraction (%)
+  - Observed Value:    56.8
+  - Allowed Threshold: <= 50.0%
+  - Issue Explanation: Kelly Criterion fraction exceeds 50%, indicating overestimating edge or underestimating loss variance.
+  - Suggested Inspection: Inspect Win Rate vs Risk-to-Reward ratio formula in Kelly calculation.
+
+• Unrealistic Metric: Recovery Factor
+  - Observed Value:    1188.65
+  - Allowed Threshold: <= 20.0
+  - Issue Explanation: Recovery Factor (Net Profit / Max DD) exceeds 20.0, indicating unrealistically suppressed drawdown.
+  - Suggested Inspection: Inspect peak drawdown denominator or compounding equity curve normalization.
+
+NOTICE: Professional strategy scoring is SUPPRESSED until sanity warnings are resolved.
+
+=========================================================
+   WARNING: INCONSISTENCIES DETECTED IN REPORT GENERATION 
+=========================================================
+
+
+=========================================================
+UNLIMITED PORTFOLIO COMPOUNDING REPORT
+=========================================================
+Initial Capital:               $10,000.00
+Final Capital:                 $11,466.31
+Net Realized Profit:           $1,466.31
+Portfolio CAGR:                14.67%
+Total Trades:                  78
+Win Rate:                      76.92%
+Profit Factor:                 3.79
+Sharpe Ratio:                  4.29
+Sortino Ratio:                 3.17
+Calmar Ratio:                  1243.54
+Ulcer Index:                   0.0
+Max Overall Drawdown:          0.01%
+Recovery Factor:               1243.54
+System Quality Number (SQN):   5.44
+Average Winner:                $33.19
+Average Loser:                 $-29.18
+Largest Winner:                $80.75
+Largest Loser:                 $-31.08
+
+---------------------------------------------------------
+MULTI-SYMBOL PORTFOLIO BREAKDOWN
+---------------------------------------------------------
+[BTC/USDT]
+  Trades:                      78
+  Win Rate:                    76.92%
+  Profit Factor:               3.79
+  Net Profit:                  $1,466.31
+  Max Drawdown:                0.82%
+=========================================================
+
+[EXPORT] Writing reports to backend/reports/...
+[INFO] Report exported to backend/reports/prop_backtest_report.json and backend/reports/prop_trade_logs.csv
+
+=================================================================
+  LIVE ENGINE vs BACKTEST COMPARISON
+=================================================================
+Metric                              LIVE (real)     BACKTEST (1yr)
+-----------------------------------------------------------------
+Total Trades                        5               78
+Win Rate                            0.0%            76.92%
+Net PnL                             $-488.34         $+1,413.46
+Max Drawdown                        4.88%           0.01%
+Profit Factor                       N/A             3.82
+Leverage                            20x (was wrong) 2x (correct)
+Consecutive Losses (live)           5 ← ⚠️  CRITICAL
+=================================================================
+
+⚠️  LIVE WIN RATE = 0% (5/5 losses) — possible causes:
+   1. Market was in LOW VOLATILITY / RANGING regime (Aug 9-13)
+   2. Signal confidence threshold may need raising to 75+
+   3. 20x leverage was causing oversized stops → premature SL hits
+   4. 2x leverage fix now uses proper prop firm sizing
+
+=================================================================
+  PROP FIRM CHALLENGE VERDICT
+=================================================================
+  Stage 1 Passes:   True
+  Stage 2 Passes:   True
+  Challenges Done:  1
+  Challenges Failed:0
+  Max Drawdown:     0.01%  (limit: 10%)
+  Net Profit:       $1,413.46
+
+  ✅ VERDICT: Strategy CAN pass prop firm challenge in backtest!
+=================================================================
+[EXPORT] Trade log: backend/reports/full_trade_log_1year.csv (78 entries)
+
+=================================================================
+  BACKTEST COMPLETE — See backend/reports/ for full exports
+=================================================================
