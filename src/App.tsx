@@ -28,6 +28,44 @@ import { JournalWorkspace } from './components/workspaces/JournalWorkspace';
 import { AnalyticsWorkspace } from './components/workspaces/AnalyticsWorkspace';
 import { NewsWorkspace } from './components/workspaces/NewsWorkspace';
 
+class GlobalModuleErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean; error: any }> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error: any) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: any, errorInfo: any) {
+    console.error("Global Module Error Boundary caught an error:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="flex-1 flex flex-col items-center justify-center p-8 bg-apex-bg text-apex-text space-y-4 font-mono text-xs">
+          <div className="p-6 bg-apex-danger/10 border border-apex-danger/40 rounded-lg text-center max-w-lg space-y-3 shadow-2xl">
+            <h3 className="text-sm font-bold text-apex-danger">MODULE RENDERING RECOVERED</h3>
+            <p className="text-xs text-apex-muted">An unexpected formatting anomaly occurred in this module view:</p>
+            <pre className="p-2.5 bg-black/70 text-apex-danger rounded text-[10px] text-left overflow-x-auto border border-apex-danger/20 font-mono">
+              {String(this.state.error?.message || this.state.error)}
+            </pre>
+            <button 
+              onClick={() => { this.setState({ hasError: false, error: null }); }} 
+              className="px-4 py-2 bg-apex-surface hover:bg-apex-surfaceHover border border-apex-border text-apex-text font-bold rounded text-xs transition-colors"
+            >
+              Reset Module View
+            </button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 const ModuleContainer: React.FC = () => {
   const { activeModule, positions = [] } = useTerminal();
   const safePositions = Array.isArray(positions) ? positions : [];
@@ -70,7 +108,9 @@ const ModuleContainer: React.FC = () => {
       <div className="flex-1 flex overflow-hidden">
         <Sidebar />
         <main className="flex-1 flex overflow-hidden">
-          {renderModule()}
+          <GlobalModuleErrorBoundary>
+            {renderModule()}
+          </GlobalModuleErrorBoundary>
         </main>
       </div>
       <CommandPalette />
