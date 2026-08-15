@@ -146,7 +146,7 @@ export const TradingWorkspace: React.FC = () => {
 
           <div className="flex items-center space-x-2 text-[10px]">
             <span className="bg-apex-surface border border-apex-accent/40 text-apex-accent px-2 py-0.5 rounded font-bold flex items-center gap-1">
-              <Bot className="w-3 h-3 text-apex-accent" /> APEX ENGINE COPY DISPATCH ACTIVE
+              <Bot className="w-3 h-3 text-apex-accent" /> PAPER ENGINE · REAL MARKET DATA
             </span>
           </div>
         </div>
@@ -181,7 +181,7 @@ export const TradingWorkspace: React.FC = () => {
             <Lock className="w-3 h-3 text-apex-accent" /> AUTONOMOUS MONITORING MODE
           </div>
           <p className="text-apex-muted leading-relaxed font-sans text-[11px]">
-            All trade signals are generated & executed 100% autonomously by the APEX Quantitative Engine WS.
+            Signals use real Binance market data; execution is paper-mode until an exchange account is explicitly connected.
           </p>
         </div>
 
@@ -191,7 +191,7 @@ export const TradingWorkspace: React.FC = () => {
             <span className="flex items-center gap-1">
               <Lock className="w-3 h-3 text-apex-accent" /> ALGORITHM EXECUTION LOCK
             </span>
-            <span className="text-apex-success font-bold text-[10px] bg-apex-success/15 px-1.5 py-0.5 rounded border border-apex-success/30">100% AUTONOMOUS</span>
+            <span className="text-apex-accent font-bold text-[10px] bg-apex-accent/15 px-1.5 py-0.5 rounded border border-apex-accent/30">PAPER MODE</span>
           </div>
 
           <div className="space-y-1.5 pt-1 border-t border-apex-border/50 font-mono text-[10px]">
@@ -239,7 +239,7 @@ export const TradingWorkspace: React.FC = () => {
             <div className="flex justify-between">
               <span className="text-apex-muted">ENGINE WIN RATE:</span>
               <span className="font-bold text-apex-success">
-                {backtest?.winRate ? `${backtest.winRate.toFixed(1)}%` : '74.3%'}
+                {backtest?.totalTrades ? `${backtest.winRate.toFixed(1)}%` : '—'}
               </span>
             </div>
           </div>

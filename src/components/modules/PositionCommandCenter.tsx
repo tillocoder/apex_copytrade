@@ -260,16 +260,16 @@ export const PositionCommandCenter: React.FC = () => {
             </div>
             <div className="workstation-panel p-2">
               <div className="text-apex-muted text-[9px]">RISK REWARD</div>
-              <div className="font-bold text-apex-accent text-xs">1 : {(activePosition.rewardPercent || 3.0).toFixed(2)}</div>
+              <div className="font-bold text-apex-accent text-xs">{activePosition.rewardPercent ? `1 : ${activePosition.rewardPercent.toFixed(2)}` : '—'}</div>
             </div>
             <div className="workstation-panel p-2">
               <div className="text-apex-muted text-[9px]">MISSION HEALTH</div>
-              <div className="font-bold text-apex-success text-xs">{activePosition.positionHealthScore || 95} / 100</div>
+              <div className="font-bold text-apex-success text-xs">{activePosition.positionHealthScore ? `${activePosition.positionHealthScore} / 100` : '—'}</div>
             </div>
             <div className="workstation-panel p-2">
               <div className="text-apex-muted text-[9px]">CHALLENGE DAILY DD</div>
               <div className="font-bold text-apex-warning text-xs">
-                {activePropAccount ? `${activePropAccount.currentDailyDrawdownPct.toFixed(2)}% / ${activePropAccount.maxDailyDrawdownPct}%` : '0.85% / 5.0%'}
+                {activePropAccount ? `${activePropAccount.currentDailyDrawdownPct.toFixed(2)}% / ${activePropAccount.maxDailyDrawdownPct}%` : '—'}
               </div>
             </div>
           </div>

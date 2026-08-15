@@ -3,15 +3,15 @@ import csv
 import json
 import time
 import urllib.request
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 from typing import List, Optional, Dict
 from .market_data import Candle
 
 class RealHistoricalDataEngine:
     """
     Production-grade Real Historical Market Data Engine.
-    Downloads and caches 3+ years of M15 OHLCV data from Binance Public REST API
-    or ingests local CSV files with strict chronological order and zero lookahead.
+    Downloads and caches Binance M15 OHLCV data or ingests a verified local CSV
+    cache. Synthetic price generation is deliberately not supported.
     """
 
     BINANCE_SPOT_URL = "https://api.binance.com/api/v3/klines"
@@ -25,61 +25,39 @@ class RealHistoricalDataEngine:
         force_download: bool = False
     ) -> List[Candle]:
         """
-        Gets 3+ years of M15 historical candles.
-        Checks local CSV cache first; downloads from Binance REST API if missing.
+        Gets real M15 historical candles.
+        Existing real-data caches are preferred; if none exists, Binance is used.
+        The engine fails closed when market history is unavailable rather than
+        silently replacing it with simulated candles.
         """
         clean_symbol = symbol.replace("/", "").upper()
         os.makedirs(cls.CACHE_DIR, exist_ok=True)
-        cache_path = os.path.join(cls.CACHE_DIR, f"{clean_symbol}_M15_3Y.csv")
-
         max_candles = int(years * 35040)
-        if os.path.exists(cache_path):
-            print(f"[REAL DATA] Loading cached M15 dataset from {cache_path} (loading last {max_candles} bars)")
-            candles = cls.load_from_csv(cache_path, symbol, max_candles=max_candles)
-            if len(candles) >= 1000 or len(candles) >= max_candles:
-                return candles
+        cache_candidates = [os.path.join(cls.CACHE_DIR, f"{clean_symbol}_M15_REAL.csv")]
+        if years <= 1.05:
+            cache_candidates = [
+                os.path.join(cls.CACHE_DIR, f"{clean_symbol}_M15_1Y_2025.csv"),
+                os.path.join(cls.CACHE_DIR, f"{clean_symbol}_REAL_M15_1Y.csv"),
+                *cache_candidates,
+            ]
 
-        print(f"[REAL DATA] Generating local 3-year Real Historical M15 dataset (2023-2026) for {symbol}...")
-        candles = cls.generate_realistic_3year_historical_csv(symbol, years=years)
+        if not force_download:
+            for cache_path in cache_candidates:
+                if not os.path.exists(cache_path):
+                    continue
+                candles = cls.load_from_csv(cache_path, symbol, max_candles=max_candles)
+                if len(candles) >= 1000:
+                    print(f"[REAL DATA] Loading verified Binance OHLCV cache: {cache_path} ({len(candles):,} bars)")
+                    return candles
+
+        print(f"[REAL DATA] Downloading {years:g} year(s) of Binance M15 OHLCV for {symbol}...")
+        candles = cls.fetch_binance_m15(clean_symbol, years=years, display_symbol=symbol)
+        if len(candles) < 1000:
+            raise RuntimeError(f"Insufficient real Binance history for {symbol}; synthetic fallback is disabled.")
+
+        cache_path = os.path.join(cls.CACHE_DIR, f"{clean_symbol}_M15_REAL.csv")
         cls.save_to_csv(candles, cache_path)
-        print(f"[REAL DATA] Successfully cached {len(candles):,} candles to {cache_path}")
-        return candles
-
-    @classmethod
-    def generate_realistic_3year_historical_csv(cls, symbol: str, years: float = 3.0) -> List[Candle]:
-        """Generates realistic 3-year historical M15 candles matching 2023-2026 market trends."""
-        import math, random
-        random.seed(42 if "BTC" in symbol else 142)
-
-        start_time = datetime(2023, 1, 1, 0, 0, tzinfo=timezone.utc)
-        total_bars = int(years * 365.25 * 24 * 4) # ~105,120 M15 bars
-
-        curr_price = 16500.0 if "BTC" in symbol else 1200.0
-        target_price = 68000.0 if "BTC" in symbol else 3600.0
-        drift = math.pow(target_price / curr_price, 1.0 / total_bars) - 1.0
-
-        candles: List[Candle] = []
-        volatility = 0.0020 if "BTC" in symbol else 0.0028
-
-        for i in range(total_bars):
-            bar_time = start_time + timedelta(minutes=15 * i)
-            op = curr_price
-            ret = drift + random.gauss(0, volatility)
-            cl = max(100.0, op * (1.0 + ret))
-            
-            # High/Low with realistic wicks
-            wick_up = random.uniform(0.0001, 0.0025) * op
-            wick_dn = random.uniform(0.0001, 0.0025) * op
-            hi = max(op, cl) + wick_up
-            lo = min(op, cl) - wick_dn
-            vol = random.uniform(150.0, 1500.0)
-
-            candles.append(Candle(
-                timestamp=bar_time, open=round(op, 2), high=round(hi, 2),
-                low=round(lo, 2), close=round(cl, 2), volume=round(vol, 2), symbol=symbol
-            ))
-            curr_price = cl
-
+        print(f"[REAL DATA] Cached {len(candles):,} real Binance M15 candles to {cache_path}")
         return candles
 
     @classmethod

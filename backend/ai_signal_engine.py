@@ -970,12 +970,18 @@ def save_signals_history(history: List[Dict[str, Any]]):
         logger.error(f"Error saving history file: {e}")
 
 def get_latest_signals() -> List[Dict[str, Any]]:
-    """Returns most recent signals for BTC, ETH, SOL."""
+    """Returns only currently actionable signals for BTC, ETH, SOL."""
     history = get_signals_history()
     latest_map = {}
     for s in history:
-        latest_map[s.get("symbol")] = s
-    return list(latest_map.values())
+        symbol = s.get("symbol")
+        current = latest_map.get(symbol)
+        if current is None or float(s.get("timestamp", 0) or 0) > float(current.get("timestamp", 0) or 0):
+            latest_map[symbol] = s
+    return [
+        signal for signal in latest_map.values()
+        if signal.get("status") in ("PENDING", "CONFIRMED")
+    ]
 
 def calculate_historical_performance() -> Dict[str, Any]:
     """Computes quantitative win-rate and profit metrics grouped by setup_type and regime."""
@@ -1180,6 +1186,7 @@ def generate_signals() -> List[Dict[str, Any]]:
                 "regime": candidate_signal["regime"],
                 "entry": candidate_signal["entry"],
                 "sl": candidate_signal["sl"],
+                "tp": candidate_signal["tp1"],  # Legacy consumers use the first target.
                 "tp1": candidate_signal["tp1"],
                 "tp2": candidate_signal["tp2"],
                 "tp3": candidate_signal["tp3"],

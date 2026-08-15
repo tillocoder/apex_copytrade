@@ -3,6 +3,7 @@ import sys
 import asyncio
 import json
 import urllib.request
+import urllib.parse
 import time
 from datetime import datetime
 from typing import List, Dict, Any, Optional
@@ -120,14 +121,6 @@ def run_quant_engine_task(years: float = 1.0, symbol: str = "BTC/USDT"):
             {"month": m, "returnPct": round(monthly_returns_map[m], 2)}
             for m in months_order if m in monthly_returns_map
         ]
-        if not monthly_returns:
-            monthly_returns = [
-                {"month": "Jan", "returnPct": 2.5},
-                {"month": "Feb", "returnPct": 3.8},
-                {"month": "Mar", "returnPct": -1.2},
-                {"month": "Apr", "returnPct": 4.1}
-            ]
-
         LATEST_BACKTEST_RESULT = {
             "cagr": round(res.report.cagr_pct, 2),
             "sharpeRatio": round(res.report.sharpe_ratio, 2),
@@ -230,10 +223,17 @@ async def monitor_ai_signals_task():
 
                 current_price = prices[sym]
                 side = s.get("side", "BUY").upper()
-                entry = s.get("entry", 0.0)
-                sl = s.get("sl", 0.0)
-                tp = s.get("tp", 0.0)
+                entry = float(s.get("entry", 0.0) or 0.0)
+                sl = float(s.get("sl", 0.0) or 0.0)
+                # New signals expose staged targets (TP1/TP2/TP3).  TP1 is the
+                # first executable target; retain `tp` as a legacy fallback.
+                tp = float(s.get("tp1", s.get("tp", 0.0)) or 0.0)
                 msg_id = s.get("telegram_message_id")
+
+                # Never evaluate incomplete price levels.  A missing target must
+                # not be interpreted as $0.00 and immediately close a BUY trade.
+                if entry <= 0 or sl <= 0 or tp <= 0:
+                    continue
 
                 hit_type = None
                 pnl_pct = 0.0
@@ -287,9 +287,14 @@ def fetch_binance_ticker_sync(symbol: str = "BTCUSDT") -> float:
         res = json.loads(resp.read().decode())
         return float(res["price"])
 
-def fetch_binance_klines_sync(symbol: str = "BTCUSDT", interval: str = "15m", limit: int = 200):
+def fetch_binance_klines_sync(
+    symbol: str = "BTCUSDT", interval: str = "15m", limit: int = 200, end_time: Optional[int] = None
+):
     sym = symbol.replace('/', '').upper()
-    url = f"https://api.binance.com/api/v3/klines?symbol={sym}&interval={interval}&limit={limit}"
+    params = {"symbol": sym, "interval": interval, "limit": max(1, min(limit, 1000))}
+    if end_time and end_time > 0:
+        params["endTime"] = int(end_time)
+    url = f"https://api.binance.com/api/v3/klines?{urllib.parse.urlencode(params)}"
     req = urllib.request.Request(url, headers={'User-Agent': 'ApexQuant/4.5'})
     with urllib.request.urlopen(req, timeout=5) as resp:
         raw = json.loads(resp.read().decode())
@@ -311,11 +316,21 @@ def fetch_binance_klines_sync(symbol: str = "BTCUSDT", interval: str = "15m", li
 
 @app.get("/api/v1/system/health")
 async def get_system_health():
+    exchange_started = time.perf_counter()
+    try:
+        await run_async_in_executor(fetch_binance_ticker_sync, "BTCUSDT")
+        exchange_status = "CONNECTED"
+        exchange_latency_ms = round((time.perf_counter() - exchange_started) * 1000, 1)
+    except Exception:
+        exchange_status = "DISCONNECTED"
+        exchange_latency_ms = 0.0
+
     return {
-        "status": "HEALTHY",
-        "vps_latency_ms": 2,
-        "exchange_latency_ms": 14,
-        "database_latency_ms": 3,
+        "status": "HEALTHY" if exchange_status == "CONNECTED" else "DEGRADED",
+        "exchange_status": exchange_status,
+        "exchange_latency_ms": exchange_latency_ms,
+        "database_status": "FILE_STATE",
+        "database_latency_ms": 0.0,
         "websocket_status": "STREAMING",
         "python_engine_status": "RUNNING" if not IS_BACKTEST_RUNNING else "OPTIMIZING",
         "ai_engine_status": "ACTIVE"
@@ -365,9 +380,11 @@ async def get_signals_history():
         return []
 
 @app.get("/api/v1/market/klines")
-async def get_real_klines(symbol: str = "BTC/USDT", interval: str = "15m", limit: int = 200):
+async def get_real_klines(
+    symbol: str = "BTC/USDT", interval: str = "15m", limit: int = 200, end_time: Optional[int] = None
+):
     try:
-        data = await run_async_in_executor(fetch_binance_klines_sync, symbol, interval, limit)
+        data = await run_async_in_executor(fetch_binance_klines_sync, symbol, interval, limit, end_time)
         return {"status": "SUCCESS", "symbol": symbol, "data": data}
     except Exception as e:
         return {"status": "ERROR", "message": str(e), "data": []}

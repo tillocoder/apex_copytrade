@@ -18,6 +18,7 @@ export const Header: React.FC = () => {
     user, 
     health, 
     positions = [], 
+    portfolio,
     setCommandPaletteOpen, 
     panicCloseAll,
     setActiveModule,
@@ -28,7 +29,12 @@ export const Header: React.FC = () => {
   } = useTerminal();
 
   const safePositions = Array.isArray(positions) ? positions : [];
-  const totalUnrealizedPnl = safePositions.reduce((acc, p) => acc + (p?.unrealizedPnl || 0), 0);
+  const totalUnrealizedPnl = portfolio.unrealizedPnl;
+  const drawdownPct = portfolio.initialCapital > 0
+    ? Math.max(0, ((portfolio.initialCapital - portfolio.currentEquity) / portfolio.initialCapital) * 100)
+    : 0;
+  const price = (value: number) => value > 0 ? `$${value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '—';
+  const latency = (value: number) => value > 0 ? `${value}ms` : '—';
 
   return (
     <header className="h-12 bg-apex-bgSecondary border-b border-apex-border flex items-center justify-between px-3 text-xs font-mono select-none shrink-0 z-30">
@@ -64,15 +70,15 @@ export const Header: React.FC = () => {
         <div className="hidden xl:flex items-center space-x-2 pl-3 border-l border-apex-border text-[11px]">
           <div className="flex items-center space-x-1.5 px-2 py-0.5 rounded bg-apex-surface border border-apex-border text-apex-textSecondary">
             <Server className="w-3 h-3 text-apex-muted" />
-            <span>VPS: <strong className="text-apex-text">{health.vpsLatency}ms</strong></span>
+            <span>API: <strong className="text-apex-text">{latency(health.vpsLatency)}</strong></span>
           </div>
           <div className="flex items-center space-x-1.5 px-2 py-0.5 rounded bg-apex-surface border border-apex-border text-apex-textSecondary">
             <Wifi className="w-3 h-3 text-apex-muted" />
-            <span>WS: <strong className="text-apex-text">{health.wsLatency}ms</strong></span>
+            <span>WS: <strong className="text-apex-text">{health.wsStatus === 'STREAMING' ? 'ON' : '—'}</strong></span>
           </div>
           <div className="flex items-center space-x-1.5 px-2 py-0.5 rounded bg-apex-surface border border-apex-border text-apex-textSecondary">
             <Database className="w-3 h-3 text-apex-muted" />
-            <span>DB: <strong className="text-apex-text">{health.dbLatency}ms</strong></span>
+            <span>STATE: <strong className="text-apex-text">{health.dbStatus === 'HEALTHY' ? 'OK' : '—'}</strong></span>
           </div>
           <div className="flex items-center space-x-1.5 px-2 py-0.5 rounded bg-apex-surface border border-apex-border text-apex-textSecondary">
             <Cpu className="w-3 h-3 text-apex-ai" />
@@ -85,7 +91,7 @@ export const Header: React.FC = () => {
       <div className="hidden lg:flex items-center space-x-4 bg-apex-surface px-3 py-1 rounded-md border border-apex-border">
         <div>
           <div className="text-[9px] text-apex-muted tracking-wider uppercase">NAV EQUITY</div>
-          <div className="font-bold text-apex-text">$324,250.00</div>
+          <div className="font-bold text-apex-text">{price(portfolio.currentEquity)}</div>
         </div>
 
         <div className="w-px h-5 bg-apex-border" />
@@ -100,22 +106,24 @@ export const Header: React.FC = () => {
         <div className="w-px h-5 bg-apex-border" />
 
         <div>
-          <div className="text-[9px] text-apex-muted tracking-wider uppercase">TODAY PNL</div>
-          <div className="font-bold text-apex-success">+$3,210.50 (+1.0%)</div>
+          <div className="text-[9px] text-apex-muted tracking-wider uppercase">REALIZED PNL</div>
+          <div className={`font-bold ${portfolio.realizedPnl >= 0 ? 'text-apex-success' : 'text-apex-danger'}`}>
+            {portfolio.realizedPnl >= 0 ? '+' : ''}{price(Math.abs(portfolio.realizedPnl))}
+          </div>
         </div>
 
         <div className="w-px h-5 bg-apex-border" />
 
         <div>
           <div className="text-[9px] text-apex-muted tracking-wider uppercase">CURRENT DD</div>
-          <div className="font-bold text-apex-warning">1.40% / 5.0%</div>
+          <div className={`font-bold ${drawdownPct > 0 ? 'text-apex-warning' : 'text-apex-muted'}`}>{drawdownPct.toFixed(2)}%</div>
         </div>
 
         <div className="w-px h-5 bg-apex-border" />
 
         <div>
           <div className="text-[9px] text-apex-muted tracking-wider uppercase">WIN RATE</div>
-          <div className="font-bold text-apex-accent">68.4%</div>
+          <div className="font-bold text-apex-accent">{portfolio.totalTrades ? `${portfolio.winRate.toFixed(1)}%` : '—'}</div>
         </div>
       </div>
 

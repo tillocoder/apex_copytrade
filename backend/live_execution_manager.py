@@ -110,17 +110,15 @@ def open_position_from_signal(signal: Dict[str, Any]) -> Optional[Dict[str, Any]
 
         entry = float(signal.get("entry", 0.0))
         sl = float(signal.get("sl", 0.0))
-        tp = float(signal.get("tp", 0.0))
+        tp = float(signal.get("tp1", signal.get("tp", 0.0)) or 0.0)
         side = signal.get("side", "BUY").upper()
         
-        if entry <= 0:
+        if entry <= 0 or sl <= 0 or tp <= 0:
+            print(f"[PAPER ENGINE REJECT] {sym} rejected: signal is missing a valid entry, stop, or TP1.")
             return None
-
-        if sl <= 0:
-            sl = round(entry * (0.99 if side == "BUY" else 1.01), 4)
-
-        if tp <= 0:
-            tp = round(entry * (1.025 if side == "BUY" else 0.975), 4)
+        if (side == "BUY" and not (sl < entry < tp)) or (side == "SELL" and not (tp < entry < sl)):
+            print(f"[PAPER ENGINE REJECT] {sym} rejected: invalid {side} entry/SL/TP ordering.")
+            return None
 
         # Institutional Prop Firm Position Sizing (aligned 100% with PositionSizingEngine)
         equity_state = _read_equity_unlocked()
@@ -171,9 +169,14 @@ def open_position_from_signal(signal: Dict[str, Any]) -> Optional[Dict[str, Any]
         expected_profit = round(abs(tp - executed_entry) * size, 2)
         expected_loss = round(abs(executed_entry - sl) * size, 2)
 
+        signal_indicators = signal.get("indicators") or {}
+        signal_atr = float(signal_indicators.get("atr", 0.0) or 0.0)
+        risk_percent = round((expected_loss / max(current_balance, 1.0)) * 100.0, 3)
+        reward_percent = round((expected_profit / max(current_balance, 1.0)) * 100.0, 3)
+
         new_pos = {
             "id": pos_id,
-            "account": "FTMO 10K LIVE EVALUATION",
+            "account": "PAPER EXECUTION · REAL BINANCE DATA",
             "symbol": sym,
             "side": side,
             "entryPrice": executed_entry,
@@ -185,14 +188,14 @@ def open_position_from_signal(signal: Dict[str, Any]) -> Optional[Dict[str, Any]
             "unrealizedPnlPercent": round((unrealized / max(1.0, margin_used)) * 100.0, 2),
             "sl": sl,
             "tp1": tp,
-            "tp2": round(tp * (1.01 if side == "BUY" else 0.99), 2),
-            "tp3": round(tp * (1.02 if side == "BUY" else 0.98), 2),
+            "tp2": float(signal.get("tp2", 0.0) or 0.0),
+            "tp3": float(signal.get("tp3", 0.0) or 0.0),
             "breakEvenPrice": executed_entry,
             "trailingStopActive": False,
             "trailingDistancePct": 0.5,
-            "atr": 35.0 if "BTC" in sym else 2.0,
-            "riskPercent": 1.5,
-            "rewardPercent": 3.0,
+            "atr": signal_atr,
+            "riskPercent": risk_percent,
+            "rewardPercent": reward_percent,
             "expectedProfit": expected_profit,
             "expectedLoss": expected_loss,
             "commission": round(margin_used * 0.0004, 2),
@@ -224,7 +227,7 @@ def open_position_from_signal(signal: Dict[str, Any]) -> Optional[Dict[str, Any]
 
         positions.append(new_pos)
         _write_positions_unlocked(positions)
-        print(f"[LIVE ENGINE] Opened LIVE Position: {pos_id} ({sym} {side} @ ${executed_entry:,.2f})")
+        print(f"[PAPER ENGINE] Opened market-data position: {pos_id} ({sym} {side} @ ${executed_entry:,.2f})")
 
     # Notify Telegram outside lock to prevent blocking
     try:
@@ -266,11 +269,11 @@ def sync_live_positions_and_equity() -> Dict[str, Any]:
                 p["unrealizedPnl"] = round(unrealized, 2)
                 p["unrealizedPnlPercent"] = round((unrealized / max(1.0, margin)) * 100.0, 2)
                 
-                p["account"] = p.get("account") or "FTMO 10K LIVE EVALUATION"
-                p["aiExplanation"] = p.get("aiExplanation") or p.get("ai_explanation") or "M15 OrderFlow Confluence"
-                p["aiConfidence"] = p.get("aiConfidence") or p.get("ai_confidence") or 85.0
-                p["duration"] = p.get("duration") or "0h 15m"
-                p["timeOpen"] = p.get("timeOpen") or "Just Now"
+                p["account"] = p.get("account") or "PAPER EXECUTION · REAL BINANCE DATA"
+                p["aiExplanation"] = p.get("aiExplanation") or p.get("ai_explanation") or ""
+                p["aiConfidence"] = p.get("aiConfidence") or p.get("ai_confidence") or 0.0
+                p["duration"] = p.get("duration") or ""
+                p["timeOpen"] = p.get("timeOpen") or ""
 
                 total_unrealized += unrealized
                 positions_updated = True

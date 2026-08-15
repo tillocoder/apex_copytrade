@@ -10,55 +10,6 @@ export interface CandleData {
   isUp: boolean;
 }
 
-export function generateCandleDataset(basePrice: number, count: number = 85): CandleData[] {
-  const dataset: CandleData[] = [];
-  let price = basePrice * 0.975;
-  const now = new Date();
-
-  for (let i = count; i >= 0; i--) {
-    const time = new Date(now.getTime() - i * 5 * 60 * 1000);
-    const timeStr = time.toTimeString().slice(0, 5);
-
-    // Realistic random walk with slight upward bias
-    const changePct = (Math.random() - 0.475) * 0.005;
-    const open = Number(price.toFixed(2));
-    const close = Number((open * (1 + changePct)).toFixed(2));
-    const spread = Math.abs(close - open);
-    const volatility = (Math.random() * 0.4 + 0.2) * (spread + open * 0.001);
-    
-    const high = Number((Math.max(open, close) + volatility).toFixed(2));
-    const low = Number((Math.min(open, close) - volatility).toFixed(2));
-    const volume = Math.floor(Math.random() * 650 + 150);
-
-    price = close;
-    dataset.push({
-      time: timeStr,
-      open,
-      high,
-      low,
-      close,
-      volume,
-      isUp: close >= open,
-    });
-  }
-
-  // Calculate Moving Averages
-  for (let i = 0; i < dataset.length; i++) {
-    if (i >= 19) {
-      const slice = dataset.slice(i - 19, i + 1);
-      const sum = slice.reduce((acc, c) => acc + c.close, 0);
-      dataset[i].ma20 = Number((sum / 20).toFixed(2));
-    }
-    if (i >= 49) {
-      const slice = dataset.slice(i - 49, i + 1);
-      const sum = slice.reduce((acc, c) => acc + c.close, 0);
-      dataset[i].ema50 = Number((sum / 50).toFixed(2));
-    }
-  }
-
-  return dataset;
-}
-
 interface ProfessionalChartParams {
   symbol: string;
   basePrice: number;
@@ -69,6 +20,7 @@ interface ProfessionalChartParams {
     entryPrice: number;
     sl?: number;
     tp?: number;
+    tp1?: number;
     unrealizedPnl?: number;
   };
   candleCount?: number;
@@ -79,9 +31,7 @@ interface ProfessionalChartParams {
 }
 
 export function getProfessionalChartOption(params: ProfessionalChartParams) {
-  const candles = (params.realCandles && params.realCandles.length > 0)
-    ? params.realCandles
-    : generateCandleDataset(params.basePrice, params.candleCount || 85);
+  const candles = params.realCandles || [];
 
   const times = candles.map(c => c.time);
   
@@ -123,24 +73,12 @@ export function getProfessionalChartOption(params: ProfessionalChartParams) {
   const markLines: any[] = [];
 
   if (params.activePosition) {
-    let entry = params.activePosition.entryPrice;
-    // Scale entry price to match current chart price if mock data is off-scale
-    if (Math.abs(entry - params.basePrice) / params.basePrice > 0.15) {
-      entry = params.activePosition.side === 'BUY'
-        ? Number((params.basePrice * 0.992).toFixed(2))
-        : Number((params.basePrice * 1.008).toFixed(2));
-    }
-
+    const entry = params.activePosition.entryPrice;
     const isBuy = params.activePosition.side === 'BUY';
-    const sl = (params.activePosition.sl && Math.abs(params.activePosition.sl - params.basePrice) / params.basePrice < 0.15)
-      ? params.activePosition.sl
-      : Number((entry * (isBuy ? 0.985 : 1.015)).toFixed(2));
+    const sl = params.activePosition.sl || 0;
+    const tp = params.activePosition.tp || params.activePosition.tp1 || 0;
 
-    const tp = (params.activePosition.tp && Math.abs(params.activePosition.tp - params.basePrice) / params.basePrice < 0.15)
-      ? params.activePosition.tp
-      : Number((entry * (isBuy ? 1.025 : 0.975)).toFixed(2));
-
-    markLines.push({
+    if (entry > 0) markLines.push({
       name: 'ENTRY',
       yAxis: entry,
       lineStyle: { color: '#3B82F6', width: 2, type: 'solid' },
@@ -157,7 +95,7 @@ export function getProfessionalChartOption(params: ProfessionalChartParams) {
       }
     });
 
-    markLines.push({
+    if (sl > 0 && (isBuy ? sl < entry : sl > entry)) markLines.push({
       name: 'SL',
       yAxis: sl,
       lineStyle: { color: '#EF4444', width: 1.5, type: 'dashed' },
@@ -174,7 +112,7 @@ export function getProfessionalChartOption(params: ProfessionalChartParams) {
       }
     });
 
-    markLines.push({
+    if (tp > 0 && (isBuy ? tp > entry : tp < entry)) markLines.push({
       name: 'TP',
       yAxis: tp,
       lineStyle: { color: '#22C55E', width: 1.5, type: 'dashed' },
@@ -190,37 +128,6 @@ export function getProfessionalChartOption(params: ProfessionalChartParams) {
         borderRadius: 4
       }
     });
-  }
-
-  if (params.overlaySMC) {
-    const highLevel = Number((params.basePrice * 1.006).toFixed(2));
-    const lowLevel = Number((params.basePrice * 0.992).toFixed(2));
-    markLines.push(
-      {
-        name: 'BOS Breakout',
-        yAxis: highLevel,
-        lineStyle: { color: '#00F0FF', width: 1, type: 'dashed' },
-        label: { 
-          formatter: 'BOS (Break of Structure)', 
-          position: 'insideStartTop', 
-          color: '#00F0FF', 
-          fontSize: 9,
-          fontFamily: 'JetBrains Mono'
-        }
-      },
-      {
-        name: 'Order Block Demand',
-        yAxis: lowLevel,
-        lineStyle: { color: '#089981', width: 1, type: 'solid' },
-        label: { 
-          formatter: 'Bullish Demand OB', 
-          position: 'insideStartTop', 
-          color: '#089981', 
-          fontSize: 9,
-          fontFamily: 'JetBrains Mono'
-        }
-      }
-    );
   }
 
   return {

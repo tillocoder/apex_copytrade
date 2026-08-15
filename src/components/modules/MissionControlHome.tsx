@@ -145,15 +145,15 @@ export const MissionControlHome: React.FC = () => {
           <div className="p-2.5 border-t border-apex-border bg-apex-surface space-y-1.5 text-[11px]">
             <div className="flex justify-between items-center text-apex-muted">
               <span>FUNDING RATE</span>
-              <span className="text-apex-text font-mono font-medium">+0.0125%</span>
+              <span className="text-apex-muted font-mono font-medium">—</span>
             </div>
             <div className="flex justify-between items-center text-apex-muted">
               <span>OPEN INTEREST</span>
-              <span className="text-apex-text font-mono font-medium">$18.45B</span>
+              <span className="text-apex-muted font-mono font-medium">—</span>
             </div>
             <div className="flex justify-between items-center text-apex-muted">
               <span>ORDER BOOK BIAS</span>
-              <span className="text-apex-success font-mono font-medium">64% BUY</span>
+              <span className="text-apex-muted font-mono font-medium">NOT CONNECTED</span>
             </div>
           </div>
         </div>

@@ -381,7 +381,9 @@ class TelegramNotifier:
         symbol = signal.get("symbol", "BTC/USDT")
         entry = signal.get("entry", 0.0)
         sl = signal.get("sl", 0.0)
-        tp = signal.get("tp", 0.0)
+        tp1 = signal.get("tp1", signal.get("tp", 0.0))
+        tp2 = signal.get("tp2", 0.0)
+        tp3 = signal.get("tp3", 0.0)
         ai_score = signal.get("aiScore", 80.0)
         prob = signal.get("probability", 80.0)
         reason = signal.get("reasoning", "Market structure alignment.")
@@ -391,7 +393,9 @@ class TelegramNotifier:
             f"==================================\n"
             f"🪙 **Kirish narxi:** ${entry:,.2f}\n"
             f"🛡️ **Stop Loss:** ${sl:,.2f}\n"
-            f"🎯 **Take Profit:** ${tp:,.2f}\n"
+            f"🎯 **TP1:** ${tp1:,.2f}\n"
+            f"🎯 **TP2:** ${tp2:,.2f}\n"
+            f"🎯 **TP3:** ${tp3:,.2f}\n"
             f"📈 **AI Ishonch:** {ai_score}% (Confluence: {prob}%)\n\n"
             f"📝 **Asos:** {reason}\n\n"
             f"⚠️ *Bu shunchaki qo'shimcha AI tahlil signalidir. Tizim avtomatik tarzda narxni kuzatadi va natijasini xabar beradi.*"

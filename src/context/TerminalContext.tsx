@@ -12,18 +12,6 @@ import type {
   DevLog, 
   ServerMetric 
 } from '../types';
-import { 
-  currentUser, 
-  initialTickers, 
-  systemHealthStatus, 
-  initialPositions, 
-  initialSignals, 
-  propFirmAccounts, 
-  mockBacktest, 
-  newsArticles, 
-  initialLogs, 
-  serverMetrics 
-} from '../data/mockData';
 import { soundEngine } from '../services/soundEngine';
 import { eventBus, type TradingEvent } from '../services/eventEngine';
 import { fetchReal24hTickers, subscribeBinanceLivePrices } from '../services/marketDataService';
@@ -49,6 +37,45 @@ interface MissionCompleteData {
   reason: string;
 }
 
+interface LivePortfolio {
+  initialCapital: number;
+  currentEquity: number;
+  realizedPnl: number;
+  unrealizedPnl: number;
+  totalTrades: number;
+  winRate: number;
+}
+
+const WATCHLIST: TickerData[] = ['BTC', 'ETH', 'SOL', 'BNB', 'AVAX', 'LINK', 'XRP'].map(symbol => ({
+  symbol: `${symbol}/USDT`, price: 0, change24h: 0, high24h: 0, low24h: 0, volume24h: 0, fundingRate: 0, openInterest: 0
+}));
+
+const EMPTY_HEALTH: SystemHealth = {
+  vpsStatus: 'OFFLINE', vpsLatency: 0, exchangeApiStatus: 'DISCONNECTED', exchangeLatency: 0,
+  dbStatus: 'ERROR', dbLatency: 0, wsStatus: 'PAUSED', wsLatency: 0,
+  pythonEngineStatus: 'PAUSED', aiEngineStatus: 'CALIBRATING'
+};
+
+const EMPTY_BACKTEST: BacktestResult = {
+  id: 'pending', strategyName: 'Real-data backtest pending', symbol: '—', timeframe: 'M15',
+  initialBalance: 0, finalBalance: 0, netProfit: 0, profitFactor: 0, winRate: 0,
+  sharpeRatio: 0, sortinoRatio: 0, maxDrawdown: 0, totalTrades: 0, avgRR: 0,
+  avgHoldingTime: '—', monthlyReturns: [], equityCurve: []
+};
+
+const EMPTY_METRICS: ServerMetric = {
+  cpuUsagePct: 0, gpuUsagePct: 0, ramUsedGb: 0, ramTotalGb: 0, diskUsedGb: 0, diskTotalGb: 0,
+  latencyMs: 0, dockerContainers: [], redisStatus: 'DEGRADED', postgresStatus: 'DEGRADED', celeryWorkers: 0
+};
+
+const EMPTY_PORTFOLIO: LivePortfolio = {
+  initialCapital: 0, currentEquity: 0, realizedPnl: 0, unrealizedPnl: 0, totalTrades: 0, winRate: 0
+};
+
+const GUEST_USER: User = {
+  id: 'guest', name: 'Guest', email: '', role: 'Guest', avatar: '', twoFactorEnabled: false, passkeyRegistered: false
+};
+
 interface TerminalContextType {
   activeModule: ModuleView;
   setActiveModule: (module: ModuleView) => void;
@@ -67,6 +94,7 @@ interface TerminalContextType {
   news: NewsArticle[];
   logs: DevLog[];
   metrics: ServerMetric;
+  portfolio: LivePortfolio;
   commandPaletteOpen: boolean;
   setCommandPaletteOpen: (open: boolean) => void;
 
@@ -131,7 +159,7 @@ const loadInitialAuthSession = (): { user: User; module: ModuleView } => {
   } catch (e) {
     console.error('Failed to parse auth session:', e);
   }
-  return { user: currentUser, module: 'login' };
+  return { user: GUEST_USER, module: 'login' };
 };
 
 const TerminalContext = createContext<TerminalContextType | undefined>(undefined);
@@ -161,23 +189,20 @@ export const TerminalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setActiveModule('login');
   };
   const [selectedSymbol, setSelectedSymbol] = useState<string>('BTC/USDT');
-  const [tickers, setTickers] = useState<TickerData[]>(initialTickers);
-  const [health] = useState<SystemHealth>(systemHealthStatus);
-  const [positions, setPositions] = useState<Position[]>(initialPositions);
-  const [signals] = useState<Signal[]>(initialSignals);
-  const [propAccounts] = useState<PropFirmAccount[]>(propFirmAccounts);
-  const [backtest, setBacktest] = useState<BacktestResult>(mockBacktest);
-  const [news] = useState<NewsArticle[]>(newsArticles);
-  const [logs, setLogs] = useState<DevLog[]>(initialLogs);
-  const [metrics] = useState<ServerMetric>(serverMetrics);
+  const [tickers, setTickers] = useState<TickerData[]>(WATCHLIST);
+  const [health, setHealth] = useState<SystemHealth>(EMPTY_HEALTH);
+  const [positions, setPositions] = useState<Position[]>([]);
+  const [signals, setSignals] = useState<Signal[]>([]);
+  const [propAccounts] = useState<PropFirmAccount[]>([]);
+  const [backtest, setBacktest] = useState<BacktestResult>(EMPTY_BACKTEST);
+  const [news] = useState<NewsArticle[]>([]);
+  const [logs, setLogs] = useState<DevLog[]>([]);
+  const [metrics] = useState<ServerMetric>(EMPTY_METRICS);
+  const [portfolio, setPortfolio] = useState<LivePortfolio>(EMPTY_PORTFOLIO);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState<boolean>(false);
 
   const [notificationsOpen, setNotificationsOpen] = useState<boolean>(false);
-  const [notifications, setNotifications] = useState<NotificationItem[]>([
-    { id: 'n1', title: 'MISSION OPENED: BTC/USDT BUY 20X', description: 'Entry $89,200.00. 1.25% Planned Risk. Zero prop firm rule violation.', category: 'Trading', severity: 'success', timestamp: '02:41:08', positionId: 'pos_001' },
-    { id: 'n2', title: 'TP1 TARGET HIT: BTC/USDT', description: 'Locked +$3,250 profit (+1.46R). Stop loss automatically updated to Entry.', category: 'Trading', severity: 'success', timestamp: '07:10:00', positionId: 'pos_001' },
-    { id: 'n3', title: 'PROP FIRM DRAWDOWN SAFEGUARD', description: 'Current daily drawdown at 0.85% / 5.0% limit. Safe risk remaining: $4,150.', category: 'Risk', severity: 'info', timestamp: '09:00:00' },
-  ]);
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
 
   // Browser Notification Permission
   const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>(
@@ -190,7 +215,7 @@ export const TerminalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     return perm;
   };
 
-  const [commandCenterPositionId, setCommandCenterPositionId] = useState<string | null>('pos_001');
+  const [commandCenterPositionId, setCommandCenterPositionId] = useState<string | null>(null);
 
   const [missionModalOpen, setMissionModalOpen] = useState<boolean>(false);
   const [lastMissionData, setLastMissionData] = useState<MissionCompleteData | null>(null);
@@ -217,50 +242,50 @@ export const TerminalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           const data = await res.json();
           if (Array.isArray(data)) {
             const formatted: Position[] = data.map((p: any) => ({
-              id: p?.id || `pos_${Math.random()}`,
-              account: p?.account || 'FTMO 10K LIVE EVALUATION',
-              symbol: p?.symbol || 'BTC/USDT',
-              side: p?.side === 'SELL' ? 'SELL' : 'BUY',
-              entryPrice: p?.entryPrice || 0,
-              currentPrice: p?.currentPrice || p?.entryPrice || 0,
-              size: p?.size || 0.1,
-              leverage: p?.leverage || 5,
-              marginUsed: p?.marginUsed || 100,
-              unrealizedPnl: p?.unrealizedPnl || 0,
-              unrealizedPnlPercent: p?.unrealizedPnlPercent || 0,
-              sl: p?.sl || 0,
-              tp1: p?.tp1 || 0,
-              tp2: p?.tp2 || 0,
-              tp3: p?.tp3 || 0,
-              breakEvenPrice: p?.breakEvenPrice || p?.entryPrice || 0,
-              trailingStopActive: false,
-              trailingDistancePct: 0.5,
-              atr: p?.atr || 35.0,
-              riskPercent: p?.riskPercent || 1.5,
-              rewardPercent: p?.rewardPercent || 3.0,
-              expectedProfit: p?.expectedProfit || 150,
-              expectedLoss: p?.expectedLoss || 150,
-              commission: p?.commission || 4.5,
-              fundingFee: 0,
-              swapFees: 0,
-              liquidationPrice: p?.liquidationPrice || 0,
-              duration: p?.duration || '0h 15m',
-              timeOpen: p?.timeOpen || 'Just Now',
-              aiExplanation: p?.aiExplanation || p?.ai_explanation || 'M15 OrderFlow Confluence',
-              aiConfidence: p?.aiConfidence || p?.ai_confidence || 85,
-              aiRecommendation: 'HOLD',
-              expectedNextMove: p?.expectedNextMove || 'Bullish Continuation',
-              reason: p?.reason || 'M15 SMC Confluence',
-              pattern: p?.pattern || 'Bullish FVG + Order Block',
-              volumeProfile: p?.volumeProfile || 'High Volume Node Support',
-              trendStatus: p?.trendStatus || 'Strong Bullish Alignment',
-              orderFlowAnalysis: p?.orderFlowAnalysis || 'Net Buying Pressure',
-              liquidityAnalysis: p?.liquidityAnalysis || 'Buy-side Liquidity Target',
-              positionHealthScore: p?.positionHealthScore || 92,
-              executionQualityScore: p?.executionQualityScore || 95,
-              status: p?.status === 'CLOSED' ? 'CLOSED' : 'OPEN',
+              id: String(p?.id || ''),
+              account: String(p?.account || 'PAPER EXECUTION · REAL MARKET DATA'),
+              symbol: String(p?.symbol || ''),
+              side: p?.side === 'SELL' ? 'SELL' as const : 'BUY' as const,
+              entryPrice: Number(p?.entryPrice) || 0,
+              currentPrice: Number(p?.currentPrice) || 0,
+              size: Number(p?.size) || 0,
+              leverage: Number(p?.leverage) || 0,
+              marginUsed: Number(p?.marginUsed) || 0,
+              unrealizedPnl: Number(p?.unrealizedPnl) || 0,
+              unrealizedPnlPercent: Number(p?.unrealizedPnlPercent) || 0,
+              sl: Number(p?.sl) || 0,
+              tp1: Number(p?.tp1) || 0,
+              tp2: Number(p?.tp2) || 0,
+              tp3: Number(p?.tp3) || 0,
+              breakEvenPrice: Number(p?.breakEvenPrice) || 0,
+              trailingStopActive: Boolean(p?.trailingStopActive),
+              trailingDistancePct: Number(p?.trailingDistancePct) || 0,
+              atr: Number(p?.atr) || 0,
+              riskPercent: Number(p?.riskPercent) || 0,
+              rewardPercent: Number(p?.rewardPercent) || 0,
+              expectedProfit: Number(p?.expectedProfit) || 0,
+              expectedLoss: Number(p?.expectedLoss) || 0,
+              commission: Number(p?.commission) || 0,
+              fundingFee: Number(p?.fundingFee) || 0,
+              swapFees: Number(p?.swapFees) || 0,
+              liquidationPrice: Number(p?.liquidationPrice) || 0,
+              duration: String(p?.duration || ''),
+              timeOpen: String(p?.timeOpen || ''),
+              aiExplanation: String(p?.aiExplanation || p?.ai_explanation || ''),
+              aiConfidence: Number(p?.aiConfidence ?? p?.ai_confidence) || 0,
+              aiRecommendation: p?.aiRecommendation || 'HOLD',
+              expectedNextMove: String(p?.expectedNextMove || ''),
+              reason: String(p?.reason || ''),
+              pattern: String(p?.pattern || ''),
+              volumeProfile: String(p?.volumeProfile || ''),
+              trendStatus: String(p?.trendStatus || ''),
+              orderFlowAnalysis: String(p?.orderFlowAnalysis || ''),
+              liquidityAnalysis: String(p?.liquidityAnalysis || ''),
+              positionHealthScore: Number(p?.positionHealthScore) || 0,
+              executionQualityScore: Number(p?.executionQualityScore) || 0,
+              status: p?.status === 'PARTIAL' ? 'PARTIAL' as const : p?.status === 'CLOSED' ? 'CLOSED' as const : 'OPEN' as const,
               timeline: p?.timeline || []
-            }));
+            })).filter(p => p.id && p.symbol);
             setPositions(formatted);
           }
         }
@@ -269,6 +294,66 @@ export const TerminalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       }
     };
     fetchLivePositions();
+
+    const fetchPortfolio = async () => {
+      try {
+        const res = await fetch('/api/v1/portfolio/live-equity');
+        if (!res.ok) return;
+        const json = await res.json();
+        if (json.status === 'SUCCESS' && json.data) {
+          const data = json.data;
+          setPortfolio({
+            initialCapital: Number(data.initialCapital) || 0,
+            currentEquity: Number(data.currentEquity) || 0,
+            realizedPnl: Number(data.realizedPnl) || 0,
+            unrealizedPnl: Number(data.unrealizedPnl) || 0,
+            totalTrades: Number(data.totalTrades) || 0,
+            winRate: Number(data.winRate) || 0
+          });
+        }
+      } catch (err) {
+        console.error('Error fetching portfolio state:', err);
+      }
+    };
+
+    const fetchSystemHealth = async () => {
+      const startedAt = performance.now();
+      try {
+        const res = await fetch('/api/v1/system/health');
+        const latency = Math.round(performance.now() - startedAt);
+        if (!res.ok) throw new Error(`health request failed (${res.status})`);
+        const data = await res.json();
+        setHealth({
+          vpsStatus: data.status === 'HEALTHY' ? 'ONLINE' : 'DEGRADED',
+          vpsLatency: latency,
+          exchangeApiStatus: data.exchange_status === 'CONNECTED' ? 'CONNECTED' : 'DISCONNECTED',
+          exchangeLatency: Number(data.exchange_latency_ms) || 0,
+          dbStatus: data.database_status === 'HEALTHY' ? 'HEALTHY' : 'ERROR',
+          dbLatency: Number(data.database_latency_ms) || 0,
+          wsStatus: data.websocket_status === 'STREAMING' ? 'STREAMING' : 'PAUSED',
+          wsLatency: 0,
+          pythonEngineStatus: ['RUNNING', 'OPTIMIZING'].includes(data.python_engine_status) ? 'RUNNING' : 'PAUSED',
+          aiEngineStatus: data.ai_engine_status === 'ACTIVE' ? 'ACTIVE' : 'CALIBRATING'
+        });
+      } catch (err) {
+        setHealth(EMPTY_HEALTH);
+      }
+    };
+
+    const fetchActiveSignals = async () => {
+      try {
+        const res = await fetch('/api/v1/signals/live');
+        if (!res.ok) return;
+        const data = await res.json();
+        if (Array.isArray(data)) setSignals(data as Signal[]);
+      } catch (err) {
+        console.error('Error fetching active signals:', err);
+      }
+    };
+
+    fetchPortfolio();
+    fetchSystemHealth();
+    fetchActiveSignals();
 
     // 2. Fetch Real Quant Engine Backtest Results from Python Backend
     const fetchQuantEngineResults = async () => {
@@ -306,7 +391,13 @@ export const TerminalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       }
     };
     fetchQuantEngineResults();
-    const interval = setInterval(fetchQuantEngineResults, 10000);
+    const backtestInterval = setInterval(fetchQuantEngineResults, 10000);
+    const liveStateInterval = setInterval(() => {
+      fetchLivePositions();
+      fetchPortfolio();
+      fetchSystemHealth();
+      fetchActiveSignals();
+    }, 5000);
 
     // 2. Real-time Binance WebSocket Subscription
     const unsubscribe = subscribeBinanceLivePrices((symbol, newPrice, change24h) => {
@@ -336,7 +427,8 @@ export const TerminalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
     return () => {
       unsubscribe();
-      clearInterval(interval);
+      clearInterval(backtestInterval);
+      clearInterval(liveStateInterval);
     };
   }, []);
 
@@ -524,6 +616,7 @@ export const TerminalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       news,
       logs,
       metrics,
+      portfolio,
       commandPaletteOpen,
       setCommandPaletteOpen,
       notificationsOpen,

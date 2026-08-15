@@ -38,9 +38,7 @@ export const LiveTrades: React.FC = () => {
   }, []);
 
   const getLiveEquityChartOption = () => {
-    const curve = liveEquityData?.liveEquityCurve || [
-      { timestamp: '00:00', equity: 10000.0 }
-    ];
+    const curve = Array.isArray(liveEquityData?.liveEquityCurve) ? liveEquityData.liveEquityCurve : [];
 
     return {
       backgroundColor: '#151A21',
@@ -69,7 +67,7 @@ export const LiveTrades: React.FC = () => {
           name: 'Real-Time Portfolio Equity ($)',
           type: 'line',
           smooth: true,
-          data: curve.map((c: any) => c?.equity || 10000.0),
+          data: curve.map((c: any) => Number(c?.equity) || 0),
           lineStyle: { color: '#10B981', width: 2.5 },
           areaStyle: {
             color: {
@@ -93,7 +91,7 @@ export const LiveTrades: React.FC = () => {
         <div className="flex items-center space-x-3">
           <div className="flex items-center space-x-2 font-bold text-xs text-apex-text">
             <TrendingUp className="w-4 h-4 text-apex-accent" />
-            <span>LIVE EXECUTION ENGINE & OPEN POSITIONS ({safePositions.length})</span>
+            <span>PAPER EXECUTION · REAL MARKET DATA ({safePositions.length})</span>
           </div>
 
           <button
@@ -104,11 +102,11 @@ export const LiveTrades: React.FC = () => {
             className="flex items-center space-x-1.5 px-2.5 py-1 rounded bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 font-bold text-[10px] transition-apex"
           >
             <Activity className="w-3.5 h-3.5" />
-            <span>VIEW LIVE REAL EQUITY CURVE</span>
+            <span>VIEW REAL-TIME PAPER EQUITY</span>
           </button>
         </div>
 
-        <div className="text-[10px] text-apex-muted">EVENT-DRIVEN LIVE DISPATCHER</div>
+        <div className="text-[10px] text-apex-muted">REAL MARKET PRICE · NO EXCHANGE ORDERS</div>
       </div>
 
       {/* Main Content Area */}
