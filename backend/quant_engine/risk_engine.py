@@ -61,14 +61,14 @@ class RiskEngine:
         
         total_dd_pct = max(0.0, total_loss / self.prop_cfg.initial_capital)
         if total_dd_pct >= 0.04:
-            base_r = min(base_r, 0.005)
+            base_r = min(base_r, 0.0025)
         elif total_dd_pct >= 0.02:
-            base_r = min(base_r, 0.010)
+            base_r = min(base_r, 0.0050)
 
         if confidence_score >= 85.0:
             tier_risk = base_r * 1.0
         elif confidence_score >= 75.0:
-            tier_risk = base_r * 0.8
+            tier_risk = base_r * 0.80
         elif confidence_score >= 70.0:
             tier_risk = base_r * 0.65
         else:

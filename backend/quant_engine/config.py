@@ -16,11 +16,11 @@ class PropFirmRulesConfig:
     # 20x leverage is NOT allowed on standard prop firm accounts.
     # With 2x leverage: $10K account can open max $20K notional per position.
     # We cap further to 1.5x equity = $15K per position for safety.
-    risk_per_trade_pct: float = 0.015       # 1.5% base risk ($150 on $10k)
+    risk_per_trade_pct: float = 0.0075       # 0.75% base risk ($75 on $10k)
     min_sl_distance_pct: float = 0.005     # 0.50% minimum SL distance floor
     max_single_position_notional_mult: float = 1.5   # Max 1.5x equity per position ($15k on $10k)
     max_total_notional_exposure_mult: float = 3.0    # Max 3.0x total portfolio notional ($30k on $10k)
-    max_crypto_portfolio_risk_pct: float = 0.03      # Max 3.0% aggregate planned risk ($300 on $10k)
+    max_crypto_portfolio_risk_pct: float = 0.02      # Max 2.0% aggregate planned risk ($200 on $10k)
     max_margin_utilization_pct: float = 0.80         # Max 80% capital used as margin (no artificial leverage)
     maintenance_margin_rate: float = 0.05            # 5.0% maintenance margin
     fee_buffer_pct: float = 0.0008          # 0.08% roundtrip fee buffer
@@ -32,7 +32,7 @@ class PropFirmRulesConfig:
         "ETH/USDT": 2.0,
         "SOL/USDT": 2.0
     })
-    max_position_margin_pct: float = 0.40   # 40% of equity max per position = $4,000 margin ($8,000 notional = ~1% risk)
+    max_position_margin_pct: float = 0.20   # 20% of equity max per position = $2,000 margin cap
 
 @dataclass
 class ExecutionConfig:
@@ -50,9 +50,9 @@ class ExecutionConfig:
 
 @dataclass
 class RiskConfig:
-    base_risk_pct: float = 0.015    # 1.50% base risk per trade
-    min_risk_pct: float = 0.005     # 0.50% min risk
-    max_risk_pct: float = 0.020     # 2.00% max risk (raised from 1.5% for high-conf trades)
+    base_risk_pct: float = 0.0075    # 0.75% base risk per trade
+    min_risk_pct: float = 0.0025     # 0.25% min risk
+    max_risk_pct: float = 0.0100     # 1.00% max risk
     max_open_positions: int = 2     # Max 2 simultaneous: BTC + ETH only
     daily_max_losses: int = 3       # Pause trading after 3 consecutive daily losses
     equity_protection_buffer: float = 0.80

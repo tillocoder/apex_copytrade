@@ -126,6 +126,12 @@ def open_position_from_signal(signal: Dict[str, Any]) -> Optional[Dict[str, Any]
         equity_state = _read_equity_unlocked()
         current_balance = equity_state["initialCapital"] + equity_state["realizedPnl"]
         
+        # Hard Circuit Breaker Guard (Stop trading if total loss >= $800 = 8.0% DD safety floor)
+        total_loss = INITIAL_CAPITAL - current_balance
+        if total_loss >= (INITIAL_CAPITAL * 0.08):
+            print(f"[LIVE ENGINE REJECT] {sym} rejected: Hard Prop Drawdown Safety Floor reached (-{round((total_loss/INITIAL_CAPITAL)*100, 2)}%)")
+            return None
+
         open_pos_list = [p for p in positions if p.get("status") == "OPEN"]
 
         sizing_res = PositionSizingEngine.calculate_position_size(

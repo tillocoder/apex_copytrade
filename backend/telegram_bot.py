@@ -175,13 +175,28 @@ class TelegramNotifier:
         sl = float(position.get("sl", 0.0))
         tp1 = float(position.get("tp1", 0.0))
         tp2 = float(position.get("tp2", 0.0))
-        risk = float(position.get("expectedLoss") or position.get("expected_loss") or 150.0)
+        risk = float(position.get("expectedLoss") or position.get("expected_loss") or 75.0)
+        risk_pct = float(position.get("riskPercent") or ((risk / max(1.0, self.account_balance)) * 100.0))
         reason = position.get("aiExplanation") or position.get("ai_explanation") or "SMC Demand Zone + FVG Fill"
         confidence = position.get("aiConfidence") or position.get("ai_confidence") or 85.0
 
-        # Balance breakdown
+        # Balance breakdown & Prop Guard check
+        total_loss = INITIAL_PROP_CAPITAL - self.account_balance
         bal_change_pct = ((self.account_balance - INITIAL_PROP_CAPITAL) / INITIAL_PROP_CAPITAL) * 100.0
         bal_change_str = f"+{bal_change_pct:.2f}%" if bal_change_pct >= 0 else f"{bal_change_pct:.2f}%"
+
+        # Check if prop firm drawdown limit breached (10% total DD)
+        if total_loss >= (INITIAL_PROP_CAPITAL * 0.10):
+            text = (
+                f"🚨 **PROP FIRM DRAWDOWN LIMITI BUZILDI (-10.0%)** 🚨\n"
+                f"==================================\n"
+                f"💵 **Qolgan Balans:** ${self.account_balance:,.2f} USD ({bal_change_str})\n"
+                f"🛑 **Qoida:** FTMO / Prop firm 10% max drawdown chegarasiga yetildi.\n"
+                f"🔒 **STATUS:** Barcha yangi savdolar avtomatik bloklandi va kapital muhofaza qilindi."
+            )
+            for cid in list(self.chat_ids):
+                self.send_direct_message(cid, text)
+            return
 
         text = (
             f"🤖 **BOT AVTOMATIK SAVDO OCHDI — {symbol} {side_text} {side_emoji}**\n"
@@ -194,7 +209,7 @@ class TelegramNotifier:
             f"🛡️ **Stop Loss:** ${sl:,.2f}\n"
             f"⚖️ **Savdo Hajmi:** {size} {base_asset}\n"
             f"🔒 **{leverage}x Leverage Margin:** ${margin:,.2f} USD\n"
-            f"💰 **Planned Risk:** ${risk:,.2f} (1.5% Risk)\n\n"
+            f"💰 **Planned Risk:** ${risk:,.2f} ({risk_pct:.2f}% Risk)\n\n"
             f"💵 **10K BALANSDAN QOLGANI:** ${self.account_balance:,.2f} USD ({bal_change_str})\n"
             f"✅ Pozitsiya avtomatik ochildi. Real-vaqtda kuzatilmoqda..."
         )
