@@ -100,6 +100,17 @@ const formatRR = (val: any): string => {
   return Number(val).toFixed(2);
 };
 
+const safeStr = (val: any, fallback = ''): string => {
+  if (typeof val === 'string') return val;
+  if (typeof val === 'number' || typeof val === 'boolean') return String(val);
+  return fallback;
+};
+
+const safeIncludes = (val: any, search: string): boolean => {
+  if (typeof val !== 'string') return false;
+  return val.includes(search);
+};
+
 const LiveSignalsContent: React.FC = () => {
   const { signals: initialSignals } = useTerminal();
   const [signals, setSignals] = React.useState<Signal[]>(() => Array.isArray(initialSignals) ? (initialSignals as Signal[]) : []);
@@ -417,17 +428,17 @@ const LiveSignalsContent: React.FC = () => {
                   {isExitCandle && (
                     <g>
                       <line x1={x} y1={paddingTop} x2={x} y2={height - paddingBottom} stroke="#f43f5e" strokeWidth={1} strokeDasharray="3,3" opacity={0.65} />
-                      <circle cx={x} cy={selectedSignal.status?.includes('TP') ? yHigh - 12 : yLow + 12} r={4.5} fill="#f43f5e" />
+                      <circle cx={x} cy={safeIncludes(selectedSignal.status, 'TP') ? yHigh - 12 : yLow + 12} r={4.5} fill="#f43f5e" />
                       <text 
                         x={x} 
-                        y={selectedSignal.status?.includes('TP') ? yHigh - 22 : yLow + 26} 
+                        y={safeIncludes(selectedSignal.status, 'TP') ? yHigh - 22 : yLow + 26} 
                         fill="#f43f5e" 
                         fontSize={8} 
                         fontWeight="bold" 
                         fontFamily="monospace" 
                         textAnchor="middle"
                       >
-                        EXIT ({selectedSignal.status?.includes('TP') ? 'TP' : 'SL'})
+                        EXIT ({safeIncludes(selectedSignal.status, 'TP') ? 'TP' : 'SL'})
                       </text>
                     </g>
                   )}
@@ -542,7 +553,7 @@ const LiveSignalsContent: React.FC = () => {
                       </span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <span className="text-[10px] text-apex-muted">{sig.formatted_time?.split(' ')[1] || ''}</span>
+                      <span className="text-[10px] text-apex-muted">{typeof sig.formatted_time === 'string' ? (sig.formatted_time.split(' ')[1] || sig.formatted_time) : ''}</span>
                       <span className={`px-2 py-0.5 rounded text-[9px] font-bold flex items-center gap-1 ${
                         statusStr === 'CONFIRMED'
                           ? 'bg-apex-success/15 text-apex-success border border-apex-success/30'
@@ -651,13 +662,13 @@ const LiveSignalsContent: React.FC = () => {
                       </div>
                       <div className="flex items-center gap-1.5">
                         <span className={`px-1.5 py-0.2 rounded text-[8px] font-bold ${
-                          status.includes('TP') 
+                          safeIncludes(status, 'TP') 
                             ? 'bg-apex-success/15 text-apex-success' 
-                            : status.includes('SL') 
+                            : safeIncludes(status, 'SL') 
                             ? 'bg-apex-danger/15 text-apex-danger' 
                             : 'bg-apex-warning/15 text-apex-warning'
                         }`}>
-                          {status}
+                          {safeStr(status, 'PENDING')}
                         </span>
                         <span className="text-[9px] text-apex-muted">{timeStr}</span>
                       </div>
@@ -710,13 +721,13 @@ const LiveSignalsContent: React.FC = () => {
                   {selectedSignal.side || 'BUY'} (M15)
                 </span>
                 <span className={`px-2 py-0.5 rounded text-[9px] font-bold ${
-                  selectedSignal.status?.includes('TP') 
+                  safeIncludes(selectedSignal.status, 'TP') 
                     ? 'bg-apex-success/15 text-apex-success border border-apex-success/30' 
-                    : selectedSignal.status?.includes('SL') 
+                    : safeIncludes(selectedSignal.status, 'SL') 
                     ? 'bg-apex-danger/15 text-apex-danger border border-apex-danger/30' 
                     : 'bg-apex-warning/15 text-apex-warning border border-apex-warning/30'
                 }`}>
-                  {selectedSignal.status || 'PENDING'}
+                  {safeStr(selectedSignal.status, 'PENDING')}
                 </span>
               </div>
               <button 
@@ -777,7 +788,7 @@ const LiveSignalsContent: React.FC = () => {
                         <div>RSI (14): <span className="font-bold text-apex-text">{selectedSignal.indicators.rsi != null ? Number(selectedSignal.indicators.rsi).toFixed(2) : 'N/A'}</span></div>
                         <div>ATR (14): <span className="font-bold text-apex-text">${selectedSignal.indicators.atr != null ? Number(selectedSignal.indicators.atr).toFixed(2) : 'N/A'}</span></div>
                         <div>Volume Delta: <span className="font-bold text-apex-text">{selectedSignal.indicators.volumeDelta != null ? Number(selectedSignal.indicators.volumeDelta).toFixed(2) : '0.00'}%</span></div>
-                        <div>Trend (15m): <span className={`font-bold ${selectedSignal.indicators.trend?.includes('BULLISH') ? 'text-apex-success' : 'text-apex-danger'}`}>{selectedSignal.indicators.trend || 'NEUTRAL'}</span></div>
+                        <div>Trend (15m): <span className={`font-bold ${safeIncludes(selectedSignal.indicators.trend, 'BULLISH') ? 'text-apex-success' : 'text-apex-danger'}`}>{safeStr(selectedSignal.indicators.trend, 'NEUTRAL')}</span></div>
                       </div>
                     </div>
                   )}
