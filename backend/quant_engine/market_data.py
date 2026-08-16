@@ -16,6 +16,32 @@ class Candle:
     symbol: str = "BTC/USDT"
 
 @dataclass
+class MarketEvent:
+    timestamp: datetime
+    symbol: str
+    timeframe: str = "M15"
+    sequence_id: int = 0
+    event_type: str = "CANDLE_CLOSE"
+    open: float = 0.0
+    high: float = 0.0
+    low: float = 0.0
+    close: float = 0.0
+    volume: float = 0.0
+    raw_candle: Optional[Candle] = None
+
+    @property
+    def canonical_key(self) -> Tuple[datetime, str, str, int]:
+        return (self.timestamp, self.symbol, self.timeframe, self.sequence_id)
+
+    def __lt__(self, other: MarketEvent) -> bool:
+        return self.canonical_key < other.canonical_key
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, MarketEvent):
+            return False
+        return self.canonical_key == other.canonical_key
+
+@dataclass
 class SymbolSpec:
     symbol: str
     start_price: float
@@ -43,7 +69,25 @@ class MarketDataEngine:
         self.multi_candles: Dict[str, List[Candle]] = {}
 
     def load_from_candles(self, candles: List[Candle]) -> None:
-        self.candles = sorted(candles, key=lambda c: c.timestamp)
+        self.candles = sorted(candles, key=lambda c: (c.timestamp, c.symbol))
+
+    def to_canonical_events(self) -> List[MarketEvent]:
+        events = []
+        for idx, c in enumerate(self.candles):
+            events.append(MarketEvent(
+                timestamp=c.timestamp,
+                symbol=c.symbol,
+                timeframe="M15",
+                sequence_id=idx,
+                event_type="CANDLE_CLOSE",
+                open=c.open,
+                high=c.high,
+                low=c.low,
+                close=c.close,
+                volume=c.volume,
+                raw_candle=c
+            ))
+        return sorted(events, key=lambda e: e.canonical_key)
 
     def generate_multi_symbol_1year(self, seed: int = 42) -> Dict[str, List[Candle]]:
         """Generates aligned 1-year M15 dataset for BTC/USDT and ETH/USDT."""

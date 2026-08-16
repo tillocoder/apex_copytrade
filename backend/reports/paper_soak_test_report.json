@@ -1,0 +1,13 @@
+{
+  "soak_test_name": "168-Hour Live Binance Paper Trading Soak Test",
+  "required_continuous_hours": 168,
+  "completed_continuous_hours": 0.5,
+  "status": "INCOMPLETE / NOT_VERIFIED",
+  "reason": "7 continuous calendar days of live paper feed soak testing requires 168 real-world hours in progress.",
+  "websocket_disconnects": 0,
+  "rest_fallbacks": 0,
+  "state_mismatches": 0,
+  "exceptions": 0,
+  "gate_status": "NOT_VERIFIED",
+  "timestamp": "2026-08-16T07:09:08.379548+00:00"
+}

@@ -1,0 +1,66 @@
+{
+  "system_metadata": {
+    "engine_name": "APEX PROP ENGINE QUANT CORE",
+    "version": "3.2.0-PRODUCTION",
+    "audit_timestamp": "2026-08-16T07:09:08.379548+00:00",
+    "execution_mode_default": "PAPER",
+    "production_ready": false
+  },
+  "symbols_configuration": {
+    "allowed_symbols": [
+      "BTC/USDT",
+      "ETH/USDT"
+    ],
+    "excluded_symbols": [
+      "SOL/USDT"
+    ],
+    "symbol_leverage_map": {
+      "BTC/USDT": 2.0,
+      "ETH/USDT": 2.0
+    }
+  },
+  "prop_firm_rules": {
+    "account_size": 10000.0,
+    "stage1_target_pct": 0.1,
+    "stage2_target_pct": 0.05,
+    "max_daily_drawdown_pct": 0.05,
+    "max_total_drawdown_pct": 0.1,
+    "daily_reset_timezone": "Europe/Prague",
+    "min_trading_days": 4
+  },
+  "risk_parameters": {
+    "base_risk_per_trade_pct": 0.015,
+    "min_risk_pct": 0.005,
+    "max_risk_pct": 0.02,
+    "max_open_positions": 2,
+    "max_single_position_margin_pct": 0.15,
+    "max_portfolio_exposure_mult": 3.0,
+    "equity_protection_buffer_pct": 0.8
+  },
+  "execution_parameters": {
+    "execution_mode": "PAPER",
+    "commission_pct": 0.0004,
+    "spread_bps": 1.0,
+    "slippage_bps": 1.0,
+    "execution_timing": "NEXT_BAR_OPEN"
+  },
+  "strategy_parameters": {
+    "timeframe": "M15",
+    "confidence_threshold": 70.0,
+    "ema_fast": 20,
+    "ema_slow": 50,
+    "ema_trend": 200,
+    "atr_period": 14,
+    "atr_multiplier_sl": 1.2,
+    "atr_multiplier_tp": 3.0
+  },
+  "realtime_safety": {
+    "enable_websocket_reconnect": true,
+    "enable_rest_fallback": true,
+    "heartbeat_interval_sec": 5,
+    "stale_data_timeout_sec": 30,
+    "emergency_kill_switch": true,
+    "daily_dd_soft_limit_pct": 0.04,
+    "daily_dd_hard_block_pct": 0.05
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "simulation_count": 100000,
+  "models_evaluated": [
+    "1. trade_bootstrap",
+    "2. block_bootstrap",
+    "3. losing_streak_stress",
+    "4. slippage_1x",
+    "5. slippage_2x",
+    "6. slippage_3x",
+    "7. commission_1x",
+    "8. commission_2x"
+  ],
+  "model_dependent_simulated_risk_of_ruin_pct": 0.803,
+  "probability_dd_gt_5_pct": 28.55,
+  "probability_dd_gt_7_5_pct": 4.28,
+  "probability_dd_gt_10_pct": 0.8,
+  "percentiles": {
+    "p5_final_equity": 13470.54,
+    "p25_final_equity": 14537.53,
+    "median_p50_final_equity": 15245.87,
+    "p75_final_equity": 15935.42,
+    "p95_final_equity": 16894.69
+  },
+  "average_worst_losing_streak": 8.9,
+  "audit_status": "PASS"
+}
