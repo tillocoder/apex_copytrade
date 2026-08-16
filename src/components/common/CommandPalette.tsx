@@ -39,7 +39,7 @@ export const CommandPalette: React.FC = () => {
     { id: 'portfolio', label: 'Portfolio Analytics', icon: PieChart, desc: 'Exposure, tax report, & asset allocation' },
     { id: 'journal', label: 'Trade Journal', icon: BookOpen, desc: 'Psychology rating, trade notes, and mistake log' },
     { id: 'analytics', label: 'Strategy Performance', icon: BarChart3, desc: 'Best trading hours, win rate by day and symbol' },
-    { id: 'copilot', label: 'XR AI Copilot Chat', icon: Bot, desc: 'Natural language strategy diagnostic assistant', isAi: true },
+    { id: 'copilot', label: 'XR AI Chat', icon: Bot, desc: 'Natural language strategy diagnostic assistant', isAi: true },
     { id: 'team', label: 'Team Collaboration Hub', icon: Users, desc: 'Shared notes, live user cursors & chat' },
     { id: 'automation', label: 'Automation & Webhooks', icon: Sliders, desc: 'TradingView alerts, Telegram & Discord bots' },
     { id: 'server', label: 'Server & Infra Health', icon: Server, desc: 'CPU, RAM, Docker containers, and Python logs' },

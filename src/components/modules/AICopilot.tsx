@@ -81,7 +81,7 @@ export const AICopilot: React.FC = () => {
       <div className="flex items-center justify-between border-b border-apex-border pb-3 font-mono">
         <div className="flex items-center space-x-2 font-bold text-sm text-apex-text">
           <Bot className="w-5 h-5 text-apex-ai" />
-          <span>REAL-TIME XR AI QUANT COPILOT</span>
+          <span>REAL-TIME XR AI CHAT & QUANT ASSISTANT</span>
         </div>
 
         <div className="flex items-center space-x-3">

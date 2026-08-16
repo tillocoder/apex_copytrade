@@ -185,7 +185,7 @@ export const BacktestLab: React.FC = () => {
                 </button>
               </div>
             </div>
-            <span className="text-[10px] text-apex-muted">STRATEGY: APEX Neural OrderFlow v4.2</span>
+            <span className="text-[10px] text-apex-muted">STRATEGY: {backtest.strategyName || 'APEX Quant Engine v3.2 (Audited)'}</span>
           </div>
           <div className="flex-1 w-full h-full min-h-[260px]">
             <ReactECharts option={getEquityChartOption()} style={{ height: '100%', width: '100%' }} />

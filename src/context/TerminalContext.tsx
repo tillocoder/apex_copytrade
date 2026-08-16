@@ -16,6 +16,7 @@ import { soundEngine } from '../services/soundEngine';
 import { eventBus, type TradingEvent } from '../services/eventEngine';
 import { fetchReal24hTickers, subscribeBinanceLivePrices } from '../services/marketDataService';
 import { getNotificationPermission, requestNotificationPermission, sendWebNotification } from '../utils/webNotification';
+import { mockBacktest, propFirmAccounts as MOCK_PROP } from '../data/mockData';
 
 interface NotificationItem {
   id: string;
@@ -188,16 +189,17 @@ export const TerminalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     clearAuthSession();
     setActiveModule('login');
   };
+
   const [selectedSymbol, setSelectedSymbol] = useState<string>('BTC/USDT');
   const [tickers, setTickers] = useState<TickerData[]>(WATCHLIST);
   const [health, setHealth] = useState<SystemHealth>(EMPTY_HEALTH);
   const [positions, setPositions] = useState<Position[]>([]);
   const [signals, setSignals] = useState<Signal[]>([]);
-  const [propAccounts] = useState<PropFirmAccount[]>([]);
-  const [backtest, setBacktest] = useState<BacktestResult>(EMPTY_BACKTEST);
-  const [news] = useState<NewsArticle[]>([]);
+  const [propAccounts] = useState<PropFirmAccount[]>(MOCK_PROP);
+  const [backtest, setBacktest] = useState<BacktestResult>(mockBacktest);
+  const [news, setNews] = useState<NewsArticle[]>([]);
   const [logs, setLogs] = useState<DevLog[]>([]);
-  const [metrics] = useState<ServerMetric>(EMPTY_METRICS);
+  const [metrics, setMetrics] = useState<ServerMetric>(EMPTY_METRICS);
   const [portfolio, setPortfolio] = useState<LivePortfolio>(EMPTY_PORTFOLIO);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState<boolean>(false);
 
@@ -351,9 +353,39 @@ export const TerminalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       }
     };
 
+    const fetchLiveNews = async () => {
+      try {
+        const res = await fetch('/api/v1/news/feed');
+        if (res.ok) {
+          const json = await res.json();
+          if (Array.isArray(json.data) && json.data.length > 0) {
+            setNews(json.data);
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching news:', err);
+      }
+    };
+
+    const fetchLiveMetrics = async () => {
+      try {
+        const res = await fetch('/api/v1/system/metrics');
+        if (res.ok) {
+          const json = await res.json();
+          if (json && json.cpuUsagePct !== undefined) {
+            setMetrics(json);
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching metrics:', err);
+      }
+    };
+
     fetchPortfolio();
     fetchSystemHealth();
     fetchActiveSignals();
+    fetchLiveNews();
+    fetchLiveMetrics();
 
     // 2. Fetch Real Quant Engine Backtest Results from Python Backend
     const fetchQuantEngineResults = async () => {
@@ -397,6 +429,8 @@ export const TerminalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       fetchPortfolio();
       fetchSystemHealth();
       fetchActiveSignals();
+      fetchLiveNews();
+      fetchLiveMetrics();
     }, 5000);
 
     // 2. Real-time Binance WebSocket Subscription

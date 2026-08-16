@@ -48,7 +48,7 @@ export const Sidebar: React.FC = () => {
     { id: 'portfolio', label: 'Portfolio', icon: PieChart },
     { id: 'journal', label: 'Trade Journal', icon: BookOpen },
     { id: 'analytics', label: 'Analytics', icon: BarChart3 },
-    { id: 'copilot', label: 'XR AI Copilot', icon: Bot, badge: 'PRO', isAi: true },
+    { id: 'copilot', label: 'XR AI Chat', icon: Bot, badge: 'PRO', isAi: true },
     { id: 'team', label: 'Team Hub', icon: Users },
     { id: 'automation', label: 'Automation', icon: Sliders },
     { id: 'server', label: 'Server Center', icon: Server },

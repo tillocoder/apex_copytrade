@@ -2,8 +2,11 @@ import React from 'react';
 import { useTerminal } from '../../context/TerminalContext';
 import { ShieldCheck, CheckCircle2 } from 'lucide-react';
 
+import { propFirmAccounts as MOCK_PROP } from '../../data/mockData';
+
 export const PropFirmCenter: React.FC = () => {
   const { propAccounts } = useTerminal();
+  const accountsToRender = (propAccounts && propAccounts.length > 0) ? propAccounts : MOCK_PROP;
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden bg-apex-bg font-sans text-xs p-4 space-y-4">
@@ -18,9 +21,12 @@ export const PropFirmCenter: React.FC = () => {
 
       {/* Grid of Linked Accounts */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 overflow-y-auto">
-        {propAccounts.map((acc) => {
-          const currentProfit = acc.currentBalance - acc.initialBalance;
-          const targetProfit = acc.targetBalance - acc.initialBalance;
+        {accountsToRender.map((acc, idx) => {
+          const initBal = acc?.initialBalance ?? 10000;
+          const currBal = acc?.currentBalance ?? 10000;
+          const targBal = acc?.targetBalance ?? 11000;
+          const currentProfit = currBal - initBal;
+          const targetProfit = Math.max(1, targBal - initBal);
           const progressPct = Math.min(100, Math.max(0, (currentProfit / targetProfit) * 100));
 
           return (
