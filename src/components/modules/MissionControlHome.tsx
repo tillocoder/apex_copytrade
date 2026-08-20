@@ -1,12 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useTerminal } from '../../context/TerminalContext';
-import ReactECharts from 'echarts-for-react';
-import { getProfessionalChartOption, type CandleData } from '../../utils/chartDataGenerator';
-import { 
-  fetchRealKlines, 
-  subscribeBinanceLivePrices, 
-  updateCandlesWithLiveTick 
-} from '../../services/marketDataService';
+import { ApexCandleChart } from '../common/ApexCandleChart';
+import { SignalsService } from '../../services/signalsService';
+import { TradesService } from '../../services/tradesService';
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -27,7 +23,9 @@ export const MissionControlHome: React.FC = () => {
     setSelectedSymbol, 
     tickers, 
     positions, 
+    setPositions,
     signals, 
+    setSignals,
     logs, 
     addLog,
     notificationPermission,
@@ -36,62 +34,29 @@ export const MissionControlHome: React.FC = () => {
     backtest
   } = useTerminal();
 
-  const [timeframe, setTimeframe] = useState<'M1' | 'M5' | 'M15' | 'H1' | 'H4' | 'D1'>('M5');
   const [logFilter, setLogFilter] = useState<string>('ALL');
-  const [overlaySMC, setOverlaySMC] = useState<boolean>(true);
-  const [overlayAI, setOverlayAI] = useState<boolean>(true);
-  const [realCandles, setRealCandles] = useState<CandleData[]>([]);
-  const zoomRef = React.useRef<{ start: number; end: number }>({ start: 45, end: 95 });
+
+  useEffect(() => {
+    const fetchHomeData = async () => {
+      try {
+        const [liveSigs, livePos] = await Promise.all([
+          SignalsService.fetchLiveSignals(),
+          TradesService.fetchLivePositions()
+        ]);
+        if (liveSigs.length > 0 && setSignals) setSignals(liveSigs);
+        if (livePos && setPositions) setPositions(livePos);
+      } catch (err) {
+        console.error('[MissionControlHome] Error fetching data:', err);
+      }
+    };
+
+    fetchHomeData();
+    const interval = setInterval(fetchHomeData, 10000);
+    return () => clearInterval(interval);
+  }, []);
 
   const currentTicker = tickers.find(t => t.symbol === selectedSymbol) || tickers[0];
   const activePosition = positions.find(p => p.symbol === selectedSymbol);
-
-  // Fetch REAL Binance Candlestick Data & Subscribe to Live Realtime Ticks
-  useEffect(() => {
-    zoomRef.current = { start: 45, end: 95 };
-    fetchRealKlines(selectedSymbol, timeframe, 200).then(data => {
-      if (data.length > 0) {
-        setRealCandles(data);
-      }
-    });
-
-    const unsubscribe = subscribeBinanceLivePrices((sym, price) => {
-      if (sym === selectedSymbol) {
-        setRealCandles(prev => updateCandlesWithLiveTick(prev, sym, selectedSymbol, price));
-      }
-    });
-
-    return () => unsubscribe();
-  }, [selectedSymbol, timeframe]);
-
-  const handleDataZoom = (e: any) => {
-    let s: number | undefined;
-    let end: number | undefined;
-    if (e.batch && e.batch[0]) {
-      s = e.batch[0].start;
-      end = e.batch[0].end;
-    } else if (e.start !== undefined && e.end !== undefined) {
-      s = e.start;
-      end = e.end;
-    }
-    if (s !== undefined && end !== undefined) {
-      zoomRef.current = { start: s, end: end };
-    }
-  };
-
-  // ECharts Candlestick & Volume Profile Options
-  const getChartOption = () => {
-    return getProfessionalChartOption({
-      symbol: selectedSymbol,
-      basePrice: currentTicker.price,
-      overlaySMC,
-      overlayAI,
-      activePosition,
-      realCandles,
-      zoomStart: zoomRef.current.start,
-      zoomEnd: zoomRef.current.end
-    });
-  };
 
   const filteredLogs = logFilter === 'ALL' 
     ? logs 
@@ -158,80 +123,13 @@ export const MissionControlHome: React.FC = () => {
           </div>
         </div>
 
-        {/* Center Column: Professional Charting & Position Bar */}
-        <div className="flex-1 flex flex-col border-r border-apex-border bg-apex-bgSecondary overflow-hidden">
-          
-          {/* Chart Control Bar */}
-          <div className="h-10 bg-apex-surface border-b border-apex-border px-3 flex items-center justify-between font-mono shrink-0">
-            <div className="flex items-center space-x-3">
-              <span className="font-bold text-sm text-apex-text">{selectedSymbol}</span>
-              <span className="text-apex-accent font-medium text-xs">${currentTicker.price.toLocaleString()}</span>
-
-              {/* Timeframe Selectors */}
-              <div className="flex space-x-1 pl-2 border-l border-apex-border">
-                {(['M1', 'M5', 'M15', 'H1', 'H4', 'D1'] as const).map((tf) => (
-                  <button
-                    key={tf}
-                    onClick={() => setTimeframe(tf)}
-                    className={`px-2 py-0.5 rounded-md text-[11px] font-medium transition-apex ${
-                      timeframe === tf 
-                        ? 'bg-apex-hover text-apex-accent border border-apex-border' 
-                        : 'text-apex-muted hover:text-apex-text hover:bg-apex-hover'
-                    }`}
-                  >
-                    {tf}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Overlays Toggle */}
-            <div className="flex items-center space-x-2">
-              <button
-                onClick={() => setOverlaySMC(!overlaySMC)}
-                className={`px-2.5 py-1 rounded-md text-[10px] font-medium border transition-apex ${
-                  overlaySMC 
-                    ? 'bg-apex-hover border-apex-accent text-apex-accent' 
-                    : 'border-apex-border text-apex-muted hover:text-apex-text'
-                }`}
-              >
-                SMC LEVELS
-              </button>
-              <button
-                onClick={() => setOverlayAI(!overlayAI)}
-                className={`px-2.5 py-1 rounded-md text-[10px] font-medium border transition-apex ${
-                  overlayAI 
-                    ? 'bg-apex-ai/15 border-apex-ai text-apex-ai' 
-                    : 'border-apex-border text-apex-muted hover:text-apex-text'
-                }`}
-              >
-                AI SIGNALS
-              </button>
-            </div>
-          </div>
-
-          {/* ECharts Candlestick Canvas */}
-          <div className="flex-1 w-full h-full relative bg-apex-bgSecondary">
-            <ReactECharts 
-              option={getChartOption()} 
-              notMerge={false}
-              lazyUpdate={true}
-              onEvents={{ datazoom: handleDataZoom }}
-              style={{ height: '100%', width: '100%' }} 
-            />
-
-            {/* Active Position Overlay Box */}
-            {activePosition && (
-              <div className="absolute top-4 right-4 bg-apex-surface/90 backdrop-blur border border-apex-border p-3 rounded-panel shadow-panel font-mono space-y-1 text-xs">
-                <div className="flex items-center justify-between gap-4">
-                  <span className="text-apex-text font-bold">ACTIVE POSITION</span>
-                  <span className="bg-apex-success/15 text-apex-success border border-apex-success/30 px-1.5 py-0.2 rounded text-[10px] font-bold">{activePosition.side} 20X</span>
-                </div>
-                <div className="text-[11px] text-apex-textSecondary">Entry: <strong className="text-apex-text">${activePosition.entryPrice}</strong></div>
-                <div className="text-[11px] text-apex-textSecondary">Unrealized PnL: <strong className="text-apex-success">+${activePosition.unrealizedPnl} ({activePosition.unrealizedPnlPercent}%)</strong></div>
-              </div>
-            )}
-          </div>
+        {/* Center Column: Professional TradingView / AI Signals Candle Chart */}
+        <div className="flex-1 flex flex-col border-r border-apex-border bg-apex-bgSecondary overflow-hidden min-w-0">
+          <ApexCandleChart
+            symbol={selectedSymbol}
+            position={activePosition}
+            defaultTimeframe="15m"
+          />
         </div>
 
         {/* Right Column: AI Decision Center */}

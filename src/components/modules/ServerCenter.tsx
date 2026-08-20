@@ -1,9 +1,26 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTerminal } from '../../context/TerminalContext';
 import { Server, Cpu, Database, HardDrive, ShieldCheck, Activity } from 'lucide-react';
+import { SystemService } from '../../services/systemService';
+import type { ServerMetric } from '../../types';
 
 export const ServerCenter: React.FC = () => {
-  const { metrics } = useTerminal();
+  const { metrics: globalMetrics, setMetrics: setGlobalMetrics } = useTerminal();
+  const [metrics, setMetrics] = useState<ServerMetric>(globalMetrics);
+
+  const fetchMetrics = async () => {
+    const data = await SystemService.fetchSystemMetrics();
+    if (data) {
+      setMetrics(data);
+      if (setGlobalMetrics) setGlobalMetrics(data);
+    }
+  };
+
+  useEffect(() => {
+    fetchMetrics();
+    const interval = setInterval(fetchMetrics, 10000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden bg-apex-bg font-mono text-xs p-4 space-y-4">

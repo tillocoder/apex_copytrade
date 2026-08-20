@@ -1,20 +1,40 @@
 import React, { useEffect, useState } from 'react';
 import { useTerminal } from '../../context/TerminalContext';
 import { Newspaper, Calendar, Tag, Clock, ExternalLink, AlertTriangle } from 'lucide-react';
+import { NewsService, type EconomicEvent } from '../../services/newsService';
+import type { NewsArticle } from '../../types';
 
 export const NewsCenter: React.FC = () => {
-  const { news } = useTerminal();
-  const [economicEvents, setEconomicEvents] = useState<any[]>([]);
+  const { news: globalNews, setNews: setGlobalNews } = useTerminal();
+  const [news, setNews] = useState<NewsArticle[]>(globalNews || []);
+  const [economicEvents, setEconomicEvents] = useState<EconomicEvent[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const fetchNewsData = async () => {
+    setLoading(true);
+    try {
+      const [articles, events] = await Promise.all([
+        NewsService.fetchNewsFeed(),
+        NewsService.fetchEconomicCalendar()
+      ]);
+      if (articles.length > 0) {
+        setNews(articles);
+        if (setGlobalNews) setGlobalNews(articles);
+      }
+      if (events.length > 0) {
+        setEconomicEvents(events);
+      }
+    } catch (e) {
+      console.error('[NewsCenter] Error fetching news data:', e);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    fetch('/api/v1/news/economic-calendar')
-      .then(res => res.json())
-      .then(json => {
-        if (json.status === 'SUCCESS' && Array.isArray(json.data)) {
-          setEconomicEvents(json.data);
-        }
-      })
-      .catch(() => {});
+    fetchNewsData();
+    const interval = setInterval(fetchNewsData, 60000); // 1 minute news refresh
+    return () => clearInterval(interval);
   }, []);
 
   return (

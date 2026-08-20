@@ -5,6 +5,7 @@ import {
   Activity, RefreshCw, History, Info,
   ChevronRight, ZoomIn, ZoomOut, BarChart2
 } from 'lucide-react';
+import { ApexCandleChart } from '../common/ApexCandleChart';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 interface Verification { label: string; passed: boolean; }
@@ -501,9 +502,11 @@ const CandleChart: React.FC<ChartProps> = ({ symbol, signal }) => {
   );
 };
 
+import { SignalsService } from '../../services/signalsService';
+
 // ─── Main Content ─────────────────────────────────────────────────────────────
 const LiveSignalsContent: React.FC = () => {
-  const { signals: initSigs } = useTerminal();
+  const { signals: initSigs, setSignals: setGlobalSignals } = useTerminal();
   const [signals,      setSig]     = React.useState<Signal[]>(() => Array.isArray(initSigs) ? (initSigs as Signal[]) : []);
   const [history,      setHist]    = React.useState<Signal[]>([]);
   const [loading,      setLoad]    = React.useState(false);
@@ -516,45 +519,53 @@ const LiveSignalsContent: React.FC = () => {
   const fetchSignals = async () => {
     setLoad(true);
     try {
-      const r = await fetch('/api/v1/signals/live');
-      if (r.ok) {
-        const d = await r.json();
-        if (Array.isArray(d)) { setSig(d.filter(Boolean)); setLU(new Date()); }
+      const d = await SignalsService.fetchLiveSignals();
+      if (Array.isArray(d)) {
+        setSig(d.filter(Boolean));
+        if (setGlobalSignals) setGlobalSignals(d.filter(Boolean));
+        setLU(new Date());
       }
-    } catch (e) { console.warn('signals fetch:', e); }
-    finally { setLoad(false); }
+    } catch (e) {
+      console.warn('[LiveSignals] signals fetch error:', e);
+    } finally {
+      setLoad(false);
+    }
   };
 
   const fetchHistory = async () => {
     setLoadH(true);
     try {
-      const r = await fetch('/api/v1/signals/history');
-      if (r.ok) {
-        const d = await r.json();
-        if (Array.isArray(d)) setHist(d.filter(Boolean));
-      }
-    } catch (e) { console.warn('history fetch:', e); }
-    finally { setLoadH(false); }
+      const d = await SignalsService.fetchSignalsHistory();
+      if (Array.isArray(d)) setHist(d.filter(Boolean));
+    } catch (e) {
+      console.warn('[LiveSignals] history fetch error:', e);
+    } finally {
+      setLoadH(false);
+    }
   };
 
   const fetchKlines = async (sym: string) => {
     if (!sym) return;
     setLoadKl(true);
     try {
-      const r = await fetch(`/api/v1/market/klines?symbol=${encodeURIComponent(sym)}&interval=15m&limit=200`);
-      if (r.ok) {
-        const j = await r.json();
-        if (j.status === 'SUCCESS' && Array.isArray(j.data)) {
-          setKl(j.data.filter((k: any) => k && typeof k.high === 'number' && typeof k.low === 'number'));
-        }
+      const d = await SignalsService.fetchMarketKlines(sym, '15m', 200);
+      if (Array.isArray(d)) {
+        setKl(d.filter((k: any) => k && typeof k.high === 'number' && typeof k.low === 'number'));
       }
-    } catch (e) { console.warn('klines fetch:', e); }
-    finally { setLoadKl(false); }
+    } catch (e) {
+      console.warn('[LiveSignals] klines fetch error:', e);
+    } finally {
+      setLoadKl(false);
+    }
   };
 
   React.useEffect(() => {
-    fetchSignals(); fetchHistory();
-    const iv = setInterval(() => { fetchSignals(); fetchHistory(); }, 30000);
+    fetchSignals();
+    fetchHistory();
+    const iv = setInterval(() => {
+      fetchSignals();
+      fetchHistory();
+    }, 15000);
     return () => clearInterval(iv);
   }, []);
 
@@ -676,7 +687,7 @@ const LiveSignalsContent: React.FC = () => {
             <>
               {/* Chart takes the top portion — fixed height for proper proportions */}
               <div className="h-[380px] shrink-0 border-b border-apex-border">
-                <CandleChart symbol={selected.symbol} signal={selected}/>
+                <ApexCandleChart symbol={selected.symbol} signal={selected as any}/>
               </div>
               {/* Details below */}
               <div className="flex-1 overflow-y-auto p-3 space-y-3 bg-[#0d0d10]">

@@ -2,38 +2,39 @@ import React, { useState, useEffect } from 'react';
 import { useTerminal } from '../../context/TerminalContext';
 import ReactECharts from 'echarts-for-react';
 import { TrendingUp, ShieldAlert, SlidersHorizontal, Activity, X, RefreshCw, Lock } from 'lucide-react';
+import { TradesService } from '../../services/tradesService';
+import { PortfolioService, type LivePortfolioData } from '../../services/portfolioService';
 
 export const LiveTrades: React.FC = () => {
-  const { positions = [], openCommandCenter, executePositionAction } = useTerminal();
+  const { positions = [], setPositions, openCommandCenter, executePositionAction } = useTerminal();
   const safePositions = Array.isArray(positions) ? positions : [];
   
   const [selectedPosId, setSelectedPosId] = useState<string>(safePositions[0]?.id || '');
   const [showEquityModal, setShowEquityModal] = useState<boolean>(false);
-  const [liveEquityData, setLiveEquityData] = useState<any>(null);
+  const [liveEquityData, setLiveEquityData] = useState<LivePortfolioData | null>(null);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
 
   const activePosition = safePositions.find(p => p && p.id === selectedPosId) || safePositions[0] || null;
 
-  const fetchLiveEquity = async () => {
+  const fetchLiveState = async () => {
     try {
       setIsRefreshing(true);
-      const res = await fetch('/api/v1/portfolio/live-equity');
-      if (res.ok) {
-        const json = await res.json();
-        if (json.status === 'SUCCESS' && json.data) {
-          setLiveEquityData(json.data);
-        }
-      }
+      const [equityData, livePos] = await Promise.all([
+        PortfolioService.fetchLivePortfolioEquity(),
+        TradesService.fetchLivePositions()
+      ]);
+      if (equityData) setLiveEquityData(equityData);
+      if (livePos && setPositions) setPositions(livePos);
     } catch (err) {
-      console.error("Failed to fetch live equity:", err);
+      console.error("[LiveTrades] Failed to fetch live state:", err);
     } finally {
       setIsRefreshing(false);
     }
   };
 
   useEffect(() => {
-    fetchLiveEquity();
-    const interval = setInterval(fetchLiveEquity, 5000);
+    fetchLiveState();
+    const interval = setInterval(fetchLiveState, 5000);
     return () => clearInterval(interval);
   }, []);
 
@@ -97,7 +98,7 @@ export const LiveTrades: React.FC = () => {
           <button
             onClick={() => {
               setShowEquityModal(true);
-              fetchLiveEquity();
+              fetchLiveState();
             }}
             className="flex items-center space-x-1.5 px-2.5 py-1 rounded bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 font-bold text-[10px] transition-apex"
           >
@@ -249,7 +250,7 @@ export const LiveTrades: React.FC = () => {
               </div>
               <div className="flex items-center space-x-3">
                 <button
-                  onClick={fetchLiveEquity}
+                  onClick={fetchLiveState}
                   disabled={isRefreshing}
                   className="flex items-center space-x-1 text-xs text-apex-accent hover:text-apex-text transition-apex"
                 >

@@ -1,12 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useTerminal } from '../../context/TerminalContext';
-import ReactECharts from 'echarts-for-react';
-import { getProfessionalChartOption, type CandleData } from '../../utils/chartDataGenerator';
-import { 
-  fetchRealKlines, 
-  subscribeBinanceLivePrices, 
-  updateCandlesWithLiveTick 
-} from '../../services/marketDataService';
+import { ApexCandleChart } from '../common/ApexCandleChart';
 import { 
   Flame, 
   Bot, 
@@ -32,60 +26,11 @@ export const TradingWorkspace: React.FC = () => {
     panicCloseAll
   } = useTerminal();
 
-  const [timeframe, setTimeframe] = useState<'M1' | 'M5' | 'M15' | 'H1' | 'H4' | 'D1'>('M5');
-  const [realCandles, setRealCandles] = useState<CandleData[]>([]);
   const [copyTradeRatio, setCopyTradeRatio] = useState<number>(1.0);
-  const zoomRef = React.useRef<{ start: number; end: number }>({ start: 45, end: 95 });
 
   const currentTicker = tickers.find(t => t.symbol === selectedSymbol) || tickers[0];
   const activePosition = positions.find(p => p.symbol === selectedSymbol);
   const activePropAccount = propAccounts[0];
-
-  // Fetch REAL Binance Candlestick Data & Subscribe to Live Realtime Ticks
-  useEffect(() => {
-    zoomRef.current = { start: 45, end: 95 };
-    fetchRealKlines(selectedSymbol, timeframe, 200).then(data => {
-      if (data.length > 0) {
-        setRealCandles(data);
-      }
-    });
-
-    const unsubscribe = subscribeBinanceLivePrices((sym, price) => {
-      if (sym === selectedSymbol) {
-        setRealCandles(prev => updateCandlesWithLiveTick(prev, sym, selectedSymbol, price));
-      }
-    });
-
-    return () => unsubscribe();
-  }, [selectedSymbol, timeframe]);
-
-  const handleDataZoom = (e: any) => {
-    let s: number | undefined;
-    let end: number | undefined;
-    if (e.batch && e.batch[0]) {
-      s = e.batch[0].start;
-      end = e.batch[0].end;
-    } else if (e.start !== undefined && e.end !== undefined) {
-      s = e.start;
-      end = e.end;
-    }
-    if (s !== undefined && end !== undefined) {
-      zoomRef.current = { start: s, end: end };
-    }
-  };
-
-  const getChartOption = () => {
-    return getProfessionalChartOption({
-      symbol: selectedSymbol,
-      basePrice: currentTicker.price,
-      overlaySMC: true,
-      overlayAI: true,
-      activePosition,
-      realCandles,
-      zoomStart: zoomRef.current.start,
-      zoomEnd: zoomRef.current.end
-    });
-  };
 
   return (
     <div className="flex-1 flex overflow-hidden bg-apex-bg font-sans text-xs">
@@ -123,43 +68,12 @@ export const TradingWorkspace: React.FC = () => {
       </div>
 
       {/* Large Chart Canvas (Center 57%) */}
-      <div className="flex-1 flex flex-col border-r border-apex-border bg-apex-bgSecondary overflow-hidden">
-        <div className="h-10 bg-apex-surface border-b border-apex-border px-3 flex items-center justify-between font-mono shrink-0">
-          <div className="flex items-center space-x-3">
-            <span className="font-bold text-sm text-apex-text">{selectedSymbol}</span>
-            <span className="text-apex-accent font-bold text-xs">${currentTicker.price.toLocaleString()}</span>
-
-            <div className="flex space-x-1 pl-2 border-l border-apex-border">
-              {(['M1', 'M5', 'M15', 'H1', 'H4', 'D1'] as const).map((tf) => (
-                <button
-                  key={tf}
-                  onClick={() => setTimeframe(tf)}
-                  className={`px-2 py-0.5 rounded-md text-[11px] font-medium transition-apex ${
-                    timeframe === tf ? 'bg-apex-hover text-apex-accent border border-apex-border' : 'text-apex-muted hover:text-apex-text'
-                  }`}
-                >
-                  {tf}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="flex items-center space-x-2 text-[10px]">
-            <span className="bg-apex-surface border border-apex-accent/40 text-apex-accent px-2 py-0.5 rounded font-bold flex items-center gap-1">
-              <Bot className="w-3 h-3 text-apex-accent" /> PAPER ENGINE · REAL MARKET DATA
-            </span>
-          </div>
-        </div>
-
-        <div className="flex-1 w-full h-full relative">
-          <ReactECharts 
-            option={getChartOption()} 
-            notMerge={false}
-            lazyUpdate={true}
-            onEvents={{ datazoom: handleDataZoom }}
-            style={{ height: '100%', width: '100%' }} 
-          />
-        </div>
+      <div className="flex-1 flex flex-col border-r border-apex-border bg-apex-bgSecondary overflow-hidden min-w-0">
+        <ApexCandleChart
+          symbol={selectedSymbol}
+          position={activePosition}
+          defaultTimeframe="15m"
+        />
       </div>
 
       {/* Autonomous Engine Copy-Trade & Prop Risk Telemetry Panel (Right 25%) */}

@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { BrainCircuit, Activity, TrendingUp, TrendingDown, Layers, ShieldCheck } from 'lucide-react';
-import { fetchMarketAnalysis, type MarketAnalysisData } from '../../services/quantApiService';
+import { IntelligenceService, type MarketAnalysisData } from '../../services/intelligenceService';
 
 export const MarketIntelligence: React.FC = () => {
   const [analysis, setAnalysis] = useState<MarketAnalysisData | null>(null);
   const [selectedSymbol, setSelectedSymbol] = useState<string>('BTC/USDT');
 
   useEffect(() => {
-    fetchMarketAnalysis(selectedSymbol).then(res => {
+    IntelligenceService.fetchMarketAnalysis(selectedSymbol).then(res => {
       if (res) setAnalysis(res);
     });
   }, [selectedSymbol]);

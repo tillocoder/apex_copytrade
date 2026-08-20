@@ -47,9 +47,8 @@ if _env_models:
 else:
     GEMINI_MODELS = [
         "gemini-2.0-flash",
-        "gemini-2.0-flash-lite",
         "gemini-1.5-flash",
-        "gemini-2.5-flash",
+        "gemini-1.5-pro",
     ]
 
 GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models/"
@@ -650,59 +649,128 @@ class SetupEngine:
         rsi = m15_data["rsi"]
         macd_hist = m15_data["macd_hist"]
         regime = regime_data["regime"]
-        struct_trend = structure["trend_structure"]
+        struct_trend = structure.get("trend_structure", "NEUTRAL")
+        sweeps = structure.get("sweeps", [])
+        atr = m15_data.get("atr", price * 0.005)
 
         setup_candidates = []
 
         # 1. TREND_PULLBACK (Bullish)
-        if regime in ("TREND_UP", "BREAKOUT") and rsi < 62.0 and macd_hist > -0.0002:
-            fresh_bull_ob = next((ob for ob in order_blocks if ob["type"] == "BULLISH" and ob["fresh"]), None)
-            if fresh_bull_ob or m15_data["ema21"] > m15_data["ema50"]:
-                setup_candidates.append({
-                    "setup_type": "TREND_PULLBACK",
-                    "side": "BUY",
-                    "score": 88,
-                    "target_price": liquidity["nearest_liquidity_above"],
-                    "invalidation_price": fresh_bull_ob["zone_low"] if fresh_bull_ob else round(m15_data["ema200"] - m15_data["atr"] * 0.5, 4),
-                    "reasoning": f"Bullish trend pullback holding above EMA200/OB with RSI ({rsi}) and positive CVD."
-                })
+        if (regime in ("TREND_UP", "BREAKOUT") or m15_data["ema21"] > m15_data["ema50"]) and rsi < 68.0:
+            fresh_bull_ob = next((ob for ob in order_blocks if ob["type"] == "BULLISH" and ob.get("fresh", True)), None)
+            setup_candidates.append({
+                "setup_type": "TREND_PULLBACK",
+                "side": "BUY",
+                "score": 88,
+                "target_price": liquidity["nearest_liquidity_above"],
+                "invalidation_price": fresh_bull_ob["zone_low"] if fresh_bull_ob else round(min(price - atr * 1.5, m15_data["ema50"] - atr * 0.5), 4),
+                "reasoning": f"Bullish trend continuation holding above EMA stack with RSI ({rsi}) and upward momentum."
+            })
 
         # 2. TREND_PULLBACK (Bearish)
-        if regime in ("TREND_DOWN", "BREAKDOWN") and rsi > 38.0 and macd_hist < 0.0002:
-            fresh_bear_ob = next((ob for ob in order_blocks if ob["type"] == "BEARISH" and ob["fresh"]), None)
-            if fresh_bear_ob or m15_data["ema21"] < m15_data["ema50"]:
-                setup_candidates.append({
-                    "setup_type": "TREND_PULLBACK",
-                    "side": "SELL",
-                    "score": 88,
-                    "target_price": liquidity["nearest_liquidity_below"],
-                    "invalidation_price": fresh_bear_ob["zone_high"] if fresh_bear_ob else round(m15_data["ema200"] + m15_data["atr"] * 0.5, 4),
-                    "reasoning": f"Bearish trend rejection under EMA200/Bearish OB with RSI ({rsi}) seller pressure."
-                })
+        if (regime in ("TREND_DOWN", "BREAKDOWN") or m15_data["ema21"] < m15_data["ema50"]) and rsi > 32.0:
+            fresh_bear_ob = next((ob for ob in order_blocks if ob["type"] == "BEARISH" and ob.get("fresh", True)), None)
+            setup_candidates.append({
+                "setup_type": "TREND_PULLBACK",
+                "side": "SELL",
+                "score": 88,
+                "target_price": liquidity["nearest_liquidity_below"],
+                "invalidation_price": fresh_bear_ob["zone_high"] if fresh_bear_ob else round(max(price + atr * 1.5, m15_data["ema50"] + atr * 0.5), 4),
+                "reasoning": f"Bearish trend continuation rejecting under EMA stack with RSI ({rsi}) seller pressure."
+            })
 
         # 3. LIQUIDITY_SWEEP (Bullish Mean-Reversion)
-        sweeps = structure.get("sweeps", [])
-        sweep_low = next((s for s in sweeps if s["type"] == "SWEEP_LOW"), None)
-        if sweep_low and rsi < 40.0:
+        sweep_low = next((s for s in sweeps if s.get("type") == "SWEEP_LOW"), None)
+        if (sweep_low or rsi < 36.0 or price <= liquidity.get("pdl", 0)):
+            ref_low = sweep_low["level"] if sweep_low else liquidity.get("pdl", price - atr)
             setup_candidates.append({
                 "setup_type": "LIQUIDITY_SWEEP",
                 "side": "BUY",
                 "score": 91,
                 "target_price": liquidity["nearest_liquidity_above"],
-                "invalidation_price": round(sweep_low["price"] - m15_data["atr"] * 0.3, 4),
-                "reasoning": f"Liquidity sweep below swing low (${sweep_low['level']}) with sharp bullish displacement."
+                "invalidation_price": round(min(ref_low, price) - atr * 0.5, 4),
+                "reasoning": f"Bullish liquidity sweep with oversold RSI ({rsi}) and mean-reversion displacement."
             })
 
-        # 4. ORDER_BLOCK_RETEST
-        fresh_bull_ob = next((ob for ob in order_blocks if ob["type"] == "BULLISH" and ob["fresh"]), None)
-        if fresh_bull_ob and abs(price - fresh_bull_ob["zone_high"]) / price < 0.004:
+        # 4. LIQUIDITY_SWEEP (Bearish Mean-Reversion)
+        sweep_high = next((s for s in sweeps if s.get("type") == "SWEEP_HIGH"), None)
+        if (sweep_high or rsi > 64.0 or price >= liquidity.get("pdh", float("inf"))):
+            ref_high = sweep_high["level"] if sweep_high else liquidity.get("pdh", price + atr)
+            setup_candidates.append({
+                "setup_type": "LIQUIDITY_SWEEP",
+                "side": "SELL",
+                "score": 91,
+                "target_price": liquidity["nearest_liquidity_below"],
+                "invalidation_price": round(max(ref_high, price) + atr * 0.5, 4),
+                "reasoning": f"Bearish liquidity sweep of buy-side liquidity with overbought RSI ({rsi})."
+            })
+
+        # 5. ORDER_BLOCK_RETEST (Bullish)
+        fresh_bull_ob = next((ob for ob in order_blocks if ob["type"] == "BULLISH" and ob.get("fresh", True)), None)
+        if fresh_bull_ob and abs(price - fresh_bull_ob["zone_high"]) / price < 0.015:
             setup_candidates.append({
                 "setup_type": "ORDER_BLOCK_RETEST",
                 "side": "BUY",
-                "score": 86,
+                "score": 89,
                 "target_price": liquidity["nearest_liquidity_above"],
-                "invalidation_price": round(fresh_bull_ob["zone_low"] - m15_data["atr"] * 0.4, 4),
-                "reasoning": f"Mitigation retest of Bullish Order Block at ${fresh_bull_ob['zone_high']}."
+                "invalidation_price": round(fresh_bull_ob["zone_low"] - atr * 0.4, 4),
+                "reasoning": f"Mitigation retest of Bullish Order Block at ${fresh_bull_ob['zone_high']:,.2f}."
+            })
+
+        # 6. ORDER_BLOCK_RETEST (Bearish)
+        fresh_bear_ob = next((ob for ob in order_blocks if ob["type"] == "BEARISH" and ob.get("fresh", True)), None)
+        if fresh_bear_ob and abs(price - fresh_bear_ob["zone_low"]) / price < 0.015:
+            setup_candidates.append({
+                "setup_type": "ORDER_BLOCK_RETEST",
+                "side": "SELL",
+                "score": 89,
+                "target_price": liquidity["nearest_liquidity_below"],
+                "invalidation_price": round(fresh_bear_ob["zone_high"] + atr * 0.4, 4),
+                "reasoning": f"Mitigation retest of Bearish Order Block at ${fresh_bear_ob['zone_low']:,.2f}."
+            })
+
+        # 7. FAIR_VALUE_GAP_ENTRY (Bullish)
+        fresh_bull_fvg = next((fvg for fvg in fvgs if fvg["type"] == "BULLISH" and fvg.get("fresh", True)), None)
+        if fresh_bull_fvg and abs(price - fresh_bull_fvg["bottom"]) / price < 0.012:
+            setup_candidates.append({
+                "setup_type": "FVG_IMBALANCE_FILL",
+                "side": "BUY",
+                "score": 87,
+                "target_price": liquidity["nearest_liquidity_above"],
+                "invalidation_price": round(fresh_bull_fvg["bottom"] - atr * 0.4, 4),
+                "reasoning": f"Bullish Fair Value Gap fill support at ${fresh_bull_fvg['bottom']:,.2f}."
+            })
+
+        # 8. FAIR_VALUE_GAP_ENTRY (Bearish)
+        fresh_bear_fvg = next((fvg for fvg in fvgs if fvg["type"] == "BEARISH" and fvg.get("fresh", True)), None)
+        if fresh_bear_fvg and abs(price - fresh_bear_fvg["top"]) / price < 0.012:
+            setup_candidates.append({
+                "setup_type": "FVG_IMBALANCE_FILL",
+                "side": "SELL",
+                "score": 87,
+                "target_price": liquidity["nearest_liquidity_below"],
+                "invalidation_price": round(fresh_bear_fvg["top"] + atr * 0.4, 4),
+                "reasoning": f"Bearish Fair Value Gap premium rejection at ${fresh_bear_fvg['top']:,.2f}."
+            })
+
+        # 9. MOMENTUM_EXPANSION_BREAKOUT (Bullish & Bearish)
+        if macd_hist > 0.0001 and rsi > 52.0 and price > m15_data["ema21"]:
+            setup_candidates.append({
+                "setup_type": "MOMENTUM_EXPANSION",
+                "side": "BUY",
+                "score": 84,
+                "target_price": liquidity["nearest_liquidity_above"],
+                "invalidation_price": round(price - atr * 1.5, 4),
+                "reasoning": f"Bullish MACD momentum expansion with price leading EMA21."
+            })
+        elif macd_hist < -0.0001 and rsi < 48.0 and price < m15_data["ema21"]:
+            setup_candidates.append({
+                "setup_type": "MOMENTUM_EXPANSION",
+                "side": "SELL",
+                "score": 84,
+                "target_price": liquidity["nearest_liquidity_below"],
+                "invalidation_price": round(price + atr * 1.5, 4),
+                "reasoning": f"Bearish MACD momentum expansion with price leading EMA21 downward."
             })
 
         if not setup_candidates:
@@ -894,7 +962,7 @@ Respond ONLY with a raw JSON object (no markdown formatting, no code blocks):
                 logger.warning(f"[GEMINI REVIEW] Failed/rate-limited on {model}: {e}")
 
         # Deterministic Quant Fallback Reviewer if Gemini is unavailable
-        fallback_decision = "APPROVE" if candidate["quantScore"] >= 72.0 else "REJECT"
+        fallback_decision = "APPROVE" if candidate["quantScore"] >= 65.0 else "REJECT"
         fallback_score = round(candidate["quantScore"] * 0.96, 1)
         return {
             "decision": fallback_decision,
@@ -924,7 +992,7 @@ class FinalSignalGate:
             chk("Momentum Filter", quant_metrics["components"]["momentum"] >= 55.0),
             chk("Volume Delta / CVD", quant_metrics["components"]["volume"] >= 45.0),
             chk("Risk-to-Reward Gate", candidate["rr"] >= 2.0),
-            chk("Quant Score Gate", candidate["quantScore"] >= 70.0),
+            chk("Quant Score Gate", candidate["quantScore"] >= 65.0),
         ]
 
     @staticmethod
@@ -1125,8 +1193,8 @@ def generate_signals() -> List[Dict[str, Any]]:
             )
             quant_score = quant_result["quant_score"]
 
-            if quant_score < 70.0:
-                logger.info(f"[ENGINE] NO_TRADE for {sym}: quant score ({quant_score}) below threshold (70.0).")
+            if quant_score < 65.0:
+                logger.info(f"[ENGINE] NO_TRADE for {sym}: quant score ({quant_score}) below threshold (65.0).")
                 continue
 
             # 7. Deterministic Risk Engine
@@ -1239,7 +1307,7 @@ def generate_signals() -> List[Dict[str, Any]]:
             from backend.telegram_bot import telegram_notifier
             for sig in generated_signals:
                 try:
-                    if sig.get("status") == "PENDING":
+                    if sig.get("status") in ("PENDING", "CONFIRMED"):
                         msg_id = telegram_notifier.send_ai_signal_notification(sig)
                         sig["telegram_message_id"] = msg_id
                 except Exception as tg_err:

@@ -335,11 +335,22 @@ async def monitor_ai_signals_task():
         except Exception as e:
             print(f"[AI MONITOR ERROR] failed to run active signals scan: {e}")
 
+async def poll_telegram_task():
+    """Background task that continuously polls Telegram updates every 2 seconds to register new chat IDs and handle commands."""
+    print("[TELEGRAM BOT] Starting Telegram long-polling background task (Interval: 2 seconds)...")
+    while True:
+        try:
+            await run_async_in_executor(telegram_notifier.poll_updates)
+        except Exception:
+            pass
+        await asyncio.sleep(2)
+
 # Trigger initial engine load in background on startup
 @app.on_event("startup")
 async def startup_event():
     loop = asyncio.get_event_loop()
     loop.run_in_executor(None, run_quant_engine_task, 1.0, "BTC/USDT")
+    asyncio.create_task(poll_telegram_task())
     asyncio.create_task(periodic_signals_task())
     asyncio.create_task(monitor_ai_signals_task())
 
@@ -442,6 +453,26 @@ async def get_signals_history():
         print(f"[SIGNALS ERROR] failed to fetch signals history: {e}")
         return []
 
+@app.post("/api/v1/signals/scan-now")
+async def trigger_signal_scan_now():
+    """Triggers an immediate multi-pair quantitative scan and opens qualifying positions."""
+    try:
+        sigs = await run_async_in_executor(ai_signal_engine.generate_signals)
+        opened_positions = []
+        if sigs:
+            for sig in sigs:
+                pos = await run_async_in_executor(live_mgr.open_position_from_signal, sig)
+                if pos:
+                    opened_positions.append(pos)
+        return {
+            "status": "SUCCESS",
+            "message": f"Scan completed. Generated {len(sigs or [])} signals. Opened {len(opened_positions)} positions.",
+            "signals": sigs or [],
+            "opened_positions": opened_positions
+        }
+    except Exception as e:
+        return {"status": "ERROR", "message": str(e)}
+
 @app.get("/api/v1/market/klines")
 async def get_real_klines(
     symbol: str = "BTC/USDT", interval: str = "15m", limit: int = 200, end_time: Optional[int] = None
@@ -489,6 +520,29 @@ async def get_telegram_status():
         "chat_ids": list(telegram_notifier.chat_ids),
         "tracked_messages": telegram_notifier.message_map
     }
+
+@app.post("/api/v1/telegram/register-chat")
+async def register_telegram_chat(payload: Dict[str, Any]):
+    """Registers a chat ID directly and sends a welcome confirmation message."""
+    chat_id = payload.get("chat_id")
+    if not chat_id:
+        return {"status": "ERROR", "message": "Missing chat_id parameter"}
+    try:
+        cid = int(chat_id)
+        telegram_notifier.chat_ids.add(cid)
+        telegram_notifier._save_state()
+        telegram_notifier.send_direct_message(
+            cid,
+            f"✅ **CHAT_ID RO'YXATDAN O'TDI ({cid})!**\n\n"
+            f"Barcha APEX avtomatik savdolar va TP/SL signallari shu botga keladi."
+        )
+        return {
+            "status": "SUCCESS",
+            "message": f"Chat ID {cid} registered successfully",
+            "chat_ids": list(telegram_notifier.chat_ids)
+        }
+    except Exception as e:
+        return {"status": "ERROR", "message": str(e)}
 
 @app.post("/api/v1/telegram/notify-open")
 async def notify_trade_open(position: Dict[str, Any]):
@@ -1020,13 +1074,27 @@ async def websocket_endpoint(websocket: WebSocket):
     except WebSocketDisconnect:
         pass
 
-import os
-from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 
 dist_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "dist"))
-if os.path.exists(dist_dir):
-    app.mount("/", StaticFiles(directory=dist_dir, html=True), name="static")
+
+@app.api_route("/{full_path:path}", methods=["GET", "HEAD"])
+async def serve_spa_frontend(full_path: str):
+    """
+    SPA Fallback Route:
+    Serves static assets if they exist (e.g. assets/*.js, favicon.ico),
+    otherwise returns dist/index.html so client-side URL routing (/aisignals, /livetrades) works seamlessly.
+    """
+    if os.path.exists(dist_dir):
+        file_path = os.path.join(dist_dir, full_path)
+        if full_path and os.path.isfile(file_path):
+            return FileResponse(file_path)
+        index_file = os.path.join(dist_dir, "index.html")
+        if os.path.exists(index_file):
+            return FileResponse(index_file)
+    return {"status": "ONLINE", "message": "APEX QUANT TERMINAL Backend Engine v4.5 Active. Build frontend with 'npm run build'."}
 
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
+

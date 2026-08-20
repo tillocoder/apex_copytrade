@@ -1,4 +1,5 @@
-import os
+BTC/USDT SHORT pozitsiyasi LIQUIDITY_SWEEP signali orqali darhol avtomatik ochildi:
+ID: pos_btcusdt_1787231114import os
 import json
 import urllib.request
 import urllib.parse
@@ -59,11 +60,123 @@ class TelegramNotifier:
     def get_main_keyboard(self) -> dict:
         return {
             "keyboard": [
+                [{"text": "📊 OCHIQ POZITSIYALAR"}, {"text": "📈 HISOB HOLATI"}],
                 [{"text": "🛑 STOP AI SIGNALS"}, {"text": "🟢 START AI SIGNALS"}]
             ],
             "resize_keyboard": True,
             "is_persistent": True
         }
+
+    def format_open_positions_report(self) -> str:
+        """Builds an exhaustive, real-time breakdown of all open trading positions."""
+        try:
+            from backend.live_execution_manager import sync_live_positions_and_equity
+            sync_data = sync_live_positions_and_equity()
+            open_positions = sync_data.get("openPositions", [])
+            current_equity = sync_data.get("currentEquity", self.account_balance)
+            realized_pnl = sync_data.get("realizedPnl", 0.0)
+            unrealized_pnl = sync_data.get("unrealizedPnl", 0.0)
+        except Exception:
+            open_positions = []
+            current_equity = self.account_balance
+            realized_pnl = 0.0
+            unrealized_pnl = 0.0
+
+        if not open_positions:
+            return (
+                f"ℹ️ **HOZIRDA OCHIQ POZITSIYALAR YO'Q**\n"
+                f"==================================\n"
+                f"Tizim bozor dinamikasini (BTC, ETH, SOL) real vaqt rejimida doimiy tahlil qilmoqda.\n"
+                f"Yuqori ehtimolli setup aniqlanishi bilan bitim avtomatik ochiladi va sizga xabarnoma keladi.\n\n"
+                f"💵 **Jami Equity:** ${current_equity:,.2f} USD\n"
+                f"💰 **Realized PnL:** +${realized_pnl:,.2f} USD"
+            )
+
+        lines = [
+            f"📊 **OCHIQ POZITSIYALAR ({len(open_positions)} TA)**",
+            "=================================="
+        ]
+
+        for i, pos in enumerate(open_positions, 1):
+            sym = pos.get("symbol", "BTC/USDT")
+            side = pos.get("side", "BUY").upper()
+            side_emoji = "🟢" if side == "BUY" else "🔴"
+            entry = float(pos.get("entryPrice") or pos.get("entry_price") or 0.0)
+            curr = float(pos.get("currentPrice") or entry)
+            size = pos.get("size", 0.0)
+            base_asset = sym.split("/")[0]
+            leverage = pos.get("leverage", 2)
+            margin = float(pos.get("marginUsed") or pos.get("margin_used") or 0.0)
+            unrealized = float(pos.get("unrealizedPnl", 0.0))
+            unrealized_pct = float(pos.get("unrealizedPnlPercent", 0.0))
+            sl = float(pos.get("sl", 0.0))
+            tp1 = float(pos.get("tp1", 0.0))
+            tp2 = float(pos.get("tp2", 0.0))
+            time_open = pos.get("timeOpen", "Live")
+            pnl_sign = "+" if unrealized >= 0 else ""
+            pnl_emoji = "🟩" if unrealized >= 0 else "🟥"
+            reason = (pos.get("aiExplanation") or "Quant Rule Engine Setup").replace("_", " ")
+
+            pos_block = (
+                f"{i}️⃣ **{sym} {side} {side_emoji}**\n"
+                f"🪙 **Kirish narxi:** ${entry:,.2f} ➡️ **Hozirgi narx:** ${curr:,.2f}\n"
+                f"{pnl_emoji} **Unrealized PnL:** {pnl_sign}${unrealized:,.2f} ({pnl_sign}{unrealized_pct:.2f}%)\n"
+                f"⚖️ **Hajm:** {size} {base_asset} ({leverage}x Leverage | Margin: ${margin:,.2f})\n"
+                f"🎯 **Take Profit 1:** ${tp1:,.2f}" + (f" | **TP2:** ${tp2:,.2f}" if tp2 > 0 else "") + "\n"
+                f"🛡️ **Stop Loss:** ${sl:,.2f}\n"
+                f"⏱ **Ochilgan vaqt:** {time_open} UTC\n"
+                f"🤖 **Asos:** {reason}"
+            )
+            lines.append(pos_block)
+            lines.append("----------------------------------")
+
+        bal_change_pct = ((current_equity - INITIAL_PROP_CAPITAL) / INITIAL_PROP_CAPITAL) * 100.0
+        bal_change_str = f"+{bal_change_pct:.2f}%" if bal_change_pct >= 0 else f"{bal_change_pct:.2f}%"
+        daily_loss = self.daily_start_balance - current_equity
+        remaining_daily_dd = max(0.0, (INITIAL_PROP_CAPITAL * 0.05) - daily_loss)
+
+        summary_block = (
+            f"💵 **JAMI HISOB BALANSI (EQUITY):** ${current_equity:,.2f} USD ({bal_change_str})\n"
+            f"🛡️ **Kunlik Drawdown Limitgacha Qoldi:** ${remaining_daily_dd:,.2f} USD\n"
+            f"⚡ Real Binance jonli narxlari bo'yicha hisoblangan."
+        )
+        lines.append(summary_block)
+        return "\n\n".join(lines)
+
+    def format_account_status_report(self) -> str:
+        """Builds a summary of the Prop Firm account equity and challenge rules."""
+        try:
+            from backend.live_execution_manager import sync_live_positions_and_equity
+            sync_data = sync_live_positions_and_equity()
+            open_cnt = len(sync_data.get("openPositions", []))
+            current_equity = sync_data.get("currentEquity", self.account_balance)
+            realized_pnl = sync_data.get("realizedPnl", 0.0)
+            unrealized_pnl = sync_data.get("unrealizedPnl", 0.0)
+            total_trades = sync_data.get("totalTrades", 0)
+            win_rate = sync_data.get("winRate", 0.0)
+        except Exception:
+            open_cnt = 0
+            current_equity = self.account_balance
+            realized_pnl = 0.0
+            unrealized_pnl = 0.0
+            total_trades = 0
+            win_rate = 0.0
+
+        pnl_change_pct = ((current_equity - INITIAL_PROP_CAPITAL) / INITIAL_PROP_CAPITAL) * 100.0
+        pnl_sign = "+" if pnl_change_pct >= 0 else ""
+
+        return (
+            f"📈 **APEX 10K PROP ACCOUNT HOLATI**\n"
+            f"==================================\n"
+            f"💵 **Boshlang'ich Balans:** ${INITIAL_PROP_CAPITAL:,.2f} USD\n"
+            f"💎 **Hozirgi Equity:** ${current_equity:,.2f} USD ({pnl_sign}{pnl_change_pct:.2f}%)\n"
+            f"💰 **Realized PnL:** +${realized_pnl:,.2f} USD\n"
+            f"📊 **Unrealized PnL:** {('+' if unrealized_pnl>=0 else '')}${unrealized_pnl:,.2f} USD\n\n"
+            f"⚡ **Ochiq Pozitsiyalar:** {open_cnt} ta\n"
+            f"🏆 **Yopilgan Savdolar:** {total_trades} ta (Win Rate: {win_rate:.1f}%)\n"
+            f"🛡️ **Prop Qoidasi:** 5% Kunlik DD / 10% Max DD\n"
+            f"🟢 **Holat:** ENGINE ACTIVE & MONITORING"
+        )
 
     def _make_request(self, method: str, payload: dict) -> dict:
         url = f"{BASE_URL}/{method}"
@@ -88,25 +201,34 @@ class TelegramNotifier:
             updates = res.get("result", [])
             for u in updates:
                 self.last_update_id = max(self.last_update_id, u.get("update_id", 0))
-                msg = u.get("message", {})
+                msg = u.get("message") or u.get("channel_post") or u.get("edited_message") or {}
                 chat = msg.get("chat", {})
                 cid = chat.get("id")
                 text = (msg.get("text") or "").strip()
 
+                if not cid and "my_chat_member" in u:
+                    cid = u["my_chat_member"].get("chat", {}).get("id")
+
                 if cid:
-                    if cid not in self.chat_ids:
+                    is_new = cid not in self.chat_ids
+                    if is_new:
                         self.chat_ids.add(cid)
                         self._save_state()
+                        logger.info(f"New Telegram user registered: chat_id={cid}")
                         self.send_direct_message(
                             cid, 
                             f"✅ **APEX QUANT COPYTRADE BOTGA XUSH KELIBSIZ!**\n\n"
                             f"Barcha avtomatik savdolar, bosqichlar (Stage 1 / Stage 2 / Funded) va real-vaqt xabarnomalari shu botga kelib turadi.\n"
                             f"💵 **Boshlang'ich Balans:** ${self.account_balance:,.2f} USD\n\n"
-                            f"Pastdagi tugmalar orqali AI tahlil signallarini o'chirishingiz yoki yoqishingiz mumkin."
+                            f"Pastdagi tugmalar orqali ochiq pozitsiyalarni ko'rishingiz yoki sozlamalarni boshqarishingiz mumkin."
                         )
 
                     # Command / Button Handling
-                    if text in ["🛑 STOP AI SIGNALS", "/stop_ai_signals", "STOP AI SIGNALS"]:
+                    if text in ["📊 OCHIQ POZITSIYALAR", "/positions", "OCHIQ POZITSIYALAR", "POZITSIYALAR", "/open_positions"]:
+                        self.send_direct_message(cid, self.format_open_positions_report())
+                    elif text in ["📈 HISOB HOLATI", "/status", "STATUS", "status", "HISOB HOLATI"]:
+                        self.send_direct_message(cid, self.format_account_status_report())
+                    elif text in ["🛑 STOP AI SIGNALS", "/stop_ai_signals", "STOP AI SIGNALS"]:
                         self.muted_ai_signal_chat_ids.add(cid)
                         self._save_state()
                         self.send_direct_message(
@@ -122,6 +244,15 @@ class TelegramNotifier:
                             cid,
                             f"🟢 **AI TAHLILIY SIGNALLARI SIZ UCHUN YOQILDI!**\n\n"
                             f"Endi sizga barcha qo'shimcha AI tahlil signallari va Engine Auto Trade xabarlari yuboriladi."
+                        )
+                    elif text in ["/start", "START", "start"] and not is_new:
+                        self.send_direct_message(
+                            cid,
+                            f"🤖 **APEX QUANT TRADING ENGINE AKTIV!**\n\n"
+                            f"Pastdagi tugmalardan birini tanlang:\n"
+                            f"• **📊 OCHIQ POZITSIYALAR** — Barcha jonli ochiq savdolar va PnL holati\n"
+                            f"• **📈 HISOB HOLATI** — 10K hisob balansi va drawdown ko'rsatkichlari\n"
+                            f"• **🛑/🟢 AI SIGNALS** — Qo'shimcha AI signallarni yoqish/o'chirish"
                         )
             if updates:
                 self._save_state()

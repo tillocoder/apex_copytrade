@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { BookOpen, Smile, Sparkles, TrendingUp, TrendingDown, Clock, Activity } from 'lucide-react';
-import { fetchJournalTrades } from '../../services/quantApiService';
+import { JournalService, type JournalTradeItem } from '../../services/journalService';
 
 export const TradeJournal: React.FC = () => {
-  const [trades, setTrades] = useState<any[]>([]);
+  const [trades, setTrades] = useState<JournalTradeItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    fetchJournalTrades().then(data => {
+    JournalService.fetchJournalTrades().then(data => {
       setTrades(data);
       setLoading(false);
     });

@@ -1,14 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useTerminal } from '../../context/TerminalContext';
-import ReactECharts from 'echarts-for-react';
-import { getProfessionalChartOption, type CandleData } from '../../utils/chartDataGenerator';
+import { ApexCandleChart } from '../common/ApexCandleChart';
 import { soundEngine } from '../../services/soundEngine';
 import { GeminiService, type GeminiAnalysisResponse } from '../../services/geminiService';
-import { 
-  fetchRealKlines, 
-  subscribeBinanceLivePrices, 
-  updateCandlesWithLiveTick 
-} from '../../services/marketDataService';
+import { TradesService } from '../../services/tradesService';
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -29,6 +24,7 @@ import {
 export const PositionCommandCenter: React.FC = () => {
   const { 
     positions = [], 
+    setPositions,
     commandCenterPositionId, 
     openCommandCenter,
     setActiveModule, 
@@ -42,31 +38,18 @@ export const PositionCommandCenter: React.FC = () => {
   const safePositions = Array.isArray(positions) ? positions : [];
   const [audioEnabled, setAudioEnabled] = useState(true);
   const [geminiAnalysis, setGeminiAnalysis] = useState<GeminiAnalysisResponse | null>(null);
-  const [timeframe, setTimeframe] = useState<'M1' | 'M5' | 'M15' | 'H1' | 'H4' | 'D1'>('M5');
-  const [realCandles, setRealCandles] = useState<CandleData[]>([]);
+
+  useEffect(() => {
+    TradesService.fetchLivePositions().then(data => {
+      if (data && data.length > 0 && setPositions) {
+        setPositions(data);
+      }
+    });
+  }, []);
 
   const activePosition = safePositions.find(p => p && p.id === commandCenterPositionId) || safePositions[0] || null;
   const activeTicker = tickers.find(t => t.symbol === activePosition?.symbol) || tickers[0];
   const activePropAccount = propAccounts[0];
-
-  // Fetch REAL Binance Candlestick Data & Subscribe to Live Realtime Ticks
-  useEffect(() => {
-    if (activePosition && activePosition.symbol) {
-      fetchRealKlines(activePosition.symbol, timeframe, 200).then(data => {
-        if (data.length > 0) {
-          setRealCandles(data);
-        }
-      });
-
-      const unsubscribe = subscribeBinanceLivePrices((sym, price) => {
-        if (sym === activePosition.symbol) {
-          setRealCandles(prev => updateCandlesWithLiveTick(prev, sym, activePosition.symbol, price));
-        }
-      });
-
-      return () => unsubscribe();
-    }
-  }, [activePosition?.symbol, timeframe]);
 
   // Fetch Live AI Stream Rationale
   useEffect(() => {
@@ -94,23 +77,6 @@ export const PositionCommandCenter: React.FC = () => {
 
   const livePrice = activePosition.currentPrice || activeTicker?.price || activePosition.entryPrice;
   const isProfit = (activePosition.unrealizedPnl || 0) >= 0;
-
-  // Mini Chart Option (35% Max Height)
-  const getMiniChartOption = () => {
-    return getProfessionalChartOption({
-      symbol: activePosition.symbol,
-      basePrice: livePrice,
-      overlaySMC: true,
-      realCandles,
-      activePosition: {
-        side: activePosition.side,
-        entryPrice: activePosition.entryPrice,
-        sl: activePosition.sl,
-        tp: activePosition.tp1,
-        unrealizedPnl: activePosition.unrealizedPnl
-      }
-    });
-  };
 
   const toggleSound = () => {
     const next = !audioEnabled;
@@ -274,39 +240,13 @@ export const PositionCommandCenter: React.FC = () => {
             </div>
           </div>
 
-          {/* Center-Bottom: Real Exchange Mini Chart */}
-          <div className="flex-1 w-full relative bg-apex-bgSecondary flex flex-col min-h-[220px]">
-            <div className="h-7 bg-apex-surface border-b border-apex-border px-3 flex items-center justify-between font-mono text-[10px] shrink-0">
-              <div className="flex items-center space-x-3">
-                <span className="font-bold text-apex-text">{activePosition.symbol} EXECUTION CHART</span>
-                <div className="flex space-x-1">
-                  {(['M1', 'M5', 'M15', 'H1', 'H4', 'D1'] as const).map(tf => (
-                    <button
-                      key={tf}
-                      onClick={() => setTimeframe(tf)}
-                      className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${
-                        timeframe === tf ? 'bg-apex-accent text-black' : 'text-apex-muted hover:text-apex-text'
-                      }`}
-                    >
-                      {tf}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="flex items-center space-x-2 text-[10px]">
-                <span className="text-apex-muted">ENTRY: <strong className="text-apex-text">${activePosition.entryPrice}</strong></span>
-                <span className="text-apex-muted">SL: <strong className="text-apex-danger">${activePosition.sl}</strong></span>
-                <span className="text-apex-muted">TP1: <strong className="text-apex-success">${activePosition.tp1}</strong></span>
-              </div>
-            </div>
-
-            <div className="flex-1 w-full relative">
-              <ReactECharts 
-                option={getMiniChartOption()} 
-                style={{ height: '100%', width: '100%' }} 
-                opts={{ renderer: 'canvas' }}
-              />
-            </div>
+          {/* Center-Bottom: Real Exchange Execution Chart with AI Signals / TradingView Aesthetics */}
+          <div className="flex-1 w-full relative bg-apex-bgSecondary flex flex-col min-h-[260px] overflow-hidden">
+            <ApexCandleChart 
+              symbol={activePosition.symbol}
+              position={activePosition}
+              defaultTimeframe="15m"
+            />
           </div>
 
           {/* Timeline Event Event Bar */}

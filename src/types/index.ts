@@ -125,6 +125,11 @@ export interface Signal {
   entry: number;
   sl: number;
   tp: number;
+  tp1?: number;
+  tp2?: number;
+  tp3?: number;
+  timestamp?: number;
+  exit_timestamp?: number;
   leverage?: number;
   reasoning?: string;
   status: 'PENDING' | 'CONFIRMED' | 'EXPIRED' | 'INVALIDATED';

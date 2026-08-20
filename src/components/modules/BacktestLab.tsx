@@ -1,21 +1,49 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTerminal } from '../../context/TerminalContext';
 import ReactECharts from 'echarts-for-react';
-import { FlaskConical, Download, Play, ShieldCheck, CheckCircle2, Trophy, Clock, Award } from 'lucide-react';
+import { FlaskConical, Download, Play, ShieldCheck, CheckCircle2, Trophy, Clock, Award, RefreshCw } from 'lucide-react';
+import { BacktestService } from '../../services/backtestService';
 
 export const BacktestLab: React.FC = () => {
-  const { backtest, addLog } = useTerminal();
+  const { backtest, setBacktest, addLog } = useTerminal();
   const [isOptimizing, setIsOptimizing] = useState(false);
   const [curveType, setCurveType] = useState<'cumulative' | 'reset'>('cumulative');
+  const [loading, setLoading] = useState(false);
+
+  const loadBacktestData = async (forceRerun: boolean = false) => {
+    try {
+      setLoading(true);
+      const res = await BacktestService.fetchBacktestResults(forceRerun);
+      if (res.status === 'SUCCESS' && res.data) {
+        const d = res.data;
+        setBacktest(prev => ({
+          ...prev,
+          ...d,
+          monthlyReturns: (d.monthlyReturns && d.monthlyReturns.length > 0)
+            ? d.monthlyReturns
+            : prev.monthlyReturns,
+          equityCurve: (d.equityCurve && d.equityCurve.length > 0)
+            ? d.equityCurve
+            : prev.equityCurve
+        }));
+      }
+    } catch (err) {
+      console.error('[BacktestLab] Error fetching backtest data:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadBacktestData();
+  }, []);
 
   const handleRunOptimization = async () => {
     try {
       setIsOptimizing(true);
       addLog('Execution', 'INFO', 'Triggered Python Quant Engine 500-Simulation Monte Carlo re-optimization...');
-      const res = await fetch('/api/v1/quant/backtest-results?force_rerun=true');
-      if (res.ok) {
-        addLog('Execution', 'SUCCESS', 'Quant Engine optimization job submitted successfully.');
-      }
+      await loadBacktestData(true);
+      addLog('Execution', 'SUCCESS', 'Quant Engine optimization job submitted successfully.');
     } catch (err) {
       addLog('Error', 'WARN', 'Backend optimization request failed, running offline calculation.');
     } finally {

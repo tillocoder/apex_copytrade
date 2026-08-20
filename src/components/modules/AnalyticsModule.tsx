@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { BarChart3, Clock, Calendar, Award, TrendingUp, Sparkles } from 'lucide-react';
 import ReactECharts from 'echarts-for-react';
+import { AnalyticsService, type PerformanceAnalyticsData } from '../../services/analyticsService';
 
 export const AnalyticsModule: React.FC = () => {
-  const [analytics, setAnalytics] = useState<any>(null);
+  const [analytics, setAnalytics] = useState<PerformanceAnalyticsData | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    fetch('/api/v1/analytics/performance')
-      .then(res => res.json())
-      .then(json => {
-        if (json.status === 'SUCCESS') setAnalytics(json);
-      })
-      .catch(() => {});
+    AnalyticsService.fetchAnalyticsPerformance().then(data => {
+      if (data) setAnalytics(data);
+      setLoading(false);
+    });
   }, []);
 
   const heatmapMatrix = analytics?.heatmapData || [
