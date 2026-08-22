@@ -27,6 +27,7 @@ from backend.quant_engine.optimization import MonteCarloOptimizer
 from backend.telegram_bot import telegram_notifier
 from backend import ai_signal_engine
 from backend import live_execution_manager as live_mgr
+from backend import shadow_engine
 
 app = FastAPI(
     title="APEX QUANT TERMINAL — Institutional Strategy Engine Backend",
@@ -227,24 +228,27 @@ def run_quant_engine_task(years: float = 1.0, symbol: str = "BTC/USDT"):
         IS_BACKTEST_RUNNING = False
 
 async def periodic_signals_task():
-    """Run AI signal generation once every 5 minutes in the background and open live positions."""
-    print("[QUANT BACKEND] Starting periodic AI Signal Engine task (Interval: 5 minutes)...")
+    """
+    Runs AI signal generation every 5 minutes.
+    IMPORTANT: AI signals are ANALYSIS-ONLY — they do NOT open engine positions.
+    The engine (10K Prop Shot) runs independently via sync_live_positions_and_equity.
+    Signals are saved to history so users can track AI win rate separately.
+    """
+    print("[QUANT BACKEND] Starting periodic AI Signal Engine task (analysis-only, 5-min interval)...")
     try:
         sigs = await run_async_in_executor(ai_signal_engine.generate_signals)
         if sigs:
-            for sig in sigs:
-                await run_async_in_executor(live_mgr.open_position_from_signal, sig)
+            print(f"[AI SIGNAL] Generated {len(sigs)} analysis signals (NOT opening positions).")
     except Exception as e:
         print(f"[QUANT BACKEND ERROR] Initial AI signal generation failed: {e}")
 
     while True:
         await asyncio.sleep(300)  # Sleep 5 minutes for M15 real-time trading
         try:
-            print("[QUANT BACKEND] Running 5-minute AI Signal Engine scan...")
+            print("[QUANT BACKEND] Running 5-minute AI Signal Engine scan (analysis only)...")
             sigs = await run_async_in_executor(ai_signal_engine.generate_signals)
             if sigs:
-                for sig in sigs:
-                    await run_async_in_executor(live_mgr.open_position_from_signal, sig)
+                print(f"[AI SIGNAL] {len(sigs)} analysis signals recorded. Engine positions are separate.")
         except Exception as e:
             print(f"[QUANT BACKEND ERROR] Periodic AI signal generation failed: {e}")
 
@@ -455,7 +459,28 @@ async def get_signals_history():
 
 @app.post("/api/v1/signals/scan-now")
 async def trigger_signal_scan_now():
-    """Triggers an immediate multi-pair quantitative scan and opens qualifying positions."""
+    """
+    Triggers an immediate AI signal scan for analysis purposes.
+    NOTE: AI signals are ANALYSIS-ONLY and do NOT open engine positions.
+    Engine positions are managed exclusively by the 10K Prop Engine.
+    """
+    try:
+        sigs = await run_async_in_executor(ai_signal_engine.generate_signals)
+        return {
+            "status": "SUCCESS",
+            "message": f"AI Scan completed. {len(sigs or [])} analysis signals recorded (no positions opened).",
+            "note": "AI signals are analysis-only. Engine manages positions independently.",
+            "signals": sigs or []
+        }
+    except Exception as e:
+        return {"status": "ERROR", "message": str(e)}
+
+@app.post("/api/v1/engine/force-scan")
+async def trigger_engine_scan_now():
+    """
+    Triggers an immediate Engine scan — the only way positions can be opened.
+    Engine uses its own Quant Rule Engine logic independent from AI signals.
+    """
     try:
         sigs = await run_async_in_executor(ai_signal_engine.generate_signals)
         opened_positions = []
@@ -466,8 +491,7 @@ async def trigger_signal_scan_now():
                     opened_positions.append(pos)
         return {
             "status": "SUCCESS",
-            "message": f"Scan completed. Generated {len(sigs or [])} signals. Opened {len(opened_positions)} positions.",
-            "signals": sigs or [],
+            "message": f"Engine scan: {len(sigs or [])} signals evaluated. {len(opened_positions)} positions opened.",
             "opened_positions": opened_positions
         }
     except Exception as e:
@@ -489,6 +513,39 @@ async def get_live_positions():
     res = await run_async_in_executor(live_mgr.sync_live_positions_and_equity)
     return res.get("openPositions", [])
 
+@app.get("/api/v1/positions/{pos_id}")
+async def get_position_by_id(pos_id: str):
+    """
+    Returns a single position by ID with fresh live Binance price + real-time PnL.
+    Used by the standalone /position.html detail page (Telegram inline button deep-link).
+    """
+    from fastapi.responses import JSONResponse
+    all_positions = await run_async_in_executor(live_mgr.load_positions)
+    pos = next((p for p in all_positions if p.get("id") == pos_id), None)
+    if not pos:
+        return JSONResponse(status_code=404, content={"error": "Position not found", "id": pos_id})
+
+    # Refresh live price and PnL in place
+    sym   = pos.get("symbol", "BTC/USDT")
+    entry = float(pos.get("entryPrice") or pos.get("entry_price") or 0.0)
+    size  = float(pos.get("size", 1.0))
+    side  = pos.get("side", "BUY").upper()
+    margin = float(pos.get("marginUsed") or 0.0)
+    try:
+        curr_price = await run_async_in_executor(live_mgr.fetch_binance_price, sym)
+        pos["currentPrice"] = curr_price
+        if side == "BUY":
+            unrealized = (curr_price - entry) * size
+        else:
+            unrealized = (entry - curr_price) * size
+        pos["unrealizedPnl"]        = round(unrealized, 2)
+        pos["unrealizedPnlPercent"] = round((unrealized / max(1.0, margin)) * 100.0, 2)
+    except Exception:
+        pass
+
+    return pos
+
+
 @app.get("/api/v1/portfolio/live-equity")
 async def get_live_portfolio_equity():
     """Returns real-time live equity, balance, unrealized PnL, realized PnL, and live equity curve."""
@@ -506,6 +563,34 @@ async def reset_all_positions():
 async def panic_close_all():
     res = await run_async_in_executor(live_mgr.reset_live_execution, 10000.00)
     return {"status": "SUCCESS", "message": "Liquidated all open positions across exchange accounts."}
+
+# --- E2 SHADOW CANDIDATE APIS (PARALLEL VIRTUAL TRACKING) ---
+
+@app.get("/api/v1/shadow/metrics")
+async def get_shadow_metrics():
+    """Returns real-time quantitative metrics for the E2 Shadow Candidate strategy."""
+    summary = await run_async_in_executor(shadow_engine.shadow_tracker.get_metrics_summary)
+    return {"status": "SUCCESS", "data": summary}
+
+@app.get("/api/v1/shadow/trades")
+async def get_shadow_trades():
+    """Returns resolved virtual trades and active virtual positions for E2."""
+    with shadow_engine.FILE_LOCK:
+        trades = shadow_engine._read_json(shadow_engine.SHADOW_TRADES_FILE, [])
+        positions = shadow_engine._read_json(shadow_engine.SHADOW_POSITIONS_FILE, [])
+    return {
+        "status": "SUCCESS",
+        "resolvedTradesCount": len(trades),
+        "openPositionsCount": len(positions),
+        "openPositions": positions,
+        "trades": trades
+    }
+
+@app.get("/api/v1/shadow/status")
+async def get_shadow_status_text():
+    """Returns formatted text status report according to institutional audit specifications."""
+    status_text = await run_async_in_executor(shadow_engine.shadow_tracker.format_official_status)
+    return {"status": "SUCCESS", "report": status_text}
 
 # --- TELEGRAM BOT APIS (@xrpropbot) ---
 

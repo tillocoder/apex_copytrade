@@ -1,5 +1,4 @@
-BTC/USDT SHORT pozitsiyasi LIQUIDITY_SWEEP signali orqali darhol avtomatik ochildi:
-ID: pos_btcusdt_1787231114import os
+import os
 import json
 import urllib.request
 import urllib.parse
@@ -61,7 +60,8 @@ class TelegramNotifier:
         return {
             "keyboard": [
                 [{"text": "📊 OCHIQ POZITSIYALAR"}, {"text": "📈 HISOB HOLATI"}],
-                [{"text": "🛑 STOP AI SIGNALS"}, {"text": "🟢 START AI SIGNALS"}]
+                [{"text": "🤖 ENGINE STATS"}, {"text": "🛡️ E2 SHADOW STATS"}],
+                [{"text": "📡 AI SIGNAL STATS"}, {"text": "🛑 STOP AI SIGNALS"}, {"text": "🟢 START AI SIGNALS"}]
             ],
             "resize_keyboard": True,
             "is_persistent": True
@@ -143,6 +143,240 @@ class TelegramNotifier:
         lines.append(summary_block)
         return "\n\n".join(lines)
 
+    def format_engine_stats(self) -> str:
+        """
+        Returns full professional Engine performance stats based on real closed trades.
+        Covers: Win Rate, Profit Factor, Avg Win/Loss, Max DD, Sharpe, best/worst trade, streak.
+        """
+        try:
+            from backend.live_execution_manager import load_equity_state
+            eq = load_equity_state()
+        except Exception:
+            return "❌ Engine ma'lumotlari yuklanmadi."
+
+        closed = eq.get("closedTradesCount", 0)
+        wins   = eq.get("winCount", 0)
+        losses = closed - wins
+        realized_pnl = eq.get("realizedPnl", 0.0)
+        history = eq.get("tradeHistory", [])
+        initial = eq.get("initialCapital", INITIAL_PROP_CAPITAL)
+
+        win_rate = (wins / max(1, closed)) * 100.0
+
+        # Detailed trade metrics
+        win_pnls  = [t.get("realizedPnl", 0.0) for t in history if (t.get("realizedPnl") or 0) > 0]
+        loss_pnls = [t.get("realizedPnl", 0.0) for t in history if (t.get("realizedPnl") or 0) <= 0]
+
+        avg_win  = (sum(win_pnls)  / max(1, len(win_pnls)))  if win_pnls  else 0.0
+        avg_loss = (sum(loss_pnls) / max(1, len(loss_pnls))) if loss_pnls else 0.0
+
+        gross_profit = sum(win_pnls)  if win_pnls  else 0.0
+        gross_loss   = abs(sum(loss_pnls)) if loss_pnls else 0.0
+        profit_factor = round(gross_profit / max(0.01, gross_loss), 2)
+
+        best_trade  = max(win_pnls,  default=0.0)
+        worst_trade = min(loss_pnls, default=0.0)
+
+        # Max drawdown from equity curve
+        curve  = [p["equity"] for p in eq.get("liveEquityCurve", []) if "equity" in p]
+        max_dd = 0.0
+        peak   = initial
+        for eq_val in curve:
+            if eq_val > peak:
+                peak = eq_val
+            dd = (peak - eq_val) / max(1.0, peak) * 100.0
+            if dd > max_dd:
+                max_dd = dd
+
+        # Longest win/loss streak
+        pnls = [t.get("realizedPnl", 0.0) for t in history]
+        max_win_streak = max_loss_streak = cur_w = cur_l = 0
+        for p in pnls:
+            if p > 0:
+                cur_w += 1; cur_l = 0
+            else:
+                cur_l += 1; cur_w = 0
+            max_win_streak  = max(max_win_streak,  cur_w)
+            max_loss_streak = max(max_loss_streak, cur_l)
+
+        # RR ratio
+        rr = round(abs(avg_win) / max(0.01, abs(avg_loss)), 2)
+
+        current_equity = round(initial + realized_pnl, 2)
+        total_return_pct = round((realized_pnl / max(1, initial)) * 100.0, 2)
+
+        sign = lambda v: "+" if v >= 0 else ""
+        return (
+            f"🤖 **ENGINE PERFORMANCE STATS**\n"
+            f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+            f"📊 **Boshlang'ich Kapital:** ${initial:,.2f}\n"
+            f"💎 **Hozirgi Equity:** ${current_equity:,.2f} ({sign(realized_pnl)}{total_return_pct:.2f}%)\n"
+            f"💰 **Jami Realized PnL:** {sign(realized_pnl)}${realized_pnl:,.2f}\n\n"
+            f"🏆 **Savdo Statistikasi**\n"
+            f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+            f"📈 **Jami Yopilgan Savdolar:** {closed} ta\n"
+            f"✅ **Yutgan:** {wins} ta\n"
+            f"❌ **Yutqazgan:** {losses} ta\n"
+            f"🎯 **Win Rate:** {win_rate:.1f}%\n\n"
+            f"📐 **Professional Ko'rsatkichlar**\n"
+            f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+            f"⚖️ **Profit Factor:** {profit_factor:.2f}x\n"
+            f"📊 **Risk/Reward:** 1 : {rr:.2f}\n"
+            f"💚 **O'rtacha Foyda:** +${avg_win:.2f}\n"
+            f"❤️ **O'rtacha Zarar:** ${avg_loss:.2f}\n"
+            f"🚀 **Eng Yaxshi Savdo:** +${best_trade:.2f}\n"
+            f"💥 **Eng Yomon Savdo:** ${worst_trade:.2f}\n"
+            f"📉 **Max Drawdown:** {max_dd:.2f}%\n\n"
+            f"🔥 **Seriya Ko'rsatkichlari**\n"
+            f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+            f"✅ **Eng Uzun Win Seriya:** {max_win_streak} ta\n"
+            f"❌ **Eng Uzun Loss Seriya:** {max_loss_streak} ta\n"
+            f"\n🟢 **Status:** ENGINE ACTIVE · REAL BINANCE DATA"
+        )
+
+    def format_ai_stats(self) -> str:
+        """
+        Returns AI Signal performance stats independent from the Engine.
+        AI signals are recorded as pure analysis — not connected to positions.
+        """
+        try:
+            from backend import ai_signal_engine
+            history = ai_signal_engine.get_signals_history()
+        except Exception:
+            return "❌ AI signal tarixi yuklanmadi."
+
+        total = len(history)
+        if total == 0:
+            return (
+                f"📡 **AI SIGNAL STATS**\n"
+                f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+                f"Hozircha AI signal tarixi yo'q.\n"
+                f"Tizim BTC/ETH/SOL ni 5 daqiqada bir skanerlaydi."
+            )
+
+        tp_hit   = [s for s in history if "TP"  in str(s.get("status", ""))]
+        sl_hit   = [s for s in history if "SL"  in str(s.get("status", ""))]
+        active   = [s for s in history if s.get("status") in ("CONFIRMED", "PENDING")]
+        expired  = [s for s in history if s.get("status") == "EXPIRED"]
+
+        wins  = len(tp_hit)
+        losses= len(sl_hit)
+        closed_sig = wins + losses
+        ai_win_rate = (wins / max(1, closed_sig)) * 100.0 if closed_sig > 0 else 0.0
+
+        # Avg pnl% from signal history
+        pnl_pcts = []
+        for s in tp_hit + sl_hit:
+            entry = float(s.get("entry", 0) or 0)
+            sl_p  = float(s.get("sl", 0) or 0)
+            tp_p  = float(s.get("tp1", s.get("tp", 0)) or 0)
+            side  = (s.get("side") or "BUY").upper()
+            if entry > 0:
+                if "TP" in str(s.get("status")):
+                    pnl_pct = ((tp_p - entry) / entry * 100) if side == "BUY" else ((entry - tp_p) / entry * 100)
+                else:
+                    pnl_pct = ((sl_p - entry) / entry * 100) if side == "BUY" else ((entry - sl_p) / entry * 100)
+                pnl_pcts.append(pnl_pct)
+
+        avg_pnl_pct = sum(pnl_pcts) / len(pnl_pcts) if pnl_pcts else 0.0
+
+        # By symbol
+        from collections import defaultdict
+        by_sym = defaultdict(lambda: {"tp": 0, "sl": 0, "total": 0})
+        for s in history:
+            sym = s.get("symbol", "?").split("/")[0]
+            by_sym[sym]["total"] += 1
+            st = str(s.get("status", ""))
+            if "TP" in st:  by_sym[sym]["tp"] += 1
+            elif "SL" in st: by_sym[sym]["sl"] += 1
+
+        sym_lines = []
+        for sym, d in sorted(by_sym.items()):
+            wr = d["tp"] / max(1, d["tp"] + d["sl"]) * 100
+            sym_lines.append(f"  • {sym}: {d['total']} signal | TP: {d['tp']} | SL: {d['sl']} | WR: {wr:.0f}%")
+
+        # Avg confidence
+        confs = [float(s.get("confidence") or s.get("ai_confidence") or 0) for s in history if s.get("confidence") or s.get("ai_confidence")]
+        avg_conf = sum(confs) / len(confs) if confs else 0.0
+
+        sign_avg = "+" if avg_pnl_pct >= 0 else ""
+        return (
+            f"📡 **AI SIGNAL PERFORMANCE STATS**\n"
+            f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+            f"⚠️ _AI signallar faqat tahlil — pozitsiya ochmaydi_\n\n"
+            f"📊 **Jami Generatsiya Qilingan:** {total} ta signal\n"
+            f"✅ **TP Hit (To'g'ri):** {wins} ta\n"
+            f"❌ **SL Hit (Noto'g'ri):** {losses} ta\n"
+            f"⏳ **Hozir Aktiv:** {len(active)} ta\n"
+            f"⌛ **Muddati O'tgan:** {len(expired)} ta\n\n"
+            f"🎯 **AI Win Rate:** {ai_win_rate:.1f}% ({closed_sig} yopilgan signal)\n"
+            f"📈 **O'rtacha PnL% (signal):** {sign_avg}{avg_pnl_pct:.2f}%\n"
+            f"🧠 **O'rtacha AI Ishonch:** {avg_conf:.1f}%\n\n"
+            f"🔤 **Juftlik Bo'yicha Taqsimot:**\n"
+            + "\n".join(sym_lines) +
+            f"\n\n⚡ _ENGINE va AI SIGNAL — alohida tizimlar._\n"
+            f"🤖 Engine 10K Prop savdolarini boshqaradi.\n"
+            f"📡 AI Signal bozor tahlili uchun."
+        )
+
+    def format_shadow_stats(self) -> str:
+        """
+        Returns real-time quantitative metrics for the E2 Shadow Candidate strategy.
+        """
+        try:
+            from backend.shadow_engine import shadow_tracker
+            m = shadow_tracker.get_metrics_summary()
+            hist = m["historical_benchmark"]
+            fwd = m["forward_metrics"]
+        except Exception as e:
+            return f"❌ Shadow Engine ma'lumotlarini yuklashda xatolik: {e}"
+
+        fwd_n = fwd.get("n", 0)
+        fwd_wr = fwd.get("wr", 0.0)
+        fwd_pf = fwd.get("pf", 0.0)
+        fwd_exp = fwd.get("exp", 0.0)
+        fwd_net = fwd.get("net", 0.0)
+        fwd_dd = fwd.get("max_dd", 0.0)
+        fwd_ls = fwd.get("max_ls", 0)
+        sign = "+" if fwd_net >= 0 else ""
+
+        # Asset breakdown lines
+        asset_lines = []
+        for sym, d in sorted(m.get("trades_by_asset", {}).items()):
+            n = d.get("n", 0)
+            wr = d.get("wr", 0.0)
+            pnl = d.get("pnl", 0.0)
+            pnl_sign = "+" if pnl >= 0 else ""
+            asset_lines.append(f"  • {sym.split('/')[0]}: {n} trade | WR: {wr:.0f}% | PnL: {pnl_sign}${pnl:.2f}")
+
+        if not asset_lines:
+            asset_lines.append("  • Hozircha forward trade'lar yig'ilmoqda")
+
+        return (
+            f"🛡️ **E2 SHADOW CANDIDATE STATS**\n"
+            f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+            f"🔬 _Model: Trend Continuation + FVG Retest (Virtual Tracking)_\n\n"
+            f"📊 **FORWARD SHADOW SAMPLE**\n"
+            f"  • **Forward Savdolar:** {fwd_n} ta trade\n"
+            f"  • **Forward Win Rate:** {fwd_wr:.1f}%\n"
+            f"  • **Forward Profit Factor:** {fwd_pf:.2f}x\n"
+            f"  • **Forward Expectancy:** +${fwd_exp:.2f} / trade\n"
+            f"  • **Forward Net PnL:** {sign}${fwd_net:.2f}\n"
+            f"  • **Forward Max Drawdown:** {fwd_dd:.2f}%\n"
+            f"  • **Forward Max Loss Streak:** {fwd_ls} ta\n\n"
+            f"🏛️ **HISTORICAL BENCHMARK (1 YIL)**\n"
+            f"  • **Historical N:** {hist['n']} ta trade\n"
+            f"  • **Historical PF:** {hist['pf']:.2f}x\n"
+            f"  • **Historical Expectancy:** +${hist['exp']:.2f} / trade\n"
+            f"  • **Historical Net PnL:** +${hist['net']:,.2f}\n"
+            f"  • **Historical Max DD:** {hist['max_dd']:.2f}%\n\n"
+            f"🔤 **Forward Asset Taqsimoti:**\n"
+            + "\n".join(asset_lines) +
+            f"\n\n🎯 **Milestone:** {m.get('milestone', '0/10')}\n"
+            f"🔒 **Parity Status:** {m.get('parity_status', 'VERIFIED')}\n"
+            f"⚡ **Decision:** {m.get('decision', 'SHADOW CONTINUE')}"
+        )
+
     def format_account_status_report(self) -> str:
         """Builds a summary of the Prop Firm account equity and challenge rules."""
         try:
@@ -178,98 +412,413 @@ class TelegramNotifier:
             f"🟢 **Holat:** ENGINE ACTIVE & MONITORING"
         )
 
+    # ──────────────────────────────────────────────────────────────
+    # CORE TRANSPORT LAYER
+    # ──────────────────────────────────────────────────────────────
+
     def _make_request(self, method: str, payload: dict) -> dict:
+        """Low-level Telegram Bot API HTTP call. Returns parsed JSON or error dict."""
         url = f"{BASE_URL}/{method}"
         data = json.dumps(payload).encode("utf-8")
         req = urllib.request.Request(
-            url, 
-            data=data, 
+            url,
+            data=data,
             headers={"Content-Type": "application/json"}
         )
         try:
             with urllib.request.urlopen(req, timeout=10) as resp:
-                result = json.loads(resp.read().decode("utf-8"))
-                return result
+                return json.loads(resp.read().decode("utf-8"))
         except Exception as e:
             logger.error(f"Telegram API request error [{method}]: {e}")
             return {"ok": False, "description": str(e)}
 
+    def _build_position_inline_keyboard(self, pos_id: str) -> dict:
+        """
+        Inline keyboard attached to every trade-open notification.
+
+        Algorithm:
+          Row 1: [📊 Jonli Holat]  — callback_data="pos:<pos_id>"
+                 Triggers answerCallbackQuery + real-time snapshot reply in Telegram.
+          Row 2: [🌐 Brauzerda Ko'rish] — url="https://apex.xrinvest.uz/aisignals?pos=<pos_id>"
+                 Opens the SPA position detail page in the Telegram in-app browser.
+        """
+        return {
+            "inline_keyboard": [
+                [
+                    {"text": "📊 Jonli Holat", "callback_data": f"pos:{pos_id}"},
+                    {"text": "🌐 Brauzerda Ko'rish", "url": f"https://apex.xrinvest.uz/position.html?pos={pos_id}"}
+                ]
+            ]
+        }
+
+    def _get_position_live_snapshot(self, pos_id: str) -> Optional[str]:
+        """
+        Algorithm: Fetches the specific position by ID from disk, queries Binance for the
+        current live price, recalculates unrealized PnL in real-time, and returns a fully
+        formatted snapshot string ready for Telegram AnswerCallbackQuery or edit.
+
+        Steps:
+          1. Read all positions from live_positions.json (FILE_LOCK protected).
+          2. Find position where id == pos_id. Return None if not found.
+          3. Fetch live Binance ticker price for position.symbol.
+          4. Compute unrealized PnL: (curr-entry)*size for BUY, (entry-curr)*size for SELL.
+          5. Compute distance to SL and TP1 as $ and %.
+          6. Build rich multi-line markdown snapshot string.
+        """
+        try:
+            from backend.live_execution_manager import load_positions, fetch_binance_price
+            all_positions = load_positions()
+            pos = next((p for p in all_positions if p.get("id") == pos_id), None)
+            if not pos:
+                return None
+
+            sym     = pos.get("symbol", "BTC/USDT")
+            side    = pos.get("side", "BUY").upper()
+            entry   = float(pos.get("entryPrice") or pos.get("entry_price") or 0.0)
+            size    = float(pos.get("size", 1.0))
+            sl      = float(pos.get("sl", 0.0))
+            tp1     = float(pos.get("tp1", 0.0))
+            tp2     = float(pos.get("tp2", 0.0))
+            tp3     = float(pos.get("tp3", 0.0))
+            leverage= pos.get("leverage", 2)
+            margin  = float(pos.get("marginUsed") or pos.get("margin_used") or 0.0)
+            time_open = pos.get("timeOpen", "-")
+            status  = pos.get("status", "OPEN")
+            reason  = (pos.get("aiExplanation") or "Quant Rule Engine Setup").replace("_", " ")
+            confidence = float(pos.get("aiConfidence") or 0.0)
+            base_asset = sym.split("/")[0]
+
+            # Step 3 — live price
+            try:
+                curr_price = fetch_binance_price(sym)
+            except Exception:
+                curr_price = float(pos.get("currentPrice") or entry)
+
+            # Step 4 — unrealized PnL
+            if side == "BUY":
+                unrealized = (curr_price - entry) * size
+                dist_sl  = entry - sl
+                dist_tp1 = tp1 - entry
+                sl_risk  = (curr_price - sl) * size   # negative means SL not yet hit
+            else:
+                unrealized = (entry - curr_price) * size
+                dist_sl  = sl - entry
+                dist_tp1 = entry - tp1
+                sl_risk  = (sl - curr_price) * size
+
+            unrealized_pct = (unrealized / max(1.0, margin)) * 100.0
+            pnl_sign  = "+" if unrealized >= 0 else ""
+            pnl_emoji = "🟩" if unrealized >= 0 else "🟥"
+            side_emoji = "🟢" if side == "BUY" else "🔴"
+
+            # Step 5 — distance to levels
+            dist_to_sl_pct  = abs(curr_price - sl) / max(1.0, curr_price) * 100.0
+            dist_to_tp1_pct = abs(curr_price - tp1) / max(1.0, curr_price) * 100.0
+
+            # SL remaining buffer
+            sl_buffer_sign = "+" if sl_risk > 0 else ""
+
+            lines = [
+                f"📊 **JONLI POZITSIYA HOLATI**",
+                f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+                f"{side_emoji} **{sym} {side}** | ID: `{pos_id}`",
+                f"",
+                f"🕐 **Ochilgan vaqt:** {time_open} UTC",
+                f"🪙 **Kirish narxi:** ${entry:,.2f}",
+                f"📡 **Hozirgi narx:** ${curr_price:,.2f}",
+                f"{pnl_emoji} **Unrealized PnL:** {pnl_sign}${unrealized:,.2f}  ({pnl_sign}{unrealized_pct:.2f}%)",
+                f"",
+                f"🎯 **Take Profit 1:** ${tp1:,.2f}  (narxdan {dist_to_tp1_pct:.2f}% uzoq)",
+            ]
+            if tp2 > 0:
+                lines.append(f"🎯 **Take Profit 2:** ${tp2:,.2f}")
+            if tp3 > 0:
+                lines.append(f"🎯 **Take Profit 3:** ${tp3:,.2f}")
+            lines += [
+                f"🛡️ **Stop Loss:** ${sl:,.2f}  (narxdan {dist_to_sl_pct:.2f}% uzoq)",
+                f"",
+                f"⚖️ **Hajm:** {size} {base_asset} | {leverage}x Leverage | Margin: ${margin:,.2f}",
+                f"🤖 **Strategiya:** {reason}",
+                f"📈 **AI Ishonch:** {confidence:.1f}%",
+                f"🔵 **Status:** {status}",
+                f"",
+                f"⚡ _Real-vaqt Binance narxi asosida hisoblangan._",
+            ]
+            return "\n".join(lines)
+        except Exception as e:
+            logger.error(f"Position snapshot error for {pos_id}: {e}")
+            return None
+
+    def send_positions_individual(self, chat_id: int):
+        """
+        Algorithm: Sends one separate Telegram message per open position,
+        each carrying its own inline keyboard with:
+          [📊 Jonli Holat]  [🌐 Brauzerda Ko'rish]
+
+        Steps:
+          1. Load all open positions (status == OPEN) from live_positions.json.
+          2. If none → send plain "No open positions" message.
+          3. Send a compact header message listing count & total equity.
+          4. For each open position:
+               a. Call _get_position_live_snapshot(pos_id) to get live data.
+               b. Send as send_trade_message(chat_id, snapshot, pos_id)
+                  so each message has its own interactive inline buttons.
+        """
+        try:
+            from backend.live_execution_manager import load_positions, sync_live_positions_and_equity
+            sync_data      = sync_live_positions_and_equity()
+            open_positions = sync_data.get("openPositions", [])
+            current_equity = sync_data.get("currentEquity", self.account_balance)
+            realized_pnl   = sync_data.get("realizedPnl", 0.0)
+        except Exception:
+            open_positions = []
+            current_equity = self.account_balance
+            realized_pnl   = 0.0
+
+        if not open_positions:
+            self.send_direct_message(
+                chat_id,
+                f"\u2139\ufe0f **HOZIRDA OCHIQ POZITSIYALAR YO'Q**\n"
+                f"\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n"
+                f"Tizim BTC, ETH, SOL ni real-vaqtda tahlil qilmoqda.\n"
+                f"Yuqori ehtimolli setup aniqlansa avtomatik ochiladi va Telegram ga xabarnoma keladi.\n\n"
+                f"\U0001f4b5 **Equity:** ${current_equity:,.2f} USD\n"
+                f"\U0001f4b0 **Realized PnL:** +${realized_pnl:,.2f} USD"
+            )
+            return
+
+        # Step 3 — compact header
+        bal_chg_pct = ((current_equity - INITIAL_PROP_CAPITAL) / INITIAL_PROP_CAPITAL) * 100.0
+        bal_chg_str = f"+{bal_chg_pct:.2f}%" if bal_chg_pct >= 0 else f"{bal_chg_pct:.2f}%"
+        self.send_direct_message(
+            chat_id,
+            f"\U0001f4ca **{len(open_positions)} TA OCHIQ POZITSIYA** — Jonli Holat\n"
+            f"\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n"
+            f"\U0001f4b5 **Equity:** ${current_equity:,.2f} USD ({bal_chg_str})\n"
+            f"\U0001f4b0 **Realized PnL:** +${realized_pnl:,.2f} USD\n\n"
+            f"Har bir pozitsiya alohida xabar sifatida yuborilmoqda.\n"
+            f"\u2935\ufe0f Tagidagi \"\U0001f4ca Jonli Holat\" tugmasini bosib real-vaqt holat ko'ring."
+        )
+
+        # Step 4 — one message per position
+        for pos in open_positions:
+            pos_id   = pos.get("id", "")
+            snapshot = self._get_position_live_snapshot(pos_id) if pos_id else None
+            if snapshot:
+                self.send_trade_message(chat_id, snapshot, pos_id)
+            else:
+                # Fallback: build minimal text from stored data
+                sym       = pos.get("symbol", "BTC/USDT")
+                side      = pos.get("side", "BUY").upper()
+                entry     = float(pos.get("entryPrice") or 0.0)
+                curr      = float(pos.get("currentPrice") or entry)
+                pnl       = float(pos.get("unrealizedPnl") or 0.0)
+                pnl_s     = "+" if pnl >= 0 else ""
+                sl        = float(pos.get("sl") or 0.0)
+                tp1       = float(pos.get("tp1") or 0.0)
+                side_em   = "🟢" if side == "BUY" else "🔴"
+                pnl_em    = "🟩" if pnl >= 0 else "🟥"
+                fb_txt = (
+                    f"{side_em} **{sym} {side}**\n"
+                    f"🪙 **Kirish:** ${entry:,.2f}  |  **Hozirgi:** ${curr:,.2f}\n"
+                    f"{pnl_em} **PnL:** {pnl_s}${pnl:,.2f}\n"
+                    f"🎯 **TP1:** ${tp1:,.2f}  |  🛡️ **SL:** ${sl:,.2f}"
+                )
+                if pos_id:
+                    self.send_trade_message(chat_id, fb_txt, pos_id)
+                else:
+                    self.send_direct_message(chat_id, fb_txt)
+
+    # ──────────────────────────────────────────────────────────────
+    # LONG POLL UPDATE PROCESSOR
+    # ──────────────────────────────────────────────────────────────
+
     def poll_updates(self):
-        """Polls getUpdates to register user chat_ids automatically and handle button commands."""
+        """
+        Algorithm:
+          1. Call getUpdates with offset=last_update_id+1 (long-poll 2s timeout).
+          2. For each update:
+             a. Extract update_id, advance last_update_id.
+             b. Handle `callback_query` (inline button press) — PRIORITY PATH:
+                  i.  Acknowledge immediately with answerCallbackQuery (removes spinner).
+                  ii. Parse callback_data:
+                       - "pos:<pos_id>" → _get_position_live_snapshot(pos_id)
+                         and editMessageText with fresh snapshot + same inline_keyboard.
+             c. Handle `message` / `channel_post` / `edited_message`:
+                  i.  Register new chat_id, send welcome message.
+                  ii. Dispatch text commands to their handlers.
+          3. Save state after any updates.
+        """
         res = self._make_request("getUpdates", {"offset": self.last_update_id + 1, "timeout": 2})
-        if res.get("ok"):
-            updates = res.get("result", [])
-            for u in updates:
-                self.last_update_id = max(self.last_update_id, u.get("update_id", 0))
-                msg = u.get("message") or u.get("channel_post") or u.get("edited_message") or {}
-                chat = msg.get("chat", {})
-                cid = chat.get("id")
-                text = (msg.get("text") or "").strip()
+        if not res.get("ok"):
+            return
 
-                if not cid and "my_chat_member" in u:
-                    cid = u["my_chat_member"].get("chat", {}).get("id")
+        updates = res.get("result", [])
+        for u in updates:
+            self.last_update_id = max(self.last_update_id, u.get("update_id", 0))
 
-                if cid:
-                    is_new = cid not in self.chat_ids
-                    if is_new:
-                        self.chat_ids.add(cid)
-                        self._save_state()
-                        logger.info(f"New Telegram user registered: chat_id={cid}")
-                        self.send_direct_message(
-                            cid, 
-                            f"✅ **APEX QUANT COPYTRADE BOTGA XUSH KELIBSIZ!**\n\n"
-                            f"Barcha avtomatik savdolar, bosqichlar (Stage 1 / Stage 2 / Funded) va real-vaqt xabarnomalari shu botga kelib turadi.\n"
-                            f"💵 **Boshlang'ich Balans:** ${self.account_balance:,.2f} USD\n\n"
-                            f"Pastdagi tugmalar orqali ochiq pozitsiyalarni ko'rishingiz yoki sozlamalarni boshqarishingiz mumkin."
-                        )
+            # ── PATH A: Inline button callback (highest priority) ──────────
+            if "callback_query" in u:
+                cq          = u["callback_query"]
+                cq_id       = cq["id"]
+                cq_data     = cq.get("data", "")
+                cq_chat_id  = cq["message"]["chat"]["id"]
+                cq_msg_id   = cq["message"]["message_id"]
 
-                    # Command / Button Handling
-                    if text in ["📊 OCHIQ POZITSIYALAR", "/positions", "OCHIQ POZITSIYALAR", "POZITSIYALAR", "/open_positions"]:
-                        self.send_direct_message(cid, self.format_open_positions_report())
-                    elif text in ["📈 HISOB HOLATI", "/status", "STATUS", "status", "HISOB HOLATI"]:
-                        self.send_direct_message(cid, self.format_account_status_report())
-                    elif text in ["🛑 STOP AI SIGNALS", "/stop_ai_signals", "STOP AI SIGNALS"]:
-                        self.muted_ai_signal_chat_ids.add(cid)
-                        self._save_state()
-                        self.send_direct_message(
-                            cid,
-                            f"🛑 **AI TAHLILIY SIGNALLARI SIZ UCHUN TO'XTATILDI!**\n\n"
-                            f"Sizga faqat real **ENGINE AUTO TRADE** va pozitsiyalar yopilishi xabarlari keladi. AI tahlil signallari yuborilmaydi."
-                        )
-                    elif text in ["🟢 START AI SIGNALS", "/start_ai_signals", "START AI SIGNALS"]:
-                        if cid in self.muted_ai_signal_chat_ids:
-                            self.muted_ai_signal_chat_ids.remove(cid)
-                            self._save_state()
-                        self.send_direct_message(
-                            cid,
-                            f"🟢 **AI TAHLILIY SIGNALLARI SIZ UCHUN YOQILDI!**\n\n"
-                            f"Endi sizga barcha qo'shimcha AI tahlil signallari va Engine Auto Trade xabarlari yuboriladi."
-                        )
-                    elif text in ["/start", "START", "start"] and not is_new:
-                        self.send_direct_message(
-                            cid,
-                            f"🤖 **APEX QUANT TRADING ENGINE AKTIV!**\n\n"
-                            f"Pastdagi tugmalardan birini tanlang:\n"
-                            f"• **📊 OCHIQ POZITSIYALAR** — Barcha jonli ochiq savdolar va PnL holati\n"
-                            f"• **📈 HISOB HOLATI** — 10K hisob balansi va drawdown ko'rsatkichlari\n"
-                            f"• **🛑/🟢 AI SIGNALS** — Qo'shimcha AI signallarni yoqish/o'chirish"
-                        )
-            if updates:
+                # Always acknowledge immediately (removes the loading spinner in Telegram)
+                self._make_request("answerCallbackQuery", {
+                    "callback_query_id": cq_id,
+                    "text": "⏳ Jonli narxlar olinmoqda...",
+                    "show_alert": False
+                })
+
+                # Register new user if needed
+                if cq_chat_id not in self.chat_ids:
+                    self.chat_ids.add(cq_chat_id)
+                    self._save_state()
+
+                if cq_data.startswith("pos:"):
+                    pos_id   = cq_data[4:]   # strip "pos:" prefix
+                    snapshot = self._get_position_live_snapshot(pos_id)
+                    if snapshot:
+                        # Edit the original trade-open message in-place with live data
+                        self._make_request("editMessageText", {
+                            "chat_id"      : cq_chat_id,
+                            "message_id"   : cq_msg_id,
+                            "text"         : snapshot,
+                            "parse_mode"   : "Markdown",
+                            "reply_markup" : self._build_position_inline_keyboard(pos_id)
+                        })
+                    else:
+                        # Position closed or not found — send ephemeral alert
+                        self._make_request("answerCallbackQuery", {
+                            "callback_query_id": cq_id,
+                            "text": "❌ Pozitsiya topilmadi yoki yopilgan.",
+                            "show_alert": True
+                        })
+                continue   # Done with this update
+
+            # ── PATH B: Regular message / command ─────────────────────────
+            msg  = u.get("message") or u.get("channel_post") or u.get("edited_message") or {}
+            chat = msg.get("chat", {})
+            cid  = chat.get("id")
+            text = (msg.get("text") or "").strip()
+
+            if not cid and "my_chat_member" in u:
+                cid = u["my_chat_member"].get("chat", {}).get("id")
+
+            if not cid:
+                continue
+
+            is_new = cid not in self.chat_ids
+            if is_new:
+                self.chat_ids.add(cid)
                 self._save_state()
+                logger.info(f"New Telegram user registered: chat_id={cid}")
+                self.send_direct_message(
+                    cid,
+                    f"✅ **APEX QUANT COPYTRADE BOTGA XUSH KELIBSIZ!**\n\n"
+                    f"Barcha avtomatik savdolar, bosqichlar (Stage 1 / Stage 2 / Funded) va "
+                    f"real-vaqt xabarnomalari shu botga kelib turadi.\n"
+                    f"💵 **Boshlang'ich Balans:** ${self.account_balance:,.2f} USD\n\n"
+                    f"Pastdagi tugmalar orqali ochiq pozitsiyalarni ko'ring yoki sozlamalarni boshqaring."
+                )
 
-    def send_direct_message(self, chat_id: int, text: str, reply_to_message_id: Optional[int] = None) -> Optional[int]:
+            # Command dispatch table
+            if text in ["\U0001f4ca OCHIQ POZITSIYALAR", "/positions", "OCHIQ POZITSIYALAR", "POZITSIYALAR", "/open_positions"]:
+                self.send_positions_individual(cid)
+            elif text in ["📈 HISOB HOLATI", "/status", "STATUS", "status", "HISOB HOLATI"]:
+                self.send_direct_message(cid, self.format_account_status_report())
+            elif text in ["🤖 ENGINE STATS", "/engine_stats", "ENGINE STATS", "engine stats"]:
+                self.send_direct_message(cid, self.format_engine_stats())
+            elif text in ["🛡️ E2 SHADOW STATS", "/shadow_stats", "E2 SHADOW STATS", "shadow stats", "SHADOW STATS"]:
+                self.send_direct_message(cid, self.format_shadow_stats())
+            elif text in ["📡 AI SIGNAL STATS", "/ai_stats", "AI SIGNAL STATS", "ai stats"]:
+                self.send_direct_message(cid, self.format_ai_stats())
+            elif text in ["🛑 STOP AI SIGNALS", "/stop_ai_signals", "STOP AI SIGNALS"]:
+                self.muted_ai_signal_chat_ids.add(cid)
+                self._save_state()
+                self.send_direct_message(
+                    cid,
+                    f"🛑 **AI TAHLILIY SIGNALLARI SIZ UCHUN TO'XTATILDI!**\n\n"
+                    f"Sizga faqat real **ENGINE AUTO TRADE** va pozitsiyalar yopilishi xabarlari keladi."
+                )
+            elif text in ["🟢 START AI SIGNALS", "/start_ai_signals", "START AI SIGNALS"]:
+                self.muted_ai_signal_chat_ids.discard(cid)
+                self._save_state()
+                self.send_direct_message(
+                    cid,
+                    f"🟢 **AI TAHLILIY SIGNALLARI SIZ UCHUN YOQILDI!**\n\n"
+                    f"Endi sizga barcha qo'shimcha AI tahlil signallari va Engine Auto Trade xabarlari yuboriladi."
+                )
+            elif text in ["/start", "START", "start"] and not is_new:
+                self.send_direct_message(
+                    cid,
+                    f"🤖 **APEX QUANT TRADING ENGINE AKTIV!**\n\n"
+                    f"Pastdagi tugmalardan birini tanlang:\n"
+                    f"• **📊 OCHIQ POZITSIYALAR** — Barcha jonli ochiq savdolar va PnL holati\n"
+                    f"• **📈 HISOB HOLATI** — 10K hisob balansi va drawdown ko'rsatkichlari\n"
+                    f"• **🛑/🟢 AI SIGNALS** — Qo'shimcha AI signallarni yoqish/o'chirish"
+                )
+
+        if updates:
+            self._save_state()
+
+    # ──────────────────────────────────────────────────────────────
+    # SEND HELPERS
+    # ──────────────────────────────────────────────────────────────
+
+    def send_direct_message(
+        self,
+        chat_id: int,
+        text: str,
+        reply_to_message_id: Optional[int] = None
+    ) -> Optional[int]:
+        """Sends a plain message with the persistent reply keyboard."""
         payload = {
-            "chat_id": chat_id,
-            "text": text,
-            "parse_mode": "Markdown",
-            "reply_markup": self.get_main_keyboard()
+            "chat_id"      : chat_id,
+            "text"         : text,
+            "parse_mode"   : "Markdown",
+            "reply_markup" : self.get_main_keyboard()
         }
         if reply_to_message_id:
             payload["reply_to_message_id"] = reply_to_message_id
-
         res = self._make_request("sendMessage", payload)
         if res.get("ok"):
             return res["result"]["message_id"]
+        logger.error(f"sendMessage failed: {res.get('description', 'unknown')}")
+        return None
+
+    def send_trade_message(
+        self,
+        chat_id: int,
+        text: str,
+        pos_id: str,
+        reply_to_message_id: Optional[int] = None
+    ) -> Optional[int]:
+        """
+        Sends a trade notification with BOTH:
+          - Inline keyboard: [📊 Jonli Holat] [🌐 Brauzerda Ko'rish]
+          - Persistent reply keyboard at bottom
+
+        Algorithm:
+          The inline_keyboard is embedded inside the trade message itself.
+          This allows the user to tap 📊 Jonli Holat directly on the notification,
+          triggering a callback_query which editMessageText in-place with live data,
+          giving a seamless real-time update without scrolling up to the keyboard.
+        """
+        payload = {
+            "chat_id"      : chat_id,
+            "text"         : text,
+            "parse_mode"   : "Markdown",
+            "reply_markup" : self._build_position_inline_keyboard(pos_id)
+        }
+        if reply_to_message_id:
+            payload["reply_to_message_id"] = reply_to_message_id
+        res = self._make_request("sendMessage", payload)
+        if res.get("ok"):
+            return res["result"]["message_id"]
+        logger.error(f"send_trade_message failed: {res.get('description', 'unknown')}")
         return None
 
     def send_trade_open_notification(self, position: Dict[str, Any]):
@@ -347,10 +896,11 @@ class TelegramNotifier:
 
         pos_id = position.get("id", "pos_001")
         for cid in list(self.chat_ids):
-            msg_id = self.send_direct_message(cid, text)
+            # Use send_trade_message so every notification carries inline buttons
+            msg_id = self.send_trade_message(cid, text, pos_id)
             if msg_id:
                 self.message_map[pos_id] = msg_id
-        
+
         self._save_state()
 
     def send_trade_update_notification(self, pos_id: str, event_type: str, details: Dict[str, Any]):
