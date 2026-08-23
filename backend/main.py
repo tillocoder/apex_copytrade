@@ -976,16 +976,219 @@ async def get_analytics_performance():
         "heatmapData": heatmap_matrix
     }
 
+# Multi-User Trade Journal Storage & Analytics Engine
+JOURNAL_DB_FILE = os.path.join(os.path.dirname(__file__), "data", "user_journals.json")
+
+class JournalTradeCreate(BaseModel):
+    userId: Optional[str] = "usr_apex_01"
+    date: str
+    symbol: str
+    direction: str  # "Long" | "Short" | "LONG" | "SHORT"
+    riskPct: float = 1.0
+    entryPrice: float
+    exitPrice: float
+    sl: Optional[float] = None
+    tp: Optional[float] = None
+    emotion: Optional[str] = "Xotirjam"
+    reason: Optional[str] = ""
+    lesson: Optional[str] = ""
+
+def _normalize_user_id(raw_id: Optional[str]) -> str:
+    if not raw_id:
+        return "usr_apex_01"
+    cleaned = str(raw_id).strip().lower().replace("@", "_").replace(".", "_")
+    return cleaned if cleaned else "usr_apex_01"
+
+def _load_user_journals() -> Dict[str, List[Dict[str, Any]]]:
+    try:
+        if os.path.exists(JOURNAL_DB_FILE):
+            with open(JOURNAL_DB_FILE, "r", encoding="utf-8") as f:
+                return json.load(f)
+    except Exception as e:
+        print(f"[Journal] Error reading journal DB: {e}")
+    return {}
+
+def _save_user_journals(data: Dict[str, List[Dict[str, Any]]]):
+    try:
+        os.makedirs(os.path.dirname(JOURNAL_DB_FILE), exist_ok=True)
+        with open(JOURNAL_DB_FILE, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+    except Exception as e:
+        print(f"[Journal] Error writing journal DB: {e}")
+
+def _calc_journal_stats(trades: List[Dict[str, Any]]) -> Dict[str, Any]:
+    total_trades = len(trades)
+    if total_trades == 0:
+        return {
+            "totalTrades": 0,
+            "winRate": 0.0,
+            "totalPnlPct": 0.0,
+            "avgRR": "—",
+            "currentStreak": "—",
+            "wins": 0,
+            "losses": 0
+        }
+    
+    wins = sum(1 for t in trades if float(t.get("pnlPct", 0) or 0) > 0)
+    losses = sum(1 for t in trades if float(t.get("pnlPct", 0) or 0) < 0)
+    win_rate = round((wins / total_trades) * 100, 1)
+    total_pnl = round(sum(float(t.get("pnlPct", 0) or 0) for t in trades), 2)
+    
+    rr_values = []
+    for t in trades:
+        entry = float(t.get("entryPrice", 0) or 0)
+        exit_p = float(t.get("exitPrice", 0) or 0)
+        sl = float(t.get("sl", 0) or 0) if t.get("sl") is not None else 0
+        direction = str(t.get("direction", "LONG")).upper()
+        if sl > 0 and entry > 0 and exit_p > 0:
+            if "LONG" in direction and entry > sl:
+                risk = entry - sl
+                reward = exit_p - entry
+                if risk > 0 and reward > 0:
+                    rr_values.append(reward / risk)
+            elif "SHORT" in direction and sl > entry:
+                risk = sl - entry
+                reward = entry - exit_p
+                if risk > 0 and reward > 0:
+                    rr_values.append(reward / risk)
+    
+    avg_rr_str = f"1:{sum(rr_values)/len(rr_values):.1f}" if rr_values else "—"
+    
+    streak_str = "—"
+    if trades:
+        last_trade = trades[0]
+        pnl = float(last_trade.get("pnlPct", 0) or 0)
+        if pnl > 0:
+            count = 0
+            for t in trades:
+                if float(t.get("pnlPct", 0) or 0) > 0:
+                    count += 1
+                else:
+                    break
+            streak_str = f"{count} g'alaba"
+        elif pnl < 0:
+            count = 0
+            for t in trades:
+                if float(t.get("pnlPct", 0) or 0) < 0:
+                    count += 1
+                else:
+                    break
+            streak_str = f"{count} mag'lubiyat"
+        else:
+            streak_str = "0 durang"
+
+    return {
+        "totalTrades": total_trades,
+        "winRate": win_rate,
+        "totalPnlPct": total_pnl,
+        "avgRR": avg_rr_str,
+        "currentStreak": streak_str,
+        "wins": wins,
+        "losses": losses
+    }
+
 @app.get("/api/v1/journal/trades")
-async def get_journal_trades():
-    """Returns real trade history from Quant Engine backtest ledger & live execution logs."""
-    trade_logs = []
-    if LATEST_BACKTEST_RESULT and "tradeLogs" in LATEST_BACKTEST_RESULT:
-        trade_logs = LATEST_BACKTEST_RESULT["tradeLogs"]
+async def get_journal_trades(user_id: Optional[str] = Query(default="usr_apex_01")):
+    """Returns user-specific isolated trade journal entries and statistics."""
+    norm_id = _normalize_user_id(user_id)
+    all_journals = _load_user_journals()
+    user_trades = all_journals.get(norm_id, [])
+    
+    # Fallback to usr_apex_01 sample if empty and requested owner
+    if not user_trades and norm_id in ["usr_apex_01", "tillo4079_gmail_com"]:
+        user_trades = all_journals.get("usr_apex_01", [])
+
+    stats = _calc_journal_stats(user_trades)
     return {
         "status": "SUCCESS",
-        "totalTrades": len(trade_logs),
-        "trades": trade_logs[-100:] if trade_logs else []
+        "userId": norm_id,
+        "totalTrades": len(user_trades),
+        "trades": user_trades,
+        "stats": stats
+    }
+
+@app.post("/api/v1/journal/trades")
+async def add_journal_trade(payload: JournalTradeCreate):
+    """Creates and calculates a new trade journal entry isolated to the user."""
+    norm_id = _normalize_user_id(payload.userId)
+    direction_upper = payload.direction.strip().upper()
+    is_long = "LONG" in direction_upper or direction_upper == "BUY"
+    
+    # Calculate PnL %
+    entry = float(payload.entryPrice)
+    exit_p = float(payload.exitPrice)
+    if entry <= 0:
+        pnl_pct = 0.0
+    elif is_long:
+        pnl_pct = round(((exit_p - entry) / entry) * 100.0, 2)
+    else:
+        pnl_pct = round(((entry - exit_p) / entry) * 100.0, 2)
+    
+    trade_id = f"tr_{int(time.time() * 1000)}"
+    new_trade = {
+        "id": trade_id,
+        "date": payload.date,
+        "symbol": payload.symbol.strip().upper(),
+        "direction": "LONG" if is_long else "SHORT",
+        "riskPct": float(payload.riskPct),
+        "entryPrice": entry,
+        "exitPrice": exit_p,
+        "sl": float(payload.sl) if payload.sl is not None else None,
+        "tp": float(payload.tp) if payload.tp is not None else None,
+        "emotion": payload.emotion or "Xotirjam",
+        "reason": payload.reason or "",
+        "lesson": payload.lesson or "",
+        "pnlPct": pnl_pct,
+        "isWin": pnl_pct > 0,
+        "createdAt": int(time.time() * 1000)
+    }
+    
+    all_journals = _load_user_journals()
+    if norm_id not in all_journals:
+        all_journals[norm_id] = []
+    
+    # Prepend new trade so latest is first
+    all_journals[norm_id].insert(0, new_trade)
+    _save_user_journals(all_journals)
+    
+    stats = _calc_journal_stats(all_journals[norm_id])
+    return {
+        "status": "SUCCESS",
+        "trade": new_trade,
+        "stats": stats
+    }
+
+@app.delete("/api/v1/journal/trades/{trade_id}")
+async def delete_journal_trade(trade_id: str, user_id: Optional[str] = Query(default="usr_apex_01")):
+    """Deletes a specific trade entry for the user."""
+    norm_id = _normalize_user_id(user_id)
+    all_journals = _load_user_journals()
+    user_trades = all_journals.get(norm_id, [])
+    
+    updated_trades = [t for t in user_trades if t.get("id") != trade_id]
+    all_journals[norm_id] = updated_trades
+    _save_user_journals(all_journals)
+    
+    stats = _calc_journal_stats(updated_trades)
+    return {
+        "status": "SUCCESS",
+        "deletedId": trade_id,
+        "stats": stats
+    }
+
+@app.delete("/api/v1/journal/trades-clear-all")
+async def clear_all_journal_trades(user_id: Optional[str] = Query(default="usr_apex_01")):
+    """Clears all trade journal entries for the specific user."""
+    norm_id = _normalize_user_id(user_id)
+    all_journals = _load_user_journals()
+    all_journals[norm_id] = []
+    _save_user_journals(all_journals)
+    
+    stats = _calc_journal_stats([])
+    return {
+        "status": "SUCCESS",
+        "message": f"All trades cleared for user {norm_id}",
+        "stats": stats
     }
 
 @app.get("/api/v1/system/metrics")

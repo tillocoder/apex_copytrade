@@ -1,0 +1,21 @@
+{
+  "usr_apex_01": [
+    {
+      "id": "tr_20260823_001",
+      "date": "2026-08-23",
+      "symbol": "GG",
+      "direction": "LONG",
+      "riskPct": 1.5,
+      "entryPrice": 3500.0,
+      "exitPrice": 3600.0,
+      "sl": 3450.0,
+      "tp": null,
+      "emotion": "FOMO / Ochko'zlik",
+      "reason": "SMC Breakout & Liquidity Sweep retest",
+      "lesson": "Rejaga muvofiq kutilgan zonani sabr bilan kutish lozim edi",
+      "pnlPct": 2.86,
+      "isWin": true,
+      "createdAt": 1787476800000
+    }
+  ]
+}
