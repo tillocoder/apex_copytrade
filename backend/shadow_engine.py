@@ -483,7 +483,7 @@ class ShadowExecutionTracker:
             regime_trades[t.get("htf_trend", "NEUTRAL")].append(t["pnl"])
             
         asset_summary = {}
-        for sym in ["BTC/USDT", "ETH/USDT", "SOL/USDT"]:
+        for sym in ["BTC/USDT", "ETH/USDT"]:
             p_list = asset_trades.get(sym, [])
             w_cnt = sum(1 for p in p_list if p > 0)
             cnt = len(p_list)

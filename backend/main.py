@@ -292,47 +292,148 @@ async def monitor_ai_signals_task():
                 side = s.get("side", "BUY").upper()
                 entry = float(s.get("entry", 0.0) or 0.0)
                 sl = float(s.get("sl", 0.0) or 0.0)
-                # New signals expose staged targets (TP1/TP2/TP3).  TP1 is the
-                # first executable target; retain `tp` as a legacy fallback.
-                tp = float(s.get("tp1", s.get("tp", 0.0)) or 0.0)
+                tp1 = float(s.get("tp1", s.get("tp", 0.0)) or 0.0)
+                tp2 = float(s.get("tp2", 0.0) or 0.0)
+                tp3 = float(s.get("tp3", 0.0) or 0.0)
                 msg_id = s.get("telegram_message_id")
 
-                # Never evaluate incomplete price levels.  A missing target must
-                # not be interpreted as $0.00 and immediately close a BUY trade.
-                if entry <= 0 or sl <= 0 or tp <= 0:
+                if entry <= 0 or sl <= 0 or tp1 <= 0:
                     continue
 
-                hit_type = None
-                pnl_pct = 0.0
-
+                # Multi-Tier Stage Evaluation (TP1 -> Breakeven -> TP2 -> TP3)
                 if side == "BUY":
-                    if current_price >= tp:
-                        hit_type = "TP"
-                        pnl_pct = ((tp - entry) / entry) * 100.0
-                    elif current_price <= sl:
-                        hit_type = "SL"
-                        pnl_pct = ((sl - entry) / entry) * 100.0
-                elif side == "SELL":
-                    if current_price <= tp:
-                        hit_type = "TP"
-                        pnl_pct = ((entry - tp) / entry) * 100.0
-                    elif current_price >= sl:
-                        hit_type = "SL"
-                        pnl_pct = ((entry - sl) / entry) * 100.0
+                    # Stage 1: Check TP1
+                    if current_price >= tp1 and not s.get("tp1_hit"):
+                        s["tp1_hit"] = True
+                        s["original_sl"] = sl
+                        s["sl"] = entry # Move SL to Breakeven
+                        pnl_pct = ((tp1 - entry) / entry) * 100.0
+                        updated = True
+                        print(f"[AI MONITOR] Signal {s.get('id')} ({sym}) reached TP1 at ${current_price:,.2f}! SL moved to Breakeven.")
+                        if msg_id:
+                            try:
+                                await run_async_in_executor(
+                                    telegram_notifier.send_ai_signal_update_notification,
+                                    msg_id, sym, "TP1", {"price": current_price, "pnl_pct": pnl_pct, "entry": entry, "tp2": tp2}
+                                )
+                            except Exception as ne:
+                                print(f"[AI MONITOR] TG TP1 error: {ne}")
 
-                if hit_type:
-                    s["status"] = f"{hit_type}_HIT"
-                    s["exit_timestamp"] = time.time()
-                    updated = True
-                    print(f"[AI MONITOR] Signal {s['id']} ({sym}) hit {hit_type} at ${current_price:,.2f}. PnL: {pnl_pct:.2f}%")
-                    if msg_id:
-                        try:
-                            await run_async_in_executor(
-                                telegram_notifier.send_ai_signal_update_notification,
-                                msg_id, sym, hit_type, {"price": current_price, "pnl_pct": pnl_pct}
-                            )
-                        except Exception as ne:
-                            print(f"[AI MONITOR] Error sending TG reply: {ne}")
+                    # Stage 2: Check TP2
+                    if tp2 > 0 and current_price >= tp2 and not s.get("tp2_hit"):
+                        s["tp2_hit"] = True
+                        pnl_pct = ((tp2 - entry) / entry) * 100.0
+                        updated = True
+                        print(f"[AI MONITOR] Signal {s.get('id')} ({sym}) reached TP2 at ${current_price:,.2f}!")
+                        if msg_id:
+                            try:
+                                await run_async_in_executor(
+                                    telegram_notifier.send_ai_signal_update_notification,
+                                    msg_id, sym, "TP2", {"price": current_price, "pnl_pct": pnl_pct, "entry": entry, "tp3": tp3}
+                                )
+                            except Exception as ne:
+                                print(f"[AI MONITOR] TG TP2 error: {ne}")
+
+                    # Stage 3: Check TP3 (Final Runner Victory)
+                    if tp3 > 0 and current_price >= tp3:
+                        s["status"] = "TP_HIT"
+                        s["final_target"] = "TP3"
+                        s["exit_timestamp"] = time.time()
+                        pnl_pct = ((tp3 - entry) / entry) * 100.0
+                        updated = True
+                        print(f"[AI MONITOR] Signal {s.get('id')} ({sym}) reached TP3 RUNNER at ${current_price:,.2f}!")
+                        if msg_id:
+                            try:
+                                await run_async_in_executor(
+                                    telegram_notifier.send_ai_signal_update_notification,
+                                    msg_id, sym, "TP3", {"price": current_price, "pnl_pct": pnl_pct}
+                                )
+                            except Exception as ne:
+                                print(f"[AI MONITOR] TG TP3 error: {ne}")
+
+                    # Stage 4: Check Stop Loss / Breakeven
+                    elif current_price <= s["sl"]:
+                        hit_type = "BREAKEVEN" if s.get("tp1_hit") else "SL"
+                        pnl_pct = 0.0 if hit_type == "BREAKEVEN" else (((s['sl'] - entry) / entry) * 100.0)
+                        s["status"] = "TP_HIT" if hit_type == "BREAKEVEN" else "SL_HIT"
+                        s["exit_timestamp"] = time.time()
+                        updated = True
+                        print(f"[AI MONITOR] Signal {s.get('id')} ({sym}) hit {hit_type} at ${current_price:,.2f}. PnL: {pnl_pct:.2f}%")
+                        if msg_id:
+                            try:
+                                await run_async_in_executor(
+                                    telegram_notifier.send_ai_signal_update_notification,
+                                    msg_id, sym, hit_type, {"price": current_price, "pnl_pct": pnl_pct}
+                                )
+                            except Exception as ne:
+                                print(f"[AI MONITOR] TG {hit_type} error: {ne}")
+
+                elif side == "SELL":
+                    # Stage 1: Check TP1
+                    if current_price <= tp1 and not s.get("tp1_hit"):
+                        s["tp1_hit"] = True
+                        s["original_sl"] = sl
+                        s["sl"] = entry # Move SL to Breakeven
+                        pnl_pct = ((entry - tp1) / entry) * 100.0
+                        updated = True
+                        print(f"[AI MONITOR] Signal {s.get('id')} ({sym}) reached TP1 at ${current_price:,.2f}! SL moved to Breakeven.")
+                        if msg_id:
+                            try:
+                                await run_async_in_executor(
+                                    telegram_notifier.send_ai_signal_update_notification,
+                                    msg_id, sym, "TP1", {"price": current_price, "pnl_pct": pnl_pct, "entry": entry, "tp2": tp2}
+                                )
+                            except Exception as ne:
+                                print(f"[AI MONITOR] TG TP1 error: {ne}")
+
+                    # Stage 2: Check TP2
+                    if tp2 > 0 and current_price <= tp2 and not s.get("tp2_hit"):
+                        s["tp2_hit"] = True
+                        pnl_pct = ((entry - tp2) / entry) * 100.0
+                        updated = True
+                        print(f"[AI MONITOR] Signal {s.get('id')} ({sym}) reached TP2 at ${current_price:,.2f}!")
+                        if msg_id:
+                            try:
+                                await run_async_in_executor(
+                                    telegram_notifier.send_ai_signal_update_notification,
+                                    msg_id, sym, "TP2", {"price": current_price, "pnl_pct": pnl_pct, "entry": entry, "tp3": tp3}
+                                )
+                            except Exception as ne:
+                                print(f"[AI MONITOR] TG TP2 error: {ne}")
+
+                    # Stage 3: Check TP3 (Final Runner Victory)
+                    if tp3 > 0 and current_price <= tp3:
+                        s["status"] = "TP_HIT"
+                        s["final_target"] = "TP3"
+                        s["exit_timestamp"] = time.time()
+                        pnl_pct = ((entry - tp3) / entry) * 100.0
+                        updated = True
+                        print(f"[AI MONITOR] Signal {s.get('id')} ({sym}) reached TP3 RUNNER at ${current_price:,.2f}!")
+                        if msg_id:
+                            try:
+                                await run_async_in_executor(
+                                    telegram_notifier.send_ai_signal_update_notification,
+                                    msg_id, sym, "TP3", {"price": current_price, "pnl_pct": pnl_pct}
+                                )
+                            except Exception as ne:
+                                print(f"[AI MONITOR] TG TP3 error: {ne}")
+
+                    # Stage 4: Check Stop Loss / Breakeven
+                    elif current_price >= s["sl"]:
+                        hit_type = "BREAKEVEN" if s.get("tp1_hit") else "SL"
+                        pnl_pct = 0.0 if hit_type == "BREAKEVEN" else (((entry - s['sl']) / entry) * 100.0)
+                        s["status"] = "TP_HIT" if hit_type == "BREAKEVEN" else "SL_HIT"
+                        s["exit_timestamp"] = time.time()
+                        updated = True
+                        print(f"[AI MONITOR] Signal {s.get('id')} ({sym}) hit {hit_type} at ${current_price:,.2f}. PnL: {pnl_pct:.2f}%")
+                        if msg_id:
+                            try:
+                                await run_async_in_executor(
+                                    telegram_notifier.send_ai_signal_update_notification,
+                                    msg_id, sym, hit_type, {"price": current_price, "pnl_pct": pnl_pct}
+                                )
+                            except Exception as ne:
+                                print(f"[AI MONITOR] TG {hit_type} error: {ne}")
 
             if updated:
                 ai_signal_engine.save_signals_history(history)

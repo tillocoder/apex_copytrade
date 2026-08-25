@@ -86,7 +86,7 @@ class TelegramNotifier:
             return (
                 f"ℹ️ **HOZIRDA OCHIQ POZITSIYALAR YO'Q**\n"
                 f"==================================\n"
-                f"Tizim bozor dinamikasini (BTC, ETH, SOL) real vaqt rejimida doimiy tahlil qilmoqda.\n"
+                f"Tizim bozor dinamikasini (BTC, ETH) real vaqt rejimida doimiy tahlil qilmoqda.\n"
                 f"Yuqori ehtimolli setup aniqlanishi bilan bitim avtomatik ochiladi va sizga xabarnoma keladi.\n\n"
                 f"💵 **Jami Equity:** ${current_equity:,.2f} USD\n"
                 f"💰 **Realized PnL:** +${realized_pnl:,.2f} USD"
@@ -251,7 +251,7 @@ class TelegramNotifier:
                 f"📡 **AI SIGNAL STATS**\n"
                 f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
                 f"Hozircha AI signal tarixi yo'q.\n"
-                f"Tizim BTC/ETH/SOL ni 5 daqiqada bir skanerlaydi."
+                f"Tizim BTC/ETH ni 5 daqiqada bir skanerlaydi."
             )
 
         tp_hit   = [s for s in history if "TP"  in str(s.get("status", ""))]
@@ -580,7 +580,7 @@ class TelegramNotifier:
                 chat_id,
                 f"\u2139\ufe0f **HOZIRDA OCHIQ POZITSIYALAR YO'Q**\n"
                 f"\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n"
-                f"Tizim BTC, ETH, SOL ni real-vaqtda tahlil qilmoqda.\n"
+                f"Tizim BTC, ETH ni real-vaqtda tahlil qilmoqda.\n"
                 f"Yuqori ehtimolli setup aniqlansa avtomatik ochiladi va Telegram ga xabarnoma keladi.\n\n"
                 f"\U0001f4b5 **Equity:** ${current_equity:,.2f} USD\n"
                 f"\U0001f4b0 **Realized PnL:** +${realized_pnl:,.2f} USD"
@@ -1050,36 +1050,49 @@ class TelegramNotifier:
 
     def send_ai_signal_notification(self, signal: Dict[str, Any]) -> Optional[int]:
         """
-        Sends a Telegram notification when an additional AI signal is detected.
+        Sends a high-definition institutional AI trade signal notification to Telegram.
         """
         self.poll_updates()
         if not self.chat_ids:
             logger.warning("No chat_ids registered in TelegramNotifier. Cannot send AI signal.")
             return None
 
-        side_emoji = "🟢" if signal.get("side", "BUY").upper() == "BUY" else "🔴"
-        side_text = signal.get("side", "BUY").upper()
+        side = signal.get("side", "BUY").upper()
+        side_emoji = "🟢 BUY (LONG)" if side == "BUY" else "🔴 SELL (SHORT)"
         symbol = signal.get("symbol", "BTC/USDT")
-        entry = signal.get("entry", 0.0)
-        sl = signal.get("sl", 0.0)
-        tp1 = signal.get("tp1", signal.get("tp", 0.0))
-        tp2 = signal.get("tp2", 0.0)
-        tp3 = signal.get("tp3", 0.0)
-        ai_score = signal.get("aiScore", 80.0)
-        prob = signal.get("probability", 80.0)
-        reason = signal.get("reasoning", "Market structure alignment.")
+        entry = float(signal.get("entry", 0.0))
+        sl = float(signal.get("sl", 0.0))
+        tp1 = float(signal.get("tp1", signal.get("tp", 0.0)))
+        tp2 = float(signal.get("tp2", 0.0))
+        tp3 = float(signal.get("tp3", 0.0))
+        rr = signal.get("rr", 2.5)
+        ai_score = signal.get("aiScore", signal.get("confidence", 85.0))
+        setup_type = signal.get("setupType", "Smart Money Setup")
+        regime = signal.get("regime", "TRENDING")
+        source = signal.get("source", "GEMINI AI & QUANT ENGINE")
+        reason = signal.get("reasoning", "Multi-timeframe liquidity sweep and structural alignment.")
+
+        sl_pct = abs((entry - sl) / entry * 100) if entry > 0 else 0
+        tp1_pct = abs((tp1 - entry) / entry * 100) if entry > 0 else 0
+        tp2_pct = abs((tp2 - entry) / entry * 100) if entry > 0 else 0
+        tp3_pct = abs((tp3 - entry) / entry * 100) if entry > 0 else 0
 
         text = (
-            f"🔮 **Qoshimcha AI signal aniqlandi — {symbol} {side_text} {side_emoji}**\n"
-            f"==================================\n"
-            f"🪙 **Kirish narxi:** ${entry:,.2f}\n"
-            f"🛡️ **Stop Loss:** ${sl:,.2f}\n"
-            f"🎯 **TP1:** ${tp1:,.2f}\n"
-            f"🎯 **TP2:** ${tp2:,.2f}\n"
-            f"🎯 **TP3:** ${tp3:,.2f}\n"
-            f"📈 **AI Ishonch:** {ai_score}% (Confluence: {prob}%)\n\n"
-            f"📝 **Asos:** {reason}\n\n"
-            f"⚠️ *Bu shunchaki qo'shimcha AI tahlil signalidir. Tizim avtomatik tarzda narxni kuzatadi va natijasini xabar beradi.*"
+            f"🎯 **YANGI AI SIGNAL ANIQLANDI — {symbol}**\n"
+            f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+            f"📊 **Yo'nalish:** {side_emoji}\n"
+            f"📍 **Setup:** {setup_type}\n"
+            f"⚡ **Bozor Rejimi:** {regime}\n\n"
+            f"📈 **Kirish Narxi (Entry):** ${entry:,.2f}\n"
+            f"🛑 **Dinamik Stop Loss (SL):** ${sl:,.2f} (-{sl_pct:.2f}%)\n"
+            f"🎯 **Take Profit 1 (50% Scale):** ${tp1:,.2f} (+{tp1_pct:.2f}% | 1:1.5 RR)\n"
+            f"🎯 **Take Profit 2 (Asosiy Target):** ${tp2:,.2f} (+{tp2_pct:.2f}% | 1:{rr} RR)\n"
+            f"🎯 **Take Profit 3 (Runner):** ${tp3:,.2f} (+{tp3_pct:.2f}%)\n\n"
+            f"🧠 **AI / Quant Ishonch:** {ai_score}%\n"
+            f"🔬 **Tahlilchi:** {source}\n"
+            f"💡 **Institutsional Mantiq:** {reason}\n"
+            f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+            f"ℹ️ _Tizim real vaqtda narxni kuzatib boradi va har bir TP/SL holatida to'g'ridan-to'g'ri xabarnoma yuboradi._"
         )
 
         first_msg_id = None
@@ -1092,37 +1105,66 @@ class TelegramNotifier:
                 first_msg_id = msg_id
         return first_msg_id
 
-    def send_ai_signal_update_notification(self, reply_id: int, symbol: str, event_type: str, details: Dict[str, Any]):
+    def send_ai_signal_update_notification(self, reply_id: Optional[int], symbol: str, event_type: str, details: Dict[str, Any]):
         """
-        Sends a reply notification to the original AI signal message when SL or TP is hit.
+        Sends real-time stage updates (TP1, TP2, TP3, BREAKEVEN, SL) to Telegram.
         """
         self.poll_updates()
-        if not self.chat_ids or not reply_id:
+        if not self.chat_ids:
             return
 
         pnl_pct = details.get("pnl_pct", 0.0)
         pnl_str = f"+{pnl_pct:.2f}%" if pnl_pct >= 0 else f"{pnl_pct:.2f}%"
         current_price = details.get("price", 0.0)
+        entry = details.get("entry", 0.0)
+        next_target = details.get("tp2") or details.get("tp3")
 
-        if event_type == "TP":
+        if event_type == "TP1":
             text = (
-                f"🎯 **AI SIGNAL: TAKE PROFIT ERISHILDI! — {symbol} 🟢**\n"
-                f"----------------------------------\n"
-                f"💰 Yakuniy Foyda (AI): {pnl_str}\n"
-                f"📈 Chiqish narxi: ${current_price:,.2f}\n"
-                f"🛡️ AI signal muvaffaqiyatli yakunlandi."
+                f"🎯 **AI SIGNAL: TAKE PROFIT 1 ERISHILDI! — {symbol} 🟢**\n"
+                f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+                f"💰 **Qisman Foyda (50%):** {pnl_str}\n"
+                f"💵 **Chiqish narxi:** ${current_price:,.2f}\n"
+                f"🛡 **Xavfsizlik:** Stop Loss **Breakeven** (${entry:,.2f}) ga surildi! Endi bu bitim 100% xavfsiz (0% risk).\n"
+                f"🚀 **Keyingi maqsad:** TP2 (${details.get('tp2', 0.0):,.2f}) kutilmoqda."
             )
-        else:
+        elif event_type == "TP2":
+            text = (
+                f"🏆 **AI SIGNAL: ASOSIY MAQSAD (TP2) ERISHILDI! — {symbol} 🚀**\n"
+                f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+                f"💰 **Asosiy Foyda:** {pnl_str}\n"
+                f"💵 **Amaldagi narx:** ${current_price:,.2f}\n"
+                f"💎 **Holat:** Umumiy pozitsiyaning 80% foydasi fiksatsiya qilindi. Qolgan qismi Runner TP3 (${details.get('tp3', 0.0):,.2f}) sari davom etmoqda!"
+            )
+        elif event_type == "TP3":
+            text = (
+                f"👑 **AI SIGNAL: TO'LIQ G'ALABA (TP3 RUNNER)! — {symbol} 💎**\n"
+                f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+                f"🔥 **Maksimal Foyda:** {pnl_str}\n"
+                f"💵 **Yakuniy narx:** ${current_price:,.2f}\n"
+                f"✅ **Signal to'liq va muvaffaqiyatli yakunlandi!**"
+            )
+        elif event_type == "BREAKEVEN":
+            text = (
+                f"🛡 **AI SIGNAL: BREAKEVEN (XAVFSIZ) DA YOPIQ — {symbol}**\n"
+                f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+                f"✅ **Natija:** $0 Zarar (TP1 da foyda olingan, qolgan qismi kirish narxida yopildi).\n"
+                f"💵 **Chiqish narxi:** ${current_price:,.2f}"
+            )
+        else: # SL
             text = (
                 f"🛑 **AI SIGNAL: STOP LOSS URILDI — {symbol} 🔴**\n"
-                f"----------------------------------\n"
-                f"🔻 Yakuniy Zarar (AI): {pnl_str}\n"
-                f"📉 Chiqish narxi: ${current_price:,.2f}\n"
-                f"🛡️ AI risk boshqaruvi signalni to'xtatdi."
+                f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+                f"📉 **Yakuniy Zarar:** {pnl_str}\n"
+                f"💵 **Chiqish narxi:** ${current_price:,.2f}\n"
+                f"🛡 _AI risk boshqaruvi kapitalni himoya qilish uchun signalni yopdi._"
             )
 
         for cid in list(self.chat_ids):
-            self.send_direct_message(cid, text, reply_to_message_id=reply_id)
+            if reply_id:
+                self.send_direct_message(cid, text, reply_to_message_id=reply_id)
+            else:
+                self.send_direct_message(cid, text)
 
 # Singleton instance
 telegram_notifier = TelegramNotifier()

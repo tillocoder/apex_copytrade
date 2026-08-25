@@ -1,1 +1,8362 @@
-[]
+[
+  {
+    "id": "sig_btcusdt_1787635907",
+    "symbol": "BTC/USDT",
+    "side": "SELL",
+    "timeframe": "M15",
+    "setupType": "LIQUIDITY_SWEEP",
+    "regime": "TREND_UP",
+    "entry": 80730.0,
+    "sl": 81105.0208,
+    "tp": 80167.4688,
+    "tp1": 80167.4688,
+    "tp2": 79604.9376,
+    "tp3": 79042.4064,
+    "rr": 3.0,
+    "quantScore": 66.1,
+    "aiReviewScore": 63.5,
+    "factorScore": 75.0,
+    "winProbability": null,
+    "confidence": 64.8,
+    "aiScore": 66.1,
+    "probability": 75.0,
+    "status": "PENDING",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 66.1.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 66.1.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": false
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": false
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 6,
+    "totalFactors": 8,
+    "timestamp": 1787635907.5029762,
+    "formatted_time": "2026-08-25 05:31 UTC",
+    "indicators": {
+      "atr": 312.5173,
+      "rsi": 66.24,
+      "ema21": 80227.24851897401,
+      "ema50": 79664.3557310535,
+      "ema200": 78349.48703060509,
+      "macdHist": -23.6592,
+      "volumeDelta": 8.61,
+      "trend": "TREND_UP"
+    },
+    "marketStructure": {
+      "trend_structure": "BULLISH",
+      "last_bos": null,
+      "last_choch": null,
+      "sweeps": [],
+      "recent_swing_highs": [
+        79118.42,
+        79049.4,
+        81272.62
+      ],
+      "recent_swing_lows": [
+        78468.61,
+        78560.0,
+        78622.13
+      ]
+    },
+    "liquidity": {
+      "pdh": 80000.0,
+      "pdl": 76670.01,
+      "eqh": [
+        80592.81,
+        80538.135
+      ],
+      "eql": [
+        80294.0,
+        80277.81
+      ],
+      "nearest_liquidity_above": 80775.0,
+      "nearest_liquidity_below": 80594.335
+    },
+    "orderBlocks": [
+      {
+        "type": "BULLISH",
+        "zone_high": 78963.99,
+        "zone_low": 78715.63,
+        "fresh": true,
+        "mitigated": false,
+        "displacement_str": 1.83,
+        "score": 97,
+        "candle_index": 178
+      }
+    ],
+    "fairValueGaps": [
+      {
+        "type": "BULLISH",
+        "top": 80776.0,
+        "bottom": 79930.0,
+        "size_pct": 1.048,
+        "fill_pct": 74.0,
+        "fresh": false,
+        "score": 74
+      },
+      {
+        "type": "BULLISH",
+        "top": 80486.0,
+        "bottom": 80363.74,
+        "size_pct": 0.151,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 69
+      },
+      {
+        "type": "BULLISH",
+        "top": 80598.0,
+        "bottom": 80577.62,
+        "size_pct": 0.025,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 65
+      }
+    ],
+    "regimeData": {
+      "regime": "TREND_UP",
+      "confidence": 93,
+      "adx": 31.4,
+      "atr_percentile": 50.0,
+      "ema_slope": 0.00208,
+      "bb_width_pct": 2.08
+    },
+    "telegram_message_id": 1013
+  },
+  {
+    "id": "sig_solusdt_1787635907",
+    "symbol": "SOL/USDT",
+    "side": "SELL",
+    "timeframe": "M15",
+    "setupType": "LIQUIDITY_SWEEP",
+    "regime": "TREND_UP",
+    "entry": 102.51,
+    "sl": 103.5474,
+    "tp": 100.9539,
+    "tp1": 100.9539,
+    "tp2": 99.3978,
+    "tp3": 97.8417,
+    "rr": 3.0,
+    "quantScore": 66.3,
+    "aiReviewScore": 63.6,
+    "factorScore": 75.0,
+    "winProbability": null,
+    "confidence": 65.0,
+    "aiScore": 66.3,
+    "probability": 75.0,
+    "status": "PENDING",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 66.3.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 66.3.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": false
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": false
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 6,
+    "totalFactors": 8,
+    "timestamp": 1787635907.5029762,
+    "formatted_time": "2026-08-25 05:31 UTC",
+    "indicators": {
+      "atr": 0.8645,
+      "rsi": 64.59,
+      "ema21": 101.13871525067887,
+      "ema50": 99.51466128941391,
+      "ema200": 96.4540094149333,
+      "macdHist": -0.0554,
+      "volumeDelta": 9.64,
+      "trend": "TREND_UP"
+    },
+    "marketStructure": {
+      "trend_structure": "BULLISH",
+      "last_bos": null,
+      "last_choch": null,
+      "sweeps": [
+        {
+          "type": "SWEEP_HIGH",
+          "price": 103.08,
+          "level": 102.77,
+          "candle_index": 198
+        }
+      ],
+      "recent_swing_highs": [
+        96.64,
+        97.61,
+        102.77
+      ],
+      "recent_swing_lows": [
+        94.18,
+        94.3,
+        94.81
+      ]
+    },
+    "liquidity": {
+      "pdh": 98.99,
+      "pdl": 93.26,
+      "eqh": [
+        101.755,
+        102.065
+      ],
+      "eql": [
+        101.205,
+        101.225
+      ],
+      "nearest_liquidity_above": 102.755,
+      "nearest_liquidity_below": 101.545
+    },
+    "orderBlocks": [
+      {
+        "type": "BULLISH",
+        "zone_high": 100.57,
+        "zone_low": 99.4,
+        "fresh": true,
+        "mitigated": false,
+        "displacement_str": 2.43,
+        "score": 98,
+        "candle_index": 178
+      },
+      {
+        "type": "BEARISH",
+        "zone_high": 102.55,
+        "zone_low": 101.39,
+        "fresh": false,
+        "mitigated": true,
+        "displacement_str": 1.32,
+        "score": 79,
+        "candle_index": 182
+      },
+      {
+        "type": "BULLISH",
+        "zone_high": 100.66,
+        "zone_low": 100.26,
+        "fresh": true,
+        "mitigated": false,
+        "displacement_str": 2.19,
+        "score": 98,
+        "candle_index": 185
+      }
+    ],
+    "fairValueGaps": [
+      {
+        "type": "BEARISH",
+        "top": 100.92,
+        "bottom": 100.66,
+        "size_pct": 0.254,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 42
+      },
+      {
+        "type": "BULLISH",
+        "top": 101.57,
+        "bottom": 100.66,
+        "size_pct": 0.888,
+        "fill_pct": 90.1,
+        "fresh": false,
+        "score": 64
+      },
+      {
+        "type": "BULLISH",
+        "top": 101.77,
+        "bottom": 101.34,
+        "size_pct": 0.419,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 77
+      },
+      {
+        "type": "BULLISH",
+        "top": 102.44,
+        "bottom": 102.08,
+        "size_pct": 0.351,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 75
+      }
+    ],
+    "regimeData": {
+      "regime": "TREND_UP",
+      "confidence": 95,
+      "adx": 44.1,
+      "atr_percentile": 78.0,
+      "ema_slope": 0.00462,
+      "bb_width_pct": 2.33
+    },
+    "telegram_message_id": 1014
+  },
+  {
+    "id": "sig_ethusdt_1787630720",
+    "symbol": "ETH/USDT",
+    "side": "BUY",
+    "timeframe": "M15",
+    "setupType": "TREND_PULLBACK",
+    "regime": "RANGE",
+    "entry": 2496.86,
+    "sl": 2478.7178,
+    "tp": 2524.0733,
+    "tp1": 2524.0733,
+    "tp2": 2551.2866,
+    "tp3": 2578.4999,
+    "rr": 3.0,
+    "quantScore": 74.7,
+    "aiReviewScore": 71.7,
+    "factorScore": 100.0,
+    "winProbability": null,
+    "confidence": 73.2,
+    "aiScore": 74.7,
+    "probability": 100.0,
+    "status": "EXPIRED",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 74.7.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 74.7.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": true
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": true
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 8,
+    "totalFactors": 8,
+    "timestamp": 1787630720.6204557,
+    "formatted_time": "2026-08-25 04:05 UTC",
+    "indicators": {
+      "atr": 12.0948,
+      "rsi": 51.16,
+      "ema21": 2497.166412261335,
+      "ema50": 2489.39185957244,
+      "ema200": 2462.7232480108273,
+      "macdHist": -0.6753,
+      "volumeDelta": 3.83,
+      "trend": "RANGE"
+    },
+    "marketStructure": {
+      "trend_structure": "BULLISH",
+      "last_bos": null,
+      "last_choch": null,
+      "sweeps": [],
+      "recent_swing_highs": [
+        2489.67,
+        2504.74,
+        2532.5
+      ],
+      "recent_swing_lows": [
+        2455.0,
+        2461.87,
+        2470.7
+      ]
+    },
+    "liquidity": {
+      "pdh": 2532.95,
+      "pdl": 2424.73,
+      "eqh": [
+        2503.12,
+        2500.03
+      ],
+      "eql": [
+        2495.155,
+        2495.085
+      ],
+      "nearest_liquidity_above": 2498.505,
+      "nearest_liquidity_below": 2495.51
+    },
+    "orderBlocks": [
+      {
+        "type": "BULLISH",
+        "zone_high": 2498.74,
+        "zone_low": 2492.31,
+        "fresh": false,
+        "mitigated": true,
+        "displacement_str": 2.91,
+        "score": 98,
+        "candle_index": 191
+      }
+    ],
+    "fairValueGaps": [
+      {
+        "type": "BULLISH",
+        "top": 2489.85,
+        "bottom": 2482.64,
+        "size_pct": 0.289,
+        "fill_pct": 68.9,
+        "fresh": false,
+        "score": 53
+      },
+      {
+        "type": "BULLISH",
+        "top": 2514.38,
+        "bottom": 2498.74,
+        "size_pct": 0.626,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 53
+      },
+      {
+        "type": "BEARISH",
+        "top": 2504.64,
+        "bottom": 2501.32,
+        "size_pct": 0.133,
+        "fill_pct": 83.4,
+        "fresh": false,
+        "score": 43
+      }
+    ],
+    "regimeData": {
+      "regime": "RANGE",
+      "confidence": 72,
+      "adx": 23.1,
+      "atr_percentile": 39.0,
+      "ema_slope": 0.0005,
+      "bb_width_pct": 2.02
+    },
+    "telegram_message_id": 1009
+  },
+  {
+    "id": "sig_solusdt_1787630412",
+    "symbol": "SOL/USDT",
+    "side": "SELL",
+    "timeframe": "M15",
+    "setupType": "LIQUIDITY_SWEEP",
+    "regime": "TREND_UP",
+    "entry": 101.57,
+    "sl": 102.6541,
+    "tp": 99.9438,
+    "tp1": 99.9438,
+    "tp2": 98.3177,
+    "tp3": 96.6915,
+    "rr": 3.0,
+    "quantScore": 66.4,
+    "aiReviewScore": 63.7,
+    "factorScore": 75.0,
+    "winProbability": null,
+    "confidence": 65.1,
+    "aiScore": 66.4,
+    "probability": 75.0,
+    "status": "SL_HIT",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 66.4.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 66.4.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": false
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": false
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 6,
+    "totalFactors": 8,
+    "timestamp": 1787630412.5616586,
+    "formatted_time": "2026-08-25 04:00 UTC",
+    "indicators": {
+      "atr": 0.9034,
+      "rsi": 61.5,
+      "ema21": 100.5769461978788,
+      "ema50": 98.8913716701352,
+      "ema200": 96.23866154330813,
+      "macdHist": -0.1062,
+      "volumeDelta": 8.53,
+      "trend": "TREND_UP"
+    },
+    "marketStructure": {
+      "trend_structure": "BULLISH",
+      "last_bos": null,
+      "last_choch": null,
+      "sweeps": [],
+      "recent_swing_highs": [
+        96.64,
+        97.61,
+        102.77
+      ],
+      "recent_swing_lows": [
+        94.18,
+        94.3,
+        94.81
+      ]
+    },
+    "liquidity": {
+      "pdh": 98.99,
+      "pdl": 93.26,
+      "eqh": [
+        101.665,
+        101.605
+      ],
+      "eql": [
+        100.885,
+        101.56
+      ],
+      "nearest_liquidity_above": 101.605,
+      "nearest_liquidity_below": 101.56
+    },
+    "orderBlocks": [
+      {
+        "type": "BULLISH",
+        "zone_high": 100.57,
+        "zone_low": 99.4,
+        "fresh": true,
+        "mitigated": false,
+        "displacement_str": 2.32,
+        "score": 98,
+        "candle_index": 184
+      },
+      {
+        "type": "BEARISH",
+        "zone_high": 102.55,
+        "zone_low": 101.39,
+        "fresh": true,
+        "mitigated": false,
+        "displacement_str": 1.26,
+        "score": 88,
+        "candle_index": 188
+      },
+      {
+        "type": "BULLISH",
+        "zone_high": 100.66,
+        "zone_low": 100.26,
+        "fresh": true,
+        "mitigated": false,
+        "displacement_str": 2.09,
+        "score": 98,
+        "candle_index": 191
+      }
+    ],
+    "fairValueGaps": [
+      {
+        "type": "BULLISH",
+        "top": 101.36,
+        "bottom": 100.57,
+        "size_pct": 0.778,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 58
+      },
+      {
+        "type": "BEARISH",
+        "top": 101.39,
+        "bottom": 101.31,
+        "size_pct": 0.079,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 37
+      },
+      {
+        "type": "BEARISH",
+        "top": 100.92,
+        "bottom": 100.66,
+        "size_pct": 0.256,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 42
+      },
+      {
+        "type": "BULLISH",
+        "top": 101.57,
+        "bottom": 100.66,
+        "size_pct": 0.896,
+        "fill_pct": 90.1,
+        "fresh": false,
+        "score": 64
+      }
+    ],
+    "regimeData": {
+      "regime": "TREND_UP",
+      "confidence": 95,
+      "adx": 58.2,
+      "atr_percentile": 85.0,
+      "ema_slope": 0.00463,
+      "bb_width_pct": 4.59
+    },
+    "telegram_message_id": 1008,
+    "exit_timestamp": 1787635769.411512
+  },
+  {
+    "id": "sig_ethusdt_1787623426",
+    "symbol": "ETH/USDT",
+    "side": "BUY",
+    "timeframe": "M15",
+    "setupType": "ORDER_BLOCK_RETEST",
+    "regime": "RANGE",
+    "entry": 2495.76,
+    "sl": 2468.0566,
+    "tp": 2537.3151,
+    "tp1": 2537.3151,
+    "tp2": 2578.8702,
+    "tp3": 2620.4253,
+    "rr": 3.0,
+    "quantScore": 83.4,
+    "aiReviewScore": 80.1,
+    "factorScore": 100.0,
+    "winProbability": null,
+    "confidence": 81.8,
+    "aiScore": 83.4,
+    "probability": 100.0,
+    "status": "EXPIRED",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 83.4.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 83.4.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": true
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": true
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 8,
+    "totalFactors": 8,
+    "timestamp": 1787623426.903583,
+    "formatted_time": "2026-08-25 02:03 UTC",
+    "indicators": {
+      "atr": 10.3085,
+      "rsi": 59.54,
+      "ema21": 2486.8986500269343,
+      "ema50": 2482.6564376017586,
+      "ema200": 2460.5059866372844,
+      "macdHist": 1.7051,
+      "volumeDelta": 5.66,
+      "trend": "RANGE"
+    },
+    "marketStructure": {
+      "trend_structure": "BULLISH",
+      "last_bos": null,
+      "last_choch": null,
+      "sweeps": [],
+      "recent_swing_highs": [
+        2532.95,
+        2489.67,
+        2504.74
+      ],
+      "recent_swing_lows": [
+        2455.0,
+        2461.87,
+        2470.7
+      ]
+    },
+    "liquidity": {
+      "pdh": 2532.95,
+      "pdl": 2424.73,
+      "eqh": [
+        2498.505,
+        2499.365
+      ],
+      "eql": [
+        2491.655,
+        2488.53
+      ],
+      "nearest_liquidity_above": 2498.505,
+      "nearest_liquidity_below": 2491.655
+    },
+    "orderBlocks": [
+      {
+        "type": "BULLISH",
+        "zone_high": 2482.64,
+        "zone_low": 2472.18,
+        "fresh": true,
+        "mitigated": false,
+        "displacement_str": 1.33,
+        "score": 89,
+        "candle_index": 192
+      }
+    ],
+    "fairValueGaps": [
+      {
+        "type": "BULLISH",
+        "top": 2482.0,
+        "bottom": 2479.34,
+        "size_pct": 0.107,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 38
+      },
+      {
+        "type": "BULLISH",
+        "top": 2489.85,
+        "bottom": 2482.64,
+        "size_pct": 0.289,
+        "fill_pct": 68.9,
+        "fresh": false,
+        "score": 53
+      }
+    ],
+    "regimeData": {
+      "regime": "RANGE",
+      "confidence": 72,
+      "adx": 11.9,
+      "atr_percentile": 9.0,
+      "ema_slope": 0.00172,
+      "bb_width_pct": 1.17
+    },
+    "telegram_message_id": 1007
+  },
+  {
+    "id": "sig_btcusdt_1787622484",
+    "symbol": "BTC/USDT",
+    "side": "BUY",
+    "timeframe": "M15",
+    "setupType": "ORDER_BLOCK_RETEST",
+    "regime": "RANGE",
+    "entry": 79660.01,
+    "sl": 78599.9477,
+    "tp": 81250.1034,
+    "tp1": 81250.1034,
+    "tp2": 82840.1969,
+    "tp3": 84430.2903,
+    "rr": 3.0,
+    "quantScore": 72.3,
+    "aiReviewScore": 69.4,
+    "factorScore": 100.0,
+    "winProbability": null,
+    "confidence": 70.8,
+    "aiScore": 72.3,
+    "probability": 100.0,
+    "status": "EXPIRED",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 72.3.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 72.3.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": true
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": true
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 8,
+    "totalFactors": 8,
+    "timestamp": 1787622484.97055,
+    "formatted_time": "2026-08-25 01:48 UTC",
+    "indicators": {
+      "atr": 289.2058,
+      "rsi": 63.83,
+      "ema21": 79226.35006634644,
+      "ema50": 78937.9962839812,
+      "ema200": 78018.48766609191,
+      "macdHist": 88.7744,
+      "volumeDelta": 7.28,
+      "trend": "RANGE"
+    },
+    "marketStructure": {
+      "trend_structure": "NEUTRAL",
+      "last_bos": {
+        "type": "BOS",
+        "direction": "BULLISH",
+        "price": 79049.4,
+        "strength": 88
+      },
+      "last_choch": null,
+      "sweeps": [],
+      "recent_swing_highs": [
+        80000.0,
+        79118.42,
+        79049.4
+      ],
+      "recent_swing_lows": [
+        78468.61,
+        78560.0,
+        78622.13
+      ]
+    },
+    "liquidity": {
+      "pdh": 80000.0,
+      "pdl": 76670.01,
+      "eqh": [
+        78981.905,
+        79904.0
+      ],
+      "eql": [
+        78783.175,
+        79633.92
+      ],
+      "nearest_liquidity_above": 79904.0,
+      "nearest_liquidity_below": 79633.92
+    },
+    "orderBlocks": [
+      {
+        "type": "BULLISH",
+        "zone_high": 78963.99,
+        "zone_low": 78715.63,
+        "fresh": true,
+        "mitigated": false,
+        "displacement_str": 1.98,
+        "score": 98,
+        "candle_index": 193
+      }
+    ],
+    "fairValueGaps": [
+      {
+        "type": "BULLISH",
+        "top": 78867.17,
+        "bottom": 78822.0,
+        "size_pct": 0.057,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 36
+      },
+      {
+        "type": "BULLISH",
+        "top": 79336.91,
+        "bottom": 78963.99,
+        "size_pct": 0.468,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 79
+      },
+      {
+        "type": "BULLISH",
+        "top": 79609.84,
+        "bottom": 79372.0,
+        "size_pct": 0.299,
+        "fill_pct": 55.4,
+        "fresh": false,
+        "score": 57
+      }
+    ],
+    "regimeData": {
+      "regime": "RANGE",
+      "confidence": 72,
+      "adx": 21.2,
+      "atr_percentile": 55.0,
+      "ema_slope": 0.00282,
+      "bb_width_pct": 1.87
+    },
+    "telegram_message_id": 1006
+  },
+  {
+    "id": "sig_btcusdt_1787614550",
+    "symbol": "BTC/USDT",
+    "side": "SELL",
+    "timeframe": "M15",
+    "setupType": "LIQUIDITY_SWEEP",
+    "regime": "LOW_VOLATILITY",
+    "entry": 78884.0,
+    "sl": 79179.2568,
+    "tp": 78441.1148,
+    "tp1": 78441.1148,
+    "tp2": 77998.2296,
+    "tp3": 77555.3444,
+    "rr": 3.0,
+    "quantScore": 65.0,
+    "aiReviewScore": 62.4,
+    "factorScore": 75.0,
+    "winProbability": null,
+    "confidence": 63.7,
+    "aiScore": 65.0,
+    "probability": 75.0,
+    "status": "SL_HIT",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 65.0.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 65.0.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": false
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": false
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 6,
+    "totalFactors": 8,
+    "timestamp": 1787614550.0142071,
+    "formatted_time": "2026-08-24 23:35 UTC",
+    "indicators": {
+      "atr": 246.0473,
+      "rsi": 50.84,
+      "ema21": 78870.1082248169,
+      "ema50": 78716.38803772276,
+      "ema200": 77854.66153017558,
+      "macdHist": -11.2489,
+      "volumeDelta": 7.39,
+      "trend": "LOW_VOLATILITY"
+    },
+    "marketStructure": {
+      "trend_structure": "NEUTRAL",
+      "last_bos": null,
+      "last_choch": null,
+      "sweeps": [],
+      "recent_swing_highs": [
+        80000.0,
+        79118.42,
+        79049.4
+      ],
+      "recent_swing_lows": [
+        77851.9,
+        78468.61,
+        78560.0
+      ]
+    },
+    "liquidity": {
+      "pdh": 78052.85,
+      "pdl": 75545.67,
+      "eqh": [
+        78951.69,
+        78952.0
+      ],
+      "eql": [
+        78810.715,
+        78740.215
+      ],
+      "nearest_liquidity_above": 78884.36,
+      "nearest_liquidity_below": 78883.595
+    },
+    "orderBlocks": [],
+    "fairValueGaps": [
+      {
+        "type": "BULLISH",
+        "top": 78824.0,
+        "bottom": 78792.0,
+        "size_pct": 0.041,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 36
+      },
+      {
+        "type": "BULLISH",
+        "top": 78868.0,
+        "bottom": 78822.0,
+        "size_pct": 0.058,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 66
+      }
+    ],
+    "regimeData": {
+      "regime": "LOW_VOLATILITY",
+      "confidence": 85,
+      "adx": 17.6,
+      "atr_percentile": 17.0,
+      "ema_slope": -0.00027,
+      "bb_width_pct": 0.53
+    },
+    "telegram_message_id": 1003,
+    "exit_timestamp": 1787618596.0409005
+  },
+  {
+    "id": "sig_ethusdt_1787614550",
+    "symbol": "ETH/USDT",
+    "side": "BUY",
+    "timeframe": "M15",
+    "setupType": "TREND_PULLBACK",
+    "regime": "LOW_VOLATILITY",
+    "entry": 2484.09,
+    "sl": 2469.8895,
+    "tp": 2505.3908,
+    "tp1": 2505.3908,
+    "tp2": 2526.6915,
+    "tp3": 2547.9922,
+    "rr": 3.0,
+    "quantScore": 73.7,
+    "aiReviewScore": 70.8,
+    "factorScore": 100.0,
+    "winProbability": null,
+    "confidence": 72.2,
+    "aiScore": 73.7,
+    "probability": 100.0,
+    "status": "EXPIRED",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 73.7.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 73.7.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": true
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": true
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 8,
+    "totalFactors": 8,
+    "timestamp": 1787614550.0142071,
+    "formatted_time": "2026-08-24 23:35 UTC",
+    "indicators": {
+      "atr": 9.467,
+      "rsi": 54.25,
+      "ema21": 2479.446707915354,
+      "ema50": 2478.663859898708,
+      "ema200": 2454.644835294118,
+      "macdHist": 1.0126,
+      "volumeDelta": 4.62,
+      "trend": "LOW_VOLATILITY"
+    },
+    "marketStructure": {
+      "trend_structure": "NEUTRAL",
+      "last_bos": null,
+      "last_choch": null,
+      "sweeps": [],
+      "recent_swing_highs": [
+        2490.89,
+        2532.95,
+        2489.67
+      ],
+      "recent_swing_lows": [
+        2476.31,
+        2455.0,
+        2461.87
+      ]
+    },
+    "liquidity": {
+      "pdh": 2484.62,
+      "pdl": 2355.71,
+      "eqh": [
+        2484.94,
+        2485.43
+      ],
+      "eql": [
+        2476.44,
+        2476.86
+      ],
+      "nearest_liquidity_above": 2484.1,
+      "nearest_liquidity_below": 2481.76
+    },
+    "orderBlocks": [],
+    "fairValueGaps": [
+      {
+        "type": "BULLISH",
+        "top": 2479.03,
+        "bottom": 2475.16,
+        "size_pct": 0.156,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 39
+      },
+      {
+        "type": "BULLISH",
+        "top": 2482.0,
+        "bottom": 2479.34,
+        "size_pct": 0.107,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 68
+      }
+    ],
+    "regimeData": {
+      "regime": "LOW_VOLATILITY",
+      "confidence": 85,
+      "adx": 6.9,
+      "atr_percentile": 1.0,
+      "ema_slope": 0.00014,
+      "bb_width_pct": 0.8
+    },
+    "telegram_message_id": 1004
+  },
+  {
+    "id": "sig_ethusdt_1787607260",
+    "symbol": "ETH/USDT",
+    "side": "BUY",
+    "timeframe": "M15",
+    "setupType": "TREND_PULLBACK",
+    "regime": "RANGE",
+    "entry": 2481.09,
+    "sl": 2464.2404,
+    "tp": 2506.3644,
+    "tp1": 2506.3644,
+    "tp2": 2531.6388,
+    "tp3": 2556.9132,
+    "rr": 3.0,
+    "quantScore": 75.2,
+    "aiReviewScore": 72.2,
+    "factorScore": 87.5,
+    "winProbability": null,
+    "confidence": 73.7,
+    "aiScore": 75.2,
+    "probability": 87.5,
+    "status": "EXPIRED",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 75.2.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 75.2.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": false
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": true
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 7,
+    "totalFactors": 8,
+    "timestamp": 1787607260.4118025,
+    "formatted_time": "2026-08-24 21:34 UTC",
+    "indicators": {
+      "atr": 11.2331,
+      "rsi": 51.28,
+      "ema21": 2478.704921632209,
+      "ema50": 2478.1492935398387,
+      "ema200": 2457.088457358246,
+      "macdHist": 1.3589,
+      "volumeDelta": -2.27,
+      "trend": "RANGE"
+    },
+    "marketStructure": {
+      "trend_structure": "BULLISH",
+      "last_bos": null,
+      "last_choch": null,
+      "sweeps": [],
+      "recent_swing_highs": [
+        2474.09,
+        2490.89,
+        2532.95
+      ],
+      "recent_swing_lows": [
+        2476.31,
+        2455.0,
+        2461.87
+      ]
+    },
+    "liquidity": {
+      "pdh": 2484.62,
+      "pdl": 2355.71,
+      "eqh": [
+        2475.34,
+        2480.905
+      ],
+      "eql": [
+        2469.67,
+        2465.66
+      ],
+      "nearest_liquidity_above": 2481.13,
+      "nearest_liquidity_below": 2480.035
+    },
+    "orderBlocks": [],
+    "fairValueGaps": [
+      {
+        "type": "BULLISH",
+        "top": 2474.8,
+        "bottom": 2470.34,
+        "size_pct": 0.18,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 40
+      },
+      {
+        "type": "BULLISH",
+        "top": 2479.03,
+        "bottom": 2475.16,
+        "size_pct": 0.156,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 69
+      }
+    ],
+    "regimeData": {
+      "regime": "RANGE",
+      "confidence": 72,
+      "adx": 18.6,
+      "atr_percentile": 6.0,
+      "ema_slope": 0.00036,
+      "bb_width_pct": 1.04
+    },
+    "telegram_message_id": 1001
+  },
+  {
+    "id": "sig_solusdt_1787607260",
+    "symbol": "SOL/USDT",
+    "side": "BUY",
+    "timeframe": "M15",
+    "setupType": "TREND_PULLBACK",
+    "regime": "RANGE",
+    "entry": 96.93,
+    "sl": 95.5772,
+    "tp": 98.9592,
+    "tp1": 98.9592,
+    "tp2": 100.9884,
+    "tp3": 103.0176,
+    "rr": 3.0,
+    "quantScore": 75.0,
+    "aiReviewScore": 72.0,
+    "factorScore": 87.5,
+    "winProbability": null,
+    "confidence": 73.5,
+    "aiScore": 75.0,
+    "probability": 87.5,
+    "status": "EXPIRED",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 75.0.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 75.0.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": false
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": true
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 7,
+    "totalFactors": 8,
+    "timestamp": 1787607260.4118025,
+    "formatted_time": "2026-08-24 21:34 UTC",
+    "indicators": {
+      "atr": 0.6144,
+      "rsi": 58.8,
+      "ema21": 96.30089078616278,
+      "ema50": 95.88437372554993,
+      "ema200": 95.05149612148801,
+      "macdHist": 0.0698,
+      "volumeDelta": -4.53,
+      "trend": "RANGE"
+    },
+    "marketStructure": {
+      "trend_structure": "BULLISH",
+      "last_bos": null,
+      "last_choch": null,
+      "sweeps": [],
+      "recent_swing_highs": [
+        95.11,
+        96.64,
+        97.61
+      ],
+      "recent_swing_lows": [
+        94.18,
+        94.3,
+        94.81
+      ]
+    },
+    "liquidity": {
+      "pdh": 97.21,
+      "pdl": 91.58,
+      "eqh": [
+        96.635,
+        96.645
+      ],
+      "eql": [
+        95.815,
+        95.88
+      ],
+      "nearest_liquidity_above": 97.21,
+      "nearest_liquidity_below": 96.735
+    },
+    "orderBlocks": [],
+    "fairValueGaps": [
+      {
+        "type": "BULLISH",
+        "top": 95.4,
+        "bottom": 95.35,
+        "size_pct": 0.052,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 66
+      },
+      {
+        "type": "BULLISH",
+        "top": 95.96,
+        "bottom": 95.43,
+        "size_pct": 0.547,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 51
+      },
+      {
+        "type": "BULLISH",
+        "top": 96.09,
+        "bottom": 95.97,
+        "size_pct": 0.124,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 38
+      },
+      {
+        "type": "BULLISH",
+        "top": 96.34,
+        "bottom": 96.22,
+        "size_pct": 0.124,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 68
+      }
+    ],
+    "regimeData": {
+      "regime": "RANGE",
+      "confidence": 72,
+      "adx": 15.1,
+      "atr_percentile": 52.0,
+      "ema_slope": 0.00241,
+      "bb_width_pct": 2.31
+    },
+    "telegram_message_id": 1002
+  },
+  {
+    "id": "sig_ethusdt_1787599662",
+    "symbol": "ETH/USDT",
+    "side": "BUY",
+    "timeframe": "M15",
+    "setupType": "TREND_PULLBACK",
+    "regime": "RANGE",
+    "entry": 2470.75,
+    "sl": 2447.4676,
+    "tp": 2505.6736,
+    "tp1": 2505.6736,
+    "tp2": 2540.5972,
+    "tp3": 2575.5208,
+    "rr": 3.0,
+    "quantScore": 66.1,
+    "aiReviewScore": 63.5,
+    "factorScore": 87.5,
+    "winProbability": null,
+    "confidence": 64.8,
+    "aiScore": 66.1,
+    "probability": 87.5,
+    "status": "EXPIRED",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 66.1.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 66.1.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": false
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": true
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 7,
+    "totalFactors": 8,
+    "timestamp": 1787599662.2527974,
+    "formatted_time": "2026-08-24 19:27 UTC",
+    "indicators": {
+      "atr": 15.5216,
+      "rsi": 43.7,
+      "ema21": 2481.611228202428,
+      "ema50": 2479.096478022024,
+      "ema200": 2453.234655829626,
+      "macdHist": -2.1241,
+      "volumeDelta": -3.72,
+      "trend": "RANGE"
+    },
+    "marketStructure": {
+      "trend_structure": "NEUTRAL",
+      "last_bos": null,
+      "last_choch": null,
+      "sweeps": [],
+      "recent_swing_highs": [
+        2474.09,
+        2490.89,
+        2532.95
+      ],
+      "recent_swing_lows": [
+        2454.4,
+        2476.31,
+        2455.0
+      ]
+    },
+    "liquidity": {
+      "pdh": 2484.62,
+      "pdl": 2355.71,
+      "eqh": [
+        2478.87,
+        2482.1
+      ],
+      "eql": [
+        2462.79,
+        2460.21
+      ],
+      "nearest_liquidity_above": 2478.87,
+      "nearest_liquidity_below": 2468.995
+    },
+    "orderBlocks": [
+      {
+        "type": "BEARISH",
+        "zone_high": 2532.95,
+        "zone_low": 2514.73,
+        "fresh": true,
+        "mitigated": false,
+        "displacement_str": 1.95,
+        "score": 98,
+        "candle_index": 183
+      }
+    ],
+    "fairValueGaps": [
+      {
+        "type": "BEARISH",
+        "top": 2514.73,
+        "bottom": 2502.51,
+        "size_pct": 0.495,
+        "fill_pct": 28.6,
+        "fresh": true,
+        "score": 71
+      },
+      {
+        "type": "BEARISH",
+        "top": 2498.27,
+        "bottom": 2491.34,
+        "size_pct": 0.28,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 73
+      },
+      {
+        "type": "BEARISH",
+        "top": 2489.27,
+        "bottom": 2484.29,
+        "size_pct": 0.202,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 71
+      },
+      {
+        "type": "BULLISH",
+        "top": 2474.8,
+        "bottom": 2470.34,
+        "size_pct": 0.181,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 40
+      }
+    ],
+    "regimeData": {
+      "regime": "RANGE",
+      "confidence": 72,
+      "adx": 19.3,
+      "atr_percentile": 77.0,
+      "ema_slope": -0.00151,
+      "bb_width_pct": 3.13
+    },
+    "telegram_message_id": 999
+  },
+  {
+    "id": "sig_solusdt_1787599662",
+    "symbol": "SOL/USDT",
+    "side": "BUY",
+    "timeframe": "M15",
+    "setupType": "TREND_PULLBACK",
+    "regime": "RANGE",
+    "entry": 95.9,
+    "sl": 94.7707,
+    "tp": 97.594,
+    "tp1": 97.594,
+    "tp2": 99.2879,
+    "tp3": 100.9819,
+    "rr": 3.0,
+    "quantScore": 72.0,
+    "aiReviewScore": 69.1,
+    "factorScore": 87.5,
+    "winProbability": null,
+    "confidence": 70.5,
+    "aiScore": 72.0,
+    "probability": 87.5,
+    "status": "EXPIRED",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 72.0.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 72.0.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": false
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": true
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 7,
+    "totalFactors": 8,
+    "timestamp": 1787599662.2527974,
+    "formatted_time": "2026-08-24 19:27 UTC",
+    "indicators": {
+      "atr": 0.7529,
+      "rsi": 50.52,
+      "ema21": 95.91096166213175,
+      "ema50": 95.59323023749295,
+      "ema200": 94.87889411683456,
+      "macdHist": -0.0631,
+      "volumeDelta": -4.16,
+      "trend": "RANGE"
+    },
+    "marketStructure": {
+      "trend_structure": "BULLISH",
+      "last_bos": null,
+      "last_choch": null,
+      "sweeps": [],
+      "recent_swing_highs": [
+        95.11,
+        96.64,
+        97.61
+      ],
+      "recent_swing_lows": [
+        94.18,
+        94.3,
+        94.81
+      ]
+    },
+    "liquidity": {
+      "pdh": 97.21,
+      "pdl": 91.58,
+      "eqh": [
+        96.24,
+        96.095
+      ],
+      "eql": [
+        95.41,
+        95.42
+      ],
+      "nearest_liquidity_above": 96.09,
+      "nearest_liquidity_below": 95.87
+    },
+    "orderBlocks": [],
+    "fairValueGaps": [
+      {
+        "type": "BEARISH",
+        "top": 96.61,
+        "bottom": 96.2,
+        "size_pct": 0.428,
+        "fill_pct": 58.5,
+        "fresh": false,
+        "score": 60
+      },
+      {
+        "type": "BULLISH",
+        "top": 95.4,
+        "bottom": 95.35,
+        "size_pct": 0.052,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 66
+      },
+      {
+        "type": "BULLISH",
+        "top": 95.96,
+        "bottom": 95.43,
+        "size_pct": 0.553,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 51
+      }
+    ],
+    "regimeData": {
+      "regime": "RANGE",
+      "confidence": 72,
+      "adx": 12.9,
+      "atr_percentile": 82.0,
+      "ema_slope": 0.00022,
+      "bb_width_pct": 2.53
+    },
+    "telegram_message_id": 1000
+  },
+  {
+    "id": "sig_ethusdt_1787592260",
+    "symbol": "ETH/USDT",
+    "side": "BUY",
+    "timeframe": "M15",
+    "setupType": "LIQUIDITY_SWEEP",
+    "regime": "BREAKDOWN",
+    "entry": 2459.56,
+    "sl": 2437.6654,
+    "tp": 2492.4019,
+    "tp1": 2492.4019,
+    "tp2": 2525.2438,
+    "tp3": 2558.0857,
+    "rr": 3.0,
+    "quantScore": 76.5,
+    "aiReviewScore": 73.4,
+    "factorScore": 100.0,
+    "winProbability": null,
+    "confidence": 75.0,
+    "aiScore": 76.5,
+    "probability": 100.0,
+    "status": "EXPIRED",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 76.5.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 76.5.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": true
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": true
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 8,
+    "totalFactors": 8,
+    "timestamp": 1787592260.7570915,
+    "formatted_time": "2026-08-24 17:24 UTC",
+    "indicators": {
+      "atr": 18.2455,
+      "rsi": 37.76,
+      "ema21": 2490.895086175272,
+      "ema50": 2481.269395576313,
+      "ema200": 2449.84846822064,
+      "macdHist": -6.6423,
+      "volumeDelta": -0.13,
+      "trend": "BREAKDOWN"
+    },
+    "marketStructure": {
+      "trend_structure": "BULLISH",
+      "last_bos": {
+        "type": "BOS",
+        "direction": "BEARISH",
+        "price": 2476.31,
+        "strength": 88
+      },
+      "last_choch": {
+        "type": "CHOCH",
+        "direction": "BEARISH",
+        "price": 2476.31,
+        "strength": 92
+      },
+      "sweeps": [
+        {
+          "type": "SWEEP_LOW",
+          "price": 2469.02,
+          "level": 2476.31,
+          "candle_index": 197
+        },
+        {
+          "type": "SWEEP_LOW",
+          "price": 2463.71,
+          "level": 2476.31,
+          "candle_index": 198
+        }
+      ],
+      "recent_swing_highs": [
+        2474.09,
+        2490.89,
+        2532.95
+      ],
+      "recent_swing_lows": [
+        2436.41,
+        2454.4,
+        2476.31
+      ]
+    },
+    "liquidity": {
+      "pdh": 2484.62,
+      "pdl": 2355.71,
+      "eqh": [
+        2524.955,
+        2501.685
+      ],
+      "eql": [
+        2515.155,
+        2489.135
+      ],
+      "nearest_liquidity_above": 2479.01,
+      "nearest_liquidity_below": 2454.975
+    },
+    "orderBlocks": [
+      {
+        "type": "BEARISH",
+        "zone_high": 2532.95,
+        "zone_low": 2514.73,
+        "fresh": true,
+        "mitigated": false,
+        "displacement_str": 1.66,
+        "score": 94,
+        "candle_index": 191
+      }
+    ],
+    "fairValueGaps": [
+      {
+        "type": "BULLISH",
+        "top": 2515.58,
+        "bottom": 2513.0,
+        "size_pct": 0.105,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 38
+      },
+      {
+        "type": "BEARISH",
+        "top": 2514.73,
+        "bottom": 2502.51,
+        "size_pct": 0.497,
+        "fill_pct": 28.6,
+        "fresh": true,
+        "score": 71
+      },
+      {
+        "type": "BEARISH",
+        "top": 2498.27,
+        "bottom": 2491.34,
+        "size_pct": 0.282,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 73
+      },
+      {
+        "type": "BEARISH",
+        "top": 2489.27,
+        "bottom": 2484.29,
+        "size_pct": 0.202,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 71
+      }
+    ],
+    "regimeData": {
+      "regime": "BREAKDOWN",
+      "confidence": 82,
+      "adx": 18.0,
+      "atr_percentile": 98.0,
+      "ema_slope": -0.00296,
+      "bb_width_pct": 2.69
+    },
+    "telegram_message_id": 997
+  },
+  {
+    "id": "sig_solusdt_1787592260",
+    "symbol": "SOL/USDT",
+    "side": "BUY",
+    "timeframe": "M15",
+    "setupType": "TREND_PULLBACK",
+    "regime": "RANGE",
+    "entry": 95.06,
+    "sl": 93.781,
+    "tp": 96.9785,
+    "tp1": 96.9785,
+    "tp2": 98.897,
+    "tp3": 100.8155,
+    "rr": 3.0,
+    "quantScore": 72.3,
+    "aiReviewScore": 69.4,
+    "factorScore": 87.5,
+    "winProbability": null,
+    "confidence": 70.8,
+    "aiScore": 72.3,
+    "probability": 87.5,
+    "status": "EXPIRED",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 72.3.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 72.3.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": false
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": true
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 7,
+    "totalFactors": 8,
+    "timestamp": 1787592260.7570915,
+    "formatted_time": "2026-08-24 17:24 UTC",
+    "indicators": {
+      "atr": 0.8527,
+      "rsi": 42.92,
+      "ema21": 95.99233426858581,
+      "ema50": 95.51081549796429,
+      "ema200": 94.66521069858372,
+      "macdHist": -0.1537,
+      "volumeDelta": -1.29,
+      "trend": "RANGE"
+    },
+    "marketStructure": {
+      "trend_structure": "BULLISH",
+      "last_bos": null,
+      "last_choch": null,
+      "sweeps": [],
+      "recent_swing_highs": [
+        95.11,
+        96.64,
+        97.61
+      ],
+      "recent_swing_lows": [
+        93.26,
+        94.18,
+        94.3
+      ]
+    },
+    "liquidity": {
+      "pdh": 97.21,
+      "pdl": 91.58,
+      "eqh": [
+        97.36,
+        96.825
+      ],
+      "eql": [
+        95.77,
+        95.78
+      ],
+      "nearest_liquidity_above": 95.07,
+      "nearest_liquidity_below": 94.88
+    },
+    "orderBlocks": [],
+    "fairValueGaps": [
+      {
+        "type": "BEARISH",
+        "top": 95.96,
+        "bottom": 95.13,
+        "size_pct": 0.873,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 61
+      },
+      {
+        "type": "BULLISH",
+        "top": 95.28,
+        "bottom": 95.13,
+        "size_pct": 0.158,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 39
+      },
+      {
+        "type": "BULLISH",
+        "top": 95.74,
+        "bottom": 95.69,
+        "size_pct": 0.053,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 36
+      },
+      {
+        "type": "BEARISH",
+        "top": 96.61,
+        "bottom": 96.2,
+        "size_pct": 0.431,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 77
+      }
+    ],
+    "regimeData": {
+      "regime": "RANGE",
+      "confidence": 72,
+      "adx": 18.0,
+      "atr_percentile": 100.0,
+      "ema_slope": -0.00053,
+      "bb_width_pct": 2.67
+    },
+    "telegram_message_id": 998
+  },
+  {
+    "id": "sig_ethusdt_1787590719",
+    "symbol": "ETH/USDT",
+    "side": "BUY",
+    "timeframe": "M15",
+    "setupType": "LIQUIDITY_SWEEP",
+    "regime": "RANGE",
+    "entry": 2479.38,
+    "sl": 2458.3226,
+    "tp": 2510.9661,
+    "tp1": 2510.9661,
+    "tp2": 2542.5522,
+    "tp3": 2574.1383,
+    "rr": 3.0,
+    "quantScore": 75.3,
+    "aiReviewScore": 72.3,
+    "factorScore": 100.0,
+    "winProbability": null,
+    "confidence": 73.8,
+    "aiScore": 75.3,
+    "probability": 100.0,
+    "status": "SL_HIT",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 75.3.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 75.3.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": true
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": true
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 8,
+    "totalFactors": 8,
+    "timestamp": 1787590719.722876,
+    "formatted_time": "2026-08-24 16:58 UTC",
+    "indicators": {
+      "atr": 17.5478,
+      "rsi": 44.34,
+      "ema21": 2495.842817871018,
+      "ema50": 2482.4111624522116,
+      "ema200": 2448.6268203645163,
+      "macdHist": -4.7791,
+      "volumeDelta": 2.05,
+      "trend": "RANGE"
+    },
+    "marketStructure": {
+      "trend_structure": "BULLISH",
+      "last_bos": null,
+      "last_choch": null,
+      "sweeps": [
+        {
+          "type": "SWEEP_LOW",
+          "price": 2469.02,
+          "level": 2476.31,
+          "candle_index": 199
+        }
+      ],
+      "recent_swing_highs": [
+        2474.09,
+        2490.89,
+        2532.95
+      ],
+      "recent_swing_lows": [
+        2436.41,
+        2454.4,
+        2476.31
+      ]
+    },
+    "liquidity": {
+      "pdh": 2484.62,
+      "pdl": 2355.71,
+      "eqh": [
+        2524.955,
+        2501.685
+      ],
+      "eql": [
+        2515.155,
+        2489.135
+      ],
+      "nearest_liquidity_above": 2484.62,
+      "nearest_liquidity_below": 2477.845
+    },
+    "orderBlocks": [
+      {
+        "type": "BEARISH",
+        "zone_high": 2532.95,
+        "zone_low": 2514.73,
+        "fresh": true,
+        "mitigated": false,
+        "displacement_str": 1.72,
+        "score": 95,
+        "candle_index": 193
+      }
+    ],
+    "fairValueGaps": [
+      {
+        "type": "BULLISH",
+        "top": 2502.62,
+        "bottom": 2495.8,
+        "size_pct": 0.275,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 43
+      },
+      {
+        "type": "BULLISH",
+        "top": 2515.58,
+        "bottom": 2513.0,
+        "size_pct": 0.104,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 38
+      },
+      {
+        "type": "BEARISH",
+        "top": 2514.73,
+        "bottom": 2502.51,
+        "size_pct": 0.493,
+        "fill_pct": 28.6,
+        "fresh": true,
+        "score": 71
+      },
+      {
+        "type": "BEARISH",
+        "top": 2498.27,
+        "bottom": 2491.34,
+        "size_pct": 0.28,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 73
+      }
+    ],
+    "regimeData": {
+      "regime": "RANGE",
+      "confidence": 72,
+      "adx": 15.4,
+      "atr_percentile": 96.0,
+      "ema_slope": -0.00091,
+      "bb_width_pct": 2.15
+    },
+    "telegram_message_id": 994,
+    "exit_timestamp": 1787592187.035486
+  },
+  {
+    "id": "sig_solusdt_1787589784",
+    "symbol": "SOL/USDT",
+    "side": "BUY",
+    "timeframe": "M15",
+    "setupType": "TREND_PULLBACK",
+    "regime": "RANGE",
+    "entry": 96.82,
+    "sl": 95.0924,
+    "tp": 99.4114,
+    "tp1": 99.4114,
+    "tp2": 102.0028,
+    "tp3": 104.5942,
+    "rr": 3.0,
+    "quantScore": 75.5,
+    "aiReviewScore": 72.5,
+    "factorScore": 87.5,
+    "winProbability": null,
+    "confidence": 74.0,
+    "aiScore": 75.5,
+    "probability": 87.5,
+    "status": "SL_HIT",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 75.5.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 75.5.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": false
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": true
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 7,
+    "totalFactors": 8,
+    "timestamp": 1787589784.651113,
+    "formatted_time": "2026-08-24 16:43 UTC",
+    "indicators": {
+      "atr": 0.8033,
+      "rsi": 58.46,
+      "ema21": 96.11351872928027,
+      "ema50": 95.494055591666,
+      "ema200": 94.63059278162463,
+      "macdHist": 0.056,
+      "volumeDelta": 0.33,
+      "trend": "RANGE"
+    },
+    "marketStructure": {
+      "trend_structure": "BULLISH",
+      "last_bos": null,
+      "last_choch": null,
+      "sweeps": [],
+      "recent_swing_highs": [
+        95.11,
+        96.64,
+        97.61
+      ],
+      "recent_swing_lows": [
+        93.26,
+        94.18,
+        94.3
+      ]
+    },
+    "liquidity": {
+      "pdh": 97.21,
+      "pdl": 91.58,
+      "eqh": [
+        97.595,
+        97.36
+      ],
+      "eql": [
+        95.935,
+        95.975
+      ],
+      "nearest_liquidity_above": 97.21,
+      "nearest_liquidity_below": 95.975
+    },
+    "orderBlocks": [],
+    "fairValueGaps": [
+      {
+        "type": "BULLISH",
+        "top": 95.94,
+        "bottom": 95.61,
+        "size_pct": 0.341,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 45
+      },
+      {
+        "type": "BEARISH",
+        "top": 95.96,
+        "bottom": 95.13,
+        "size_pct": 0.857,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 60
+      },
+      {
+        "type": "BULLISH",
+        "top": 95.28,
+        "bottom": 95.13,
+        "size_pct": 0.155,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 69
+      },
+      {
+        "type": "BULLISH",
+        "top": 95.74,
+        "bottom": 95.69,
+        "size_pct": 0.052,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 66
+      }
+    ],
+    "regimeData": {
+      "regime": "RANGE",
+      "confidence": 72,
+      "adx": 20.1,
+      "atr_percentile": 97.0,
+      "ema_slope": 0.00334,
+      "bb_width_pct": 2.7
+    },
+    "telegram_message_id": 993,
+    "exit_timestamp": 1787592203.93119
+  },
+  {
+    "id": "sig_solusdt_1787579240",
+    "symbol": "SOL/USDT",
+    "side": "SELL",
+    "timeframe": "M15",
+    "setupType": "LIQUIDITY_SWEEP",
+    "regime": "RANGE",
+    "entry": 94.88,
+    "sl": 95.7301,
+    "tp": 93.6048,
+    "tp1": 93.6048,
+    "tp2": 92.3297,
+    "tp3": 91.0546,
+    "rr": 3.0,
+    "quantScore": 65.3,
+    "aiReviewScore": 62.7,
+    "factorScore": 87.5,
+    "winProbability": null,
+    "confidence": 64.0,
+    "aiScore": 65.3,
+    "probability": 87.5,
+    "status": "EXPIRED",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 65.3.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 65.3.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": false
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": true
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 7,
+    "totalFactors": 8,
+    "timestamp": 1787579240.3286417,
+    "formatted_time": "2026-08-24 13:47 UTC",
+    "indicators": {
+      "atr": 0.7084,
+      "rsi": 47.46,
+      "ema21": 95.22639168384065,
+      "ema50": 94.9181061617981,
+      "ema200": 94.50927675960985,
+      "macdHist": -0.0458,
+      "volumeDelta": 3.32,
+      "trend": "RANGE"
+    },
+    "marketStructure": {
+      "trend_structure": "NEUTRAL",
+      "last_bos": null,
+      "last_choch": null,
+      "sweeps": [
+        {
+          "type": "SWEEP_HIGH",
+          "price": 96.09,
+          "level": 95.11,
+          "candle_index": 198
+        }
+      ],
+      "recent_swing_highs": [
+        94.66,
+        95.45,
+        95.11
+      ],
+      "recent_swing_lows": [
+        93.47,
+        93.26,
+        94.18
+      ]
+    },
+    "liquidity": {
+      "pdh": 97.21,
+      "pdl": 91.58,
+      "eqh": [
+        96.38,
+        96.135
+      ],
+      "eql": [
+        94.54,
+        94.24
+      ],
+      "nearest_liquidity_above": 94.9,
+      "nearest_liquidity_below": 94.805
+    },
+    "orderBlocks": [],
+    "fairValueGaps": [
+      {
+        "type": "BULLISH",
+        "top": 94.85,
+        "bottom": 94.75,
+        "size_pct": 0.105,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 38
+      },
+      {
+        "type": "BULLISH",
+        "top": 95.46,
+        "bottom": 94.95,
+        "size_pct": 0.538,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 51
+      },
+      {
+        "type": "BULLISH",
+        "top": 95.94,
+        "bottom": 95.61,
+        "size_pct": 0.348,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 45
+      },
+      {
+        "type": "BEARISH",
+        "top": 95.96,
+        "bottom": 95.03,
+        "size_pct": 0.98,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 94
+      }
+    ],
+    "regimeData": {
+      "regime": "RANGE",
+      "confidence": 72,
+      "adx": 15.0,
+      "atr_percentile": 100.0,
+      "ema_slope": 0.00115,
+      "bb_width_pct": 2.65
+    },
+    "telegram_message_id": 992
+  },
+  {
+    "id": "sig_solusdt_1787577388",
+    "symbol": "SOL/USDT",
+    "side": "BUY",
+    "timeframe": "M15",
+    "setupType": "TREND_PULLBACK",
+    "regime": "RANGE",
+    "entry": 96.03,
+    "sl": 94.6016,
+    "tp": 98.1726,
+    "tp1": 98.1726,
+    "tp2": 100.3152,
+    "tp3": 102.4578,
+    "rr": 3.0,
+    "quantScore": 70.1,
+    "aiReviewScore": 67.3,
+    "factorScore": 87.5,
+    "winProbability": null,
+    "confidence": 68.7,
+    "aiScore": 70.1,
+    "probability": 87.5,
+    "status": "SL_HIT",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 70.1.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 70.1.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": false
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": true
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 7,
+    "totalFactors": 8,
+    "timestamp": 1787577388.4408412,
+    "formatted_time": "2026-08-24 13:16 UTC",
+    "indicators": {
+      "atr": 0.6441,
+      "rsi": 60.24,
+      "ema21": 95.30540666177157,
+      "ema50": 94.9236120000496,
+      "ema200": 94.44007114178763,
+      "macdHist": 0.1246,
+      "volumeDelta": 7.15,
+      "trend": "RANGE"
+    },
+    "marketStructure": {
+      "trend_structure": "BEARISH",
+      "last_bos": {
+        "type": "BOS",
+        "direction": "BULLISH",
+        "price": 95.11,
+        "strength": 88
+      },
+      "last_choch": {
+        "type": "CHOCH",
+        "direction": "BULLISH",
+        "price": 95.11,
+        "strength": 92
+      },
+      "sweeps": [],
+      "recent_swing_highs": [
+        94.66,
+        95.45,
+        95.11
+      ],
+      "recent_swing_lows": [
+        93.47,
+        93.47,
+        93.26
+      ]
+    },
+    "liquidity": {
+      "pdh": 97.21,
+      "pdl": 91.58,
+      "eqh": [
+        96.365,
+        96.38
+      ],
+      "eql": [
+        94.555,
+        94.215
+      ],
+      "nearest_liquidity_above": 96.24,
+      "nearest_liquidity_below": 94.805
+    },
+    "orderBlocks": [],
+    "fairValueGaps": [
+      {
+        "type": "BULLISH",
+        "top": 94.62,
+        "bottom": 94.59,
+        "size_pct": 0.031,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 35
+      },
+      {
+        "type": "BULLISH",
+        "top": 94.85,
+        "bottom": 94.75,
+        "size_pct": 0.104,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 38
+      },
+      {
+        "type": "BULLISH",
+        "top": 95.46,
+        "bottom": 94.95,
+        "size_pct": 0.531,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 50
+      },
+      {
+        "type": "BULLISH",
+        "top": 95.94,
+        "bottom": 95.61,
+        "size_pct": 0.344,
+        "fill_pct": 18.2,
+        "fresh": true,
+        "score": 69
+      }
+    ],
+    "regimeData": {
+      "regime": "RANGE",
+      "confidence": 72,
+      "adx": 14.5,
+      "atr_percentile": 93.0,
+      "ema_slope": 0.00424,
+      "bb_width_pct": 3.07
+    },
+    "telegram_message_id": 991,
+    "exit_timestamp": 1787579140.8756585
+  },
+  {
+    "id": "sig_ethusdt_1787570536",
+    "symbol": "ETH/USDT",
+    "side": "BUY",
+    "timeframe": "M15",
+    "setupType": "TREND_PULLBACK",
+    "regime": "RANGE",
+    "entry": 2469.47,
+    "sl": 2448.9846,
+    "tp": 2500.1981,
+    "tp1": 2500.1981,
+    "tp2": 2530.9262,
+    "tp3": 2561.6543,
+    "rr": 3.0,
+    "quantScore": 76.6,
+    "aiReviewScore": 73.5,
+    "factorScore": 87.5,
+    "winProbability": null,
+    "confidence": 75.0,
+    "aiScore": 76.6,
+    "probability": 87.5,
+    "status": "TP_HIT",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 76.6.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 76.6.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": false
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": true
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 7,
+    "totalFactors": 8,
+    "timestamp": 1787570536.9286807,
+    "formatted_time": "2026-08-24 11:22 UTC",
+    "indicators": {
+      "atr": 11.5782,
+      "rsi": 56.31,
+      "ema21": 2461.4328085046022,
+      "ema50": 2454.7737177999265,
+      "ema200": 2438.139148420737,
+      "macdHist": 0.7594,
+      "volumeDelta": 11.62,
+      "trend": "RANGE"
+    },
+    "marketStructure": {
+      "trend_structure": "BULLISH",
+      "last_bos": null,
+      "last_choch": null,
+      "sweeps": [],
+      "recent_swing_highs": [
+        2459.82,
+        2474.09,
+        2490.89
+      ],
+      "recent_swing_lows": [
+        2424.73,
+        2426.49,
+        2436.41
+      ]
+    },
+    "liquidity": {
+      "pdh": 2484.62,
+      "pdl": 2355.71,
+      "eqh": [
+        2458.165,
+        2464.155
+      ],
+      "eql": [
+        2463.985,
+        2464.73
+      ],
+      "nearest_liquidity_above": 2470.085,
+      "nearest_liquidity_below": 2464.73
+    },
+    "orderBlocks": [],
+    "fairValueGaps": [
+      {
+        "type": "BEARISH",
+        "top": 2452.85,
+        "bottom": 2449.48,
+        "size_pct": 0.136,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 39
+      },
+      {
+        "type": "BULLISH",
+        "top": 2450.42,
+        "bottom": 2449.48,
+        "size_pct": 0.038,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 66
+      },
+      {
+        "type": "BULLISH",
+        "top": 2453.75,
+        "bottom": 2453.63,
+        "size_pct": 0.005,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 65
+      },
+      {
+        "type": "BULLISH",
+        "top": 2470.32,
+        "bottom": 2465.1,
+        "size_pct": 0.211,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 41
+      }
+    ],
+    "regimeData": {
+      "regime": "RANGE",
+      "confidence": 72,
+      "adx": 13.2,
+      "atr_percentile": 26.0,
+      "ema_slope": 0.00118,
+      "bb_width_pct": 1.58
+    },
+    "telegram_message_id": 989,
+    "exit_timestamp": 1787571647.2111168
+  },
+  {
+    "id": "sig_solusdt_1787569994",
+    "symbol": "SOL/USDT",
+    "side": "BUY",
+    "timeframe": "M15",
+    "setupType": "ORDER_BLOCK_RETEST",
+    "regime": "RANGE",
+    "entry": 94.65,
+    "sl": 93.0651,
+    "tp": 97.0274,
+    "tp1": 97.0274,
+    "tp2": 99.4047,
+    "tp3": 101.7821,
+    "rr": 3.0,
+    "quantScore": 70.0,
+    "aiReviewScore": 67.2,
+    "factorScore": 87.5,
+    "winProbability": null,
+    "confidence": 68.6,
+    "aiScore": 70.0,
+    "probability": 87.5,
+    "status": "EXPIRED",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 70.0.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 70.0.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": false
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": true
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 7,
+    "totalFactors": 8,
+    "timestamp": 1787569994.969823,
+    "formatted_time": "2026-08-24 11:13 UTC",
+    "indicators": {
+      "atr": 0.4873,
+      "rsi": 52.54,
+      "ema21": 94.50783409918776,
+      "ema50": 94.52032303869213,
+      "ema200": 94.42240075393825,
+      "macdHist": 0.0637,
+      "volumeDelta": 2.84,
+      "trend": "RANGE"
+    },
+    "marketStructure": {
+      "trend_structure": "NEUTRAL",
+      "last_bos": null,
+      "last_choch": null,
+      "sweeps": [],
+      "recent_swing_highs": [
+        95.05,
+        94.66,
+        95.45
+      ],
+      "recent_swing_lows": [
+        93.47,
+        93.47,
+        93.26
+      ]
+    },
+    "liquidity": {
+      "pdh": 97.21,
+      "pdl": 91.58,
+      "eqh": [
+        94.86,
+        94.78
+      ],
+      "eql": [
+        94.605,
+        94.58
+      ],
+      "nearest_liquidity_above": 94.66,
+      "nearest_liquidity_below": 94.62
+    },
+    "orderBlocks": [
+      {
+        "type": "BEARISH",
+        "zone_high": 95.45,
+        "zone_low": 94.5,
+        "fresh": true,
+        "mitigated": false,
+        "displacement_str": 2.07,
+        "score": 98,
+        "candle_index": 183
+      },
+      {
+        "type": "BULLISH",
+        "zone_high": 94.06,
+        "zone_low": 93.26,
+        "fresh": true,
+        "mitigated": false,
+        "displacement_str": 1.21,
+        "score": 88,
+        "candle_index": 188
+      },
+      {
+        "type": "BULLISH",
+        "zone_high": 94.1,
+        "zone_low": 93.83,
+        "fresh": true,
+        "mitigated": false,
+        "displacement_str": 1.31,
+        "score": 89,
+        "candle_index": 190
+      }
+    ],
+    "fairValueGaps": [
+      {
+        "type": "BULLISH",
+        "top": 94.5,
+        "bottom": 94.3,
+        "size_pct": 0.211,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 41
+      },
+      {
+        "type": "BEARISH",
+        "top": 94.5,
+        "bottom": 94.42,
+        "size_pct": 0.085,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 37
+      },
+      {
+        "type": "BULLISH",
+        "top": 94.34,
+        "bottom": 94.1,
+        "size_pct": 0.254,
+        "fill_pct": 37.5,
+        "fresh": true,
+        "score": 61
+      },
+      {
+        "type": "BULLISH",
+        "top": 94.62,
+        "bottom": 94.59,
+        "size_pct": 0.032,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 35
+      }
+    ],
+    "regimeData": {
+      "regime": "RANGE",
+      "confidence": 72,
+      "adx": 11.1,
+      "atr_percentile": 18.0,
+      "ema_slope": 0.00114,
+      "bb_width_pct": 1.88
+    },
+    "telegram_message_id": 988
+  },
+  {
+    "id": "sig_btcusdt_1787562727",
+    "symbol": "BTC/USDT",
+    "side": "BUY",
+    "timeframe": "M15",
+    "setupType": "ORDER_BLOCK_RETEST",
+    "regime": "RANGE",
+    "entry": 77221.42,
+    "sl": 76572.8537,
+    "tp": 78194.2694,
+    "tp1": 78194.2694,
+    "tp2": 79167.1189,
+    "tp3": 80139.9683,
+    "rr": 3.0,
+    "quantScore": 72.2,
+    "aiReviewScore": 69.3,
+    "factorScore": 100.0,
+    "winProbability": null,
+    "confidence": 70.8,
+    "aiScore": 72.2,
+    "probability": 100.0,
+    "status": "EXPIRED",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 72.2.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 72.2.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": true
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": true
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 8,
+    "totalFactors": 8,
+    "timestamp": 1787562727.177984,
+    "formatted_time": "2026-08-24 09:12 UTC",
+    "indicators": {
+      "atr": 242.8907,
+      "rsi": 49.05,
+      "ema21": 77247.56310254811,
+      "ema50": 77276.24691993777,
+      "ema200": 77228.28690457786,
+      "macdHist": -20.5659,
+      "volumeDelta": 3.18,
+      "trend": "RANGE"
+    },
+    "marketStructure": {
+      "trend_structure": "NEUTRAL",
+      "last_bos": null,
+      "last_choch": null,
+      "sweeps": [],
+      "recent_swing_highs": [
+        77829.7,
+        77545.08,
+        77790.19
+      ],
+      "recent_swing_lows": [
+        77200.03,
+        76883.61,
+        76670.01
+      ]
+    },
+    "liquidity": {
+      "pdh": 78052.85,
+      "pdl": 75545.67,
+      "eqh": [
+        77469.985,
+        77254.485
+      ],
+      "eql": [
+        77344.035,
+        77312.845
+      ],
+      "nearest_liquidity_above": 77222.86,
+      "nearest_liquidity_below": 77219.0
+    },
+    "orderBlocks": [
+      {
+        "type": "BULLISH",
+        "zone_high": 77122.01,
+        "zone_low": 76670.01,
+        "fresh": true,
+        "mitigated": false,
+        "displacement_str": 1.28,
+        "score": 89,
+        "candle_index": 182
+      }
+    ],
+    "fairValueGaps": [
+      {
+        "type": "BULLISH",
+        "top": 77550.0,
+        "bottom": 77525.09,
+        "size_pct": 0.032,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 35
+      },
+      {
+        "type": "BEARISH",
+        "top": 77550.0,
+        "bottom": 77425.34,
+        "size_pct": 0.161,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 69
+      },
+      {
+        "type": "BEARISH",
+        "top": 77281.68,
+        "bottom": 77248.97,
+        "size_pct": 0.042,
+        "fill_pct": 33.7,
+        "fresh": true,
+        "score": 56
+      },
+      {
+        "type": "BEARISH",
+        "top": 77206.0,
+        "bottom": 77129.97,
+        "size_pct": 0.098,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 37
+      }
+    ],
+    "regimeData": {
+      "regime": "RANGE",
+      "confidence": 72,
+      "adx": 15.1,
+      "atr_percentile": 56.0,
+      "ema_slope": -0.00095,
+      "bb_width_pct": 1.08
+    },
+    "telegram_message_id": 985
+  },
+  {
+    "id": "sig_solusdt_1787562727",
+    "symbol": "SOL/USDT",
+    "side": "BUY",
+    "timeframe": "M15",
+    "setupType": "LIQUIDITY_SWEEP",
+    "regime": "RANGE",
+    "entry": 94.43,
+    "sl": 93.1761,
+    "tp": 96.3109,
+    "tp1": 96.3109,
+    "tp2": 98.1917,
+    "tp3": 100.0726,
+    "rr": 3.0,
+    "quantScore": 70.8,
+    "aiReviewScore": 68.0,
+    "factorScore": 87.5,
+    "winProbability": null,
+    "confidence": 69.4,
+    "aiScore": 70.8,
+    "probability": 87.5,
+    "status": "EXPIRED",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 70.8.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 70.8.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": false
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": true
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 7,
+    "totalFactors": 8,
+    "timestamp": 1787562727.177984,
+    "formatted_time": "2026-08-24 09:12 UTC",
+    "indicators": {
+      "atr": 0.5879,
+      "rsi": 51.81,
+      "ema21": 94.21578122000662,
+      "ema50": 94.42767896011823,
+      "ema200": 94.49317404794442,
+      "macdHist": 0.0084,
+      "volumeDelta": 5.82,
+      "trend": "RANGE"
+    },
+    "marketStructure": {
+      "trend_structure": "NEUTRAL",
+      "last_bos": null,
+      "last_choch": null,
+      "sweeps": [
+        {
+          "type": "SWEEP_LOW",
+          "price": 93.35,
+          "level": 93.47,
+          "candle_index": 197
+        }
+      ],
+      "recent_swing_highs": [
+        95.05,
+        94.66,
+        95.45
+      ],
+      "recent_swing_lows": [
+        93.67,
+        93.47,
+        93.47
+      ]
+    },
+    "liquidity": {
+      "pdh": 97.21,
+      "pdl": 91.58,
+      "eqh": [
+        94.34,
+        94.615
+      ],
+      "eql": [
+        93.885,
+        93.915
+      ],
+      "nearest_liquidity_above": 94.445,
+      "nearest_liquidity_below": 94.08
+    },
+    "orderBlocks": [
+      {
+        "type": "BEARISH",
+        "zone_high": 95.45,
+        "zone_low": 94.5,
+        "fresh": true,
+        "mitigated": false,
+        "displacement_str": 1.72,
+        "score": 95,
+        "candle_index": 191
+      }
+    ],
+    "fairValueGaps": [
+      {
+        "type": "BULLISH",
+        "top": 94.5,
+        "bottom": 94.3,
+        "size_pct": 0.212,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 41
+      },
+      {
+        "type": "BEARISH",
+        "top": 94.5,
+        "bottom": 94.42,
+        "size_pct": 0.085,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 37
+      }
+    ],
+    "regimeData": {
+      "regime": "RANGE",
+      "confidence": 72,
+      "adx": 19.8,
+      "atr_percentile": 67.0,
+      "ema_slope": -0.0012,
+      "bb_width_pct": 1.5
+    },
+    "telegram_message_id": 986
+  },
+  {
+    "id": "sig_ethusdt_1787559375",
+    "symbol": "ETH/USDT",
+    "side": "BUY",
+    "timeframe": "M15",
+    "setupType": "ORDER_BLOCK_RETEST",
+    "regime": "RANGE",
+    "entry": 2444.21,
+    "sl": 2423.5387,
+    "tp": 2475.2169,
+    "tp1": 2475.2169,
+    "tp2": 2506.2239,
+    "tp3": 2537.2308,
+    "rr": 3.0,
+    "quantScore": 72.5,
+    "aiReviewScore": 69.6,
+    "factorScore": 87.5,
+    "winProbability": null,
+    "confidence": 71.0,
+    "aiScore": 72.5,
+    "probability": 87.5,
+    "status": "TP_HIT",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 72.5.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 72.5.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": false
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": true
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 7,
+    "totalFactors": 8,
+    "timestamp": 1787559375.2229383,
+    "formatted_time": "2026-08-24 08:16 UTC",
+    "indicators": {
+      "atr": 11.4283,
+      "rsi": 46.36,
+      "ema21": 2450.886080183299,
+      "ema50": 2448.1810167762615,
+      "ema200": 2435.9604380464957,
+      "macdHist": -0.3779,
+      "volumeDelta": -1.61,
+      "trend": "RANGE"
+    },
+    "marketStructure": {
+      "trend_structure": "BULLISH",
+      "last_bos": null,
+      "last_choch": null,
+      "sweeps": [],
+      "recent_swing_highs": [
+        2466.98,
+        2459.82,
+        2474.09
+      ],
+      "recent_swing_lows": [
+        2441.78,
+        2424.73,
+        2426.49
+      ]
+    },
+    "liquidity": {
+      "pdh": 2484.62,
+      "pdl": 2355.71,
+      "eqh": [
+        2458.935,
+        2463.055
+      ],
+      "eql": [
+        2445.525,
+        2454.06
+      ],
+      "nearest_liquidity_above": 2444.7,
+      "nearest_liquidity_below": 2444.19
+    },
+    "orderBlocks": [
+      {
+        "type": "BULLISH",
+        "zone_high": 2443.78,
+        "zone_low": 2428.11,
+        "fresh": true,
+        "mitigated": false,
+        "displacement_str": 1.74,
+        "score": 96,
+        "candle_index": 185
+      }
+    ],
+    "fairValueGaps": [
+      {
+        "type": "BULLISH",
+        "top": 2447.72,
+        "bottom": 2443.78,
+        "size_pct": 0.161,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 39
+      },
+      {
+        "type": "BULLISH",
+        "top": 2451.95,
+        "bottom": 2449.78,
+        "size_pct": 0.089,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 37
+      },
+      {
+        "type": "BEARISH",
+        "top": 2460.03,
+        "bottom": 2459.36,
+        "size_pct": 0.027,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 65
+      },
+      {
+        "type": "BEARISH",
+        "top": 2452.85,
+        "bottom": 2449.48,
+        "size_pct": 0.138,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 69
+      }
+    ],
+    "regimeData": {
+      "regime": "RANGE",
+      "confidence": 72,
+      "adx": 6.7,
+      "atr_percentile": 32.0,
+      "ema_slope": -0.00019,
+      "bb_width_pct": 1.51
+    },
+    "telegram_message_id": 984,
+    "exit_timestamp": 1787565798.8994107
+  },
+  {
+    "id": "sig_btcusdt_1787555399",
+    "symbol": "BTC/USDT",
+    "side": "BUY",
+    "timeframe": "M15",
+    "setupType": "ORDER_BLOCK_RETEST",
+    "regime": "RANGE",
+    "entry": 77557.12,
+    "sl": 76573.3162,
+    "tp": 79032.8257,
+    "tp1": 79032.8257,
+    "tp2": 80508.5314,
+    "tp3": 81984.2371,
+    "rr": 3.0,
+    "quantScore": 73.9,
+    "aiReviewScore": 70.9,
+    "factorScore": 87.5,
+    "winProbability": null,
+    "confidence": 72.4,
+    "aiScore": 73.9,
+    "probability": 87.5,
+    "status": "EXPIRED",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 73.9.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 73.9.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": true
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": false
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 7,
+    "totalFactors": 8,
+    "timestamp": 1787555399.0448382,
+    "formatted_time": "2026-08-24 07:09 UTC",
+    "indicators": {
+      "atr": 241.7345,
+      "rsi": 57.91,
+      "ema21": 77284.50172048417,
+      "ema50": 77291.6025563644,
+      "ema200": 77200.42415804834,
+      "macdHist": 58.7392,
+      "volumeDelta": -11.19,
+      "trend": "RANGE"
+    },
+    "marketStructure": {
+      "trend_structure": "BEARISH",
+      "last_bos": {
+        "type": "BOS",
+        "direction": "BULLISH",
+        "price": 77545.08,
+        "strength": 88
+      },
+      "last_choch": {
+        "type": "CHOCH",
+        "direction": "BULLISH",
+        "price": 77545.08,
+        "strength": 92
+      },
+      "sweeps": [],
+      "recent_swing_highs": [
+        78052.85,
+        77829.7,
+        77545.08
+      ],
+      "recent_swing_lows": [
+        77200.03,
+        76883.61,
+        76670.01
+      ]
+    },
+    "liquidity": {
+      "pdh": 78052.85,
+      "pdl": 75545.67,
+      "eqh": [
+        77480.365,
+        77515.11
+      ],
+      "eql": [
+        77021.225,
+        77060.5
+      ],
+      "nearest_liquidity_above": 77561.465,
+      "nearest_liquidity_below": 77489.155
+    },
+    "orderBlocks": [
+      {
+        "type": "BULLISH",
+        "zone_high": 77264.0,
+        "zone_low": 76918.0,
+        "fresh": false,
+        "mitigated": true,
+        "displacement_str": 1.86,
+        "score": 87,
+        "candle_index": 178
+      },
+      {
+        "type": "BULLISH",
+        "zone_high": 77122.01,
+        "zone_low": 76670.01,
+        "fresh": true,
+        "mitigated": false,
+        "displacement_str": 1.29,
+        "score": 89,
+        "candle_index": 190
+      }
+    ],
+    "fairValueGaps": [
+      {
+        "type": "BEARISH",
+        "top": 77204.87,
+        "bottom": 77161.36,
+        "size_pct": 0.056,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 36
+      },
+      {
+        "type": "BULLISH",
+        "top": 77296.16,
+        "bottom": 77177.33,
+        "size_pct": 0.153,
+        "fill_pct": 54.0,
+        "fresh": false,
+        "score": 53
+      },
+      {
+        "type": "BULLISH",
+        "top": 77464.31,
+        "bottom": 77382.7,
+        "size_pct": 0.105,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 68
+      }
+    ],
+    "regimeData": {
+      "regime": "RANGE",
+      "confidence": 72,
+      "adx": 22.4,
+      "atr_percentile": 56.0,
+      "ema_slope": 0.00095,
+      "bb_width_pct": 1.02
+    },
+    "telegram_message_id": 983
+  },
+  {
+    "id": "sig_ethusdt_1787549633",
+    "symbol": "ETH/USDT",
+    "side": "BUY",
+    "timeframe": "M15",
+    "setupType": "ORDER_BLOCK_RETEST",
+    "regime": "RANGE",
+    "entry": 2443.9,
+    "sl": 2423.0782,
+    "tp": 2475.1327,
+    "tp1": 2475.1327,
+    "tp2": 2506.3654,
+    "tp3": 2537.5981,
+    "rr": 3.0,
+    "quantScore": 68.7,
+    "aiReviewScore": 66.0,
+    "factorScore": 75.0,
+    "winProbability": null,
+    "confidence": 67.3,
+    "aiScore": 68.7,
+    "probability": 75.0,
+    "status": "EXPIRED",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 68.7.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 68.7.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": false
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": false
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 6,
+    "totalFactors": 8,
+    "timestamp": 1787549633.2931457,
+    "formatted_time": "2026-08-24 05:33 UTC",
+    "indicators": {
+      "atr": 12.5795,
+      "rsi": 49.12,
+      "ema21": 2445.055303215023,
+      "ema50": 2444.7540642091685,
+      "ema200": 2445.8006818848407,
+      "macdHist": 1.1996,
+      "volumeDelta": -9.67,
+      "trend": "RANGE"
+    },
+    "marketStructure": {
+      "trend_structure": "NEUTRAL",
+      "last_bos": null,
+      "last_choch": null,
+      "sweeps": [],
+      "recent_swing_highs": [
+        2484.62,
+        2471.02,
+        2466.98
+      ],
+      "recent_swing_lows": [
+        2441.78,
+        2424.73,
+        2426.49
+      ]
+    },
+    "liquidity": {
+      "pdh": 2484.62,
+      "pdl": 2355.71,
+      "eqh": [
+        2443.79,
+        2442.545
+      ],
+      "eql": [
+        2440.12,
+        2439.68
+      ],
+      "nearest_liquidity_above": 2444.7,
+      "nearest_liquidity_below": 2443.66
+    },
+    "orderBlocks": [
+      {
+        "type": "BULLISH",
+        "zone_high": 2460.0,
+        "zone_low": 2444.08,
+        "fresh": false,
+        "mitigated": true,
+        "displacement_str": 1.54,
+        "score": 83,
+        "candle_index": 179
+      },
+      {
+        "type": "BULLISH",
+        "zone_high": 2443.78,
+        "zone_low": 2428.11,
+        "fresh": true,
+        "mitigated": false,
+        "displacement_str": 1.58,
+        "score": 93,
+        "candle_index": 196
+      }
+    ],
+    "fairValueGaps": [
+      {
+        "type": "BEARISH",
+        "top": 2453.88,
+        "bottom": 2449.7,
+        "size_pct": 0.171,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 40
+      },
+      {
+        "type": "BEARISH",
+        "top": 2442.51,
+        "bottom": 2441.24,
+        "size_pct": 0.052,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 36
+      },
+      {
+        "type": "BULLISH",
+        "top": 2444.16,
+        "bottom": 2441.24,
+        "size_pct": 0.119,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 38
+      },
+      {
+        "type": "BULLISH",
+        "top": 2447.72,
+        "bottom": 2443.78,
+        "size_pct": 0.161,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 39
+      }
+    ],
+    "regimeData": {
+      "regime": "RANGE",
+      "confidence": 72,
+      "adx": 17.5,
+      "atr_percentile": 64.0,
+      "ema_slope": 0.0005,
+      "bb_width_pct": 1.42
+    },
+    "telegram_message_id": 979
+  },
+  {
+    "id": "sig_solusdt_1787549633",
+    "symbol": "SOL/USDT",
+    "side": "SELL",
+    "timeframe": "M15",
+    "setupType": "TREND_PULLBACK",
+    "regime": "TREND_DOWN",
+    "entry": 93.76,
+    "sl": 94.8711,
+    "tp": 92.0934,
+    "tp1": 92.0934,
+    "tp2": 90.4267,
+    "tp3": 88.7601,
+    "rr": 3.0,
+    "quantScore": 71.1,
+    "aiReviewScore": 68.3,
+    "factorScore": 87.5,
+    "winProbability": null,
+    "confidence": 69.7,
+    "aiScore": 71.1,
+    "probability": 87.5,
+    "status": "SL_HIT",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 71.1.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 71.1.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": false
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": true
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 7,
+    "totalFactors": 8,
+    "timestamp": 1787549633.2931457,
+    "formatted_time": "2026-08-24 05:33 UTC",
+    "indicators": {
+      "atr": 0.5653,
+      "rsi": 40.95,
+      "ema21": 94.32416239794912,
+      "ema50": 94.58849380236661,
+      "ema200": 94.78160497604098,
+      "macdHist": 0.0091,
+      "volumeDelta": -3.42,
+      "trend": "TREND_DOWN"
+    },
+    "marketStructure": {
+      "trend_structure": "BEARISH",
+      "last_bos": null,
+      "last_choch": null,
+      "sweeps": [],
+      "recent_swing_highs": [
+        96.25,
+        95.88,
+        95.05
+      ],
+      "recent_swing_lows": [
+        93.87,
+        93.67,
+        93.47
+      ]
+    },
+    "liquidity": {
+      "pdh": 97.21,
+      "pdl": 91.58,
+      "eqh": [
+        94.07,
+        94.045
+      ],
+      "eql": [
+        93.98,
+        93.675
+      ],
+      "nearest_liquidity_above": 94.025,
+      "nearest_liquidity_below": 93.73
+    },
+    "orderBlocks": [
+      {
+        "type": "BULLISH",
+        "zone_high": 95.09,
+        "zone_low": 94.36,
+        "fresh": false,
+        "mitigated": true,
+        "displacement_str": 2.07,
+        "score": 91,
+        "candle_index": 179
+      }
+    ],
+    "fairValueGaps": [
+      {
+        "type": "BEARISH",
+        "top": 94.88,
+        "bottom": 94.66,
+        "size_pct": 0.235,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 42
+      },
+      {
+        "type": "BEARISH",
+        "top": 94.47,
+        "bottom": 94.29,
+        "size_pct": 0.192,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 40
+      },
+      {
+        "type": "BULLISH",
+        "top": 94.44,
+        "bottom": 94.29,
+        "size_pct": 0.16,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 39
+      },
+      {
+        "type": "BULLISH",
+        "top": 94.62,
+        "bottom": 94.53,
+        "size_pct": 0.096,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 37
+      }
+    ],
+    "regimeData": {
+      "regime": "TREND_DOWN",
+      "confidence": 91,
+      "adx": 28.0,
+      "atr_percentile": 54.0,
+      "ema_slope": -0.00104,
+      "bb_width_pct": 1.96
+    },
+    "telegram_message_id": 980,
+    "exit_timestamp": 1787555253.3934615
+  },
+  {
+    "id": "sig_btcusdt_1787547194",
+    "symbol": "BTC/USDT",
+    "side": "SELL",
+    "timeframe": "M15",
+    "setupType": "TREND_PULLBACK",
+    "regime": "TREND_DOWN",
+    "entry": 76711.89,
+    "sl": 77408.2487,
+    "tp": 75667.352,
+    "tp1": 75667.352,
+    "tp2": 74622.8139,
+    "tp3": 73578.2759,
+    "rr": 3.0,
+    "quantScore": 75.3,
+    "aiReviewScore": 72.3,
+    "factorScore": 87.5,
+    "winProbability": null,
+    "confidence": 73.8,
+    "aiScore": 75.3,
+    "probability": 87.5,
+    "status": "SL_HIT",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 75.3.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 75.3.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": false
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": true
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 7,
+    "totalFactors": 8,
+    "timestamp": 1787547194.328226,
+    "formatted_time": "2026-08-24 04:53 UTC",
+    "indicators": {
+      "atr": 259.7331,
+      "rsi": 37.45,
+      "ema21": 77209.23357330935,
+      "ema50": 77278.38215181748,
+      "ema200": 77351.0331659224,
+      "macdHist": -44.4158,
+      "volumeDelta": -21.22,
+      "trend": "TREND_DOWN"
+    },
+    "marketStructure": {
+      "trend_structure": "BEARISH",
+      "last_bos": {
+        "type": "BOS",
+        "direction": "BEARISH",
+        "price": 76883.61,
+        "strength": 88
+      },
+      "last_choch": null,
+      "sweeps": [],
+      "recent_swing_highs": [
+        78052.85,
+        77829.7,
+        77545.08
+      ],
+      "recent_swing_lows": [
+        77116.0,
+        77200.03,
+        76883.61
+      ]
+    },
+    "liquidity": {
+      "pdh": 78052.85,
+      "pdl": 75545.67,
+      "eqh": [
+        77137.005,
+        77106.585
+      ],
+      "eql": [
+        76986.505,
+        77007.005
+      ],
+      "nearest_liquidity_above": 77106.585,
+      "nearest_liquidity_below": 75545.67
+    },
+    "orderBlocks": [
+      {
+        "type": "BULLISH",
+        "zone_high": 77597.84,
+        "zone_low": 77219.34,
+        "fresh": false,
+        "mitigated": true,
+        "displacement_str": 1.71,
+        "score": 85,
+        "candle_index": 182
+      },
+      {
+        "type": "BULLISH",
+        "zone_high": 77264.0,
+        "zone_low": 76918.0,
+        "fresh": false,
+        "mitigated": true,
+        "displacement_str": 1.73,
+        "score": 85,
+        "candle_index": 187
+      }
+    ],
+    "fairValueGaps": [
+      {
+        "type": "BEARISH",
+        "top": 77439.28,
+        "bottom": 77368.0,
+        "size_pct": 0.093,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 37
+      },
+      {
+        "type": "BULLISH",
+        "top": 77371.99,
+        "bottom": 77264.0,
+        "size_pct": 0.141,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 39
+      },
+      {
+        "type": "BEARISH",
+        "top": 77204.87,
+        "bottom": 77161.36,
+        "size_pct": 0.057,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 36
+      }
+    ],
+    "regimeData": {
+      "regime": "TREND_DOWN",
+      "confidence": 87,
+      "adx": 23.7,
+      "atr_percentile": 78.0,
+      "ema_slope": -0.00129,
+      "bb_width_pct": 1.27
+    },
+    "telegram_message_id": 968,
+    "exit_timestamp": 1787552071.6004686
+  },
+  {
+    "id": "sig_ethusdt_1787547194",
+    "symbol": "ETH/USDT",
+    "side": "SELL",
+    "timeframe": "M15",
+    "setupType": "TREND_PULLBACK",
+    "regime": "RANGE",
+    "entry": 2430.43,
+    "sl": 2449.6968,
+    "tp": 2401.5298,
+    "tp1": 2401.5298,
+    "tp2": 2372.6296,
+    "tp3": 2343.7294,
+    "rr": 3.0,
+    "quantScore": 66.0,
+    "aiReviewScore": 63.4,
+    "factorScore": 87.5,
+    "winProbability": null,
+    "confidence": 64.7,
+    "aiScore": 66.0,
+    "probability": 87.5,
+    "status": "SL_HIT",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 66.0.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 66.0.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": false
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": true
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 7,
+    "totalFactors": 8,
+    "timestamp": 1787547194.328226,
+    "formatted_time": "2026-08-24 04:53 UTC",
+    "indicators": {
+      "atr": 11.9742,
+      "rsi": 42.19,
+      "ema21": 2442.61415402679,
+      "ema50": 2443.709741493073,
+      "ema200": 2445.3130433655783,
+      "macdHist": -0.6101,
+      "volumeDelta": -10.74,
+      "trend": "RANGE"
+    },
+    "marketStructure": {
+      "trend_structure": "NEUTRAL",
+      "last_bos": null,
+      "last_choch": null,
+      "sweeps": [],
+      "recent_swing_highs": [
+        2484.62,
+        2471.02,
+        2466.98
+      ],
+      "recent_swing_lows": [
+        2441.78,
+        2424.73,
+        2426.49
+      ]
+    },
+    "liquidity": {
+      "pdh": 2484.62,
+      "pdl": 2355.71,
+      "eqh": [
+        2443.79,
+        2442.545
+      ],
+      "eql": [
+        2428.03,
+        2429.375
+      ],
+      "nearest_liquidity_above": 2439.715,
+      "nearest_liquidity_below": 2429.375
+    },
+    "orderBlocks": [
+      {
+        "type": "BULLISH",
+        "zone_high": 2460.0,
+        "zone_low": 2444.08,
+        "fresh": false,
+        "mitigated": true,
+        "displacement_str": 1.62,
+        "score": 84,
+        "candle_index": 182
+      },
+      {
+        "type": "BULLISH",
+        "zone_high": 2441.24,
+        "zone_low": 2427.27,
+        "fresh": false,
+        "mitigated": true,
+        "displacement_str": 1.23,
+        "score": 78,
+        "candle_index": 187
+      }
+    ],
+    "fairValueGaps": [
+      {
+        "type": "BEARISH",
+        "top": 2453.88,
+        "bottom": 2449.7,
+        "size_pct": 0.172,
+        "fill_pct": 49.5,
+        "fresh": true,
+        "score": 55
+      },
+      {
+        "type": "BEARISH",
+        "top": 2442.51,
+        "bottom": 2441.24,
+        "size_pct": 0.052,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 36
+      },
+      {
+        "type": "BULLISH",
+        "top": 2444.16,
+        "bottom": 2441.24,
+        "size_pct": 0.12,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 38
+      }
+    ],
+    "regimeData": {
+      "regime": "RANGE",
+      "confidence": 72,
+      "adx": 21.8,
+      "atr_percentile": 55.0,
+      "ema_slope": -0.00066,
+      "bb_width_pct": 1.5
+    },
+    "telegram_message_id": 969,
+    "exit_timestamp": 1787548318.7702246
+  },
+  {
+    "id": "sig_btcusdt_1787542341",
+    "symbol": "BTC/USDT",
+    "side": "BUY",
+    "timeframe": "M15",
+    "setupType": "ORDER_BLOCK_RETEST",
+    "regime": "RANGE",
+    "entry": 77097.9,
+    "sl": 76790.2224,
+    "tp": 77559.4164,
+    "tp1": 77559.4164,
+    "tp2": 78020.9328,
+    "tp3": 78482.4492,
+    "rr": 3.0,
+    "quantScore": 70.9,
+    "aiReviewScore": 68.1,
+    "factorScore": 87.5,
+    "winProbability": null,
+    "confidence": 69.5,
+    "aiScore": 70.9,
+    "probability": 87.5,
+    "status": "SL_HIT",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 70.9.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 70.9.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": true
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": false
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 7,
+    "totalFactors": 8,
+    "timestamp": 1787542341.8133054,
+    "formatted_time": "2026-08-24 03:32 UTC",
+    "indicators": {
+      "atr": 256.398,
+      "rsi": 43.02,
+      "ema21": 77356.55138902072,
+      "ema50": 77346.55713244026,
+      "ema200": 77293.25910773188,
+      "macdHist": -35.5245,
+      "volumeDelta": -12.97,
+      "trend": "RANGE"
+    },
+    "marketStructure": {
+      "trend_structure": "BEARISH",
+      "last_bos": null,
+      "last_choch": null,
+      "sweeps": [],
+      "recent_swing_highs": [
+        77475.0,
+        78052.85,
+        77829.7
+      ],
+      "recent_swing_lows": [
+        77116.0,
+        77200.03,
+        76883.61
+      ]
+    },
+    "liquidity": {
+      "pdh": 78052.85,
+      "pdl": 75545.67,
+      "eqh": [
+        77476.185,
+        77520.71
+      ],
+      "eql": [
+        77150.43,
+        76970.0
+      ],
+      "nearest_liquidity_above": 77268.5,
+      "nearest_liquidity_below": 76970.0
+    },
+    "orderBlocks": [
+      {
+        "type": "BULLISH",
+        "zone_high": 77597.84,
+        "zone_low": 77219.34,
+        "fresh": false,
+        "mitigated": true,
+        "displacement_str": 1.73,
+        "score": 85,
+        "candle_index": 187
+      },
+      {
+        "type": "BULLISH",
+        "zone_high": 77264.0,
+        "zone_low": 76918.0,
+        "fresh": true,
+        "mitigated": false,
+        "displacement_str": 1.75,
+        "score": 96,
+        "candle_index": 192
+      }
+    ],
+    "fairValueGaps": [
+      {
+        "type": "BEARISH",
+        "top": 77439.28,
+        "bottom": 77368.0,
+        "size_pct": 0.092,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 37
+      },
+      {
+        "type": "BULLISH",
+        "top": 77371.99,
+        "bottom": 77264.0,
+        "size_pct": 0.14,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 39
+      },
+      {
+        "type": "BEARISH",
+        "top": 77204.87,
+        "bottom": 77141.58,
+        "size_pct": 0.082,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 67
+      }
+    ],
+    "regimeData": {
+      "regime": "RANGE",
+      "confidence": 72,
+      "adx": 15.1,
+      "atr_percentile": 76.0,
+      "ema_slope": -0.00087,
+      "bb_width_pct": 1.1
+    },
+    "telegram_message_id": 965,
+    "exit_timestamp": 1787547134.054472
+  },
+  {
+    "id": "sig_solusdt_1787542341",
+    "symbol": "SOL/USDT",
+    "side": "BUY",
+    "timeframe": "M15",
+    "setupType": "LIQUIDITY_SWEEP",
+    "regime": "RANGE",
+    "entry": 93.78,
+    "sl": 93.0605,
+    "tp": 94.8593,
+    "tp1": 94.8593,
+    "tp2": 95.9385,
+    "tp3": 97.0177,
+    "rr": 3.0,
+    "quantScore": 66.6,
+    "aiReviewScore": 63.9,
+    "factorScore": 75.0,
+    "winProbability": null,
+    "confidence": 65.2,
+    "aiScore": 66.6,
+    "probability": 75.0,
+    "status": "EXPIRED",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 66.6.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 66.6.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": false
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": false
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 6,
+    "totalFactors": 8,
+    "timestamp": 1787542341.8133054,
+    "formatted_time": "2026-08-24 03:32 UTC",
+    "indicators": {
+      "atr": 0.5996,
+      "rsi": 38.85,
+      "ema21": 94.58584915212414,
+      "ema50": 94.77400460843927,
+      "ema200": 94.40479082173312,
+      "macdHist": -0.0991,
+      "volumeDelta": -5.52,
+      "trend": "RANGE"
+    },
+    "marketStructure": {
+      "trend_structure": "BEARISH",
+      "last_bos": null,
+      "last_choch": null,
+      "sweeps": [
+        {
+          "type": "SWEEP_LOW",
+          "price": 93.47,
+          "level": 93.67,
+          "candle_index": 199
+        }
+      ],
+      "recent_swing_highs": [
+        95.9,
+        96.25,
+        95.88
+      ],
+      "recent_swing_lows": [
+        94.78,
+        93.87,
+        93.67
+      ]
+    },
+    "liquidity": {
+      "pdh": 97.21,
+      "pdl": 91.58,
+      "eqh": [
+        94.595,
+        94.72
+      ],
+      "eql": [
+        93.76,
+        93.725
+      ],
+      "nearest_liquidity_above": 94.265,
+      "nearest_liquidity_below": 93.76
+    },
+    "orderBlocks": [
+      {
+        "type": "BULLISH",
+        "zone_high": 95.09,
+        "zone_low": 94.36,
+        "fresh": false,
+        "mitigated": true,
+        "displacement_str": 1.95,
+        "score": 89,
+        "candle_index": 187
+      }
+    ],
+    "fairValueGaps": [
+      {
+        "type": "BEARISH",
+        "top": 94.47,
+        "bottom": 94.29,
+        "size_pct": 0.192,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 40
+      },
+      {
+        "type": "BULLISH",
+        "top": 94.44,
+        "bottom": 94.29,
+        "size_pct": 0.16,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 39
+      },
+      {
+        "type": "BULLISH",
+        "top": 94.62,
+        "bottom": 94.53,
+        "size_pct": 0.096,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 37
+      },
+      {
+        "type": "BEARISH",
+        "top": 93.88,
+        "bottom": 93.81,
+        "size_pct": 0.075,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 67
+      }
+    ],
+    "regimeData": {
+      "regime": "RANGE",
+      "confidence": 72,
+      "adx": 31.9,
+      "atr_percentile": 55.0,
+      "ema_slope": -0.00295,
+      "bb_width_pct": 2.48
+    },
+    "telegram_message_id": 966
+  },
+  {
+    "id": "sig_btcusdt_1787538715",
+    "symbol": "BTC/USDT",
+    "side": "BUY",
+    "timeframe": "M15",
+    "setupType": "LIQUIDITY_SWEEP",
+    "regime": "RANGE",
+    "entry": 77447.75,
+    "sl": 77068.4085,
+    "tp": 78016.7622,
+    "tp1": 78016.7622,
+    "tp2": 78585.7745,
+    "tp3": 79154.7867,
+    "rr": 3.0,
+    "quantScore": 72.2,
+    "aiReviewScore": 69.3,
+    "factorScore": 100.0,
+    "winProbability": null,
+    "confidence": 70.8,
+    "aiScore": 72.2,
+    "probability": 100.0,
+    "status": "SL_HIT",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 72.2.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 72.2.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": true
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": true
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 8,
+    "totalFactors": 8,
+    "timestamp": 1787538715.5424597,
+    "formatted_time": "2026-08-24 02:31 UTC",
+    "indicators": {
+      "atr": 263.2431,
+      "rsi": 50.53,
+      "ema21": 77423.24528063538,
+      "ema50": 77368.36149310337,
+      "ema200": 77313.63866160788,
+      "macdHist": -23.4273,
+      "volumeDelta": -2.01,
+      "trend": "RANGE"
+    },
+    "marketStructure": {
+      "trend_structure": "NEUTRAL",
+      "last_bos": null,
+      "last_choch": null,
+      "sweeps": [
+        {
+          "type": "SWEEP_LOW",
+          "price": 77178.06,
+          "level": 77200.03,
+          "candle_index": 195
+        },
+        {
+          "type": "SWEEP_LOW",
+          "price": 76883.61,
+          "level": 77200.03,
+          "candle_index": 197
+        }
+      ],
+      "recent_swing_highs": [
+        77475.0,
+        78052.85,
+        77829.7
+      ],
+      "recent_swing_lows": [
+        76802.0,
+        77116.0,
+        77200.03
+      ]
+    },
+    "liquidity": {
+      "pdh": 78052.85,
+      "pdl": 75545.67,
+      "eqh": [
+        77466.14,
+        77417.995
+      ],
+      "eql": [
+        77405.635,
+        77437.78
+      ],
+      "nearest_liquidity_above": 77449.59,
+      "nearest_liquidity_below": 77442.79
+    },
+    "orderBlocks": [
+      {
+        "type": "BEARISH",
+        "zone_high": 78052.85,
+        "zone_low": 77697.69,
+        "fresh": true,
+        "mitigated": false,
+        "displacement_str": 1.53,
+        "score": 92,
+        "candle_index": 178
+      },
+      {
+        "type": "BULLISH",
+        "zone_high": 77597.84,
+        "zone_low": 77219.34,
+        "fresh": false,
+        "mitigated": true,
+        "displacement_str": 1.68,
+        "score": 85,
+        "candle_index": 191
+      },
+      {
+        "type": "BULLISH",
+        "zone_high": 77264.0,
+        "zone_low": 76918.0,
+        "fresh": true,
+        "mitigated": false,
+        "displacement_str": 1.71,
+        "score": 95,
+        "candle_index": 196
+      }
+    ],
+    "fairValueGaps": [
+      {
+        "type": "BEARISH",
+        "top": 77439.28,
+        "bottom": 77368.0,
+        "size_pct": 0.092,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 37
+      },
+      {
+        "type": "BULLISH",
+        "top": 77371.99,
+        "bottom": 77264.0,
+        "size_pct": 0.139,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 69
+      },
+      {
+        "type": "BULLISH",
+        "top": 77436.28,
+        "bottom": 77420.0,
+        "size_pct": 0.021,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 65
+      }
+    ],
+    "regimeData": {
+      "regime": "RANGE",
+      "confidence": 72,
+      "adx": 12.8,
+      "atr_percentile": 86.0,
+      "ema_slope": -0.00064,
+      "bb_width_pct": 1.11
+    },
+    "telegram_message_id": 961,
+    "exit_timestamp": 1787542240.075126
+  },
+  {
+    "id": "sig_solusdt_1787538715",
+    "symbol": "SOL/USDT",
+    "side": "BUY",
+    "timeframe": "M15",
+    "setupType": "LIQUIDITY_SWEEP",
+    "regime": "RANGE",
+    "entry": 94.75,
+    "sl": 93.5757,
+    "tp": 96.5114,
+    "tp1": 96.5114,
+    "tp2": 98.2729,
+    "tp3": 100.0344,
+    "rr": 3.0,
+    "quantScore": 66.5,
+    "aiReviewScore": 63.8,
+    "factorScore": 75.0,
+    "winProbability": null,
+    "confidence": 65.2,
+    "aiScore": 66.5,
+    "probability": 75.0,
+    "status": "SL_HIT",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 66.5.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 66.5.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": false
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": false
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 6,
+    "totalFactors": 8,
+    "timestamp": 1787538715.5424597,
+    "formatted_time": "2026-08-24 02:31 UTC",
+    "indicators": {
+      "atr": 0.5886,
+      "rsi": 48.1,
+      "ema21": 94.86553374523326,
+      "ema50": 94.90840408231759,
+      "ema200": 94.44927722654856,
+      "macdHist": -0.0494,
+      "volumeDelta": -6.6,
+      "trend": "RANGE"
+    },
+    "marketStructure": {
+      "trend_structure": "BEARISH",
+      "last_bos": null,
+      "last_choch": null,
+      "sweeps": [
+        {
+          "type": "SWEEP_LOW",
+          "price": 93.74,
+          "level": 93.87,
+          "candle_index": 196
+        },
+        {
+          "type": "SWEEP_LOW",
+          "price": 93.67,
+          "level": 93.87,
+          "candle_index": 197
+        }
+      ],
+      "recent_swing_highs": [
+        95.9,
+        96.25,
+        95.88
+      ],
+      "recent_swing_lows": [
+        94.76,
+        94.78,
+        93.87
+      ]
+    },
+    "liquidity": {
+      "pdh": 97.21,
+      "pdl": 91.58,
+      "eqh": [
+        94.885,
+        94.72
+      ],
+      "eql": [
+        94.81,
+        94.455
+      ],
+      "nearest_liquidity_above": 94.885,
+      "nearest_liquidity_below": 94.455
+    },
+    "orderBlocks": [
+      {
+        "type": "BEARISH",
+        "zone_high": 96.21,
+        "zone_low": 95.64,
+        "fresh": true,
+        "mitigated": false,
+        "displacement_str": 1.41,
+        "score": 91,
+        "candle_index": 178
+      },
+      {
+        "type": "BULLISH",
+        "zone_high": 95.09,
+        "zone_low": 94.36,
+        "fresh": false,
+        "mitigated": true,
+        "displacement_str": 1.99,
+        "score": 89,
+        "candle_index": 191
+      }
+    ],
+    "fairValueGaps": [
+      {
+        "type": "BEARISH",
+        "top": 94.88,
+        "bottom": 94.66,
+        "size_pct": 0.232,
+        "fill_pct": 77.3,
+        "fresh": false,
+        "score": 48
+      },
+      {
+        "type": "BEARISH",
+        "top": 94.47,
+        "bottom": 94.29,
+        "size_pct": 0.19,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 40
+      },
+      {
+        "type": "BULLISH",
+        "top": 94.44,
+        "bottom": 94.29,
+        "size_pct": 0.158,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 69
+      },
+      {
+        "type": "BULLISH",
+        "top": 94.74,
+        "bottom": 94.53,
+        "size_pct": 0.222,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 71
+      }
+    ],
+    "regimeData": {
+      "regime": "RANGE",
+      "confidence": 72,
+      "adx": 26.0,
+      "atr_percentile": 54.0,
+      "ema_slope": -0.00179,
+      "bb_width_pct": 2.13
+    },
+    "telegram_message_id": 962,
+    "exit_timestamp": 1787542246.4548488
+  },
+  {
+    "id": "sig_btcusdt_1787536876",
+    "symbol": "BTC/USDT",
+    "side": "BUY",
+    "timeframe": "M15",
+    "setupType": "LIQUIDITY_SWEEP",
+    "regime": "RANGE",
+    "entry": 76962.92,
+    "sl": 76651.4475,
+    "tp": 77430.1288,
+    "tp1": 77430.1288,
+    "tp2": 77897.3375,
+    "tp3": 78364.5463,
+    "rr": 3.0,
+    "quantScore": 72.3,
+    "aiReviewScore": 69.4,
+    "factorScore": 100.0,
+    "winProbability": null,
+    "confidence": 70.8,
+    "aiScore": 72.3,
+    "probability": 100.0,
+    "status": "TP_HIT",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 72.3.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 72.3.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": true
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": true
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 8,
+    "totalFactors": 8,
+    "timestamp": 1787536876.7650602,
+    "formatted_time": "2026-08-24 02:01 UTC",
+    "indicators": {
+      "atr": 259.5604,
+      "rsi": 39.67,
+      "ema21": 77380.89219839705,
+      "ema50": 77345.68550703293,
+      "ema200": 77302.13842985668,
+      "macdHist": -83.955,
+      "volumeDelta": -1.29,
+      "trend": "RANGE"
+    },
+    "marketStructure": {
+      "trend_structure": "NEUTRAL",
+      "last_bos": {
+        "type": "BOS",
+        "direction": "BEARISH",
+        "price": 77200.03,
+        "strength": 88
+      },
+      "last_choch": null,
+      "sweeps": [
+        {
+          "type": "SWEEP_LOW",
+          "price": 77178.06,
+          "level": 77200.03,
+          "candle_index": 197
+        }
+      ],
+      "recent_swing_highs": [
+        77475.0,
+        78052.85,
+        77829.7
+      ],
+      "recent_swing_lows": [
+        76802.0,
+        77116.0,
+        77200.03
+      ]
+    },
+    "liquidity": {
+      "pdh": 78052.85,
+      "pdl": 75545.67,
+      "eqh": [
+        77729.64,
+        77680.58
+      ],
+      "eql": [
+        77198.7,
+        77160.455
+      ],
+      "nearest_liquidity_above": 77305.005,
+      "nearest_liquidity_below": 75545.67
+    },
+    "orderBlocks": [
+      {
+        "type": "BEARISH",
+        "zone_high": 78052.85,
+        "zone_low": 77697.69,
+        "fresh": true,
+        "mitigated": false,
+        "displacement_str": 1.55,
+        "score": 93,
+        "candle_index": 180
+      },
+      {
+        "type": "BULLISH",
+        "zone_high": 77597.84,
+        "zone_low": 77219.34,
+        "fresh": false,
+        "mitigated": true,
+        "displacement_str": 1.71,
+        "score": 85,
+        "candle_index": 193
+      }
+    ],
+    "fairValueGaps": [
+      {
+        "type": "BEARISH",
+        "top": 77439.28,
+        "bottom": 77368.0,
+        "size_pct": 0.093,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 67
+      },
+      {
+        "type": "BEARISH",
+        "top": 77178.06,
+        "bottom": 76978.0,
+        "size_pct": 0.26,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 72
+      }
+    ],
+    "regimeData": {
+      "regime": "RANGE",
+      "confidence": 72,
+      "adx": 14.6,
+      "atr_percentile": 85.0,
+      "ema_slope": -0.00184,
+      "bb_width_pct": 1.4
+    },
+    "telegram_message_id": 958,
+    "exit_timestamp": 1787537744.407102
+  },
+  {
+    "id": "sig_ethusdt_1787536876",
+    "symbol": "ETH/USDT",
+    "side": "BUY",
+    "timeframe": "M15",
+    "setupType": "TREND_PULLBACK",
+    "regime": "RANGE",
+    "entry": 2428.68,
+    "sl": 2409.1452,
+    "tp": 2457.9822,
+    "tp1": 2457.9822,
+    "tp2": 2487.2844,
+    "tp3": 2516.5866,
+    "rr": 3.0,
+    "quantScore": 66.1,
+    "aiReviewScore": 63.5,
+    "factorScore": 87.5,
+    "winProbability": null,
+    "confidence": 64.8,
+    "aiScore": 66.1,
+    "probability": 87.5,
+    "status": "EXPIRED",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 66.1.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 66.1.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": false
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": true
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 7,
+    "totalFactors": 8,
+    "timestamp": 1787536876.7650602,
+    "formatted_time": "2026-08-24 02:01 UTC",
+    "indicators": {
+      "atr": 13.0232,
+      "rsi": 38.89,
+      "ema21": 2448.640740152016,
+      "ema50": 2445.7144343044447,
+      "ema200": 2445.044941392439,
+      "macdHist": -3.8661,
+      "volumeDelta": -3.24,
+      "trend": "RANGE"
+    },
+    "marketStructure": {
+      "trend_structure": "NEUTRAL",
+      "last_bos": {
+        "type": "BOS",
+        "direction": "BEARISH",
+        "price": 2441.78,
+        "strength": 88
+      },
+      "last_choch": null,
+      "sweeps": [],
+      "recent_swing_highs": [
+        2459.22,
+        2484.62,
+        2471.02
+      ],
+      "recent_swing_lows": [
+        2432.81,
+        2436.41,
+        2441.78
+      ]
+    },
+    "liquidity": {
+      "pdh": 2484.62,
+      "pdl": 2355.71,
+      "eqh": [
+        2464.95,
+        2465.49
+      ],
+      "eql": [
+        2443.205,
+        2443.295
+      ],
+      "nearest_liquidity_above": 2444.95,
+      "nearest_liquidity_below": 2355.71
+    },
+    "orderBlocks": [
+      {
+        "type": "BEARISH",
+        "zone_high": 2479.81,
+        "zone_low": 2466.12,
+        "fresh": true,
+        "mitigated": false,
+        "displacement_str": 1.2,
+        "score": 88,
+        "candle_index": 180
+      },
+      {
+        "type": "BULLISH",
+        "zone_high": 2460.0,
+        "zone_low": 2444.08,
+        "fresh": false,
+        "mitigated": true,
+        "displacement_str": 1.49,
+        "score": 82,
+        "candle_index": 193
+      }
+    ],
+    "fairValueGaps": [
+      {
+        "type": "BEARISH",
+        "top": 2456.15,
+        "bottom": 2455.69,
+        "size_pct": 0.019,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 35
+      },
+      {
+        "type": "BEARISH",
+        "top": 2453.88,
+        "bottom": 2449.7,
+        "size_pct": 0.172,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 70
+      },
+      {
+        "type": "BEARISH",
+        "top": 2442.51,
+        "bottom": 2441.24,
+        "size_pct": 0.052,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 66
+      },
+      {
+        "type": "BEARISH",
+        "top": 2434.72,
+        "bottom": 2432.0,
+        "size_pct": 0.112,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 68
+      }
+    ],
+    "regimeData": {
+      "regime": "RANGE",
+      "confidence": 72,
+      "adx": 11.3,
+      "atr_percentile": 79.0,
+      "ema_slope": -0.00261,
+      "bb_width_pct": 1.97
+    },
+    "telegram_message_id": 959
+  },
+  {
+    "id": "sig_btcusdt_1787532619",
+    "symbol": "BTC/USDT",
+    "side": "BUY",
+    "timeframe": "M15",
+    "setupType": "LIQUIDITY_SWEEP",
+    "regime": "RANGE",
+    "entry": 77416.81,
+    "sl": 77071.1252,
+    "tp": 77935.3372,
+    "tp1": 77935.3372,
+    "tp2": 78453.8644,
+    "tp3": 78972.3916,
+    "rr": 3.0,
+    "quantScore": 73.3,
+    "aiReviewScore": 70.4,
+    "factorScore": 100.0,
+    "winProbability": null,
+    "confidence": 71.8,
+    "aiScore": 73.3,
+    "probability": 100.0,
+    "status": "SL_HIT",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 73.3.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 73.3.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": true
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": true
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 8,
+    "totalFactors": 8,
+    "timestamp": 1787532619.249536,
+    "formatted_time": "2026-08-24 00:50 UTC",
+    "indicators": {
+      "atr": 257.8096,
+      "rsi": 48.12,
+      "ema21": 77508.46427266563,
+      "ema50": 77379.68888362889,
+      "ema200": 77395.11559930012,
+      "macdHist": -47.5131,
+      "volumeDelta": 8.84,
+      "trend": "RANGE"
+    },
+    "marketStructure": {
+      "trend_structure": "NEUTRAL",
+      "last_bos": null,
+      "last_choch": null,
+      "sweeps": [
+        {
+          "type": "SWEEP_LOW",
+          "price": 77142.85,
+          "level": 77200.03,
+          "candle_index": 199
+        }
+      ],
+      "recent_swing_highs": [
+        77475.0,
+        78052.85,
+        77829.7
+      ],
+      "recent_swing_lows": [
+        76802.0,
+        77116.0,
+        77200.03
+      ]
+    },
+    "liquidity": {
+      "pdh": 78052.85,
+      "pdl": 75545.67,
+      "eqh": [
+        77656.94,
+        77633.92
+      ],
+      "eql": [
+        77254.78,
+        77479.67
+      ],
+      "nearest_liquidity_above": 77417.665,
+      "nearest_liquidity_below": 77415.665
+    },
+    "orderBlocks": [
+      {
+        "type": "BEARISH",
+        "zone_high": 78052.85,
+        "zone_low": 77697.69,
+        "fresh": true,
+        "mitigated": false,
+        "displacement_str": 1.56,
+        "score": 93,
+        "candle_index": 185
+      }
+    ],
+    "fairValueGaps": [
+      {
+        "type": "BULLISH",
+        "top": 77385.99,
+        "bottom": 77346.01,
+        "size_pct": 0.052,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 36
+      },
+      {
+        "type": "BULLISH",
+        "top": 77697.69,
+        "bottom": 77434.89,
+        "size_pct": 0.339,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 45
+      }
+    ],
+    "regimeData": {
+      "regime": "RANGE",
+      "confidence": 72,
+      "adx": 21.4,
+      "atr_percentile": 89.0,
+      "ema_slope": -0.00054,
+      "bb_width_pct": 0.97
+    },
+    "telegram_message_id": 956,
+    "exit_timestamp": 1787536574.1446497
+  },
+  {
+    "id": "sig_solusdt_1787531388",
+    "symbol": "SOL/USDT",
+    "side": "SELL",
+    "timeframe": "M15",
+    "setupType": "ORDER_BLOCK_RETEST",
+    "regime": "RANGE",
+    "entry": 94.49,
+    "sl": 96.4501,
+    "tp": 91.5498,
+    "tp1": 91.5498,
+    "tp2": 88.6097,
+    "tp3": 85.6695,
+    "rr": 3.0,
+    "quantScore": 65.1,
+    "aiReviewScore": 62.5,
+    "factorScore": 87.5,
+    "winProbability": null,
+    "confidence": 63.8,
+    "aiScore": 65.1,
+    "probability": 87.5,
+    "status": "EXPIRED",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 65.1.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 65.1.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": false
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": true
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 7,
+    "totalFactors": 8,
+    "timestamp": 1787531388.0339475,
+    "formatted_time": "2026-08-24 00:29 UTC",
+    "indicators": {
+      "atr": 0.6002,
+      "rsi": 39.48,
+      "ema21": 95.25206570623364,
+      "ema50": 95.04599851224717,
+      "ema200": 94.49962504941026,
+      "macdHist": -0.0894,
+      "volumeDelta": 0.78,
+      "trend": "RANGE"
+    },
+    "marketStructure": {
+      "trend_structure": "BULLISH",
+      "last_bos": {
+        "type": "BOS",
+        "direction": "BEARISH",
+        "price": 94.78,
+        "strength": 88
+      },
+      "last_choch": {
+        "type": "CHOCH",
+        "direction": "BEARISH",
+        "price": 94.78,
+        "strength": 92
+      },
+      "sweeps": [],
+      "recent_swing_highs": [
+        95.81,
+        95.9,
+        96.25
+      ],
+      "recent_swing_lows": [
+        94.82,
+        94.76,
+        94.78
+      ]
+    },
+    "liquidity": {
+      "pdh": 97.21,
+      "pdl": 91.58,
+      "eqh": [
+        95.63,
+        95.575
+      ],
+      "eql": [
+        94.97,
+        94.975
+      ],
+      "nearest_liquidity_above": 95.145,
+      "nearest_liquidity_below": 91.58
+    },
+    "orderBlocks": [
+      {
+        "type": "BEARISH",
+        "zone_high": 96.21,
+        "zone_low": 95.64,
+        "fresh": true,
+        "mitigated": false,
+        "displacement_str": 1.38,
+        "score": 90,
+        "candle_index": 187
+      }
+    ],
+    "fairValueGaps": [
+      {
+        "type": "BULLISH",
+        "top": 95.64,
+        "bottom": 95.19,
+        "size_pct": 0.476,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 49
+      }
+    ],
+    "regimeData": {
+      "regime": "RANGE",
+      "confidence": 72,
+      "adx": 12.9,
+      "atr_percentile": 59.0,
+      "ema_slope": -0.001,
+      "bb_width_pct": 1.3
+    },
+    "telegram_message_id": 955
+  },
+  {
+    "id": "sig_btcusdt_1787521323",
+    "symbol": "BTC/USDT",
+    "side": "BUY",
+    "timeframe": "M15",
+    "setupType": "ORDER_BLOCK_RETEST",
+    "regime": "RANGE",
+    "entry": 77638.0,
+    "sl": 77309.1947,
+    "tp": 78131.208,
+    "tp1": 78131.208,
+    "tp2": 78624.4159,
+    "tp3": 79117.6239,
+    "rr": 3.0,
+    "quantScore": 71.3,
+    "aiReviewScore": 68.4,
+    "factorScore": 87.5,
+    "winProbability": null,
+    "confidence": 69.8,
+    "aiScore": 71.3,
+    "probability": 87.5,
+    "status": "EXPIRED",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 71.3.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 71.3.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": false
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": true
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 7,
+    "totalFactors": 8,
+    "timestamp": 1787521323.8105896,
+    "formatted_time": "2026-08-23 21:42 UTC",
+    "indicators": {
+      "atr": 204.3633,
+      "rsi": 57.65,
+      "ema21": 77437.37389622045,
+      "ema50": 77255.75563926638,
+      "ema200": 77153.92084495426,
+      "macdHist": 37.0628,
+      "volumeDelta": 16.11,
+      "trend": "RANGE"
+    },
+    "marketStructure": {
+      "trend_structure": "NEUTRAL",
+      "last_bos": {
+        "type": "BOS",
+        "direction": "BULLISH",
+        "price": 77475.0,
+        "strength": 88
+      },
+      "last_choch": null,
+      "sweeps": [],
+      "recent_swing_highs": [
+        77400.0,
+        77765.8,
+        77475.0
+      ],
+      "recent_swing_lows": [
+        76802.0,
+        77116.0,
+        77200.03
+      ]
+    },
+    "liquidity": {
+      "pdh": 78828.15,
+      "pdl": 76500.0,
+      "eqh": [
+        77460.965,
+        77390.45
+      ],
+      "eql": [
+        77360.105,
+        77365.43
+      ],
+      "nearest_liquidity_above": 77675.225,
+      "nearest_liquidity_below": 77411.325
+    },
+    "orderBlocks": [
+      {
+        "type": "BULLISH",
+        "zone_high": 77434.89,
+        "zone_low": 77390.94,
+        "fresh": true,
+        "mitigated": false,
+        "displacement_str": 1.45,
+        "score": 91,
+        "candle_index": 196
+      }
+    ],
+    "fairValueGaps": [
+      {
+        "type": "BULLISH",
+        "top": 77385.99,
+        "bottom": 77346.01,
+        "size_pct": 0.051,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 66
+      },
+      {
+        "type": "BULLISH",
+        "top": 77697.69,
+        "bottom": 77434.89,
+        "size_pct": 0.338,
+        "fill_pct": 47.0,
+        "fresh": true,
+        "score": 61
+      }
+    ],
+    "regimeData": {
+      "regime": "RANGE",
+      "confidence": 72,
+      "adx": 12.4,
+      "atr_percentile": 47.0,
+      "ema_slope": 0.00159,
+      "bb_width_pct": 0.96
+    },
+    "telegram_message_id": 953
+  },
+  {
+    "id": "sig_ethusdt_1787521323",
+    "symbol": "ETH/USDT",
+    "side": "BUY",
+    "timeframe": "M15",
+    "setupType": "TREND_PULLBACK",
+    "regime": "RANGE",
+    "entry": 2462.41,
+    "sl": 2434.3818,
+    "tp": 2504.4523,
+    "tp1": 2504.4523,
+    "tp2": 2546.4946,
+    "tp3": 2588.5369,
+    "rr": 3.0,
+    "quantScore": 69.8,
+    "aiReviewScore": 67.0,
+    "factorScore": 87.5,
+    "winProbability": null,
+    "confidence": 68.4,
+    "aiScore": 69.8,
+    "probability": 87.5,
+    "status": "EXPIRED",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 69.8.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 69.8.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": false
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": true
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 7,
+    "totalFactors": 8,
+    "timestamp": 1787521323.8105896,
+    "formatted_time": "2026-08-23 21:42 UTC",
+    "indicators": {
+      "atr": 11.7248,
+      "rsi": 59.29,
+      "ema21": 2450.3505198533903,
+      "ema50": 2440.244234707637,
+      "ema200": 2430.5734016402084,
+      "macdHist": 1.9223,
+      "volumeDelta": 3.84,
+      "trend": "RANGE"
+    },
+    "marketStructure": {
+      "trend_structure": "NEUTRAL",
+      "last_bos": {
+        "type": "BOS",
+        "direction": "BULLISH",
+        "price": 2459.22,
+        "strength": 88
+      },
+      "last_choch": null,
+      "sweeps": [],
+      "recent_swing_highs": [
+        2438.31,
+        2484.06,
+        2459.22
+      ],
+      "recent_swing_lows": [
+        2389.85,
+        2432.81,
+        2436.41
+      ]
+    },
+    "liquidity": {
+      "pdh": 2529.99,
+      "pdl": 2385.0,
+      "eqh": [
+        2449.44,
+        2452.44
+      ],
+      "eql": [
+        2445.285,
+        2445.775
+      ],
+      "nearest_liquidity_above": 2468.585,
+      "nearest_liquidity_below": 2446.065
+    },
+    "orderBlocks": [],
+    "fairValueGaps": [
+      {
+        "type": "BEARISH",
+        "top": 2444.96,
+        "bottom": 2444.95,
+        "size_pct": 0.0,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 35
+      },
+      {
+        "type": "BULLISH",
+        "top": 2445.62,
+        "bottom": 2444.95,
+        "size_pct": 0.027,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 65
+      },
+      {
+        "type": "BULLISH",
+        "top": 2450.47,
+        "bottom": 2450.0,
+        "size_pct": 0.019,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 65
+      },
+      {
+        "type": "BULLISH",
+        "top": 2466.12,
+        "bottom": 2450.72,
+        "size_pct": 0.625,
+        "fill_pct": 43.1,
+        "fresh": true,
+        "score": 70
+      }
+    ],
+    "regimeData": {
+      "regime": "RANGE",
+      "confidence": 72,
+      "adx": 11.8,
+      "atr_percentile": 75.0,
+      "ema_slope": 0.0027,
+      "bb_width_pct": 1.5
+    },
+    "telegram_message_id": 954
+  },
+  {
+    "id": "sig_btcusdt_1787513478",
+    "symbol": "BTC/USDT",
+    "side": "BUY",
+    "timeframe": "M15",
+    "setupType": "TREND_PULLBACK",
+    "regime": "RANGE",
+    "entry": 77338.77,
+    "sl": 77057.9093,
+    "tp": 77760.0611,
+    "tp1": 77760.0611,
+    "tp2": 78181.3521,
+    "tp3": 78602.6432,
+    "rr": 3.0,
+    "quantScore": 67.6,
+    "aiReviewScore": 64.9,
+    "factorScore": 87.5,
+    "winProbability": null,
+    "confidence": 66.2,
+    "aiScore": 67.6,
+    "probability": 87.5,
+    "status": "TP_HIT",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 67.6.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 67.6.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": false
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": true
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 7,
+    "totalFactors": 8,
+    "timestamp": 1787513478.3883,
+    "formatted_time": "2026-08-23 19:31 UTC",
+    "indicators": {
+      "atr": 172.4484,
+      "rsi": 55.1,
+      "ema21": 77282.7288322643,
+      "ema50": 77144.13351565762,
+      "ema200": 77173.15385051529,
+      "macdHist": -13.0948,
+      "volumeDelta": 11.71,
+      "trend": "RANGE"
+    },
+    "marketStructure": {
+      "trend_structure": "NEUTRAL",
+      "last_bos": null,
+      "last_choch": null,
+      "sweeps": [],
+      "recent_swing_highs": [
+        77400.0,
+        77765.8,
+        77475.0
+      ],
+      "recent_swing_lows": [
+        75907.82,
+        76802.0,
+        77116.0
+      ]
+    },
+    "liquidity": {
+      "pdh": 78828.15,
+      "pdl": 76500.0,
+      "eqh": [
+        77362.58,
+        77352.51
+      ],
+      "eql": [
+        77324.975,
+        77299.58
+      ],
+      "nearest_liquidity_above": 77338.885,
+      "nearest_liquidity_below": 77338.11
+    },
+    "orderBlocks": [],
+    "fairValueGaps": [
+      {
+        "type": "BULLISH",
+        "top": 77318.05,
+        "bottom": 77303.31,
+        "size_pct": 0.019,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 35
+      },
+      {
+        "type": "BULLISH",
+        "top": 77360.0,
+        "bottom": 77328.0,
+        "size_pct": 0.041,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 36
+      }
+    ],
+    "regimeData": {
+      "regime": "RANGE",
+      "confidence": 72,
+      "adx": 4.3,
+      "atr_percentile": 34.0,
+      "ema_slope": 0.00034,
+      "bb_width_pct": 0.4
+    },
+    "telegram_message_id": 949,
+    "exit_timestamp": 1787519762.108311
+  },
+  {
+    "id": "sig_ethusdt_1787513478",
+    "symbol": "ETH/USDT",
+    "side": "BUY",
+    "timeframe": "M15",
+    "setupType": "ORDER_BLOCK_RETEST",
+    "regime": "RANGE",
+    "entry": 2441.88,
+    "sl": 2385.6427,
+    "tp": 2526.236,
+    "tp1": 2526.236,
+    "tp2": 2610.5919,
+    "tp3": 2694.9479,
+    "rr": 3.0,
+    "quantScore": 66.6,
+    "aiReviewScore": 63.9,
+    "factorScore": 87.5,
+    "winProbability": null,
+    "confidence": 65.2,
+    "aiScore": 66.6,
+    "probability": 87.5,
+    "status": "EXPIRED",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 66.6.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 66.6.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": false
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": true
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 7,
+    "totalFactors": 8,
+    "timestamp": 1787513478.3883,
+    "formatted_time": "2026-08-23 19:31 UTC",
+    "indicators": {
+      "atr": 10.5183,
+      "rsi": 51.2,
+      "ema21": 2442.314699365286,
+      "ema50": 2434.197416092333,
+      "ema200": 2429.9026650551145,
+      "macdHist": -1.2413,
+      "volumeDelta": -0.26,
+      "trend": "RANGE"
+    },
+    "marketStructure": {
+      "trend_structure": "NEUTRAL",
+      "last_bos": null,
+      "last_choch": null,
+      "sweeps": [],
+      "recent_swing_highs": [
+        2438.31,
+        2484.06,
+        2459.22
+      ],
+      "recent_swing_lows": [
+        2404.51,
+        2389.85,
+        2432.81
+      ]
+    },
+    "liquidity": {
+      "pdh": 2529.99,
+      "pdl": 2385.0,
+      "eqh": [
+        2449.445,
+        2446.735
+      ],
+      "eql": [
+        2443.06,
+        2443.42
+      ],
+      "nearest_liquidity_above": 2442.055,
+      "nearest_liquidity_below": 2441.705
+    },
+    "orderBlocks": [
+      {
+        "type": "BULLISH",
+        "zone_high": 2457.66,
+        "zone_low": 2389.85,
+        "fresh": true,
+        "mitigated": false,
+        "displacement_str": 1.74,
+        "score": 96,
+        "candle_index": 179
+      }
+    ],
+    "fairValueGaps": [
+      {
+        "type": "BEARISH",
+        "top": 2444.96,
+        "bottom": 2444.95,
+        "size_pct": 0.0,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 65
+      }
+    ],
+    "regimeData": {
+      "regime": "RANGE",
+      "confidence": 72,
+      "adx": 6.0,
+      "atr_percentile": 59.0,
+      "ema_slope": 0.00032,
+      "bb_width_pct": 0.71
+    },
+    "telegram_message_id": 950
+  },
+  {
+    "id": "sig_solusdt_1787513478",
+    "symbol": "SOL/USDT",
+    "side": "BUY",
+    "timeframe": "M15",
+    "setupType": "ORDER_BLOCK_RETEST",
+    "regime": "LOW_VOLATILITY",
+    "entry": 95.01,
+    "sl": 93.2318,
+    "tp": 97.6773,
+    "tp1": 97.6773,
+    "tp2": 100.3446,
+    "tp3": 103.0119,
+    "rr": 3.0,
+    "quantScore": 69.9,
+    "aiReviewScore": 67.1,
+    "factorScore": 87.5,
+    "winProbability": null,
+    "confidence": 68.5,
+    "aiScore": 69.9,
+    "probability": 87.5,
+    "status": "EXPIRED",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 69.9.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 69.9.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": false
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": true
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 7,
+    "totalFactors": 8,
+    "timestamp": 1787513478.3883,
+    "formatted_time": "2026-08-23 19:31 UTC",
+    "indicators": {
+      "atr": 0.4204,
+      "rsi": 49.07,
+      "ema21": 95.12720486481042,
+      "ema50": 94.7431835781716,
+      "ema200": 93.91770476492803,
+      "macdHist": -0.0926,
+      "volumeDelta": 12.29,
+      "trend": "LOW_VOLATILITY"
+    },
+    "marketStructure": {
+      "trend_structure": "NEUTRAL",
+      "last_bos": null,
+      "last_choch": null,
+      "sweeps": [],
+      "recent_swing_highs": [
+        94.82,
+        95.81,
+        95.9
+      ],
+      "recent_swing_lows": [
+        93.4,
+        94.82,
+        94.82
+      ]
+    },
+    "liquidity": {
+      "pdh": 102.74,
+      "pdl": 87.72,
+      "eqh": [
+        95.4,
+        95.445
+      ],
+      "eql": [
+        95.05,
+        95.055
+      ],
+      "nearest_liquidity_above": 95.015,
+      "nearest_liquidity_below": 95.005
+    },
+    "orderBlocks": [
+      {
+        "type": "BULLISH",
+        "zone_high": 95.5,
+        "zone_low": 93.4,
+        "fresh": true,
+        "mitigated": false,
+        "displacement_str": 1.57,
+        "score": 93,
+        "candle_index": 179
+      }
+    ],
+    "fairValueGaps": [],
+    "regimeData": {
+      "regime": "LOW_VOLATILITY",
+      "confidence": 85,
+      "adx": 12.4,
+      "atr_percentile": 1.0,
+      "ema_slope": -0.00018,
+      "bb_width_pct": 0.77
+    },
+    "telegram_message_id": 951
+  },
+  {
+    "id": "sig_btcusdt_1787506258",
+    "symbol": "BTC/USDT",
+    "side": "BUY",
+    "timeframe": "M15",
+    "setupType": "TREND_PULLBACK",
+    "regime": "RANGE",
+    "entry": 77242.52,
+    "sl": 76931.5076,
+    "tp": 77709.0386,
+    "tp1": 77709.0386,
+    "tp2": 78175.5572,
+    "tp3": 78642.0758,
+    "rr": 3.0,
+    "quantScore": 73.4,
+    "aiReviewScore": 70.5,
+    "factorScore": 87.5,
+    "winProbability": null,
+    "confidence": 72.0,
+    "aiScore": 73.4,
+    "probability": 87.5,
+    "status": "EXPIRED",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 73.4.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 73.4.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": false
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": true
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 7,
+    "totalFactors": 8,
+    "timestamp": 1787506258.2331324,
+    "formatted_time": "2026-08-23 17:30 UTC",
+    "indicators": {
+      "atr": 207.3416,
+      "rsi": 52.36,
+      "ema21": 77229.30803319285,
+      "ema50": 77075.29724305063,
+      "ema200": 77137.02845685926,
+      "macdHist": -28.3097,
+      "volumeDelta": 9.62,
+      "trend": "RANGE"
+    },
+    "marketStructure": {
+      "trend_structure": "BULLISH",
+      "last_bos": null,
+      "last_choch": null,
+      "sweeps": [],
+      "recent_swing_highs": [
+        76654.78,
+        77400.0,
+        77765.8
+      ],
+      "recent_swing_lows": [
+        75545.67,
+        75907.82,
+        76802.0
+      ]
+    },
+    "liquidity": {
+      "pdh": 78828.15,
+      "pdl": 76500.0,
+      "eqh": [
+        77289.0,
+        77410.21
+      ],
+      "eql": [
+        77229.645,
+        77280.27
+      ],
+      "nearest_liquidity_above": 77246.0,
+      "nearest_liquidity_below": 77229.645
+    },
+    "orderBlocks": [],
+    "fairValueGaps": [
+      {
+        "type": "BULLISH",
+        "top": 77350.72,
+        "bottom": 77341.35,
+        "size_pct": 0.012,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 35
+      },
+      {
+        "type": "BEARISH",
+        "top": 77421.06,
+        "bottom": 77315.01,
+        "size_pct": 0.137,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 39
+      },
+      {
+        "type": "BULLISH",
+        "top": 77318.05,
+        "bottom": 77303.31,
+        "size_pct": 0.019,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 35
+      },
+      {
+        "type": "BULLISH",
+        "top": 77360.0,
+        "bottom": 77328.0,
+        "size_pct": 0.041,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 36
+      }
+    ],
+    "regimeData": {
+      "regime": "RANGE",
+      "confidence": 72,
+      "adx": 7.6,
+      "atr_percentile": 50.0,
+      "ema_slope": 0.00039,
+      "bb_width_pct": 0.7
+    },
+    "telegram_message_id": 942
+  },
+  {
+    "id": "sig_ethusdt_1787506258",
+    "symbol": "ETH/USDT",
+    "side": "BUY",
+    "timeframe": "M15",
+    "setupType": "ORDER_BLOCK_RETEST",
+    "regime": "RANGE",
+    "entry": 2440.42,
+    "sl": 2384.3669,
+    "tp": 2524.4997,
+    "tp1": 2524.4997,
+    "tp2": 2608.5793,
+    "tp3": 2692.659,
+    "rr": 3.0,
+    "quantScore": 67.6,
+    "aiReviewScore": 64.9,
+    "factorScore": 87.5,
+    "winProbability": null,
+    "confidence": 66.2,
+    "aiScore": 67.6,
+    "probability": 87.5,
+    "status": "EXPIRED",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 67.6.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 67.6.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": false
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": true
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 7,
+    "totalFactors": 8,
+    "timestamp": 1787506258.2331324,
+    "formatted_time": "2026-08-23 17:30 UTC",
+    "indicators": {
+      "atr": 13.7078,
+      "rsi": 51.88,
+      "ema21": 2440.0289037109183,
+      "ema50": 2430.360413930209,
+      "ema200": 2424.440310078183,
+      "macdHist": -1.4254,
+      "volumeDelta": 9.56,
+      "trend": "RANGE"
+    },
+    "marketStructure": {
+      "trend_structure": "NEUTRAL",
+      "last_bos": null,
+      "last_choch": null,
+      "sweeps": [],
+      "recent_swing_highs": [
+        2426.03,
+        2438.31,
+        2484.06
+      ],
+      "recent_swing_lows": [
+        2355.71,
+        2404.51,
+        2389.85
+      ]
+    },
+    "liquidity": {
+      "pdh": 2529.99,
+      "pdl": 2385.0,
+      "eqh": [
+        2448.42,
+        2451.8
+      ],
+      "eql": [
+        2440.045,
+        2440.905
+      ],
+      "nearest_liquidity_above": 2441.16,
+      "nearest_liquidity_below": 2440.045
+    },
+    "orderBlocks": [
+      {
+        "type": "BULLISH",
+        "zone_high": 2457.66,
+        "zone_low": 2389.85,
+        "fresh": true,
+        "mitigated": false,
+        "displacement_str": 1.34,
+        "score": 90,
+        "candle_index": 187
+      }
+    ],
+    "fairValueGaps": [
+      {
+        "type": "BULLISH",
+        "top": 2432.04,
+        "bottom": 2428.22,
+        "size_pct": 0.157,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 39
+      },
+      {
+        "type": "BULLISH",
+        "top": 2449.51,
+        "bottom": 2432.9,
+        "size_pct": 0.681,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 55
+      },
+      {
+        "type": "BEARISH",
+        "top": 2455.25,
+        "bottom": 2448.13,
+        "size_pct": 0.292,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 43
+      }
+    ],
+    "regimeData": {
+      "regime": "RANGE",
+      "confidence": 72,
+      "adx": 9.7,
+      "atr_percentile": 88.0,
+      "ema_slope": 0.00085,
+      "bb_width_pct": 1.77
+    },
+    "telegram_message_id": 943
+  },
+  {
+    "id": "sig_solusdt_1787506258",
+    "symbol": "SOL/USDT",
+    "side": "BUY",
+    "timeframe": "M15",
+    "setupType": "ORDER_BLOCK_RETEST",
+    "regime": "RANGE",
+    "entry": 95.1,
+    "sl": 93.1959,
+    "tp": 97.9561,
+    "tp1": 97.9561,
+    "tp2": 100.8123,
+    "tp3": 103.6684,
+    "rr": 3.0,
+    "quantScore": 73.9,
+    "aiReviewScore": 70.9,
+    "factorScore": 87.5,
+    "winProbability": null,
+    "confidence": 72.4,
+    "aiScore": 73.9,
+    "probability": 87.5,
+    "status": "EXPIRED",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 73.9.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 73.9.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": false
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": true
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 7,
+    "totalFactors": 8,
+    "timestamp": 1787506258.2331324,
+    "formatted_time": "2026-08-23 17:30 UTC",
+    "indicators": {
+      "atr": 0.5102,
+      "rsi": 52.73,
+      "ema21": 95.08849871571833,
+      "ema50": 94.58139779822704,
+      "ema200": 93.75072677639365,
+      "macdHist": -0.0825,
+      "volumeDelta": 12.36,
+      "trend": "RANGE"
+    },
+    "marketStructure": {
+      "trend_structure": "BULLISH",
+      "last_bos": null,
+      "last_choch": null,
+      "sweeps": [],
+      "recent_swing_highs": [
+        94.82,
+        95.81,
+        95.9
+      ],
+      "recent_swing_lows": [
+        93.94,
+        91.58,
+        93.4
+      ]
+    },
+    "liquidity": {
+      "pdh": 102.74,
+      "pdl": 87.72,
+      "eqh": [
+        95.465,
+        95.48
+      ],
+      "eql": [
+        95.14,
+        95.135
+      ],
+      "nearest_liquidity_above": 95.215,
+      "nearest_liquidity_below": 95.095
+    },
+    "orderBlocks": [
+      {
+        "type": "BULLISH",
+        "zone_high": 95.5,
+        "zone_low": 93.4,
+        "fresh": true,
+        "mitigated": false,
+        "displacement_str": 1.29,
+        "score": 89,
+        "candle_index": 187
+      }
+    ],
+    "fairValueGaps": [
+      {
+        "type": "BULLISH",
+        "top": 94.88,
+        "bottom": 94.76,
+        "size_pct": 0.126,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 38
+      }
+    ],
+    "regimeData": {
+      "regime": "RANGE",
+      "confidence": 72,
+      "adx": 8.7,
+      "atr_percentile": 25.0,
+      "ema_slope": 0.00086,
+      "bb_width_pct": 1.31
+    },
+    "telegram_message_id": 944
+  },
+  {
+    "id": "sig_btcusdt_1787498979",
+    "symbol": "BTC/USDT",
+    "side": "BUY",
+    "timeframe": "M15",
+    "setupType": "TREND_PULLBACK",
+    "regime": "RANGE",
+    "entry": 77196.03,
+    "sl": 76792.4412,
+    "tp": 77801.4132,
+    "tp1": 77801.4132,
+    "tp2": 78406.7964,
+    "tp3": 79012.1796,
+    "rr": 3.0,
+    "quantScore": 73.4,
+    "aiReviewScore": 70.5,
+    "factorScore": 87.5,
+    "winProbability": null,
+    "confidence": 72.0,
+    "aiScore": 73.4,
+    "probability": 87.5,
+    "status": "EXPIRED",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 73.4.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 73.4.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": false
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": true
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 7,
+    "totalFactors": 8,
+    "timestamp": 1787498979.092454,
+    "formatted_time": "2026-08-23 15:29 UTC",
+    "indicators": {
+      "atr": 269.0592,
+      "rsi": 53.86,
+      "ema21": 77140.78355568036,
+      "ema50": 76980.45555523373,
+      "ema200": 77135.04520078118,
+      "macdHist": -36.9293,
+      "volumeDelta": 9.27,
+      "trend": "RANGE"
+    },
+    "marketStructure": {
+      "trend_structure": "BULLISH",
+      "last_bos": null,
+      "last_choch": null,
+      "sweeps": [],
+      "recent_swing_highs": [
+        76654.78,
+        77400.0,
+        77765.8
+      ],
+      "recent_swing_lows": [
+        76772.0,
+        75545.67,
+        75907.82
+      ]
+    },
+    "liquidity": {
+      "pdh": 78828.15,
+      "pdl": 76500.0,
+      "eqh": [
+        77634.79,
+        77525.995
+      ],
+      "eql": [
+        77385.89,
+        76857.745
+      ],
+      "nearest_liquidity_above": 77246.0,
+      "nearest_liquidity_below": 77191.1
+    },
+    "orderBlocks": [],
+    "fairValueGaps": [
+      {
+        "type": "BULLISH",
+        "top": 77164.0,
+        "bottom": 77127.72,
+        "size_pct": 0.047,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 36
+      },
+      {
+        "type": "BULLISH",
+        "top": 77338.22,
+        "bottom": 77260.0,
+        "size_pct": 0.101,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 38
+      },
+      {
+        "type": "BULLISH",
+        "top": 77350.72,
+        "bottom": 77341.35,
+        "size_pct": 0.012,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 35
+      },
+      {
+        "type": "BEARISH",
+        "top": 77421.06,
+        "bottom": 77315.01,
+        "size_pct": 0.137,
+        "fill_pct": 20.7,
+        "fresh": true,
+        "score": 62
+      }
+    ],
+    "regimeData": {
+      "regime": "RANGE",
+      "confidence": 72,
+      "adx": 26.1,
+      "atr_percentile": 99.0,
+      "ema_slope": 6e-05,
+      "bb_width_pct": 1.11
+    },
+    "telegram_message_id": 940
+  },
+  {
+    "id": "sig_solusdt_1787498979",
+    "symbol": "SOL/USDT",
+    "side": "BUY",
+    "timeframe": "M15",
+    "setupType": "TREND_PULLBACK",
+    "regime": "TREND_UP",
+    "entry": 95.46,
+    "sl": 93.9126,
+    "tp": 97.7811,
+    "tp1": 97.7811,
+    "tp2": 100.1022,
+    "tp3": 102.4233,
+    "rr": 3.0,
+    "quantScore": 73.0,
+    "aiReviewScore": 70.1,
+    "factorScore": 87.5,
+    "winProbability": null,
+    "confidence": 71.5,
+    "aiScore": 73.0,
+    "probability": 87.5,
+    "status": "EXPIRED",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 73.0.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 73.0.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": false
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": true
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 7,
+    "totalFactors": 8,
+    "timestamp": 1787498979.092454,
+    "formatted_time": "2026-08-23 15:29 UTC",
+    "indicators": {
+      "atr": 0.6396,
+      "rsi": 62.56,
+      "ema21": 94.70992710492494,
+      "ema50": 94.23240653779769,
+      "ema200": 93.54363075832818,
+      "macdHist": 0.0116,
+      "volumeDelta": 12.01,
+      "trend": "TREND_UP"
+    },
+    "marketStructure": {
+      "trend_structure": "NEUTRAL",
+      "last_bos": null,
+      "last_choch": null,
+      "sweeps": [],
+      "recent_swing_highs": [
+        96.59,
+        94.82,
+        95.81
+      ],
+      "recent_swing_lows": [
+        92.58,
+        93.94,
+        91.58
+      ]
+    },
+    "liquidity": {
+      "pdh": 102.74,
+      "pdl": 87.72,
+      "eqh": [
+        95.52,
+        95.495
+      ],
+      "eql": [
+        94.875,
+        94.86
+      ],
+      "nearest_liquidity_above": 95.495,
+      "nearest_liquidity_below": 94.875
+    },
+    "orderBlocks": [],
+    "fairValueGaps": [
+      {
+        "type": "BULLISH",
+        "top": 94.28,
+        "bottom": 93.9,
+        "size_pct": 0.398,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 46
+      },
+      {
+        "type": "BULLISH",
+        "top": 94.88,
+        "bottom": 94.76,
+        "size_pct": 0.126,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 38
+      }
+    ],
+    "regimeData": {
+      "regime": "TREND_UP",
+      "confidence": 88,
+      "adx": 24.9,
+      "atr_percentile": 54.0,
+      "ema_slope": 0.0019,
+      "bb_width_pct": 2.36
+    },
+    "telegram_message_id": 941
+  },
+  {
+    "id": "sig_ethusdt_1787494118",
+    "symbol": "ETH/USDT",
+    "side": "SELL",
+    "timeframe": "M15",
+    "setupType": "LIQUIDITY_SWEEP",
+    "regime": "TREND_UP",
+    "entry": 2459.42,
+    "sl": 2535.6378,
+    "tp": 2345.0933,
+    "tp1": 2345.0933,
+    "tp2": 2230.7666,
+    "tp3": 2116.4399,
+    "rr": 3.0,
+    "quantScore": 65.1,
+    "aiReviewScore": 62.5,
+    "factorScore": 75.0,
+    "winProbability": null,
+    "confidence": 63.8,
+    "aiScore": 65.1,
+    "probability": 75.0,
+    "status": "EXPIRED",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 65.1.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 65.1.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": false
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": false
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 6,
+    "totalFactors": 8,
+    "timestamp": 1787494118.0227048,
+    "formatted_time": "2026-08-23 14:08 UTC",
+    "indicators": {
+      "atr": 11.2956,
+      "rsi": 75.72,
+      "ema21": 2431.382440556564,
+      "ema50": 2421.0474445289747,
+      "ema200": 2419.1685884048875,
+      "macdHist": 3.5951,
+      "volumeDelta": 19.66,
+      "trend": "TREND_UP"
+    },
+    "marketStructure": {
+      "trend_structure": "BULLISH",
+      "last_bos": {
+        "type": "BOS",
+        "direction": "BULLISH",
+        "price": 2438.31,
+        "strength": 88
+      },
+      "last_choch": null,
+      "sweeps": [],
+      "recent_swing_highs": [
+        2435.53,
+        2426.03,
+        2438.31
+      ],
+      "recent_swing_lows": [
+        2408.0,
+        2355.71,
+        2404.51
+      ]
+    },
+    "liquidity": {
+      "pdh": 2529.99,
+      "pdl": 2385.0,
+      "eqh": [
+        2433.605,
+        2433.29
+      ],
+      "eql": [
+        2426.5,
+        2427.51
+      ],
+      "nearest_liquidity_above": 2529.99,
+      "nearest_liquidity_below": 2427.51
+    },
+    "orderBlocks": [],
+    "fairValueGaps": [
+      {
+        "type": "BULLISH",
+        "top": 2426.0,
+        "bottom": 2420.77,
+        "size_pct": 0.213,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 41
+      },
+      {
+        "type": "BEARISH",
+        "top": 2428.02,
+        "bottom": 2424.85,
+        "size_pct": 0.129,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 38
+      },
+      {
+        "type": "BULLISH",
+        "top": 2432.04,
+        "bottom": 2428.22,
+        "size_pct": 0.155,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 69
+      },
+      {
+        "type": "BULLISH",
+        "top": 2449.51,
+        "bottom": 2432.9,
+        "size_pct": 0.675,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 85
+      }
+    ],
+    "regimeData": {
+      "regime": "TREND_UP",
+      "confidence": 95,
+      "adx": 42.9,
+      "atr_percentile": 81.0,
+      "ema_slope": 0.00503,
+      "bb_width_pct": 2.66
+    },
+    "telegram_message_id": 939
+  },
+  {
+    "id": "sig_solusdt_1787491681",
+    "symbol": "SOL/USDT",
+    "side": "SELL",
+    "timeframe": "M15",
+    "setupType": "LIQUIDITY_SWEEP",
+    "regime": "TREND_UP",
+    "entry": 95.13,
+    "sl": 102.9895,
+    "tp": 83.3407,
+    "tp1": 83.3407,
+    "tp2": 71.5515,
+    "tp3": 59.7622,
+    "rr": 3.0,
+    "quantScore": 69.8,
+    "aiReviewScore": 67.0,
+    "factorScore": 75.0,
+    "winProbability": null,
+    "confidence": 68.4,
+    "aiScore": 69.8,
+    "probability": 75.0,
+    "status": "EXPIRED",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 69.8.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 69.8.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": false
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": false
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 6,
+    "totalFactors": 8,
+    "timestamp": 1787491681.2092466,
+    "formatted_time": "2026-08-23 13:28 UTC",
+    "indicators": {
+      "atr": 0.4991,
+      "rsi": 68.53,
+      "ema21": 94.13308078522323,
+      "ema50": 93.86137650677752,
+      "ema200": 93.33147679998808,
+      "macdHist": 0.1248,
+      "volumeDelta": 19.71,
+      "trend": "TREND_UP"
+    },
+    "marketStructure": {
+      "trend_structure": "BEARISH",
+      "last_bos": {
+        "type": "BOS",
+        "direction": "BULLISH",
+        "price": 94.82,
+        "strength": 88
+      },
+      "last_choch": {
+        "type": "CHOCH",
+        "direction": "BULLISH",
+        "price": 94.82,
+        "strength": 92
+      },
+      "sweeps": [],
+      "recent_swing_highs": [
+        97.21,
+        96.59,
+        94.82
+      ],
+      "recent_swing_lows": [
+        92.58,
+        93.94,
+        91.58
+      ]
+    },
+    "liquidity": {
+      "pdh": 102.74,
+      "pdl": 87.72,
+      "eqh": [
+        94.75,
+        94.69
+      ],
+      "eql": [
+        94.48,
+        94.555
+      ],
+      "nearest_liquidity_above": 102.74,
+      "nearest_liquidity_below": 94.555
+    },
+    "orderBlocks": [],
+    "fairValueGaps": [
+      {
+        "type": "BULLISH",
+        "top": 93.29,
+        "bottom": 93.28,
+        "size_pct": 0.011,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 65
+      },
+      {
+        "type": "BULLISH",
+        "top": 93.66,
+        "bottom": 93.55,
+        "size_pct": 0.116,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 38
+      },
+      {
+        "type": "BULLISH",
+        "top": 94.28,
+        "bottom": 93.9,
+        "size_pct": 0.399,
+        "fill_pct": 63.2,
+        "fresh": false,
+        "score": 58
+      },
+      {
+        "type": "BULLISH",
+        "top": 94.88,
+        "bottom": 94.76,
+        "size_pct": 0.126,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 68
+      }
+    ],
+    "regimeData": {
+      "regime": "TREND_UP",
+      "confidence": 86,
+      "adx": 22.3,
+      "atr_percentile": 14.0,
+      "ema_slope": 0.00363,
+      "bb_width_pct": 2.68
+    },
+    "telegram_message_id": 938
+  },
+  {
+    "id": "sig_btcusdt_1787486813",
+    "symbol": "BTC/USDT",
+    "side": "BUY",
+    "timeframe": "M15",
+    "setupType": "TREND_PULLBACK",
+    "regime": "RANGE",
+    "entry": 77118.3,
+    "sl": 76655.0659,
+    "tp": 77813.1512,
+    "tp1": 77813.1512,
+    "tp2": 78508.0023,
+    "tp3": 79202.8535,
+    "rr": 3.0,
+    "quantScore": 76.7,
+    "aiReviewScore": 73.6,
+    "factorScore": 87.5,
+    "winProbability": null,
+    "confidence": 75.2,
+    "aiScore": 76.7,
+    "probability": 87.5,
+    "status": "EXPIRED",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 76.7.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 76.7.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": false
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": true
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 7,
+    "totalFactors": 8,
+    "timestamp": 1787486813.6791916,
+    "formatted_time": "2026-08-23 12:06 UTC",
+    "indicators": {
+      "atr": 225.6904,
+      "rsi": 62.44,
+      "ema21": 76784.89093759199,
+      "ema50": 76767.91110947277,
+      "ema200": 77196.25824475945,
+      "macdHist": 93.2754,
+      "volumeDelta": 13.21,
+      "trend": "RANGE"
+    },
+    "marketStructure": {
+      "trend_structure": "BULLISH",
+      "last_bos": {
+        "type": "BOS",
+        "direction": "BULLISH",
+        "price": 76654.78,
+        "strength": 88
+      },
+      "last_choch": null,
+      "sweeps": [],
+      "recent_swing_highs": [
+        77400.0,
+        76357.51,
+        76654.78
+      ],
+      "recent_swing_lows": [
+        76772.0,
+        75545.67,
+        75907.82
+      ]
+    },
+    "liquidity": {
+      "pdh": 78828.15,
+      "pdl": 76500.0,
+      "eqh": [
+        76907.76,
+        77312.995
+      ],
+      "eql": [
+        76695.47,
+        76786.635
+      ],
+      "nearest_liquidity_above": 77312.995,
+      "nearest_liquidity_below": 76786.635
+    },
+    "orderBlocks": [],
+    "fairValueGaps": [
+      {
+        "type": "BULLISH",
+        "top": 76448.37,
+        "bottom": 76299.0,
+        "size_pct": 0.194,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 70
+      },
+      {
+        "type": "BULLISH",
+        "top": 76646.0,
+        "bottom": 76640.21,
+        "size_pct": 0.008,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 65
+      },
+      {
+        "type": "BULLISH",
+        "top": 76749.27,
+        "bottom": 76732.36,
+        "size_pct": 0.022,
+        "fill_pct": 25.6,
+        "fresh": true,
+        "score": 57
+      },
+      {
+        "type": "BULLISH",
+        "top": 77132.0,
+        "bottom": 76892.0,
+        "size_pct": 0.311,
+        "fill_pct": 18.3,
+        "fresh": true,
+        "score": 68
+      }
+    ],
+    "regimeData": {
+      "regime": "RANGE",
+      "confidence": 72,
+      "adx": 18.2,
+      "atr_percentile": 66.0,
+      "ema_slope": 0.00263,
+      "bb_width_pct": 1.97
+    },
+    "telegram_message_id": 937
+  },
+  {
+    "id": "sig_solusdt_1787484351",
+    "symbol": "SOL/USDT",
+    "side": "SELL",
+    "timeframe": "M15",
+    "setupType": "LIQUIDITY_SWEEP",
+    "regime": "BREAKOUT",
+    "entry": 94.37,
+    "sl": 103.0004,
+    "tp": 81.4244,
+    "tp1": 81.4244,
+    "tp2": 68.4788,
+    "tp3": 55.5332,
+    "rr": 3.0,
+    "quantScore": 69.2,
+    "aiReviewScore": 66.4,
+    "factorScore": 75.0,
+    "winProbability": null,
+    "confidence": 67.8,
+    "aiScore": 69.2,
+    "probability": 75.0,
+    "status": "EXPIRED",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 69.2.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 69.2.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": false
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": false
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 6,
+    "totalFactors": 8,
+    "timestamp": 1787484351.5511196,
+    "formatted_time": "2026-08-23 11:25 UTC",
+    "indicators": {
+      "atr": 0.5208,
+      "rsi": 65.38,
+      "ema21": 93.44922652390379,
+      "ema50": 93.5420149373745,
+      "ema200": 93.41597002310255,
+      "macdHist": 0.1688,
+      "volumeDelta": 19.16,
+      "trend": "BREAKOUT"
+    },
+    "marketStructure": {
+      "trend_structure": "BEARISH",
+      "last_bos": null,
+      "last_choch": null,
+      "sweeps": [],
+      "recent_swing_highs": [
+        94.01,
+        97.21,
+        96.59
+      ],
+      "recent_swing_lows": [
+        92.58,
+        93.94,
+        91.58
+      ]
+    },
+    "liquidity": {
+      "pdh": 102.74,
+      "pdl": 87.72,
+      "eqh": [
+        93.835,
+        93.85
+      ],
+      "eql": [
+        93.7,
+        93.675
+      ],
+      "nearest_liquidity_above": 102.74,
+      "nearest_liquidity_below": 93.7
+    },
+    "orderBlocks": [],
+    "fairValueGaps": [
+      {
+        "type": "BULLISH",
+        "top": 92.8,
+        "bottom": 92.74,
+        "size_pct": 0.064,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 66
+      },
+      {
+        "type": "BULLISH",
+        "top": 93.06,
+        "bottom": 92.95,
+        "size_pct": 0.117,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 38
+      },
+      {
+        "type": "BULLISH",
+        "top": 93.29,
+        "bottom": 93.28,
+        "size_pct": 0.011,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 65
+      },
+      {
+        "type": "BULLISH",
+        "top": 93.66,
+        "bottom": 93.55,
+        "size_pct": 0.117,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 38
+      }
+    ],
+    "regimeData": {
+      "regime": "BREAKOUT",
+      "confidence": 82,
+      "adx": 11.2,
+      "atr_percentile": 16.0,
+      "ema_slope": 0.00243,
+      "bb_width_pct": 2.38
+    },
+    "telegram_message_id": 936
+  },
+  {
+    "id": "sig_btcusdt_1787477073",
+    "symbol": "BTC/USDT",
+    "side": "BUY",
+    "timeframe": "M15",
+    "setupType": "ORDER_BLOCK_RETEST",
+    "regime": "RANGE",
+    "entry": 76504.01,
+    "sl": 75716.8992,
+    "tp": 77684.6762,
+    "tp1": 77684.6762,
+    "tp2": 78865.3424,
+    "tp3": 80046.0086,
+    "rr": 3.0,
+    "quantScore": 69.6,
+    "aiReviewScore": 66.8,
+    "factorScore": 87.5,
+    "winProbability": null,
+    "confidence": 68.2,
+    "aiScore": 69.6,
+    "probability": 87.5,
+    "status": "EXPIRED",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 69.6.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 69.6.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": false
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": true
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 7,
+    "totalFactors": 8,
+    "timestamp": 1787477073.534591,
+    "formatted_time": "2026-08-23 09:24 UTC",
+    "indicators": {
+      "atr": 232.7771,
+      "rsi": 50.7,
+      "ema21": 76425.96689166875,
+      "ema50": 76673.1832233723,
+      "ema200": 77043.72228109116,
+      "macdHist": 74.8433,
+      "volumeDelta": -0.99,
+      "trend": "RANGE"
+    },
+    "marketStructure": {
+      "trend_structure": "NEUTRAL",
+      "last_bos": {
+        "type": "BOS",
+        "direction": "BULLISH",
+        "price": 76357.51,
+        "strength": 88
+      },
+      "last_choch": null,
+      "sweeps": [],
+      "recent_swing_highs": [
+        77400.0,
+        77400.0,
+        76357.51
+      ],
+      "recent_swing_lows": [
+        76772.0,
+        75545.67,
+        75907.82
+      ]
+    },
+    "liquidity": {
+      "pdh": 78828.15,
+      "pdl": 76500.0,
+      "eqh": [
+        76265.34,
+        76630.05
+      ],
+      "eql": [
+        76216.915,
+        76233.17
+      ],
+      "nearest_liquidity_above": 76630.05,
+      "nearest_liquidity_below": 76500.0
+    },
+    "orderBlocks": [
+      {
+        "type": "BULLISH",
+        "zone_high": 76730.99,
+        "zone_low": 75810.01,
+        "fresh": true,
+        "mitigated": false,
+        "displacement_str": 1.46,
+        "score": 91,
+        "candle_index": 182
+      }
+    ],
+    "fairValueGaps": [
+      {
+        "type": "BULLISH",
+        "top": 76176.79,
+        "bottom": 76148.0,
+        "size_pct": 0.038,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 36
+      },
+      {
+        "type": "BEARISH",
+        "top": 76230.0,
+        "bottom": 76148.0,
+        "size_pct": 0.107,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 38
+      },
+      {
+        "type": "BULLISH",
+        "top": 76203.83,
+        "bottom": 76148.0,
+        "size_pct": 0.073,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 67
+      },
+      {
+        "type": "BULLISH",
+        "top": 76448.37,
+        "bottom": 76299.0,
+        "size_pct": 0.195,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 70
+      }
+    ],
+    "regimeData": {
+      "regime": "RANGE",
+      "confidence": 72,
+      "adx": 47.9,
+      "atr_percentile": 60.0,
+      "ema_slope": 0.00059,
+      "bb_width_pct": 1.21
+    },
+    "telegram_message_id": null
+  },
+  {
+    "id": "sig_ethusdt_1787477073",
+    "symbol": "ETH/USDT",
+    "side": "BUY",
+    "timeframe": "M15",
+    "setupType": "ORDER_BLOCK_RETEST",
+    "regime": "RANGE",
+    "entry": 2407.95,
+    "sl": 2358.9739,
+    "tp": 2481.4141,
+    "tp1": 2481.4141,
+    "tp2": 2554.8783,
+    "tp3": 2628.3424,
+    "rr": 3.0,
+    "quantScore": 70.8,
+    "aiReviewScore": 68.0,
+    "factorScore": 87.5,
+    "winProbability": null,
+    "confidence": 69.4,
+    "aiScore": 70.8,
+    "probability": 87.5,
+    "status": "EXPIRED",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 70.8.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 70.8.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": false
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": true
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 7,
+    "totalFactors": 8,
+    "timestamp": 1787477073.534591,
+    "formatted_time": "2026-08-23 09:24 UTC",
+    "indicators": {
+      "atr": 10.7153,
+      "rsi": 53.53,
+      "ema21": 2402.1612021445767,
+      "ema50": 2407.7061163717344,
+      "ema200": 2418.071617054016,
+      "macdHist": 3.7241,
+      "volumeDelta": 11.1,
+      "trend": "RANGE"
+    },
+    "marketStructure": {
+      "trend_structure": "BEARISH",
+      "last_bos": null,
+      "last_choch": null,
+      "sweeps": [],
+      "recent_swing_highs": [
+        2437.76,
+        2444.71,
+        2435.53
+      ],
+      "recent_swing_lows": [
+        2403.47,
+        2408.0,
+        2355.71
+      ]
+    },
+    "liquidity": {
+      "pdh": 2529.99,
+      "pdl": 2385.0,
+      "eqh": [
+        2413.645,
+        2412.38
+      ],
+      "eql": [
+        2406.335,
+        2407.025
+      ],
+      "nearest_liquidity_above": 2410.99,
+      "nearest_liquidity_below": 2407.83
+    },
+    "orderBlocks": [
+      {
+        "type": "BULLISH",
+        "zone_high": 2384.8,
+        "zone_low": 2363.26,
+        "fresh": true,
+        "mitigated": false,
+        "displacement_str": 1.29,
+        "score": 89,
+        "candle_index": 182
+      },
+      {
+        "type": "BULLISH",
+        "zone_high": 2393.48,
+        "zone_low": 2386.84,
+        "fresh": true,
+        "mitigated": false,
+        "displacement_str": 1.68,
+        "score": 95,
+        "candle_index": 193
+      },
+      {
+        "type": "BULLISH",
+        "zone_high": 2411.15,
+        "zone_low": 2405.41,
+        "fresh": true,
+        "mitigated": false,
+        "displacement_str": 1.21,
+        "score": 88,
+        "candle_index": 195
+      }
+    ],
+    "fairValueGaps": [
+      {
+        "type": "BEARISH",
+        "top": 2401.81,
+        "bottom": 2384.8,
+        "size_pct": 0.706,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 56
+      },
+      {
+        "type": "BULLISH",
+        "top": 2387.55,
+        "bottom": 2380.0,
+        "size_pct": 0.314,
+        "fill_pct": 15.8,
+        "fresh": true,
+        "score": 69
+      },
+      {
+        "type": "BULLISH",
+        "top": 2405.41,
+        "bottom": 2393.48,
+        "size_pct": 0.495,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 79
+      }
+    ],
+    "regimeData": {
+      "regime": "RANGE",
+      "confidence": 72,
+      "adx": 27.9,
+      "atr_percentile": 57.0,
+      "ema_slope": 0.00207,
+      "bb_width_pct": 2.41
+    },
+    "telegram_message_id": null
+  },
+  {
+    "id": "sig_solusdt_1787477073",
+    "symbol": "SOL/USDT",
+    "side": "SELL",
+    "timeframe": "M15",
+    "setupType": "TREND_PULLBACK",
+    "regime": "RANGE",
+    "entry": 93.14,
+    "sl": 94.0058,
+    "tp": 91.8413,
+    "tp1": 91.8413,
+    "tp2": 90.5426,
+    "tp3": 89.2439,
+    "rr": 3.0,
+    "quantScore": 68.0,
+    "aiReviewScore": 65.3,
+    "factorScore": 87.5,
+    "winProbability": null,
+    "confidence": 66.7,
+    "aiScore": 68.0,
+    "probability": 87.5,
+    "status": "SL_HIT",
+    "reasoning": "Quant Rule Engine fallback review approved setup with score 68.0.",
+    "aiNotes": "[DETERMINISTIC LOCAL QUANT FALLBACK] Quant Rule Engine fallback review approved setup with score 68.0.",
+    "verification": [
+      {
+        "label": "MTF Alignment",
+        "passed": false
+      },
+      {
+        "label": "Market Regime",
+        "passed": true
+      },
+      {
+        "label": "Market Structure",
+        "passed": true
+      },
+      {
+        "label": "SMC Block / FVG",
+        "passed": true
+      },
+      {
+        "label": "Momentum Filter",
+        "passed": true
+      },
+      {
+        "label": "Volume Delta / CVD",
+        "passed": true
+      },
+      {
+        "label": "Risk-to-Reward Gate",
+        "passed": true
+      },
+      {
+        "label": "Quant Score Gate",
+        "passed": true
+      }
+    ],
+    "passedFactors": 7,
+    "totalFactors": 8,
+    "timestamp": 1787477073.534591,
+    "formatted_time": "2026-08-23 09:24 UTC",
+    "indicators": {
+      "atr": 0.5772,
+      "rsi": 49.56,
+      "ema21": 93.06763142216586,
+      "ema50": 93.46287094744312,
+      "ema200": 93.21254009519171,
+      "macdHist": 0.1468,
+      "volumeDelta": -0.44,
+      "trend": "RANGE"
+    },
+    "marketStructure": {
+      "trend_structure": "BEARISH",
+      "last_bos": null,
+      "last_choch": null,
+      "sweeps": [],
+      "recent_swing_highs": [
+        94.01,
+        97.21,
+        96.59
+      ],
+      "recent_swing_lows": [
+        92.58,
+        93.94,
+        91.58
+      ]
+    },
+    "liquidity": {
+      "pdh": 102.74,
+      "pdl": 87.72,
+      "eqh": [
+        92.96,
+        93.46
+      ],
+      "eql": [
+        92.32,
+        92.305
+      ],
+      "nearest_liquidity_above": 93.325,
+      "nearest_liquidity_below": 93.135
+    },
+    "orderBlocks": [
+      {
+        "type": "BULLISH",
+        "zone_high": 92.92,
+        "zone_low": 92.13,
+        "fresh": false,
+        "mitigated": true,
+        "displacement_str": 1.46,
+        "score": 81,
+        "candle_index": 182
+      }
+    ],
+    "fairValueGaps": [
+      {
+        "type": "BEARISH",
+        "top": 92.54,
+        "bottom": 92.5,
+        "size_pct": 0.043,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 36
+      },
+      {
+        "type": "BULLISH",
+        "top": 92.63,
+        "bottom": 92.58,
+        "size_pct": 0.054,
+        "fill_pct": 100.0,
+        "fresh": false,
+        "score": 36
+      },
+      {
+        "type": "BULLISH",
+        "top": 92.8,
+        "bottom": 92.74,
+        "size_pct": 0.064,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 66
+      },
+      {
+        "type": "BULLISH",
+        "top": 93.06,
+        "bottom": 92.95,
+        "size_pct": 0.118,
+        "fill_pct": 0.0,
+        "fresh": true,
+        "score": 68
+      }
+    ],
+    "regimeData": {
+      "regime": "RANGE",
+      "confidence": 72,
+      "adx": 21.9,
+      "atr_percentile": 25.0,
+      "ema_slope": 0.00084,
+      "bb_width_pct": 1.53
+    },
+    "telegram_message_id": null,
+    "exit_timestamp": 1787480480.2211127
+  }
+]

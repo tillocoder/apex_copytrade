@@ -17,5 +17,25 @@
       "isWin": true,
       "createdAt": 1787476800000
     }
+  ],
+  "test_user": [],
+  "guest": [
+    {
+      "id": "tr_1787589904030",
+      "date": "2026-08-24",
+      "symbol": "BTC/USDT",
+      "direction": "LONG",
+      "riskPct": 1.5,
+      "entryPrice": 2000.0,
+      "exitPrice": 2000.0,
+      "sl": 2100.0,
+      "tp": 5000.0,
+      "emotion": "Shoshqaloqlik",
+      "reason": "blmadim",
+      "lesson": "huyo",
+      "pnlPct": 0.0,
+      "isWin": false,
+      "createdAt": 1787589904030
+    }
   ]
 }
