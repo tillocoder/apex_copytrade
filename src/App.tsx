@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { TerminalProvider, useTerminal } from './context/TerminalContext';
 import { Header } from './components/layout/Header';
 import { Sidebar } from './components/layout/Sidebar';
@@ -70,10 +70,6 @@ const ModuleContainer: React.FC = () => {
   const { activeModule, positions = [] } = useTerminal();
   const safePositions = Array.isArray(positions) ? positions : [];
 
-  if (activeModule === 'login') {
-    return <AuthLogin />;
-  }
-
   // Standalone Admin Dashboard UI/UX for apex-api.xrinvest.uz or apex.api.xrinvest.uz
   if (window.location.hostname.includes('api') || activeModule === 'admin') {
     return <StandaloneAdminDashboard />;
@@ -121,10 +117,21 @@ const ModuleContainer: React.FC = () => {
   );
 };
 
+const RootSecurityGate: React.FC = () => {
+  const { user, activeModule } = useTerminal();
+
+  // STRICT AUTH GATEWAY: Unauthenticated or Guest visitors MUST see AuthLogin standalone page
+  if (!user || user.role === 'Guest' || !user.email || activeModule === 'login') {
+    return <AuthLogin />;
+  }
+
+  return <ModuleContainer />;
+};
+
 export function App() {
   return (
     <TerminalProvider>
-      <ModuleContainer />
+      <RootSecurityGate />
     </TerminalProvider>
   );
 }
