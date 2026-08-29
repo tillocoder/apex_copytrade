@@ -875,17 +875,22 @@ class RiskEngine:
         min_sl_dist = 1.3 * atr
         max_sl_dist = 2.8 * atr
 
+        regime_type = str(setup.get("regime", "")).upper()
+        conf_score = float(setup.get("confidence", 80.0))
+        
+        # Dynamic TP Count: 2 targets in ranging/choppy markets, 3 targets in high-confidence trend expansion
+        target_count = 3 if ("TREND" in regime_type or conf_score >= 82.0) else 2
+
         if side == "BUY":
             raw_dist = entry - raw_sl if raw_sl < entry else 1.5 * atr
             buffered_dist = raw_dist + 0.6 * atr
             sl_distance = max(min_sl_dist, min(max_sl_dist, buffered_dist))
             sl = round(entry - sl_distance, 4)
 
-            # Dynamic 3-Tier Institutional Take Profit Levels
-            tp1 = round(entry + 1.5 * sl_distance, 4)  # 1:1.5 RR - Scale 50% & Move SL to Breakeven
+            tp1 = round(entry + 1.5 * sl_distance, 4)  # 1:1.5 RR - Trigger BE (SL -> Entry)
             struct_liq_above = float(liquidity.get("nearest_liquidity_above", entry + 2.8 * sl_distance))
-            tp2 = round(max(entry + 2.8 * sl_distance, struct_liq_above), 4)  # Main Target (1:2.8+ RR)
-            tp3 = round(entry + 4.2 * sl_distance, 4)  # 1:4.2 RR - Trend Runner Target
+            tp2 = round(max(entry + 2.8 * sl_distance, struct_liq_above), 4)  # Main Target (Trail SL -> TP1)
+            tp3 = round(entry + 4.2 * sl_distance, 4) if target_count == 3 else None
             rr = round((tp2 - entry) / sl_distance, 2)
         else:
             raw_dist = raw_sl - entry if raw_sl > entry else 1.5 * atr
@@ -893,10 +898,10 @@ class RiskEngine:
             sl_distance = max(min_sl_dist, min(max_sl_dist, buffered_dist))
             sl = round(entry + sl_distance, 4)
 
-            tp1 = round(entry - 1.5 * sl_distance, 4)  # 1:1.5 RR - Scale 50% & Breakeven
+            tp1 = round(entry - 1.5 * sl_distance, 4)  # 1:1.5 RR - Trigger BE (SL -> Entry)
             struct_liq_below = float(liquidity.get("nearest_liquidity_below", entry - 2.8 * sl_distance))
-            tp2 = round(min(entry - 2.8 * sl_distance, struct_liq_below), 4)  # Main Target
-            tp3 = round(entry - 4.2 * sl_distance, 4)  # 1:4.2 RR - Trend Runner Target
+            tp2 = round(min(entry - 2.8 * sl_distance, struct_liq_below), 4)  # Main Target (Trail SL -> TP1)
+            tp3 = round(entry - 4.2 * sl_distance, 4) if target_count == 3 else None
             rr = round((entry - tp2) / sl_distance, 2)
 
         # Mandatory Institutional Risk Gate: Minimum RR >= 2.0

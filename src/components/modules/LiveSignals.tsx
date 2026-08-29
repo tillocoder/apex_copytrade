@@ -583,7 +583,7 @@ const LiveSignalsContent: React.FC = () => {
   // The API is expected to send active signals only; keep this guard so a
   // completed/expired signal can never remain in the Active Signals panel.
   const sigs = Array.isArray(signals)
-    ? signals.filter(signal => signal && (signal.status === 'PENDING' || signal.status === 'CONFIRMED'))
+    ? signals.filter(signal => signal && (['ACTIVE', 'PENDING', 'CONFIRMED', 'OPEN'].includes(String(signal.status || '').toUpperCase())))
     : [];
   const hist = Array.isArray(history) ? history.filter(Boolean) : [];
   const selectedTargets = signalTargets(selected);
@@ -709,7 +709,62 @@ const LiveSignalsContent: React.FC = () => {
                     <div className="text-[9px] text-apex-ai font-bold uppercase flex items-center gap-1"><Sparkles className="w-3 h-3"/> AI Analysis</div>
                     <p className="text-[10px] text-apex-textSecondary leading-relaxed">{selected.reasoning || selected.aiNotes || 'Quant Engine Confluence Order Block Setup detected.'}</p>
                   </div>
-                  {selected.indicators && (
+                  
+                {/* AI Autonomous Trailing SL & Break-Even Roadmap */}
+                <div className="p-3 bg-apex-surface/80 border border-apex-border rounded space-y-2">
+                  <div className="flex items-center justify-between border-b border-apex-border/40 pb-1.5">
+                    <div className="text-[10px] text-emerald-400 font-bold uppercase flex items-center gap-1.5">
+                      <Zap className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>AI Autonomous Break-Even & Trailing SL Roadmap</span>
+                    </div>
+                    <span className="text-[9px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-bold">
+                      {selectedTargets.length} Dynamic Targets Active
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-[10px]">
+                    {/* Stage 1: TP1 -> BE */}
+                    <div className="p-2 bg-apex-bg rounded border border-apex-border/60 space-y-1">
+                      <div className="font-bold text-apex-text flex items-center justify-between">
+                        <span className="text-emerald-400">1. Target TP1</span>
+                        <span className="font-mono text-emerald-400">${selectedTargets[0] ? fmt(selectedTargets[0].value) : fmt(selected.entry * 1.015)}</span>
+                      </div>
+                      <div className="text-[9px] text-apex-muted flex items-center gap-1">
+                        <span className="text-cyan-400 font-bold">🛡️ Auto-BE:</span>
+                        <span>SL moves to Entry (${fmt(selected.entry)})</span>
+                      </div>
+                      <div className="text-[8.5px] text-emerald-500/80">0 Downside Risk Trigger</div>
+                    </div>
+
+                    {/* Stage 2: TP2 -> Trail to TP1 */}
+                    <div className="p-2 bg-apex-bg rounded border border-apex-border/60 space-y-1">
+                      <div className="font-bold text-apex-text flex items-center justify-between">
+                        <span className="text-cyan-400">2. Target TP2</span>
+                        <span className="font-mono text-cyan-400">${selectedTargets[1] ? fmt(selectedTargets[1].value) : fmt(selected.entry * 1.028)}</span>
+                      </div>
+                      <div className="text-[9px] text-apex-muted flex items-center gap-1">
+                        <span className="text-emerald-400 font-bold">🔒 Profit Lock:</span>
+                        <span>SL trails to TP1 (${selectedTargets[0] ? fmt(selectedTargets[0].value) : fmt(selected.entry * 1.015)})</span>
+                      </div>
+                      <div className="text-[8.5px] text-cyan-500/80">Guaranteed Gain Secured</div>
+                    </div>
+
+                    {/* Stage 3: TP3 (If active) */}
+                    <div className="p-2 bg-apex-bg rounded border border-apex-border/60 space-y-1">
+                      <div className="font-bold text-apex-text flex items-center justify-between">
+                        <span className="text-purple-400">{selectedTargets[2] ? '3. Target TP3' : '3. Macro Target'}</span>
+                        <span className="font-mono text-purple-400">${selectedTargets[2] ? fmt(selectedTargets[2].value) : 'Dynamic Close'}</span>
+                      </div>
+                      <div className="text-[9px] text-apex-muted flex items-center gap-1">
+                        <span className="text-purple-400 font-bold">💎 Trend Runner:</span>
+                        <span>Full target exit at macro level</span>
+                      </div>
+                      <div className="text-[8.5px] text-purple-400/80">Maximum Profit Realization</div>
+                    </div>
+                  </div>
+                </div>
+
+                {selected.indicators && (
                     <div className="p-3 bg-apex-bg border border-apex-border rounded space-y-1.5">
                       <div className="text-[9px] text-apex-muted font-bold uppercase flex items-center gap-1"><Info className="w-3 h-3"/> Indicators</div>
                       <div className="grid grid-cols-2 gap-1.5 text-[9.5px]">

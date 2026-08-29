@@ -25,7 +25,7 @@ import { StandaloneAdminDashboard } from './components/admin/StandaloneAdminDash
 import { TradingWorkspace } from './components/workspaces/TradingWorkspace';
 import { RiskWorkspace } from './components/workspaces/RiskWorkspace';
 import { JournalWorkspace } from './components/workspaces/JournalWorkspace';
-import { AnalyticsWorkspace } from './components/workspaces/AnalyticsWorkspace';
+import { AnalyticsModule } from './components/modules/AnalyticsModule';
 import { NewsWorkspace } from './components/workspaces/NewsWorkspace';
 
 class GlobalModuleErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean; error: any }> {
@@ -88,7 +88,7 @@ const ModuleContainer: React.FC = () => {
       case 'news': return <NewsWorkspace />;
       case 'portfolio': return <RiskWorkspace />;
       case 'journal': return <JournalWorkspace />;
-      case 'analytics': return <AnalyticsWorkspace />;
+      case 'analytics': return <AnalyticsModule />;
       case 'copilot': return <AICopilot />;
       case 'team': return <TeamHub />;
       case 'automation': return <AutomationCenter />;

@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { useTerminal } from '../../context/TerminalContext';
 import ReactECharts from 'echarts-for-react';
-import { TrendingUp, ShieldAlert, SlidersHorizontal, Activity, X, RefreshCw, Lock } from 'lucide-react';
+import { TrendingUp, TrendingDown, ShieldAlert, SlidersHorizontal, Activity, X, RefreshCw, Lock, History, CheckCircle2, AlertCircle, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { TradesService } from '../../services/tradesService';
 import { PortfolioService, type LivePortfolioData } from '../../services/portfolioService';
 
 export const LiveTrades: React.FC = () => {
-  const { positions = [], setPositions, openCommandCenter, executePositionAction } = useTerminal();
+  const { positions = [], setPositions, openCommandCenter } = useTerminal();
   const safePositions = Array.isArray(positions) ? positions : [];
   
+  const [activeTab, setActiveTab] = useState<'OPEN' | 'HISTORY'>('OPEN');
   const [selectedPosId, setSelectedPosId] = useState<string>(safePositions[0]?.id || '');
   const [showEquityModal, setShowEquityModal] = useState<boolean>(false);
-  const [liveEquityData, setLiveEquityData] = useState<LivePortfolioData | null>(null);
+  const [liveEquityData, setLiveEquityData] = useState<any | null>(null);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
 
   const activePosition = safePositions.find(p => p && p.id === selectedPosId) || safePositions[0] || null;
+  const tradeHistory = Array.isArray(liveEquityData?.tradeHistory) ? liveEquityData.tradeHistory : [];
 
   const fetchLiveState = async () => {
     try {
@@ -90,9 +92,30 @@ export const LiveTrades: React.FC = () => {
       {/* Module Title Header */}
       <div className="h-10 bg-apex-surface border-b border-apex-border px-4 flex items-center justify-between shrink-0">
         <div className="flex items-center space-x-3">
-          <div className="flex items-center space-x-2 font-bold text-xs text-apex-text">
-            <TrendingUp className="w-4 h-4 text-apex-accent" />
-            <span>PAPER EXECUTION · REAL MARKET DATA ({safePositions.length})</span>
+          {/* Tab buttons */}
+          <div className="flex items-center space-x-1 bg-apex-bg p-0.5 rounded border border-apex-border">
+            <button
+              onClick={() => setActiveTab('OPEN')}
+              className={`flex items-center space-x-1.5 px-3 py-1 rounded text-xs font-bold transition-all ${
+                activeTab === 'OPEN'
+                  ? 'bg-apex-accent text-apex-bg shadow-sm'
+                  : 'text-apex-muted hover:text-apex-text'
+              }`}
+            >
+              <TrendingUp className="w-3.5 h-3.5" />
+              <span>OPEN POSITIONS ({safePositions.length})</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('HISTORY')}
+              className={`flex items-center space-x-1.5 px-3 py-1 rounded text-xs font-bold transition-all ${
+                activeTab === 'HISTORY'
+                  ? 'bg-apex-accent text-apex-bg shadow-sm'
+                  : 'text-apex-muted hover:text-apex-text'
+              }`}
+            >
+              <History className="w-3.5 h-3.5" />
+              <span>POSITION HISTORY ({tradeHistory.length})</span>
+            </button>
           </div>
 
           <button
@@ -107,196 +130,295 @@ export const LiveTrades: React.FC = () => {
           </button>
         </div>
 
-        <div className="text-[10px] text-apex-muted">REAL MARKET PRICE · NO EXCHANGE ORDERS</div>
+        <div className="flex items-center space-x-3 text-[10px] text-apex-muted">
+          <button
+            onClick={fetchLiveState}
+            disabled={isRefreshing}
+            className="flex items-center space-x-1 px-2 py-0.5 rounded bg-apex-surface hover:bg-apex-surfaceHover border border-apex-border text-apex-text"
+          >
+            <RefreshCw className={`w-3 h-3 ${isRefreshing ? 'animate-spin' : ''}`} />
+            <span>REFRESH</span>
+          </button>
+          <span>REAL MARKET PRICE • BINANCE DATA FEED</span>
+        </div>
       </div>
 
       {/* Main Content Area */}
       <div className="flex-1 flex overflow-hidden">
-        {/* Positions Table (Left 65%) */}
-        <div className="flex-1 overflow-y-auto border-r border-apex-border bg-apex-bg">
-          {safePositions.length === 0 ? (
-            <div className="p-12 text-center text-apex-muted space-y-2 font-sans">
-              <ShieldAlert className="w-8 h-8 text-apex-warning mx-auto" />
-              <div className="text-xs">NO ACTIVE OPEN POSITIONS IN PORTFOLIO</div>
-              <div className="text-[10px] text-apex-muted">Engine is scanning live Binance M15 order flow...</div>
-            </div>
-          ) : (
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-apex-surface border-b border-apex-border text-[10px] text-apex-muted uppercase">
-                  <th className="p-2.5">Account / Symbol</th>
-                  <th className="p-2.5">Side / Lev</th>
-                  <th className="p-2.5 text-right font-mono">Entry Price</th>
-                  <th className="p-2.5 text-right font-mono">Mark Price</th>
-                  <th className="p-2.5 text-right font-mono">Margin</th>
-                  <th className="p-2.5 text-right font-mono">SL / TP</th>
-                  <th className="p-2.5 text-right font-mono">Unrealized PnL</th>
-                  <th className="p-2.5 text-right">Command Center</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-apex-border/40 font-mono">
-                {safePositions.map((p, idx) => {
-                  if (!p) return null;
-                  const isSelected = p.id === selectedPosId;
-                  const isProfit = (p.unrealizedPnl || 0) >= 0;
-                  return (
-                    <tr 
-                      key={p.id || idx}
-                      onClick={() => setSelectedPosId(p.id)}
-                      className={`hover:bg-apex-hover cursor-pointer transition-apex ${
-                        isSelected ? 'bg-apex-surface border-l-2 border-apex-accent' : idx % 2 === 1 ? 'bg-apex-bgSecondary/60' : 'bg-apex-bg'
-                      }`}
-                    >
-                      <td className="p-2.5">
-                        <div className="font-bold text-apex-text text-xs">{p.symbol || 'N/A'}</div>
-                        <div className="text-[10px] text-apex-muted">{p.account || 'FTMO 10K LIVE'}</div>
-                      </td>
-
-                      <td className="p-2.5">
-                        <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
-                          p.side === 'BUY' ? 'bg-apex-success/15 text-apex-success border border-apex-success/30' : 'bg-apex-danger/15 text-apex-danger border border-apex-danger/30'
-                        }`}>
-                          {p.side || 'BUY'} {p.leverage || 5}X
-                        </span>
-                      </td>
-
-                      <td className="p-2.5 text-right font-bold text-apex-text">
-                        ${(p.entryPrice || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                      </td>
-
-                      <td className="p-2.5 text-right font-bold text-apex-accent">
-                        ${(p.currentPrice || p.entryPrice || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                      </td>
-
-                      <td className="p-2.5 text-right text-apex-textSecondary">
-                        ${(p.marginUsed || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                      </td>
-
-                      <td className="p-2.5 text-right text-[10px]">
-                        <div className="text-apex-danger font-medium">${p.sl || 0}</div>
-                        <div className="text-apex-success font-medium">${p.tp1 || 0}</div>
-                      </td>
-
-                      <td className="p-2.5 text-right">
-                        <div className={`font-bold ${isProfit ? 'text-apex-success' : 'text-apex-danger'}`}>
-                          {isProfit ? '+' : ''}${(p.unrealizedPnl || 0).toFixed(2)}
-                        </div>
-                        <div className={`text-[10px] ${isProfit ? 'text-apex-success' : 'text-apex-danger'}`}>
-                          ({isProfit ? '+' : ''}{(p.unrealizedPnlPercent || 0)}%)
-                        </div>
-                      </td>
-
-                      <td className="p-2.5 text-right space-x-1.5">
-                        <button
-                          onClick={(e) => { e.stopPropagation(); openCommandCenter(p.id); }}
-                          className="px-2.5 py-1 rounded-md bg-apex-surface hover:bg-apex-hover border border-apex-accent text-apex-accent text-[10px] font-bold transition-apex flex items-center space-x-1 ml-auto"
-                        >
-                          <SlidersHorizontal className="w-3 h-3 text-apex-accent" />
-                          <span>INSPECT</span>
-                        </button>
-                      </td>
+        {activeTab === 'OPEN' ? (
+          /* OPEN POSITIONS VIEW */
+          <>
+            {/* Positions Table (Left 65%) */}
+            <div className="flex-1 overflow-y-auto border-r border-apex-border bg-apex-bg">
+              {safePositions.length === 0 ? (
+                <div className="p-12 text-center text-apex-muted space-y-2 font-sans">
+                  <ShieldAlert className="w-8 h-8 text-apex-warning mx-auto" />
+                  <div className="text-xs font-bold text-apex-text">NO ACTIVE OPEN POSITIONS IN PORTFOLIO</div>
+                  <div className="text-[10px] text-apex-muted">Engine is scanning live Binance M15 order flow for high probability SMC setups...</div>
+                </div>
+              ) : (
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-apex-surface border-b border-apex-border text-[10px] text-apex-muted uppercase tracking-wider">
+                      <th className="p-2.5">Account / Symbol</th>
+                      <th className="p-2.5">Side / Lev</th>
+                      <th className="p-2.5 text-right font-mono">Entry Price</th>
+                      <th className="p-2.5 text-right font-mono">Mark Price</th>
+                      <th className="p-2.5 text-right font-mono">Margin</th>
+                      <th className="p-2.5 text-right font-mono">SL / TP</th>
+                      <th className="p-2.5 text-right font-mono">Unrealized PnL</th>
+                      <th className="p-2.5 text-right">Command Center</th>
                     </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          )}
-        </div>
+                  </thead>
+                  <tbody className="divide-y divide-apex-border/40 font-mono">
+                    {safePositions.map((p, idx) => {
+                      if (!p) return null;
+                      const isSelected = p.id === selectedPosId;
+                      const isProfit = (p.unrealizedPnl || 0) >= 0;
 
-        {/* Quick Position Overview Panel */}
-        {activePosition && (
-          <div className="w-96 bg-apex-bgSecondary p-4 overflow-y-auto space-y-4 shrink-0 font-sans">
-            <div className="workstation-panel p-4 space-y-3 font-mono">
-              <div className="flex justify-between items-center font-bold">
-                <span className="text-apex-text text-sm">{activePosition.symbol || 'POSITION'} OVERVIEW</span>
-                <span className="px-2 py-0.5 rounded bg-apex-surface border border-apex-accent text-apex-accent text-[9px] font-bold flex items-center gap-1">
-                  <Lock className="w-3 h-3" /> AUTO EA ACTIVE
-                </span>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2 text-xs pt-1">
-                <div className="bg-apex-bg p-2.5 rounded-md border border-apex-border">
-                  <div className="text-apex-muted text-[10px]">EXPECTED PROFIT</div>
-                  <div className="text-apex-success font-bold">+${activePosition.expectedProfit || 0}</div>
-                </div>
-                <div className="bg-apex-bg p-2.5 rounded-md border border-apex-border">
-                  <div className="text-apex-muted text-[10px]">MAX EXPECTED LOSS</div>
-                  <div className="text-apex-danger font-bold">-${activePosition.expectedLoss || 0}</div>
-                </div>
-              </div>
+                      return (
+                        <tr
+                          key={p.id || idx}
+                          onClick={() => setSelectedPosId(p.id)}
+                          className={`cursor-pointer transition-colors ${
+                            isSelected ? 'bg-apex-accent/10 border-l-2 border-apex-accent' : 'hover:bg-apex-surfaceHover/50'
+                          }`}
+                        >
+                          <td className="p-2.5">
+                            <div className="font-bold text-apex-text">{p.symbol}</div>
+                            <div className="text-[9px] text-apex-muted uppercase">{p.account || 'PAPER EXECUTION • REAL BINANCE DATA'}</div>
+                          </td>
+                          <td className="p-2.5">
+                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                              p.side === 'BUY'
+                                ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                                : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
+                            }`}>
+                              {p.side} {p.leverage}X
+                            </span>
+                          </td>
+                          <td className="p-2.5 text-right font-bold text-apex-text">
+                            ${Number(p.entryPrice || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          </td>
+                          <td className="p-2.5 text-right font-bold text-apex-accent">
+                            ${Number(p.currentPrice || p.entryPrice || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          </td>
+                          <td className="p-2.5 text-right text-apex-text">
+                            ${Number(p.marginUsed || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          </td>
+                          <td className="p-2.5 text-right">
+                            <div className="text-rose-400 text-[10px]">
+                              ${Number(p.sl || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </div>
+                            <div className="text-emerald-400 text-[10px]">
+                              ${Number(p.tp1 || p.tp2 || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </div>
+                          </td>
+                          <td className="p-2.5 text-right">
+                            <div className={`font-bold ${isProfit ? 'text-emerald-400' : 'text-rose-400'}`}>
+                              {isProfit ? '+' : ''}${Number(p.unrealizedPnl || 0).toFixed(2)}
+                            </div>
+                            <div className={`text-[9px] ${isProfit ? 'text-emerald-500/80' : 'text-rose-500/80'}`}>
+                              ({isProfit ? '+' : ''}{Number(p.unrealizedPnlPercent || 0).toFixed(2)}%)
+                            </div>
+                          </td>
+                          <td className="p-2.5 text-right">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (openCommandCenter) openCommandCenter(p.id);
+                              }}
+                              className="px-2.5 py-1 rounded bg-apex-surface hover:bg-apex-accent hover:text-apex-bg text-apex-text border border-apex-border text-[10px] font-bold transition-all inline-flex items-center space-x-1"
+                            >
+                              <SlidersHorizontal className="w-3 h-3" />
+                              <span>INSPECT</span>
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              )}
             </div>
 
-            {/* Read-Only EA Observer Mode */}
-            <div className="p-3 bg-apex-surface rounded-md border border-apex-border text-[10px] font-mono space-y-1.5">
-              <div className="font-bold text-apex-accent flex items-center gap-1.5">
-                <Lock className="w-3.5 h-3.5 text-apex-accent" /> READ-ONLY MONITORING MODE
+            {/* Position Summary Sidebar (Right 35%) */}
+            {activePosition && (
+              <div className="w-[360px] bg-apex-surface/40 p-4 border-l border-apex-border flex flex-col space-y-4 overflow-y-auto">
+                <div className="flex items-center justify-between border-b border-apex-border pb-2">
+                  <div className="font-bold text-xs text-apex-text flex items-center space-x-2">
+                    <span>{activePosition.symbol} OVERVIEW</span>
+                  </div>
+                  <span className="px-2 py-0.5 rounded text-[9px] bg-apex-accent/10 border border-apex-accent/30 text-apex-accent font-bold">
+                    AUTO RA ACTIVE
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="bg-apex-surface p-2.5 rounded border border-apex-border">
+                    <div className="text-[9px] text-apex-muted">EXPECTED PROFIT</div>
+                    <div className="text-sm font-bold text-emerald-400">
+                      +${Number(activePosition.expectedProfit || 0).toFixed(2)}
+                    </div>
+                  </div>
+                  <div className="bg-apex-surface p-2.5 rounded border border-apex-border">
+                    <div className="text-[9px] text-apex-muted">MAX EXPECTED LOSS</div>
+                    <div className="text-sm font-bold text-rose-400">
+                      -${Number(activePosition.expectedLoss || 0).toFixed(2)}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-apex-surface/80 p-3 rounded border border-apex-border/60 space-y-2 text-[11px]">
+                  <div className="text-apex-accent font-bold text-xs flex items-center space-x-1">
+                    <Lock className="w-3.5 h-3.5" />
+                    <span>READ-ONLY MONITORING MODE</span>
+                  </div>
+                  <p className="text-apex-muted text-[10px] leading-relaxed">
+                    All position management, trailing stops, break-even adjustments, and profit-taking are handled 100% autonomously by APEX Quant Engine.
+                  </p>
+                </div>
               </div>
-              <div className="text-apex-textSecondary text-[9px] leading-relaxed">
-                All position management, trailing stops, break-even adjustments, and profit-taking are handled 100% autonomously by APEX M5 Quant Engine. Manual override disabled.
+            )}
+          </>
+        ) : (
+          /* POSITION HISTORY / CLOSED TRADES VIEW */
+          <div className="flex-1 overflow-y-auto bg-apex-bg">
+            {tradeHistory.length === 0 ? (
+              <div className="p-12 text-center text-apex-muted space-y-2 font-sans">
+                <History className="w-8 h-8 text-apex-muted mx-auto" />
+                <div className="text-xs font-bold text-apex-text">NO HISTORICAL TRADES RECORDED</div>
+                <div className="text-[10px] text-apex-muted">Closed positions will appear here with full execution forensics.</div>
               </div>
-            </div>
+            ) : (
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-apex-surface border-b border-apex-border text-[10px] text-apex-muted uppercase tracking-wider">
+                    <th className="p-2.5">Symbol / Side</th>
+                    <th className="p-2.5 text-right font-mono">Entry Price</th>
+                    <th className="p-2.5 text-right font-mono">Exit Price</th>
+                    <th className="p-2.5 text-right font-mono">Size / Leverage</th>
+                    <th className="p-2.5 text-center">Status</th>
+                    <th className="p-2.5 text-right font-mono">Realized PnL</th>
+                    <th className="p-2.5 text-right">Time Open / Close</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-apex-border/40 font-mono">
+                  {tradeHistory.map((t: any, idx: number) => {
+                    const pnl = Number(t.realizedPnl ?? t.realized_pnl ?? 0);
+                    const isWin = pnl > 0;
+                    const side = String(t.side || t.direction || 'BUY').toUpperCase();
+                    const statusStr = String(t.status || 'CLOSED').toUpperCase();
+
+                    return (
+                      <tr key={t.id || idx} className="hover:bg-apex-surfaceHover/40 transition-colors">
+                        <td className="p-2.5">
+                          <div className="font-bold text-apex-text flex items-center space-x-1.5">
+                            {isWin ? (
+                              <ArrowUpRight className="w-3.5 h-3.5 text-emerald-400" />
+                            ) : (
+                              <ArrowDownRight className="w-3.5 h-3.5 text-rose-400" />
+                            )}
+                            <span>{t.symbol || 'BTC/USDT'}</span>
+                          </div>
+                          <div className="text-[9px]">
+                            <span className={`font-bold ${side === 'BUY' || side === 'LONG' ? 'text-emerald-400' : 'text-rose-400'}`}>
+                              {side}
+                            </span>
+                            <span className="text-apex-muted ml-1">{t.leverage || 2}X</span>
+                          </div>
+                        </td>
+                        <td className="p-2.5 text-right font-bold text-apex-text">
+                          ${Number(t.entryPrice ?? t.entry_price ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </td>
+                        <td className="p-2.5 text-right font-bold text-apex-accent">
+                          ${Number(t.closePrice ?? t.mark_price ?? t.entryPrice ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </td>
+                        <td className="p-2.5 text-right text-apex-muted">
+                          <div>{Number(t.size || 0.1).toFixed(3)}</div>
+                          <div className="text-[9px] text-apex-muted">${Number(t.marginUsed ?? t.margin ?? 500).toFixed(0)} Margin</div>
+                        </td>
+                        <td className="p-2.5 text-center">
+                          <span className={`px-2 py-0.5 rounded text-[9px] font-bold ${
+                            statusStr.includes('TP')
+                              ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
+                              : statusStr.includes('SL')
+                              ? 'bg-rose-500/10 text-rose-400 border border-rose-500/30'
+                              : 'bg-apex-surface text-apex-muted border border-apex-border'
+                          }`}>
+                            {statusStr}
+                          </span>
+                        </td>
+                        <td className="p-2.5 text-right">
+                          <div className={`font-bold text-xs ${isWin ? 'text-emerald-400' : 'text-rose-400'}`}>
+                            {isWin ? '+' : ''}${pnl.toFixed(2)}
+                          </div>
+                          <div className={`text-[9px] ${isWin ? 'text-emerald-500/80' : 'text-rose-500/80'}`}>
+                            {Number(t.unrealizedPnlPercent ?? t.pnl_pct ?? 0).toFixed(2)}%
+                          </div>
+                        </td>
+                        <td className="p-2.5 text-right text-apex-muted text-[10px]">
+                          <div>{t.formatted_entry_time || t.timeOpen || '2026-08-28'}</div>
+                          <div className="text-[9px] text-apex-muted/70">{t.duration || '0h 15m'}</div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            )}
           </div>
         )}
       </div>
 
-      {/* Live Real-Time Equity Curve Modal */}
+      {/* Real-time Equity Curve Modal */}
       {showEquityModal && (
-        <div className="fixed inset-0 bg-black/75 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-apex-surface border border-apex-border w-full max-w-4xl rounded-lg p-5 space-y-4 shadow-2xl font-mono">
-            <div className="flex items-center justify-between border-b border-apex-border pb-3">
-              <div className="flex items-center space-x-2">
-                <Activity className="w-5 h-5 text-emerald-400" />
-                <span className="font-bold text-sm text-apex-text">REAL-TIME LIVE PORTFOLIO EQUITY EXPANSION</span>
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-apex-surface border border-apex-border rounded-lg w-full max-w-3xl overflow-hidden shadow-2xl flex flex-col">
+            <div className="p-3 border-b border-apex-border flex items-center justify-between bg-apex-bg">
+              <div className="flex items-center space-x-2 font-bold text-xs text-apex-text">
+                <Activity className="w-4 h-4 text-emerald-400" />
+                <span>INSTITUTIONAL REAL-TIME EQUITY CURVE</span>
               </div>
-              <div className="flex items-center space-x-3">
-                <button
-                  onClick={fetchLiveState}
-                  disabled={isRefreshing}
-                  className="flex items-center space-x-1 text-xs text-apex-accent hover:text-apex-text transition-apex"
-                >
-                  <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
-                  <span>REFRESH</span>
-                </button>
-                <button
-                  onClick={() => setShowEquityModal(false)}
-                  className="p-1 rounded text-apex-muted hover:text-apex-text transition-apex"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
+              <button
+                onClick={() => setShowEquityModal(false)}
+                className="p-1 rounded hover:bg-apex-surface text-apex-muted hover:text-apex-text transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
 
-            {/* Key Live Equity Metrics */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <div className="bg-apex-bg p-3 rounded border border-apex-border">
-                <div className="text-[10px] text-apex-muted">CURRENT LIVE EQUITY</div>
-                <div className="text-lg font-bold text-emerald-400">
-                  ${(liveEquityData?.currentEquity || 10000).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+            <div className="p-4 space-y-4">
+              <div className="grid grid-cols-4 gap-3 text-center">
+                <div className="bg-apex-bg p-2.5 rounded border border-apex-border">
+                  <div className="text-[9px] text-apex-muted">INITIAL CAPITAL</div>
+                  <div className="text-sm font-bold text-apex-text">
+                    ${Number(liveEquityData?.initialCapital || 10000).toLocaleString()}
+                  </div>
+                </div>
+                <div className="bg-apex-bg p-2.5 rounded border border-apex-border">
+                  <div className="text-[9px] text-apex-muted">REALIZED PNL</div>
+                  <div className={`text-sm font-bold ${(liveEquityData?.realizedPnl || 0) >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                    {(liveEquityData?.realizedPnl || 0) >= 0 ? '+' : ''}${Number(liveEquityData?.realizedPnl || 0).toFixed(2)}
+                  </div>
+                </div>
+                <div className="bg-apex-bg p-2.5 rounded border border-apex-border">
+                  <div className="text-[9px] text-apex-muted">CLOSED TRADES</div>
+                  <div className="text-sm font-bold text-apex-text">
+                    {liveEquityData?.closedTradesCount || 0}
+                  </div>
+                </div>
+                <div className="bg-apex-bg p-2.5 rounded border border-apex-border">
+                  <div className="text-[9px] text-apex-muted">WIN COUNT</div>
+                  <div className="text-sm font-bold text-emerald-400">
+                    {liveEquityData?.winCount || 0}
+                  </div>
                 </div>
               </div>
-              <div className="bg-apex-bg p-3 rounded border border-apex-border">
-                <div className="text-[10px] text-apex-muted">UNREALIZED PNL</div>
-                <div className={`text-lg font-bold ${(liveEquityData?.unrealizedPnl || 0) >= 0 ? 'text-emerald-400' : 'text-rose-500'}`}>
-                  {(liveEquityData?.unrealizedPnl || 0) >= 0 ? '+' : ''}${(liveEquityData?.unrealizedPnl || 0).toFixed(2)}
-                </div>
-              </div>
-              <div className="bg-apex-bg p-3 rounded border border-apex-border">
-                <div className="text-[10px] text-apex-muted">REALIZED PNL</div>
-                <div className={`text-lg font-bold ${(liveEquityData?.realizedPnl || 0) >= 0 ? 'text-emerald-400' : 'text-rose-500'}`}>
-                  {(liveEquityData?.realizedPnl || 0) >= 0 ? '+' : ''}${(liveEquityData?.realizedPnl || 0).toFixed(2)}
-                </div>
-              </div>
-              <div className="bg-apex-bg p-3 rounded border border-apex-border">
-                <div className="text-[10px] text-apex-muted">WIN RATE ({liveEquityData?.totalTrades || 0} Trades)</div>
-                <div className="text-lg font-bold text-apex-accent">
-                  {liveEquityData?.winRate || 100}%
-                </div>
-              </div>
-            </div>
 
-            {/* ECharts Live Equity Curve */}
-            <div className="h-80 w-full bg-apex-bg rounded p-2 border border-apex-border">
-              <ReactECharts option={getLiveEquityChartOption()} style={{ height: '100%', width: '100%' }} />
+              <div className="h-64 bg-apex-bg rounded border border-apex-border p-2">
+                <ReactECharts option={getLiveEquityChartOption()} style={{ height: '100%', width: '100%' }} />
+              </div>
             </div>
           </div>
         </div>
@@ -304,3 +426,5 @@ export const LiveTrades: React.FC = () => {
     </div>
   );
 };
+
+export default LiveTrades;

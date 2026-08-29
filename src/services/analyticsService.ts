@@ -1,17 +1,57 @@
+export interface StrategyBreakdown {
+  setup: string;
+  trades: number;
+  winRate: number;
+  profitFactor: number;
+  avgRR: number;
+}
+
+export interface SymbolBreakdown {
+  symbol: string;
+  trades: number;
+  winRate: number;
+  pnl: number;
+  profitFactor: number;
+}
+
+export interface RDistributionItem {
+  r: string;
+  count: number;
+  pct: number;
+  type: 'WIN' | 'LOSS' | 'BREAKEVEN';
+}
+
 export interface PerformanceAnalyticsData {
   status: string;
-  bestSession: string;
-  bestDay: string;
-  profitFactor: number;
-  expectancy: string;
-  winRate: number;
   totalTrades: number;
+  winCount: number;
+  lossCount: number;
+  winRate: number;
+  profitFactor: number;
+  sharpeRatio: number;
+  maxDrawdownPct: number;
+  recoveryFactor: number;
+  netPnl: number;
+  expectancy: string;
+  expectancyValue: number;
+  bestSession: string;
+  bestSessionSub: string;
+  bestDay: string;
+  bestDaySub: string;
+  avgWin: number;
+  avgLoss: number;
+  longWinRate: number;
+  shortWinRate: number;
   heatmapData: number[][];
+  strategyBreakdown: StrategyBreakdown[];
+  symbolBreakdown: SymbolBreakdown[];
+  rDistribution: RDistributionItem[];
+  equityCurve: { timestamp: string; equity: number }[];
 }
 
 export class AnalyticsService {
   /**
-   * Fetch performance metrics and session win-rate heatmap
+   * Fetch quantitative performance metrics, session win-rate heatmap, and strategy forensics
    */
   public static async fetchAnalyticsPerformance(): Promise<PerformanceAnalyticsData | null> {
     try {
