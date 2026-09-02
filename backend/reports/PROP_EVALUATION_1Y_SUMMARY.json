@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-02T08:09:19.717748+00:00",
+  "timestamp": "2026-09-02T12:37:30.315614+00:00",
   "completed_challenges": 10,
   "stage1_passed": 11,
   "stage2_passed": 10,
@@ -12,23 +12,23 @@
   "total_trades": 1230,
   "win_rate_pct": 62.28,
   "profit_factor": 1.81,
-  "total_net_pnl": 14997.88,
+  "total_net_pnl": 14995.86,
   "max_daily_drawdown_pct": 2.39,
-  "max_total_drawdown_pct": 3.47,
-  "sharpe_ratio": 7.92,
-  "sortino_ratio": 10.79,
+  "max_total_drawdown_pct": 3.48,
+  "sharpe_ratio": 7.93,
+  "sortino_ratio": 10.8,
   "symbol_breakdown": {
     "ETH/USDT": {
       "trades": 787,
       "win_rate": 59.72,
       "profit_factor": 1.54,
-      "net_pnl": 7054.01
+      "net_pnl": 7053.14
     },
     "BTC/USDT": {
       "trades": 443,
       "win_rate": 66.82,
       "profit_factor": 2.47,
-      "net_pnl": 7943.87
+      "net_pnl": 7942.71
     }
   }
 }

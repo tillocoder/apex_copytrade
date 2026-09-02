@@ -139,7 +139,7 @@ export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
     return list.filter(t => isBuy ? t.value > entryPrice : t.value < entryPrice);
   }, [position, signal, entryPrice, isBuy]);
 
-  const hasStop = entryPrice > 0 && stopLoss > 0 && (isBuy ? stopLoss < entryPrice : stopLoss > entryPrice);
+  const hasStop = entryPrice > 0 && stopLoss > 0;
 
   // Calculated Risk/Reward
   const calculatedRR = React.useMemo(() => {

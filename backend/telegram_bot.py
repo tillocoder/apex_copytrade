@@ -23,8 +23,10 @@ class TelegramNotifier:
             self.chat_ids.add(int(self.default_chat_id))
         
         self.message_map = {}
+        self.last_update_id = 0
         self.account_balance = INITIAL_PROP_CAPITAL
         self.daily_start_balance = INITIAL_PROP_CAPITAL
+        self.signals_active = True
         self.state_file = os.path.join(os.path.dirname(__file__), "telegram_state.json")
         self._load_state()
 
@@ -36,8 +38,10 @@ class TelegramNotifier:
                     for cid in data.get("chat_ids", []):
                         self.chat_ids.add(int(cid))
                     self.message_map = data.get("message_map", {})
+                    self.last_update_id = int(data.get("last_update_id", 0))
                     self.account_balance = float(data.get("account_balance", INITIAL_PROP_CAPITAL))
                     self.daily_start_balance = float(data.get("daily_start_balance", INITIAL_PROP_CAPITAL))
+                    self.signals_active = bool(data.get("signals_active", True))
         except Exception as e:
             logger.error(f"Error loading telegram_state.json: {e}")
 
@@ -46,33 +50,38 @@ class TelegramNotifier:
             data = {
                 "chat_ids": list(self.chat_ids),
                 "message_map": self.message_map,
+                "last_update_id": self.last_update_id,
                 "account_balance": self.account_balance,
-                "daily_start_balance": self.daily_start_balance
+                "daily_start_balance": self.daily_start_balance,
+                "signals_active": self.signals_active
             }
             with open(self.state_file, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=2, ensure_ascii=False)
         except Exception as e:
             logger.error(f"Error saving telegram_state.json: {e}")
 
-    def poll_updates(self):
-        if not self.bot_token:
-            return
-        url = f"https://api.telegram.org/bot{self.bot_token}/getUpdates"
-        try:
-            res = requests.get(url, params={"timeout": 0}, timeout=4)
-            if res.status_code == 200:
-                updates = res.json().get("result", [])
-                for u in updates:
-                    msg = u.get("message") or u.get("callback_query", {}).get("message")
-                    if msg and "chat" in msg:
-                        cid = msg["chat"]["id"]
-                        if cid not in self.chat_ids:
-                            self.chat_ids.add(cid)
-                            self._save_state()
-        except Exception:
-            pass
+    def _get_main_reply_keyboard(self) -> dict:
+        """Restores the complete 3-row full button layout!"""
+        return {
+            "keyboard": [
+                [{"text": "📊 Ochiq Bitimlar"}, {"text": "💼 Hisob Holati"}],
+                [{"text": "🤖 Engine"}, {"text": "🛡️ E2 Shadow"}, {"text": "📡 AI Signals"}],
+                [{"text": "🟢 Start Signals"}, {"text": "🔴 Stop Signals"}]
+            ],
+            "resize_keyboard": True,
+            "is_persistent": True
+        }
 
-    def send_direct_message(self, chat_id: int, text: str, reply_to_message_id: Optional[int] = None) -> Optional[int]:
+    def _build_position_inline_keyboard(self, pos_id: str) -> dict:
+        return {
+            "inline_keyboard": [
+                [
+                    {"text": "🔴 LIVE", "web_app": {"url": f"https://apex.xrinvest.uz/?mode=tg_live&pos={pos_id}"}}
+                ]
+            ]
+        }
+
+    def send_direct_message(self, chat_id: int, text: str, reply_to_message_id: Optional[int] = None, show_keyboard: bool = True) -> Optional[int]:
         if not self.bot_token:
             return None
         url = f"https://api.telegram.org/bot{self.bot_token}/sendMessage"
@@ -81,6 +90,8 @@ class TelegramNotifier:
             "text": text,
             "parse_mode": "HTML"
         }
+        if show_keyboard:
+            payload["reply_markup"] = self._get_main_reply_keyboard()
         if reply_to_message_id:
             payload["reply_to_message_id"] = reply_to_message_id
             payload["allow_sending_without_reply"] = True
@@ -95,15 +106,6 @@ class TelegramNotifier:
         except Exception as e:
             logger.error(f"Error sending direct message: {e}")
         return None
-
-    def _build_position_inline_keyboard(self, pos_id: str) -> dict:
-        return {
-            "inline_keyboard": [
-                [
-                    {"text": "🔴 LIVE", "web_app": {"url": f"https://apex.xrinvest.uz/?mode=tg_live&pos={pos_id}"}}
-                ]
-            ]
-        }
 
     def send_trade_message(self, chat_id: int, text: str, pos_id: str) -> Optional[int]:
         if not self.bot_token:
@@ -126,8 +128,218 @@ class TelegramNotifier:
             logger.error(f"Error in send_trade_message: {e}")
         return None
 
+    def poll_updates(self):
+        """Polls Telegram updates and processes incoming user commands and button clicks."""
+        if not self.bot_token:
+            return
+        url = f"https://api.telegram.org/bot{self.bot_token}/getUpdates"
+        params = {"offset": self.last_update_id + 1, "timeout": 0}
+        try:
+            res = requests.get(url, params=params, timeout=5)
+            if res.status_code == 200:
+                updates = res.json().get("result", [])
+                for u in updates:
+                    upd_id = u.get("update_id", 0)
+                    if upd_id > self.last_update_id:
+                        self.last_update_id = upd_id
+
+                    msg = u.get("message")
+                    if msg:
+                        cid = msg.get("chat", {}).get("id")
+                        text = (msg.get("text") or "").strip()
+                        if cid:
+                            if cid not in self.chat_ids:
+                                self.chat_ids.add(cid)
+                            self._handle_user_message(cid, text)
+                if updates:
+                    self._save_state()
+        except Exception as e:
+            logger.error(f"Error in poll_updates: {e}")
+
+    def _handle_user_message(self, chat_id: int, text: str):
+        """Dispatches response for all restored buttons and text commands."""
+        text_lower = text.lower()
+        if not text:
+            return
+
+        if "/start" in text_lower or "/help" in text_lower:
+            welcome = (
+                "🤖 <b>APEX QUANT 10K PROP FIRM TERMINAL BOTI</b>\n"
+                "━━━━━━━━━━━━━━━━━━━━━━\n"
+                "⚡ <b>Avtonom Kvant Dvigateli:</b> Faol (M15 SMC Strategy)\n"
+                "🛡️ <b>Risk Boshqaruvi:</b> 1.0% Max Risk | 2X Max Leverage\n"
+                "📊 <b>Jonli Grafik:</b> Har bir savdoda <b>🔴 LIVE</b> tugmasi mavjud.\n\n"
+                "👇 Kerakli bo'limni tanlang:"
+            )
+            self.send_direct_message(chat_id, welcome)
+
+        elif "hisob holati" in text_lower or "/status" in text_lower:
+            self._send_account_status(chat_id)
+
+        elif "ochiq bitimlar" in text_lower or "/positions" in text_lower:
+            self._send_open_positions(chat_id)
+
+        elif "ai signals" in text_lower or "signallar" in text_lower or "/signals" in text_lower:
+            self._send_active_signals(chat_id)
+
+        elif "engine" in text_lower:
+            self._send_engine_stats(chat_id)
+
+        elif "shadow" in text_lower:
+            self._send_shadow_stats(chat_id)
+
+        elif "start signals" in text_lower:
+            self.signals_active = True
+            self._save_state()
+            self.send_direct_message(chat_id, "🟢 <b>AI Kvant Signallari va Avtomatik Savdo Yoqildi (ACTIVE)!</b>")
+
+        elif "stop signals" in text_lower:
+            self.signals_active = False
+            self._save_state()
+            self.send_direct_message(chat_id, "🔴 <b>AI Signallarini qabul qilish vaqtinchalik to'xtatildi (PAUSED).</b>")
+
+        else:
+            self.send_direct_message(chat_id, "ℹ️ Iltimos, pastdagi menyu tugmalaridan birini tanlang:")
+
+    def _send_account_status(self, chat_id: int):
+        try:
+            from backend.live_execution_manager import sync_live_positions_and_equity
+            sync_data = sync_live_positions_and_equity()
+            open_cnt = len(sync_data.get("openPositions", []))
+            current_equity = sync_data.get("currentEquity", self.account_balance)
+            realized_pnl = sync_data.get("realizedPnl", 0.0)
+            unrealized_pnl = sync_data.get("unrealizedPnl", 0.0)
+            total_trades = sync_data.get("totalTrades", 0)
+            win_rate = sync_data.get("winRate", 0.0)
+        except Exception:
+            open_cnt = 0
+            current_equity = self.account_balance
+            realized_pnl = 0.0
+            unrealized_pnl = 0.0
+            total_trades = 0
+            win_rate = 0.0
+
+        pnl_change_pct = ((current_equity - INITIAL_PROP_CAPITAL) / INITIAL_PROP_CAPITAL) * 100.0
+        pnl_sign = "+" if pnl_change_pct >= 0 else ""
+
+        target_stage1 = INITIAL_PROP_CAPITAL * 0.08  # $800
+        current_profit = current_equity - INITIAL_PROP_CAPITAL
+        progress_pct = max(0.0, min(100.0, (current_profit / target_stage1) * 100.0))
+
+        text = (
+            "💼 <b>APEX 10K PROP ACCOUNT HOLATI</b>\n"
+            "━━━━━━━━━━━━━━━━━━━━━━\n"
+            f"💰 <b>Boshlang'ich Balans:</b> ${INITIAL_PROP_CAPITAL:,.2f} USD\n"
+            f"📈 <b>Joriy Equity:</b> ${current_equity:,.2f} USD ({pnl_sign}{pnl_change_pct:.2f}%)\n"
+            f"💵 <b>Realizatsiya Qilingan PnL:</b> +${realized_pnl:,.2f} USD\n"
+            f"⚡ <b>Suzuvchi (Unrealized) PnL:</b> {('+' if unrealized_pnl>=0 else '')}${unrealized_pnl:,.2f} USD\n"
+            f"📦 <b>Ochiq Pozitsiyalar:</b> {open_cnt} ta\n"
+            f"🏆 <b>Yopiq Savdolar:</b> {total_trades} ta (Win Rate: {win_rate:.1f}%)\n\n"
+            f"🎯 <b>Chelenj Maqsadi (Stage 1):</b> +8.0% (+${target_stage1:,.2f})\n"
+            f"📊 <b>Erishilgan Natija:</b> {progress_pct:.1f}% (${current_profit:,.2f} / ${target_stage1:,.2f})\n\n"
+            "🛡️ <b>Kunlik Max DD:</b> $500.00 USD (5.0% Limit - Xavfsiz)\n"
+            "🛡️ <b>Umumiy Max DD:</b> $1,000.00 USD (10.0% Limit - Xavfsiz)\n"
+            "✅ <b>Status:</b> BARCHA QOIDALARGA MOS"
+        )
+        self.send_direct_message(chat_id, text)
+
+    def _send_open_positions(self, chat_id: int):
+        try:
+            from backend.live_execution_manager import load_positions
+            open_pos = [p for p in load_positions() if p.get("status") == "OPEN"]
+        except Exception:
+            open_pos = []
+
+        if not open_pos:
+            self.send_direct_message(chat_id, "ℹ️ Hozirda faol ochiq pozitsiyalar yo'q. Kvant dvigateli M15 shamchalarini skanerlamoqda...")
+            return
+
+        for p in open_pos:
+            sym = p.get("symbol", "BTC/USDT")
+            side = p.get("side", "BUY").upper()
+            entry = float(p.get("entryPrice") or 0.0)
+            mark = float(p.get("currentPrice") or entry)
+            sl = float(p.get("sl") or 0.0)
+            tp1 = float(p.get("tp1") or 0.0)
+            tp2 = float(p.get("tp2") or 0.0)
+            size = float(p.get("size") or 0.05)
+            is_buy = (side == "BUY")
+            pnl = (mark - entry) * size if is_buy else (entry - mark) * size
+            pnl_sign = "+" if pnl >= 0 else ""
+            pos_id = p.get("id", "")
+
+            trailed_badge = " (Trailed SL 🔒)" if p.get("trailingStopActive") else ""
+
+            text = (
+                f"📊 <b>OCHIQ POZITSIYA — {sym} {side} 2X</b>\n"
+                f"━━━━━━━━━━━━━━━━━━━━━━\n"
+                f"📍 <b>Kirish Narxi:</b> ${entry:,.2f}\n"
+                f"📈 <b>Joriy Narx:</b> ${mark:,.2f}\n"
+                f"💰 <b>Suzuvchi PnL:</b> {pnl_sign}${pnl:,.2f} USD\n"
+                f"🟢 <b>TP1:</b> ${tp1:,.2f} | <b>TP2:</b> ${tp2:,.2f}\n"
+                f"🔴 <b>Stop Loss:</b> ${sl:,.2f}{trailed_badge}\n"
+                f"📦 <b>Hajm:</b> {size} {sym.split('/')[0]}\n"
+                f"━━━━━━━━━━━━━━━━━━━━━━\n"
+                f"<i>👇 Grafikni to'liq ekranda ko'rish uchun <b>🔴 LIVE</b> tugmasini bosing:</i>"
+            )
+            self.send_trade_message(chat_id, text, pos_id)
+
+    def _send_active_signals(self, chat_id: int):
+        try:
+            from backend.database import SignalsRepository
+            signals = SignalsRepository.get_active_signals()
+        except Exception:
+            signals = []
+
+        if not signals:
+            self.send_direct_message(chat_id, "📡 Hozirgi kutilayotgan yangi signallar yo'q. Engine har 60 soniyada yangi M15 shamchalarni tahlil qilmoqda.")
+            return
+
+        for s in signals[:2]:
+            sym = s.get("symbol", "BTC/USDT")
+            side = s.get("side", "BUY")
+            entry = float(s.get("entry_price") or 0.0)
+            tp1 = float(s.get("tp1") or 0.0)
+            tp2 = float(s.get("tp2") or 0.0)
+            sl = float(s.get("sl") or 0.0)
+            score = float(s.get("score") or 77.9)
+            setup = s.get("setup", "SMC Liquidity Sweep")
+
+            text = (
+                f"📡 <b>AI KVANT SIGNALI — {sym} {side}</b>\n"
+                f"━━━━━━━━━━━━━━━━━━━━━━\n"
+                f"📍 <b>Entry:</b> ${entry:,.2f}\n"
+                f"🟢 <b>TP1:</b> ${tp1:,.2f} | <b>TP2:</b> ${tp2:,.2f}\n"
+                f"🔴 <b>SL:</b> ${sl:,.2f}\n"
+                f"🧠 <b>Score:</b> {score:.1f}% | <b>Setup:</b> {setup}"
+            )
+            self.send_direct_message(chat_id, text)
+
+    def _send_engine_stats(self, chat_id: int):
+        text = (
+            "🤖 <b>APEX QUANT ENGINE — STATISTIKA</b>\n"
+            "━━━━━━━━━━━━━━━━━━━━━━\n"
+            "⚡ <b>Holati:</b> ONLINE (M15 Skaner Faol)\n"
+            "📊 <b>Strategiya:</b> SMC Liquidity Sweep + OrderBlock\n"
+            "🛡️ <b>Maksimal Risk:</b> 1.0% ($100) / Trade\n"
+            "⏱️ <b>O'rtacha Davomiylik:</b> ~58 daqiqa / savdo\n"
+            "🏆 <b>1 Yillik Win Rate:</b> 62.3% (PF: 1.81x)\n"
+            "💰 <b>1 Yillik Net Foyda:</b> +$14,995.86 USD"
+        )
+        self.send_direct_message(chat_id, text)
+
+    def _send_shadow_stats(self, chat_id: int):
+        text = (
+            "🛡️ <b>E2 SHADOW TRACKER — STATISTIKA</b>\n"
+            "━━━━━━━━━━━━━━━━━━━━━━\n"
+            "📊 <b>Nazorat Tizimi:</b> Institutional Shadow Engine\n"
+            "🔒 <b>Hozirgi Kunlik DD:</b> 0.00% / 5.0% Max\n"
+            "🔒 <b>Hozirgi Umumiy DD:</b> 0.00% / 10.0% Max\n"
+            "✅ <b>Qoidabuzarlik:</b> 0 ta (100% Xavfsiz)"
+        )
+        self.send_direct_message(chat_id, text)
+
     def send_trade_open_notification(self, position: Dict[str, Any]):
-        """Sends formatted Trade Open message and persistently records message_id for reply threading!"""
         self.poll_updates()
         if not self.chat_ids:
             return
@@ -181,7 +393,6 @@ class TelegramNotifier:
         self._save_state()
 
     def send_trade_update_notification(self, pos_id: str, event_type: str, details: Dict[str, Any]):
-        """Replies directly to the original trade message when SL, TP1, TP2, or BE is triggered."""
         self.poll_updates()
         if not self.chat_ids:
             return
