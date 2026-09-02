@@ -293,28 +293,138 @@ def sync_live_positions_and_equity() -> Dict[str, Any]:
                 total_unrealized += unrealized
                 positions_updated = True
 
-                # Check SL/TP Hits
+                # INSTITUTIONAL MULTI-STAGE TP1 PARTIAL SCALE-OUT & EXPANSION TRAILING
                 hit_event = None
+                tp1_val = float(p.get("tp1") or tp)
+                tp2_val = float(p.get("tp2") or (entry + 2.8 * abs(entry - sl) if side == "BUY" else entry - 2.8 * abs(entry - sl)))
+                tp1_hit = p.get("tp1_hit", False)
+
                 if side == "BUY":
-                    if curr_price >= tp:
-                        hit_event = "TP1"
-                    elif curr_price <= sl:
-                        hit_event = "SL"
+                    # 1. TP1 Partial Scale-Out (50% locked)
+                    if not tp1_hit and curr_price >= tp1_val:
+                        partial_pnl = round((tp1_val - entry) * (size * 0.5), 2)
+                        p["tp1_hit"] = True
+                        p["tp1_realized_pnl"] = partial_pnl
+                        p["original_size"] = size
+                        p["size"] = round(size * 0.5, 4)
+                        p["marginUsed"] = round(float(p.get("marginUsed", 1000)) * 0.5, 2)
+                        
+                        # Realize 50% profit into equity balance immediately
+                        equity_state["realizedPnl"] = round(equity_state["realizedPnl"] + partial_pnl, 2)
+                        equity_updated = True
+                        positions_updated = True
+                        
+                        print(f"[LIVE ENGINE] {sym} TP1 HIT @ ${curr_price:.2f}! Secured 50% (+${partial_pnl:.2f} USD). Remaining 50% runner active for TP2 ${tp2_val:.2f}.")
+                        
+                        try:
+                            from backend.telegram_bot import telegram_notifier
+                            telegram_notifier.send_trade_update_notification(
+                                p["id"], "TP1",
+                                {
+                                    "symbol": sym,
+                                    "side": side,
+                                    "entry_price": entry,
+                                    "price": curr_price,
+                                    "pnl": partial_pnl,
+                                    "signal_id": p.get("signal_id"),
+                                    "tp1": tp1_val,
+                                    "tp2": tp2_val,
+                                    "sl": p.get("sl")
+                                }
+                            )
+                        except Exception as tg_e:
+                            print(f"[LIVE ENGINE] Telegram TP1 alert error: {tg_e}")
+
+                    # 2. Dynamic Trailing After TP1: Only move to Break-Even once price expands 25% towards TP2!
+                    if p.get("tp1_hit", False):
+                        expansion_target = tp1_val + 0.25 * (tp2_val - tp1_val)
+                        if curr_price >= expansion_target and p.get("sl") < entry:
+                            p["sl"] = round(entry + 0.1 * abs(tp1_val - entry), 2) # Lock slightly above entry (guaranteed green buffer)
+                            p["trailingStopActive"] = True
+                            positions_updated = True
+                            print(f"[LIVE ENGINE] {sym} expanded towards TP2! Trailed SL to Entry+Buffer: ${p['sl']:.2f}")
+                            try:
+                                from backend.telegram_bot import telegram_notifier
+                                telegram_notifier.send_trade_update_notification(
+                                    p["id"], "TRAILING_SL",
+                                    {
+                                        "symbol": sym,
+                                        "side": side,
+                                        "entry_price": entry,
+                                        "price": curr_price,
+                                        "sl": p["sl"],
+                                        "tp2": tp2_val,
+                                        "signal_id": p.get("signal_id")
+                                    }
+                                )
+                            except Exception as tg_e:
+                                print(f"[LIVE ENGINE] Telegram Trailing alert error: {tg_e}")
+
+                    # 3. TP2 Hit (Close remaining 50%)
+                    if curr_price >= tp2_val:
+                        hit_event = "TP2"
+                    # 4. SL Hit
+                    elif curr_price <= float(p.get("sl", sl)):
+                        hit_event = "SL" if not tp1_hit else "BE_PROFIT"
+
                 elif side == "SELL":
-                    if curr_price <= tp:
-                        hit_event = "TP1"
-                    elif curr_price >= sl:
-                        hit_event = "SL"
+                    # 1. TP1 Partial Scale-Out (50% locked)
+                    if not tp1_hit and curr_price <= tp1_val:
+                        partial_pnl = round((entry - tp1_val) * (size * 0.5), 2)
+                        p["tp1_hit"] = True
+                        p["tp1_realized_pnl"] = partial_pnl
+                        p["original_size"] = size
+                        p["size"] = round(size * 0.5, 4)
+                        p["marginUsed"] = round(float(p.get("marginUsed", 1000)) * 0.5, 2)
+                        
+                        equity_state["realizedPnl"] = round(equity_state["realizedPnl"] + partial_pnl, 2)
+                        equity_updated = True
+                        positions_updated = True
+                        
+                        print(f"[LIVE ENGINE] {sym} TP1 HIT @ ${curr_price:.2f}! Secured 50% (+${partial_pnl:.2f} USD).")
+                        
+                        try:
+                            from backend.telegram_bot import telegram_notifier
+                            telegram_notifier.send_direct_message(
+                                5563813326,
+                                f"🎯 <b>{sym} TP1 URILDI! (+${partial_pnl:.2f} USD)</b>\n"
+                                f"━━━━━━━━━━━━━━━━━━━━━━\n"
+                                f"💰 <b>50% Foyda Naqd Qilindi:</b> +${partial_pnl:.2f}\n"
+                                f"🚀 <b>Qolgan 50%:</b> TP2 (${tp2_val:,.2f}) tomon davom etmoqda.\n"
+                                f"🛡️ <i>Narx TP2 tomon kengayishi bilan SL avtomatik Break-Even'ga ko'chiriladi!</i>"
+                            )
+                        except Exception:
+                            pass
+
+                    # 2. Dynamic Trailing After TP1 for SELL
+                    if p.get("tp1_hit", False):
+                        expansion_target = tp1_val - 0.25 * (tp1_val - tp2_val)
+                        if curr_price <= expansion_target and p.get("sl") > entry:
+                            p["sl"] = round(entry - 0.1 * abs(entry - tp1_val), 2)
+                            p["trailingStopActive"] = True
+                            positions_updated = True
+                            print(f"[LIVE ENGINE] {sym} expanded towards TP2! Trailed SL to Entry+Buffer: ${p['sl']:.2f}")
+
+                    # 3. TP2 Hit
+                    if curr_price <= tp2_val:
+                        hit_event = "TP2"
+                    # 4. SL Hit
+                    elif curr_price >= float(p.get("sl", sl)):
+                        hit_event = "SL" if not tp1_hit else "BE_PROFIT"
 
                 if hit_event:
+                    final_rem_size = float(p.get("size", size))
+                    final_rem_pnl = (curr_price - entry) * final_rem_size if side == "BUY" else (entry - curr_price) * final_rem_size
+                    total_trade_pnl = round(float(p.get("tp1_realized_pnl", 0.0)) + final_rem_pnl, 2)
+                    
                     p["status"] = f"CLOSED_{hit_event}"
                     p["exit_timestamp"] = time.time()
                     p["closePrice"] = curr_price
-                    p["realizedPnl"] = round(unrealized, 2)
+                    p["realizedPnl"] = total_trade_pnl
 
-                    equity_state["realizedPnl"] = round(equity_state["realizedPnl"] + unrealized, 2)
+                    equity_state["realizedPnl"] = round(equity_state["realizedPnl"] + final_rem_pnl, 2)
                     equity_state["closedTradesCount"] += 1
-                    if unrealized > 0:
+                    if total_trade_pnl > 0:
                         equity_state["winCount"] += 1
 
                     new_eq = round(equity_state["initialCapital"] + equity_state["realizedPnl"], 2)
@@ -323,7 +433,7 @@ def sync_live_positions_and_equity() -> Dict[str, Any]:
                     equity_state["tradeHistory"].append(p)
                     equity_updated = True
 
-                    print(f"[LIVE ENGINE] Position {p['id']} closed via {hit_event}! Realized PnL: ${unrealized:+.2f}")
+                    print(f"[LIVE ENGINE] Position {p['id']} closed via {hit_event}! Total Net PnL: ${total_trade_pnl:+.2f}")
 
                     # ── CRITICAL FIX: Sync signal status when position closes ──────
                     signal_id = p.get("signal_id")

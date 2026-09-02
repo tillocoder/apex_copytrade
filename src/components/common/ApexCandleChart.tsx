@@ -55,8 +55,20 @@ const num = (v: unknown) => {
 };
 
 const epochSeconds = (v: unknown) => {
-  const value = num(v);
-  return value > 10_000_000_000 ? value / 1000 : value;
+  if (!v) return 0;
+  if (typeof v === 'number') {
+    return v > 10_000_000_000 ? Math.floor(v / 1000) : Math.floor(v);
+  }
+  const str = String(v).trim();
+  const numVal = Number(str);
+  if (!isNaN(numVal) && numVal > 1_000_000) {
+    return numVal > 10_000_000_000 ? Math.floor(numVal / 1000) : Math.floor(numVal);
+  }
+  const parsed = Date.parse(str.replace(' UTC', 'Z'));
+  if (!isNaN(parsed) && parsed > 0) {
+    return Math.floor(parsed / 1000);
+  }
+  return 0;
 };
 
 export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
@@ -305,18 +317,22 @@ export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
     let targetOffset = 0;
     if (mode === 'center_entry' && entryPrice > 0) {
       // Find entry index
-      let entryIdx = data.length - 1;
-      const entryTime = epochSeconds(position?.timeOpen || signal?.timestamp || signal?.createdAt);
-      if (entryTime) {
-        data.forEach((k, i) => {
-          if (k.timestamp && entryTime >= k.timestamp && entryTime < k.timestamp + tf.dur) {
-            entryIdx = i;
-          }
-        });
-      }
-      // Place entry at 42% from left, so entry, active trade & future target area are dead center!
-      const entryPx = entryIdx * newStep;
-      targetOffset = Math.max(0, entryPx - cw2 * 0.42);
+      let entryIdx = Math.max(0, data.length - 2);
+        const rawTime = (position as any)?.entry_timestamp || 
+                        (position as any)?.formatted_entry_time || 
+                        position?.timeOpen || 
+                        signal?.timestamp || 
+                        signal?.createdAt;
+        const entryTime = epochSeconds(rawTime);
+        if (entryTime > 0) {
+          data.forEach((k, i) => {
+            if (k.timestamp && entryTime >= k.timestamp && entryTime < k.timestamp + tf.dur) {
+              entryIdx = i;
+            }
+          });
+        }
+        const entryPx = entryIdx * newStep;
+        targetOffset = Math.max(0, entryPx - cw2 * 0.42);
     } else {
       // Latest candle at 68% from left (leaving 32% future space on the right, NOT glued!)
       const latestPx = (data.length - 1) * newStep;
@@ -378,22 +394,26 @@ export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
   const gy = (p: number) => PT + cH - ((p - lo) / PR2) * cH;
 
   // Find Entry candle index
-  let entryIndex = Math.max(0, n - 1);
-  if (entryPrice > 0) {
-    const entryTime = epochSeconds(position?.timeOpen || signal?.timestamp || signal?.createdAt);
-    let found = false;
-    if (entryTime) {
-      data.forEach((k, i) => {
-        if (k.timestamp && entryTime >= k.timestamp && entryTime < k.timestamp + tf.dur) {
-          entryIndex = i;
-          found = true;
-        }
-      });
-    }
-    if (!found) {
-      const closest = data.map((k, i) => ({ i, d: Math.abs(k.close - entryPrice) })).sort((a, b) => a.d - b.d);
-      if (closest.length) entryIndex = closest[0].i;
-    }
+  let entryIndex = Math.max(0, n - 2);
+    if (entryPrice > 0) {
+      const rawTime = (position as any)?.entry_timestamp || 
+                      (position as any)?.formatted_entry_time || 
+                      position?.timeOpen || 
+                      signal?.timestamp || 
+                      signal?.createdAt;
+      const entryTime = epochSeconds(rawTime);
+      let found = false;
+      if (entryTime > 0) {
+        data.forEach((k, i) => {
+          if (k.timestamp && entryTime >= k.timestamp && entryTime < k.timestamp + tf.dur) {
+            entryIndex = i;
+            found = true;
+          }
+        });
+      }
+      if (!found) {
+        entryIndex = Math.max(0, n - 2);
+      }
   }
 
   // Position Box (TradingView Long / Short Tool)
