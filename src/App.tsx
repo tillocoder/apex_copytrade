@@ -1,3 +1,4 @@
+import { TelegramLivePositionView } from './components/modules/TelegramLivePositionView';
 ﻿import React from 'react';
 import { TerminalProvider, useTerminal } from './context/TerminalContext';
 import { Header } from './components/layout/Header';
@@ -119,6 +120,14 @@ const ModuleContainer: React.FC = () => {
 
 const RootSecurityGate: React.FC = () => {
   const { user, activeModule } = useTerminal();
+
+  // TELEGRAM LIVE WEBAPP ROUTE: If opened from Telegram bot (mode=tg_live or pos=...), show dedicated trade view
+  const isTgLive = window.location.search.includes('mode=tg_live') || 
+                   window.location.search.includes('tg_view=live') || 
+                   window.location.search.includes('pos=');
+  if (isTgLive) {
+    return <TelegramLivePositionView />;
+  }
 
   // STRICT AUTH GATEWAY: Unauthenticated or Guest visitors MUST see AuthLogin standalone page
   if (!user || user.role === 'Guest' || !user.email || activeModule === 'login') {

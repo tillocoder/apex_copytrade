@@ -38,6 +38,7 @@ export interface ApexCandleChartProps {
   onTimeframeChange?: (tf: string) => void;
   showVolume?: boolean;
   className?: string;
+  hideHeader?: boolean;
 }
 
 // â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -65,7 +66,8 @@ export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
   defaultTimeframe = '15m',
   onTimeframeChange,
   showVolume = true,
-  className = ''
+  className = '',
+  hideHeader = false
 }) => {
   const activeSymbol = (position?.symbol || signal?.symbol || propSymbol || 'BTC/USDT').toUpperCase();
   const wrapRef = React.useRef<HTMLDivElement>(null);
@@ -480,6 +482,7 @@ export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
   return (
     <div className={`w-full h-full flex flex-col font-mono select-none bg-[#131722] text-[#d1d4dc] ${className}`}>
       {/* Top TradingView-Style Bar */}
+      {!hideHeader && (
       <div className="flex items-center justify-between px-3 py-1.5 bg-[#1e222d] border-b border-[#2a2e39] shrink-0 gap-2 overflow-x-auto no-scrollbar">
         <div className="flex items-center gap-1.5 text-[11px] font-mono font-bold overflow-hidden flex-wrap">
           <span className="text-white font-bold">{activeSymbol}</span>
@@ -567,6 +570,7 @@ export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
           </button>
         </div>
       </div>
+      )}
 
       {/* Main TradingView SVG Chart Area */}
       <div
@@ -841,6 +845,7 @@ export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
       </div>
 
       {/* Bottom Status / Navigation Bar */}
+      {!hideHeader && (
       <div className="h-6 bg-[#1e222d] border-t border-[#2a2e39] px-3 flex items-center justify-between text-[9px] font-mono text-[#787b86] shrink-0">
         <div className="flex items-center gap-3">
           <span className="flex items-center gap-1 text-white">
@@ -859,6 +864,7 @@ export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
           <span>Box Edge = Stretch</span>
         </div>
       </div>
+      )}
     </div>
   );
 };

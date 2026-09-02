@@ -870,10 +870,12 @@ class RiskEngine:
         entry = round(price, 4)
         raw_sl = setup.get("invalidation_price", price)
 
-        # Dynamic Smart Invalidation: Anchor beyond structural swing level with dynamic 0.6x ATR buffer
-        # Clamps SL distance between 1.3x ATR (prevents noise stop-outs) and 2.8x ATR (prevents excessive risk)
-        min_sl_dist = 1.3 * atr
-        max_sl_dist = 2.8 * atr
+        # STRICT M15 INTRADAY ATR TIMEFRAME CLAMP (Zero D1/H4 Leakage Guard)
+        is_btc = "BTC" in str(setup.get("symbol", "")).upper()
+        
+        # M15 Strict Dynamic Limits (BTC: 120-550 pts, ETH: 8-35 pts)
+        min_sl_dist = max(1.2 * atr, 120.0 if is_btc else 8.0)
+        max_sl_dist = min(2.5 * atr, 550.0 if is_btc else 35.0)
 
         regime_type = str(setup.get("regime", "")).upper()
         conf_score = float(setup.get("confidence", 80.0))
@@ -883,26 +885,24 @@ class RiskEngine:
 
         if side == "BUY":
             raw_dist = entry - raw_sl if raw_sl < entry else 1.5 * atr
-            buffered_dist = raw_dist + 0.6 * atr
+            buffered_dist = raw_dist + 0.5 * atr
             sl_distance = max(min_sl_dist, min(max_sl_dist, buffered_dist))
-            sl = round(entry - sl_distance, 4)
+            sl = round(entry - sl_distance, 2 if is_btc else 2)
 
-            tp1 = round(entry + 1.5 * sl_distance, 4)  # 1:1.5 RR - Trigger BE (SL -> Entry)
-            struct_liq_above = float(liquidity.get("nearest_liquidity_above", entry + 2.8 * sl_distance))
-            tp2 = round(max(entry + 2.8 * sl_distance, struct_liq_above), 4)  # Main Target (Trail SL -> TP1)
-            tp3 = round(entry + 4.2 * sl_distance, 4) if target_count == 3 else None
-            rr = round((tp2 - entry) / sl_distance, 2)
+            tp1 = round(entry + 1.5 * sl_distance, 2 if is_btc else 2)  # 1:1.5 RR - Fast Intraday TP1 (Trigger BE)
+            tp2 = round(entry + 2.8 * sl_distance, 2 if is_btc else 2)  # Main Intraday Target (Trail SL -> TP1)
+            tp3 = round(entry + 4.0 * sl_distance, 2 if is_btc else 2) if target_count == 3 else None
+            rr = round((tp2 - entry) / max(0.01, sl_distance), 2)
         else:
             raw_dist = raw_sl - entry if raw_sl > entry else 1.5 * atr
-            buffered_dist = raw_dist + 0.6 * atr
+            buffered_dist = raw_dist + 0.5 * atr
             sl_distance = max(min_sl_dist, min(max_sl_dist, buffered_dist))
-            sl = round(entry + sl_distance, 4)
+            sl = round(entry + sl_distance, 2 if is_btc else 2)
 
-            tp1 = round(entry - 1.5 * sl_distance, 4)  # 1:1.5 RR - Trigger BE (SL -> Entry)
-            struct_liq_below = float(liquidity.get("nearest_liquidity_below", entry - 2.8 * sl_distance))
-            tp2 = round(min(entry - 2.8 * sl_distance, struct_liq_below), 4)  # Main Target (Trail SL -> TP1)
-            tp3 = round(entry - 4.2 * sl_distance, 4) if target_count == 3 else None
-            rr = round((entry - tp2) / sl_distance, 2)
+            tp1 = round(entry - 1.5 * sl_distance, 2 if is_btc else 2)  # 1:1.5 RR - Fast Intraday TP1 (Trigger BE)
+            tp2 = round(entry - 2.8 * sl_distance, 2 if is_btc else 2)  # Main Intraday Target (Trail SL -> TP1)
+            tp3 = round(entry - 4.0 * sl_distance, 2 if is_btc else 2) if target_count == 3 else None
+            rr = round((entry - tp2) / max(0.01, sl_distance), 2)
 
         # Mandatory Institutional Risk Gate: Minimum RR >= 2.0
         if rr < 2.0:
@@ -1020,19 +1020,24 @@ class FinalSignalGate:
 
     @staticmethod
     def validate_candidate(candidate: Dict[str, Any], active_signals: List[Dict[str, Any]]) -> bool:
-        # Check duplicate symbol active signals
-        for s in active_signals:
-            if s.get("symbol") == candidate["symbol"] and s.get("status") in ("PENDING", "CONFIRMED"):
-                logger.info(f"[FINAL GATE] Rejected {candidate['symbol']} due to existing active signal.")
+        # Strictly sync with real live open positions
+        try:
+            from backend.live_execution_manager import load_positions
+            open_positions = [p for p in load_positions() if p.get("status") == "OPEN"]
+            
+            # Check if symbol already has an open position
+            if any(p.get("symbol") == candidate["symbol"] for p in open_positions):
+                logger.info(f"[FINAL GATE] Rejected {candidate['symbol']} because position is already OPEN.")
                 return False
-
-        # Portfolio Exposure: Max 2 simultaneous signals across correlated assets (BTC/ETH/SOL)
-        active_count = sum(1 for s in active_signals if s.get("status") in ("PENDING", "CONFIRMED"))
-        if active_count >= 2:
-            logger.info(f"[FINAL GATE] Rejected {candidate['symbol']} due to max portfolio exposure limit (2).")
-            return False
-
-        return True
+                
+            # Max 2 simultaneous open positions
+            if len(open_positions) >= 2:
+                logger.info(f"[FINAL GATE] Rejected {candidate['symbol']} due to max portfolio open positions limit (2).")
+                return False
+                
+            return True
+        except Exception:
+            return True
 
 
 # =============================================================================
@@ -1131,17 +1136,28 @@ def generate_signals() -> List[Dict[str, Any]]:
     dt_str = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')
     history = get_signals_history()
 
-    # Active signal TTL check (2 hours)
+    # Active signal TTL check (15 minutes or active open position check)
     active_symbols = set()
     history_updated = False
+    
+    # Check actual live open positions from live_positions.json
+    try:
+        from backend.live_execution_manager import load_positions
+        open_pos = load_positions()
+        for p in open_pos:
+            if p.get("status") == "OPEN":
+                active_symbols.add(p.get("symbol"))
+    except Exception:
+        pass
+
     for hs in history:
         st = hs.get("status")
         ts = hs.get("timestamp", 0)
         if st in ("PENDING", "CONFIRMED"):
-            if (now - ts) > 7200:
+            if (now - ts) > 900 and hs.get("symbol") not in active_symbols:
                 hs["status"] = "EXPIRED"
                 history_updated = True
-            else:
+            elif hs.get("symbol") in active_symbols:
                 active_symbols.add(hs.get("symbol"))
     if history_updated:
         save_signals_history(history)

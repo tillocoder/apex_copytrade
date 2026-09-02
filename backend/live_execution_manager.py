@@ -122,6 +122,19 @@ def open_position_from_signal(signal: Dict[str, Any]) -> Optional[Dict[str, Any]
             print(f"[PAPER ENGINE REJECT] {sym} rejected: invalid {side} entry/SL/TP ordering.")
             return None
 
+        # Strict M15 Range Safety Clamp (prevents D1/H4 wide swing leakage)
+        is_btc = "BTC" in sym.upper()
+        max_allowed_sl_dist = 650.0 if is_btc else 45.0
+        sl_dist = abs(entry - sl)
+        if sl_dist > max_allowed_sl_dist:
+            print(f"[LIVE ENGINE CLAMP] {sym} SL distance {sl_dist:.2f} was too wide; clamping to strict M15 {max_allowed_sl_dist:.2f} pts.")
+            if side == "BUY":
+                sl = round(entry - max_allowed_sl_dist, 2)
+                tp = round(entry + 1.5 * max_allowed_sl_dist, 2)
+            else:
+                sl = round(entry + max_allowed_sl_dist, 2)
+                tp = round(entry - 1.5 * max_allowed_sl_dist, 2)
+
         # Institutional Prop Firm Position Sizing (aligned 100% with PositionSizingEngine)
         equity_state = _read_equity_unlocked()
         current_balance = equity_state["initialCapital"] + equity_state["realizedPnl"]

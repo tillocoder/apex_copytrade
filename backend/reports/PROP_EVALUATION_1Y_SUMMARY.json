@@ -1,0 +1,34 @@
+{
+  "timestamp": "2026-09-02T08:09:19.717748+00:00",
+  "completed_challenges": 10,
+  "stage1_passed": 11,
+  "stage2_passed": 10,
+  "failed_challenges": 0,
+  "challenge_success_rate_pct": 100.0,
+  "avg_days_per_challenge": 10.1,
+  "monthly_challenge_passes": 0.83,
+  "yearly_funded_accounts": 10,
+  "longest_winning_challenge_streak": 10,
+  "total_trades": 1230,
+  "win_rate_pct": 62.28,
+  "profit_factor": 1.81,
+  "total_net_pnl": 14997.88,
+  "max_daily_drawdown_pct": 2.39,
+  "max_total_drawdown_pct": 3.47,
+  "sharpe_ratio": 7.92,
+  "sortino_ratio": 10.79,
+  "symbol_breakdown": {
+    "ETH/USDT": {
+      "trades": 787,
+      "win_rate": 59.72,
+      "profit_factor": 1.54,
+      "net_pnl": 7054.01
+    },
+    "BTC/USDT": {
+      "trades": 443,
+      "win_rate": 66.82,
+      "profit_factor": 2.47,
+      "net_pnl": 7943.87
+    }
+  }
+}

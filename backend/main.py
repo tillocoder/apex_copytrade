@@ -149,11 +149,12 @@ async def periodic_signals_task():
             signals = await run_async(generate_signals)
             for s in signals:
                 SignalsRepository.save_or_update(s)
-                if s.get("status") == "ACTIVE":
+                sig_status = str(s.get("status", "")).upper()
+                if sig_status in ("ACTIVE", "CONFIRMED"):
                     await run_async(open_position_from_signal, s)
         except Exception as e:
             print(f"[SIGNALS TASK ERROR] {e}")
-        await asyncio.sleep(300)
+        await asyncio.sleep(60)
 
 async def monitor_positions_task():
     while True:

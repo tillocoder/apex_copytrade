@@ -151,7 +151,7 @@ class ReportEngine:
             print(f"[FAIL] Inconsistency: Completed Challenges ({ps.completed_challenges}) != Stage 2 Passed ({ps.stage2_passed})")
             checks_passed = False
         else:
-            print("✓ Completed Challenges equals Stage 2 Passed.")
+            print("[OK] Completed Challenges equals Stage 2 Passed.")
 
         # Check 2: Challenge Success Rate matches Completed / (Completed + Failed)
         tot_c = ps.completed_challenges + ps.failed_challenges
@@ -160,15 +160,15 @@ class ReportEngine:
             print(f"[FAIL] Inconsistency: Success Rate ({ps.challenge_success_rate_pct}%) != Computed ({expected_rate}%)")
             checks_passed = False
         else:
-            print("✓ Challenge Success Rate matches Completed / (Completed + Failed).")
+            print("[OK] Challenge Success Rate matches Completed / (Completed + Failed).")
 
         # Check 3: Historical vs Monte Carlo separation
         if hasattr(rep, '_mc_flag') and rep._mc_flag:
             print("[FAIL] Inconsistency: Historical metric overwritten by Monte Carlo value.")
             checks_passed = False
         else:
-            print("✓ Historical statistics never use Monte Carlo values.")
-            print("✓ Monte Carlo statistics never overwrite historical values.")
+            print("[OK] Historical statistics never use Monte Carlo values.")
+            print("[OK] Monte Carlo statistics never overwrite historical values.")
 
         # Check 4: Portfolio totals equal sum of BTC + ETH trades
         sum_sym_trades = sum(s.total_trades for s in res.symbol_reports.values())
@@ -176,7 +176,7 @@ class ReportEngine:
             print(f"[FAIL] Inconsistency: Portfolio Trades ({rep.total_trades}) != Sum of Symbol Trades ({sum_sym_trades})")
             checks_passed = False
         else:
-            print("✓ Portfolio totals equal BTC + ETH totals.")
+            print("[OK] Portfolio totals equal BTC + ETH totals.")
 
         # Sanity Validation Engine Thresholds
         from .sanity_validation import SanityValidationEngine
@@ -197,7 +197,7 @@ class ReportEngine:
                 print(f"  - Suggested Inspection: {w.suggested_fix}\n")
             print("NOTICE: Professional strategy scoring is SUPPRESSED until sanity warnings are resolved.\n")
         else:
-            print("✓ All statistical sanity thresholds passed.")
+            print("[OK] All statistical sanity thresholds passed.")
 
         if checks_passed:
             print("=========================================================")

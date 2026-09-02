@@ -20,7 +20,7 @@ from typing import Dict, Any, List, Optional, Set
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("APEX_TELEGRAM_BOT")
 
-TELEGRAM_BOT_TOKEN = "8588880620:AAGr_bV4D0_tDgg1w6K89L84y9z9YIq3pYk"
+TELEGRAM_BOT_TOKEN = "8922592987:AAEKfszGRuNsgGVy95f649rf8MHdrKiw6QI"
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATE_FILE = os.path.join(BASE_DIR, "telegram_state.json")
 INITIAL_PROP_CAPITAL = 10000.00
@@ -93,8 +93,7 @@ class TelegramNotifier:
         return {
             "inline_keyboard": [
                 [
-                    {"text": "🔄 Yangilash", "callback_data": f"pos:{pos_id}"},
-                    {"text": "🌐 Web Terminal", "url": f"https://apex.xrinvest.uz/"}
+                    {"text": "🔴 LIVE", "web_app": {"url": f"https://apex.xrinvest.uz/?mode=tg_live&pos={pos_id}"}}
                 ]
             ]
         }
