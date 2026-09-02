@@ -6,6 +6,7 @@ export interface LivePortfolioData {
   totalTrades: number;
   winRate: number;
   openPositions?: any[];
+  tradeHistory?: any[];
   liveEquityCurve?: Array<{ timestamp: string; equity: number }>;
 }
 
@@ -18,19 +19,18 @@ export class PortfolioService {
       const res = await fetch('/api/v1/portfolio/live-equity');
       if (!res.ok) throw new Error(`HTTP error ${res.status}`);
       const json = await res.json();
-      if (json.status === 'SUCCESS' && json.data) {
-        return {
-          initialCapital: Number(json.data.initialCapital) || 0,
-          currentEquity: Number(json.data.currentEquity) || 0,
-          realizedPnl: Number(json.data.realizedPnl) || 0,
-          unrealizedPnl: Number(json.data.unrealizedPnl) || 0,
-          totalTrades: Number(json.data.totalTrades) || 0,
-          winRate: Number(json.data.winRate) || 0,
-          openPositions: json.data.openPositions || [],
-          liveEquityCurve: json.data.liveEquityCurve || []
-        };
-      }
-      return null;
+      const raw = json.data || json;
+      return {
+        initialCapital: Number(raw.initialCapital) || 10000,
+        currentEquity: Number(raw.currentEquity) || 10000,
+        realizedPnl: Number(raw.realizedPnl) || 0,
+        unrealizedPnl: Number(raw.unrealizedPnl) || 0,
+        totalTrades: Number(raw.totalTrades ?? raw.closedTradesCount) || 0,
+        winRate: Number(raw.winRate) || 0,
+        openPositions: raw.openPositions || [],
+        tradeHistory: Array.isArray(raw.tradeHistory) ? raw.tradeHistory : [],
+        liveEquityCurve: Array.isArray(raw.liveEquityCurve) ? raw.liveEquityCurve : []
+      };
     } catch (err) {
       console.error('[PortfolioService] fetchLivePortfolioEquity failed:', err);
       return null;

@@ -309,16 +309,13 @@ async def api_auth_me(authorization: Optional[str] = Header(None)):
     if not payload or payload.get("type") != "access":
         raise HTTPException(status_code=401, detail="Session expired or invalid token.")
     
-    from backend.auth_service import AUTHORIZED_USERS
-    email = payload.get("email")
-    rec = AUTHORIZED_USERS.get(email)
-    if not rec:
-        raise HTTPException(status_code=401, detail="User record not found.")
+    from backend.auth_service import AUTHORIZED_USER
     return {
-        "id": rec["id"],
-        "name": rec["name"],
-        "email": email,
-        "role": rec["role"],
+        "id": AUTHORIZED_USER["id"],
+        "name": AUTHORIZED_USER["name"],
+        "username": AUTHORIZED_USER["username"],
+        "email": AUTHORIZED_USER["email"],
+        "role": AUTHORIZED_USER["role"],
         "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80",
         "twoFactorEnabled": True,
         "passkeyRegistered": True
@@ -329,40 +326,101 @@ async def api_auth_me(authorization: Optional[str] = Header(None)):
 # =====================================================================
 @app.get("/api/v1/signals/live")
 async def get_live_signals():
-    active_pos = load_positions()
-    pos_signals = []
-    if active_pos:
-        for p in active_pos:
-            if str(p.get("status", "")).upper() == "OPEN":
-                entry_p = float(p.get("entry_price", p.get("entryPrice", 0.0)) or 0.0)
-                sl_p = float(p.get("stop_loss", p.get("sl", 0.0)) or 0.0)
-                tp_p = float(p.get("take_profit", p.get("tp1", p.get("tp", 0.0))) or 0.0)
-                side_v = "BUY" if str(p.get("direction", p.get("side", "LONG"))).upper() in ("LONG", "BUY") else "SELL"
-                pos_signals.append({
-                    "id": p.get("signal_id") or f"sig_live_{p.get('id')}",
-                    "symbol": p.get("symbol", "BTC/USDT"),
-                    "side": side_v,
-                    "direction": "LONG" if side_v == "BUY" else "SHORT",
-                    "entry": entry_p,
-                    "entry_price": entry_p,
-                    "sl": sl_p,
-                    "stop_loss": sl_p,
-                    "tp": tp_p,
-                    "tp1": tp_p,
-                    "tp2": float(p.get("tp2", 0.0) or 0.0),
-                    "tp3": float(p.get("tp3", 0.0) or 0.0),
-                    "confidence": float(p.get("aiConfidence", 88.5)),
-                    "confidence_score": float(p.get("aiConfidence", 88.5)),
-                    "status": "ACTIVE",
-                    "timeframe": "15m",
-                    "reasoning": p.get("aiExplanation", "SMC OrderBlock Demand Sweep setup confirmed by Quant Engine."),
-                    "aiNotes": p.get("aiExplanation", "Institutional OrderBlock setup confirmed.")
-                })
+    """Returns ONLY truly ACTIVE signals — filters out anything with a closed position."""
+    all_positions = load_positions()
 
-    db_signals = SignalsRepository.get_all(limit=20, status="ACTIVE")
-    all_live = pos_signals + [s for s in (db_signals or []) if s.get("symbol") not in [x["symbol"] for x in pos_signals]]
-    if not all_live:
-        all_live = get_latest_signals()
+    # Build a set of signal_ids that are still OPEN
+    open_signal_ids = set()
+    open_symbols = set()
+    for p in all_positions:
+        p_status = str(p.get("status", "")).upper()
+        if p_status == "OPEN":
+            sig_id = p.get("signal_id")
+            if sig_id:
+                open_signal_ids.add(str(sig_id))
+            open_symbols.add(str(p.get("symbol", "")))
+
+    # Build set of symbols with CLOSED positions (SL/TP hit)
+    closed_signal_ids = set()
+    closed_symbols_with_reason = {}
+    for p in all_positions:
+        p_status = str(p.get("status", "")).upper()
+        if p_status.startswith("CLOSED_"):
+            sig_id = p.get("signal_id")
+            if sig_id:
+                closed_signal_ids.add(str(sig_id))
+            sym = str(p.get("symbol", ""))
+            closed_symbols_with_reason[sym] = p_status
+
+    # Build pos_signals only from OPEN positions
+    pos_signals = []
+    for p in all_positions:
+        if str(p.get("status", "")).upper() != "OPEN":
+            continue
+        entry_p = float(p.get("entry_price", p.get("entryPrice", 0.0)) or 0.0)
+        sl_p = float(p.get("stop_loss", p.get("sl", 0.0)) or 0.0)
+        tp_p = float(p.get("take_profit", p.get("tp1", p.get("tp", 0.0))) or 0.0)
+        side_v = "BUY" if str(p.get("direction", p.get("side", "LONG"))).upper() in ("LONG", "BUY") else "SELL"
+        pos_signals.append({
+            "id": p.get("signal_id") or f"sig_live_{p.get('id')}",
+            "symbol": p.get("symbol", "BTC/USDT"),
+            "side": side_v,
+            "direction": "LONG" if side_v == "BUY" else "SHORT",
+            "entry": entry_p,
+            "entry_price": entry_p,
+            "sl": sl_p,
+            "stop_loss": sl_p,
+            "tp": tp_p,
+            "tp1": tp_p,
+            "tp2": float(p.get("tp2", 0.0) or 0.0),
+            "tp3": float(p.get("tp3", 0.0) or 0.0),
+            "confidence": float(p.get("aiConfidence", 88.5)),
+            "confidence_score": float(p.get("aiConfidence", 88.5)),
+            "status": "ACTIVE",
+            "timeframe": "15m",
+            "reasoning": p.get("aiExplanation", "SMC OrderBlock Demand Sweep confirmed."),
+            "aiNotes": p.get("aiExplanation", "Institutional OrderBlock setup confirmed.")
+        })
+
+    # Sync closed signals in DB so they don't re-appear
+    for sig_id in closed_signal_ids:
+        try:
+            sig = SignalsRepository.get_by_id(sig_id)
+            if sig and str(sig.get("status", "")).upper() == "ACTIVE":
+                reason = closed_symbols_with_reason.get(sig.get("symbol", ""), "CLOSED_SL")
+                sig["status"] = reason
+                SignalsRepository.save_or_update(sig)
+                print(f"[SIGNAL SYNC] Cleaned up orphaned signal {sig_id} -> {reason}")
+        except Exception:
+            pass
+
+    # Pull DB signals, strictly excluding any that are closed
+    db_signals = SignalsRepository.get_all(limit=50, status="ACTIVE") or []
+    filtered_db = []
+    for s in db_signals:
+        s_status = str(s.get("status", "")).upper()
+        if s_status.startswith("CLOSED_") or s_status in ("SL_HIT", "TP1_HIT", "TP2_HIT", "TP3_HIT", "CLOSED"):
+            continue
+        s_id = str(s.get("id", ""))
+        s_sym = str(s.get("symbol", ""))
+        # Skip if signal_id is in closed set
+        if s_id in closed_signal_ids:
+            continue
+        # Skip if symbol has a closed position and no open position
+        if s_sym in closed_symbols_with_reason and s_sym not in open_symbols:
+            continue
+        # Skip if already included from pos_signals
+        if s_sym in [x["symbol"] for x in pos_signals]:
+            continue
+        filtered_db.append(s)
+
+    all_live = pos_signals + filtered_db
+
+    # Final fallback: only use AI engine signals if NO open positions at all
+    if not all_live and not all_positions:
+        fallback = get_latest_signals()
+        all_live = fallback
+
     return [format_signal_for_api(s) for s in all_live]
 
 @app.get("/api/v1/signals/history")
@@ -373,11 +431,36 @@ async def get_signals_history():
 
 @app.get("/api/v1/positions/live")
 async def get_live_positions():
+    """Returns ONLY genuinely OPEN positions (filters out CLOSED_SL, CLOSED_TP1, etc)."""
     raw_pos = load_positions()
     if not raw_pos:
         db_pos = PositionsRepository.get_live()
         raw_pos = db_pos if db_pos else []
-    return [format_position_for_api(p) for p in raw_pos]
+    # STRICT FILTER: Only return OPEN positions
+    open_only = [p for p in raw_pos if str(p.get("status", "")).upper() == "OPEN"]
+    return [format_position_for_api(p) for p in open_only]
+
+
+@app.get("/api/v1/positions/history")
+async def get_positions_history():
+    """Returns all historical / closed positions with full execution forensics."""
+    eq = load_equity_state()
+    trade_history = eq.get("tradeHistory", [])
+    raw_pos = load_positions()
+    closed_pos = [p for p in raw_pos if str(p.get("status", "")).upper() != "OPEN"]
+
+    # Merge unique by id
+    seen_ids = set()
+    combined = []
+    for t in (trade_history + closed_pos):
+        tid = str(t.get("id", ""))
+        if tid and tid not in seen_ids:
+            seen_ids.add(tid)
+            combined.append(t)
+        elif not tid:
+            combined.append(t)
+
+    return [format_position_for_api(p) for p in combined]
 
 @app.get("/api/v1/signals/{sig_id}")
 async def get_signal_by_id(sig_id: str):
@@ -1135,7 +1218,12 @@ async def get_system_health():
 
 @app.get("/api/v1/portfolio/live-equity")
 async def get_live_portfolio_equity():
-    return load_equity_state()
+    eq = load_equity_state()
+    return {
+        "status": "SUCCESS",
+        "data": eq,
+        **eq
+    }
 
 @app.get("/api/v1/quant/backtest-results")
 async def get_backtest_results(symbol: str = "BTC/USDT"):

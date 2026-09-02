@@ -14,7 +14,9 @@ import {
   ShieldCheck,
   Activity,
   DollarSign,
-  BarChart2
+  BarChart2,
+  ChevronRight,
+  Target
 } from 'lucide-react';
 
 export const MissionControlHome: React.FC = () => {
@@ -51,7 +53,7 @@ export const MissionControlHome: React.FC = () => {
     };
 
     fetchHomeData();
-    const interval = setInterval(fetchHomeData, 10000);
+    const interval = setInterval(fetchHomeData, 8000);
     return () => clearInterval(interval);
   }, []);
 
@@ -63,42 +65,42 @@ export const MissionControlHome: React.FC = () => {
     : logs.filter(l => l.category.toUpperCase() === logFilter);
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden bg-apex-bg font-sans text-xs">
+    <div className="flex-1 flex flex-col overflow-hidden bg-[#080A0D] font-sans text-xs">
       {/* Main Workspace Area (3 Columns: Market Watch, Chart, AI Radar) */}
       <div className="flex-1 flex overflow-hidden">
         
         {/* Left Column: Market Watch Panel */}
-        <div className="w-64 bg-apex-bgSecondary border-r border-apex-border flex flex-col shrink-0 font-mono">
-          <div className="p-2.5 border-b border-apex-border bg-apex-surface flex justify-between items-center font-medium text-xs">
-            <span className="flex items-center gap-1.5 text-apex-text font-bold">
-              <Flame className="w-3.5 h-3.5 text-apex-accent" /> MARKET WATCH
+        <div className="w-60 bg-[#0D1117] border-r border-[#222C3A] flex flex-col shrink-0 font-mono">
+          <div className="p-2.5 border-b border-[#222C3A] bg-[#141A23] flex justify-between items-center font-medium text-xs">
+            <span className="flex items-center gap-1.5 text-white font-bold font-sans">
+              <Flame className="w-3.5 h-3.5 text-amber-400" /> MARKET WATCH
             </span>
-            <span className="text-[10px] text-apex-muted">REAL-TIME</span>
+            <span className="text-[9.5px] text-[#6B7280]">LIVE</span>
           </div>
 
           {/* Ticker List */}
-          <div className="flex-1 overflow-y-auto divide-y divide-apex-border/40">
+          <div className="flex-1 overflow-y-auto divide-y divide-[#1A222E]">
             {tickers.map((t) => {
               const isSelected = t.symbol === selectedSymbol;
               return (
                 <div
                   key={t.symbol}
                   onClick={() => setSelectedSymbol(t.symbol)}
-                  className={`p-2.5 hover:bg-apex-hover cursor-pointer transition-apex flex items-center justify-between ${
-                    isSelected ? 'bg-apex-surface border-l-2 border-apex-accent' : ''
+                  className={`p-2.5 hover:bg-[#141A23] cursor-pointer transition-apex flex items-center justify-between ${
+                    isSelected ? 'bg-blue-500/10 border-l-2 border-blue-500' : ''
                   }`}
                 >
                   <div>
-                    <div className="font-bold text-apex-text text-xs">{t.symbol}</div>
-                    <div className="text-[10px] text-apex-muted">Vol: ${(t.volume24h / 1e9).toFixed(2)}B</div>
+                    <div className="font-bold text-white text-xs">{t.symbol}</div>
+                    <div className="text-[9px] text-[#6B7280]">Vol: ${(t.volume24h / 1e9).toFixed(2)}B</div>
                   </div>
 
                   <div className="text-right">
-                    <div className="font-bold text-apex-text text-xs">${t.price.toLocaleString()}</div>
-                    <div className={`text-[10px] font-medium flex items-center justify-end ${
-                      t.change24h >= 0 ? 'text-apex-success' : 'text-apex-danger'
+                    <div className="font-bold text-white text-xs tabular-nums">${t.price.toLocaleString()}</div>
+                    <div className={`text-[10px] font-medium tabular-nums flex items-center justify-end ${
+                      t.change24h >= 0 ? 'text-emerald-400' : 'text-rose-400'
                     }`}>
-                      {t.change24h >= 0 ? '+' : ''}{t.change24h}%
+                      {t.change24h >= 0 ? '+' : ''}{t.change24h.toFixed(2)}%
                     </div>
                   </div>
                 </div>
@@ -106,168 +108,114 @@ export const MissionControlHome: React.FC = () => {
             })}
           </div>
 
-          {/* Order Book Sentiment */}
-          <div className="p-2.5 border-t border-apex-border bg-apex-surface space-y-1.5 text-[11px]">
-            <div className="flex justify-between items-center text-apex-muted">
-              <span>FUNDING RATE</span>
-              <span className="text-apex-muted font-mono font-medium">—</span>
+          {/* Quick Stats at Bottom of Left Panel */}
+          <div className="p-2.5 bg-[#141A23] border-t border-[#222C3A] text-[10px] space-y-1">
+            <div className="flex justify-between text-[#9CA3AF]">
+              <span>Active Signals:</span>
+              <strong className="text-purple-400 font-mono">{signals.length}</strong>
             </div>
-            <div className="flex justify-between items-center text-apex-muted">
-              <span>OPEN INTEREST</span>
-              <span className="text-apex-muted font-mono font-medium">—</span>
-            </div>
-            <div className="flex justify-between items-center text-apex-muted">
-              <span>ORDER BOOK BIAS</span>
-              <span className="text-apex-muted font-mono font-medium">NOT CONNECTED</span>
+            <div className="flex justify-between text-[#9CA3AF]">
+              <span>Open Trades:</span>
+              <strong className="text-emerald-400 font-mono">{positions.length}</strong>
             </div>
           </div>
         </div>
 
-        {/* Center Column: Professional TradingView / AI Signals Candle Chart */}
-        <div className="flex-1 flex flex-col border-r border-apex-border bg-apex-bgSecondary overflow-hidden min-w-0">
-          <ApexCandleChart
-            symbol={selectedSymbol}
-            position={activePosition}
-            defaultTimeframe="15m"
-          />
+        {/* Center Column: High-Performance Live Trading Chart */}
+        <div className="flex-1 flex flex-col overflow-hidden bg-[#080A0D]">
+          <div className="flex-1 overflow-hidden relative">
+            <ApexCandleChart 
+              symbol={selectedSymbol} 
+              position={activePosition}
+              className="w-full h-full"
+            />
+          </div>
         </div>
 
-        {/* Right Column: AI Decision Center */}
-        <div className="w-80 bg-apex-bgSecondary flex flex-col shrink-0 font-mono overflow-y-auto">
-          <div className="p-2.5 border-b border-apex-border bg-apex-surface flex justify-between items-center font-medium">
-            <span className="flex items-center gap-1.5 text-apex-ai font-bold text-xs">
-              <Bot className="w-4 h-4 text-apex-ai" /> AI DECISION RADAR
+        {/* Right Column: AI Signal Stream & Log Radar */}
+        <div className="w-80 bg-[#0D1117] border-l border-[#222C3A] flex flex-col shrink-0">
+          
+          {/* Signal Radar Header */}
+          <div className="p-2.5 border-b border-[#222C3A] bg-[#141A23] flex justify-between items-center text-xs font-mono">
+            <span className="flex items-center gap-1.5 font-bold text-white font-sans">
+              <Sparkles className="w-3.5 h-3.5 text-purple-400" /> AI SIGNALS
             </span>
-            <span className="text-[10px] bg-apex-ai/15 border border-apex-ai/30 text-apex-ai px-1.5 py-0.5 rounded font-mono">CONFIDENCE 96%</span>
+            <span className="text-[9.5px] px-1.5 py-0.2 rounded bg-purple-500/15 text-purple-300 border border-purple-500/30">
+              {signals.length} ACTIVE
+            </span>
           </div>
 
-          <div className="p-3 space-y-3">
-            {/* BUY / SELL Probability Gauge */}
-            <div className="bg-apex-surface border border-apex-border p-3 rounded-panel space-y-2">
-              <div className="flex justify-between items-center text-xs font-bold">
-                <span className="text-apex-success flex items-center gap-1"><TrendingUp className="w-3.5 h-3.5" /> BUY 88.5%</span>
-                <span className="text-apex-danger flex items-center gap-1"><TrendingDown className="w-3.5 h-3.5" /> SELL 11.5%</span>
+          {/* Signal Cards */}
+          <div className="p-2 space-y-2 overflow-y-auto max-h-[48%] border-b border-[#222C3A]">
+            {signals.length === 0 ? (
+              <div className="p-6 text-center text-[#6B7280] text-[11px]">
+                No active signals right now. Skaner faol...
               </div>
-              <div className="w-full h-1.5 bg-apex-danger/30 rounded-full overflow-hidden flex">
-                <div className="h-full bg-apex-success" style={{ width: '88.5%' }} />
-              </div>
-            </div>
-
-            {/* AI Suggested Execution Parameters */}
-            <div className="bg-apex-surface border border-apex-border p-3 rounded-panel space-y-2 text-xs">
-              <div className="text-[10px] text-apex-ai font-semibold uppercase tracking-wider flex items-center gap-1">
-                <Sparkles className="w-3 h-3 text-apex-ai" /> AI EXECUTION SUGGESTION
-              </div>
-              
-              <div className="flex justify-between py-1 border-b border-apex-border/50">
-                <span className="text-apex-muted">ENTRY:</span>
-                <span className="font-bold text-apex-text">${(currentTicker.price * 0.998).toFixed(2)}</span>
-              </div>
-              <div className="flex justify-between py-1 border-b border-apex-border/50">
-                <span className="text-apex-muted">STOP LOSS (SL):</span>
-                <span className="font-bold text-apex-danger">${(currentTicker.price * 0.988).toFixed(2)}</span>
-              </div>
-              <div className="flex justify-between py-1 border-b border-apex-border/50">
-                <span className="text-apex-muted">TAKE PROFIT (TP1):</span>
-                <span className="font-bold text-apex-success">${(currentTicker.price * 1.025).toFixed(2)}</span>
-              </div>
-              <div className="flex justify-between py-1">
-                <span className="text-apex-muted">RISK / REWARD:</span>
-                <span className="font-bold text-apex-accent">1 : 3.8</span>
-              </div>
-            </div>
-
-            {/* AI Regime Analysis */}
-            <div className="bg-apex-surface border border-apex-border p-3 rounded-panel space-y-1 text-xs">
-              <div className="text-[10px] text-apex-muted uppercase tracking-wider">MARKET REGIME & CONFLUENCE</div>
-              <div className="text-apex-success font-bold">Bullish Order Block Expansion</div>
-              <p className="text-[11px] text-apex-muted leading-relaxed">
-                Institutional delta divergence on Market Depth. CME open interest expanded by +$420M in 4H.
-              </p>
-            </div>
-
-            {/* Engine Output Stats */}
-            <div className="bg-apex-surface border border-apex-border p-3 rounded-panel space-y-2 text-xs">
-              <div className="text-[10px] text-apex-muted uppercase tracking-wider flex items-center gap-1 mb-1">
-                <Activity className="w-3 h-3 text-apex-accent" /> ENGINE OUTPUT
-              </div>
-
-              {/* Grid of 4 stats */}
-              <div className="grid grid-cols-2 gap-2">
-                {/* Avg Margin */}
-                <div className="bg-apex-bg rounded-md p-2 border border-apex-border/60">
-                  <div className="flex items-center gap-1 text-[9px] text-apex-muted uppercase mb-1">
-                    <DollarSign className="w-2.5 h-2.5" /> AVG MARGIN
-                  </div>
-                  <div className="font-bold text-apex-text text-sm">
-                    ${positions.length > 0
-                      ? (positions.reduce((acc, p) => acc + p.marginUsed, 0) / positions.length).toFixed(0)
-                      : '—'}
-                  </div>
-                </div>
-
-                {/* Win Rate */}
-                <div className="bg-apex-bg rounded-md p-2 border border-apex-border/60">
-                  <div className="flex items-center gap-1 text-[9px] text-apex-muted uppercase mb-1">
-                    <BarChart2 className="w-2.5 h-2.5" /> WIN RATE
-                  </div>
-                  <div className="font-bold text-apex-success text-sm">
-                    {backtest?.winRate != null ? `${backtest.winRate.toFixed(1)}%` : '—'}
-                  </div>
-                </div>
-
-                {/* Daily PnL */}
-                <div className="bg-apex-bg rounded-md p-2 border border-apex-border/60">
-                  <div className="flex items-center gap-1 text-[9px] text-apex-muted uppercase mb-1">
-                    <TrendingUp className="w-2.5 h-2.5" /> DAILY PNL
-                  </div>
-                  <div className={`font-bold text-sm ${
-                    positions.some(p => p.unrealizedPnl > 0) ? 'text-apex-success' : 'text-apex-muted'
-                  }`}>
-                    ${positions.reduce((acc, p) => acc + (p.unrealizedPnl || 0), 0).toFixed(2)}
-                  </div>
-                </div>
-
-                {/* Prop DD usage */}
-                <div className="bg-apex-bg rounded-md p-2 border border-apex-border/60">
-                  <div className="flex items-center gap-1 text-[9px] text-apex-muted uppercase mb-1">
-                    <ShieldCheck className="w-2.5 h-2.5" /> PROP DD
-                  </div>
-                  <div className={`font-bold text-sm ${
-                    propAccounts[0] && propAccounts[0].currentDailyDrawdownPct > 3.5 ? 'text-apex-danger' : 'text-apex-accent'
-                  }`}>
-                    {propAccounts[0] ? `${propAccounts[0].currentDailyDrawdownPct.toFixed(2)}%` : '—'}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Notification Permission */}
-            <div className="pt-1">
-              {notificationPermission === 'granted' ? (
-                <div className="flex items-center gap-2 px-3 py-2 bg-apex-success/10 border border-apex-success/30 rounded-btn text-xs text-apex-success">
-                  <Bell className="w-3.5 h-3.5" />
-                  <span>Push Alerts Active</span>
-                </div>
-              ) : notificationPermission === 'denied' ? (
-                <div className="flex items-center gap-2 px-3 py-2 bg-apex-danger/10 border border-apex-danger/30 rounded-btn text-xs text-apex-danger">
-                  <Bell className="w-3.5 h-3.5" />
-                  <span>Notifications Blocked — Enable in browser</span>
-                </div>
-              ) : (
-                <button
-                  onClick={() => requestWebNotifications()}
-                  className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-apex-surface hover:bg-apex-hover border border-apex-accent/50 text-apex-accent rounded-btn text-xs font-semibold transition-apex"
+            ) : (
+              signals.map((sig) => (
+                <div 
+                  key={sig.id}
+                  onClick={() => setSelectedSymbol(sig.symbol)}
+                  className="p-2.5 bg-[#141A23] hover:bg-[#1A222E] border border-[#222C3A] rounded-lg cursor-pointer transition-apex space-y-1.5"
                 >
-                  <Bell className="w-3.5 h-3.5" />
-                  Enable Push Notifications
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center space-x-1.5">
+                      <span className="font-bold text-white text-xs">{sig.symbol}</span>
+                      <span className={`px-1 rounded text-[9px] font-bold ${
+                        sig.side === 'BUY' ? 'bg-emerald-500/15 text-emerald-400' : 'bg-rose-500/15 text-rose-400'
+                      }`}>
+                        {sig.side}
+                      </span>
+                    </div>
+                    <span className="text-[10px] font-mono text-purple-400 font-bold">
+                      {sig.confidence ?? sig.aiScore ?? 85}%
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-1 font-mono text-[9.5px] text-[#9CA3AF] tabular-nums">
+                    <div>E: <strong className="text-white">${sig.entry?.toLocaleString()}</strong></div>
+                    <div>SL: <strong className="text-rose-400">${sig.sl?.toLocaleString()}</strong></div>
+                    <div>TP1: <strong className="text-emerald-400">${sig.tp1?.toLocaleString()}</strong></div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+
+          {/* Execution Log Terminal */}
+          <div className="p-2.5 border-b border-[#222C3A] bg-[#141A23] flex justify-between items-center text-xs font-mono">
+            <span className="flex items-center gap-1.5 font-bold text-white font-sans">
+              <Terminal className="w-3.5 h-3.5 text-blue-400" /> EXECUTION LOGS
+            </span>
+            <div className="flex gap-1 text-[9px]">
+              {['ALL', 'SYSTEM', 'QUANT'].map(f => (
+                <button
+                  key={f}
+                  onClick={() => setLogFilter(f)}
+                  className={`px-1.5 py-0.2 rounded font-bold ${
+                    logFilter === f ? 'bg-blue-600 text-white' : 'text-[#6B7280] hover:text-white'
+                  }`}
+                >
+                  {f}
                 </button>
-              )}
+              ))}
             </div>
           </div>
+
+          <div className="flex-1 p-2 overflow-y-auto font-mono text-[10px] space-y-1 bg-[#080A0D]">
+            {filteredLogs.slice(-25).map((l, i) => (
+              <div key={i} className="text-[#9CA3AF] leading-tight flex items-start space-x-1.5">
+                <span className="text-[#6B7280] shrink-0">{l.timestamp?.split(' ')[1] || '00:00'}</span>
+                <span className="text-white break-words">{l.message}</span>
+              </div>
+            ))}
+          </div>
+
         </div>
 
       </div>
     </div>
   );
 };
+
+export default MissionControlHome;

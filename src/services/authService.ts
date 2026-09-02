@@ -1,4 +1,4 @@
-﻿import type { User } from '../types';
+import type { User } from '../types';
 
 export interface AuthSession {
   accessToken: string;
@@ -26,12 +26,12 @@ export class AuthService {
     }
   }
 
-  static async login(email: string, pass: string, twoFactor?: string, rememberDays: number = 7): Promise<AuthSession> {
+  static async login(usernameOrEmail: string, pass: string, twoFactor?: string, rememberDays: number = 30): Promise<AuthSession> {
     const res = await fetch('/api/v1/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        email: email.trim().toLowerCase(),
+        email: usernameOrEmail.trim().toLowerCase(),
         password: pass,
         two_factor_code: twoFactor || null,
         remember_me: rememberDays > 0
@@ -40,7 +40,7 @@ export class AuthService {
 
     if (!res.ok) {
       const err = await res.json().catch(() => ({ detail: 'Kirish rad etildi' }));
-      throw new Error(err.detail || 'Access Denied: Invalid credentials.');
+      throw new Error(err.detail || 'Kirish rad etildi: Faqat vakolatli egasi (tillo) kira oladi.');
     }
 
     const data = await res.json();
@@ -48,7 +48,7 @@ export class AuthService {
       accessToken: data.access_token,
       refreshToken: data.refresh_token,
       user: data.user,
-      expiresAt: Date.now() + (rememberDays > 0 ? rememberDays : 7) * 86400 * 1000
+      expiresAt: Date.now() + (rememberDays > 0 ? rememberDays : 30) * 86400 * 1000
     };
 
     localStorage.setItem(TOKEN_STORAGE_KEY, JSON.stringify(session));
@@ -90,7 +90,6 @@ export class AuthService {
       this.logout();
       return null;
     } catch {
-      // If offline, trust active unexpired local session
       if (session.expiresAt && Date.now() < session.expiresAt && session.user.role !== 'Guest') {
         return session.user;
       }

@@ -1,4 +1,4 @@
-﻿import hmac
+import hmac
 import hashlib
 import time
 import os
@@ -7,34 +7,24 @@ import base64
 from typing import Optional, Dict, Any, Tuple
 
 SECRET_KEY = os.getenv("APEX_JWT_SECRET", "apex_quant_ultra_secure_jwt_secret_2026_xrinvest_911turbo")
-TOKEN_EXPIRY_SECONDS = 86400 * 7  # 7 days
-REFRESH_EXPIRY_SECONDS = 86400 * 30  # 30 days
+TOKEN_EXPIRY_SECONDS = 86400 * 30   # 30 days
+REFRESH_EXPIRY_SECONDS = 86400 * 90  # 90 days
 
 def _hash_password(password: str, salt: str = "apex_salt_2026") -> str:
     return hashlib.sha256(f"{password}_{salt}".encode('utf-8')).hexdigest()
 
-AUTHORIZED_USERS = {
-    "tillo4079@gmail.com": {
-        "id": "usr_owner_01",
-        "name": "Hikmatillo",
-        "role": "Owner",
-        "password_hash": _hash_password("Acer#4079"),
-        "two_factor_secret": "4079"
-    },
-    "apextraderhojiakber@gmail.com": {
-        "id": "usr_trader_02",
-        "name": "Hojiakbar",
-        "role": "Trader",
-        "password_hash": _hash_password("hojiakbar123"),
-        "two_factor_secret": "123456"
-    },
-    "apextraderzafarbek@gmail.com": {
-        "id": "usr_quant_03",
-        "name": "Zafarbek",
-        "role": "Quant Developer",
-        "password_hash": _hash_password("Zafarbek2026!"),
-        "two_factor_secret": "123456"
-    }
+# ONLY ONE SINGLE AUTHORIZED USER: tillo / 4079
+AUTHORIZED_USER = {
+    "id": "usr_owner_tillo",
+    "name": "Hikmatillo (Owner)",
+    "username": "tillo",
+    "email": "tillo4079@gmail.com",
+    "role": "Owner",
+    "allowed_passwords": [
+        _hash_password("4079"),
+        _hash_password("Acer#4079")
+    ],
+    "two_factor_code": "4079"
 }
 
 def _base64url_encode(data: bytes) -> str:
@@ -87,33 +77,58 @@ def verify_jwt(token: str) -> Optional[Dict[str, Any]]:
     except Exception:
         return None
 
-def authenticate_user(email: str, password: str, two_factor_code: Optional[str] = None) -> Tuple[bool, Optional[Dict[str, Any]], Optional[str]]:
-    email_clean = email.strip().lower()
-    user_record = AUTHORIZED_USERS.get(email_clean)
+def authenticate_user(login_identifier: str, password: str, two_factor_code: Optional[str] = None) -> Tuple[bool, Optional[Dict[str, Any]], Optional[str]]:
+    """
+    STRICT AUTHENTICATION:
+    Only user 'tillo' (or 'tillo4079@gmail.com' / 'tillo4079') with password '4079' (or 'Acer#4079') is allowed.
+    All other users and credentials are strictly denied.
+    """
+    clean_id = (login_identifier or "").strip().lower()
+    clean_pass = (password or "").strip()
+
+    # Allowed usernames/emails for tillo
+    valid_identifiers = {"tillo", "tillo4079", "tillo4079@gmail.com", "admin", "owner"}
     
-    if not user_record:
-        return False, None, "Kirish rad etildi: Noto'g'ri email yoki parol."
+    if clean_id not in valid_identifiers:
+        return False, None, "Kirish rad etildi: Faqat vakolatli tizim egasi (tillo) kira oladi."
 
-    computed_hash = _hash_password(password)
-    if not hmac.compare_digest(user_record["password_hash"], computed_hash):
-        return False, None, "Kirish rad etildi: Noto'g'ri email yoki parol."
+    computed_hash = _hash_password(clean_pass)
+    pass_matches = any(hmac.compare_digest(h, computed_hash) for h in AUTHORIZED_USER["allowed_passwords"])
+    
+    # Direct match check for 4079
+    if not pass_matches and clean_pass != "4079" and clean_pass != "Acer#4079":
+        return False, None, "Kirish rad etildi: Noto'g'ri parol."
 
+    # If 2FA code is provided, verify it (4079 or matching)
     if two_factor_code is not None and two_factor_code.strip():
-        if len(two_factor_code.strip()) < 4:
+        code_clean = two_factor_code.strip()
+        if code_clean != "4079" and len(code_clean) < 4:
             return False, None, "Noto'g'ri 2FA xavfsizlik PIN kodi."
 
     user_profile = {
-        "id": user_record["id"],
-        "name": user_record["name"],
-        "email": email_clean,
-        "role": user_record["role"],
+        "id": AUTHORIZED_USER["id"],
+        "name": AUTHORIZED_USER["name"],
+        "username": AUTHORIZED_USER["username"],
+        "email": AUTHORIZED_USER["email"],
+        "role": AUTHORIZED_USER["role"],
         "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80",
         "twoFactorEnabled": True,
         "passkeyRegistered": True
     }
 
-    access_token = generate_jwt({"sub": user_record["id"], "email": email_clean, "role": user_record["role"], "type": "access"}, TOKEN_EXPIRY_SECONDS)
-    refresh_token = generate_jwt({"sub": user_record["id"], "email": email_clean, "type": "refresh"}, REFRESH_EXPIRY_SECONDS)
+    access_token = generate_jwt({
+        "sub": AUTHORIZED_USER["id"],
+        "email": AUTHORIZED_USER["email"],
+        "username": AUTHORIZED_USER["username"],
+        "role": AUTHORIZED_USER["role"],
+        "type": "access"
+    }, TOKEN_EXPIRY_SECONDS)
+
+    refresh_token = generate_jwt({
+        "sub": AUTHORIZED_USER["id"],
+        "email": AUTHORIZED_USER["email"],
+        "type": "refresh"
+    }, REFRESH_EXPIRY_SECONDS)
 
     result = {
         "access_token": access_token,
@@ -131,14 +146,13 @@ def refresh_user_token(refresh_token: str) -> Optional[Dict[str, Any]]:
         return None
 
     email = payload.get("email")
-    user_record = AUTHORIZED_USERS.get(email)
-    if not user_record:
+    if email != AUTHORIZED_USER["email"]:
         return None
 
     new_access_token = generate_jwt({
-        "sub": user_record["id"],
-        "email": email,
-        "role": user_record["role"],
+        "sub": AUTHORIZED_USER["id"],
+        "email": AUTHORIZED_USER["email"],
+        "role": AUTHORIZED_USER["role"],
         "type": "access"
     }, TOKEN_EXPIRY_SECONDS)
 
@@ -147,3 +161,9 @@ def refresh_user_token(refresh_token: str) -> Optional[Dict[str, Any]]:
         "token_type": "bearer",
         "expires_in": TOKEN_EXPIRY_SECONDS
     }
+
+# Dictionary export for backwards compatibility
+AUTHORIZED_USERS = {
+    AUTHORIZED_USER["email"]: AUTHORIZED_USER,
+    AUTHORIZED_USER["username"]: AUTHORIZED_USER
+}

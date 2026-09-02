@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import type { Position, Signal } from '../../types';
 import { subscribeBinanceLivePrices } from '../../services/marketDataService';
 import { 
@@ -13,7 +13,7 @@ import {
   Sparkles
 } from 'lucide-react';
 
-// ─── Types & Timeframes ───────────────────────────────────────────────────────
+// â”€â”€â”€ Types & Timeframes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export interface TimeframeOption {
   label: string;
   interval: string;
@@ -40,7 +40,7 @@ export interface ApexCandleChartProps {
   className?: string;
 }
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const fmt = (v: any, d = 2) => {
   if (v === undefined || v === null || isNaN(Number(v))) return '0.00';
   const numVal = Number(v);
@@ -285,7 +285,7 @@ export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
     dataRef.current = data.length;
   }, [data.length]);
 
-  // ─── Center / Position Logic like TradingView ───────────────────────────────
+  // â”€â”€â”€ Center / Position Logic like TradingView â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // FUTURE_BARS adds empty space on the right (like TradingView's right margin)
   const FUTURE_BARS = 35;
   const totalSlots = Math.max(1, data.length + FUTURE_BARS);
@@ -483,7 +483,7 @@ export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
       <div className="flex items-center justify-between px-3 py-1.5 bg-[#1e222d] border-b border-[#2a2e39] shrink-0 gap-2 overflow-x-auto no-scrollbar">
         <div className="flex items-center gap-1.5 text-[11px] font-mono font-bold overflow-hidden flex-wrap">
           <span className="text-white font-bold">{activeSymbol}</span>
-          <span className="text-[#50535e]">·</span>
+          <span className="text-[#50535e]">Â·</span>
           
           {/* Timeframe Selector Pills */}
           <div className="flex items-center bg-[#131722] p-0.5 rounded border border-[#2a2e39]">
@@ -502,12 +502,12 @@ export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
             ))}
           </div>
           
-          <span className="text-[#50535e]">·</span>
+          <span className="text-[#50535e]">Â·</span>
           <span className="text-[#787b86] text-[10px]">BINANCE PERPETUAL</span>
 
           {entryPrice > 0 && (
             <>
-              <span className="text-[#50535e]">·</span>
+              <span className="text-[#50535e]">Â·</span>
               <span className={`px-1.5 py-0.2 rounded text-[9px] font-bold ${
                 isBuy ? 'bg-[#089981]/20 text-[#089981] border border-[#089981]/40' : 'bg-[#f23645]/20 text-[#f23645] border border-[#f23645]/40'
               }`}>
@@ -661,34 +661,30 @@ export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
               );
             })}
 
-            {/* ═══════════════════════════════════════════════════════════════════════════
+            {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
                 TRADINGVIEW POSITION TOOL (EXACT MATCH TO REFERENCE SCREENSHOT)
-               ═══════════════════════════════════════════════════════════════════════════ */}
+               â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
             {entryPrice > 0 && finalTarget && (
               <g>
-                {/* 1. Green TP Box (Upper Half) */}
+                {/* 1. Subtle TP zone tint - lines only, no box */}
                 <rect
-                  x={posStartX}
+                  x={PL}
                   y={Math.min(gy(entryPrice), gy(finalTarget.value))}
-                  width={Math.max(20, posEndX - posStartX)}
+                  width={Math.max(0, plotRight - PL)}
                   height={Math.abs(gy(entryPrice) - gy(finalTarget.value))}
-                  fill="url(#tv_green_zone)"
-                  stroke="#089981"
-                  strokeWidth={1.5}
-                  strokeOpacity={0.8}
+                  fill="rgba(8,153,129,0.04)"
+                  stroke="none"
                 />
 
-                {/* 2. Red SL Box (Lower Half) */}
+                {/* 2. Subtle SL zone tint - lines only, no box */}
                 {hasStop && (
                   <rect
-                    x={posStartX}
+                    x={PL}
                     y={Math.min(gy(entryPrice), gy(stopLoss))}
-                    width={Math.max(20, posEndX - posStartX)}
+                    width={Math.max(0, plotRight - PL)}
                     height={Math.abs(gy(entryPrice) - gy(stopLoss))}
-                    fill="url(#tv_red_zone)"
-                    stroke="#f23645"
-                    strokeWidth={1.5}
-                    strokeOpacity={0.8}
+                    fill="rgba(242,54,69,0.04)"
+                    stroke="none"
                   />
                 )}
 
@@ -785,9 +781,9 @@ export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
               </g>
             )}
 
-            {/* ═══════════════════════════════════════════════════════════════════════════
+            {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
                 CANDLESTICKS (SHARP PIXEL TRADINGVIEW RENDER)
-               ═══════════════════════════════════════════════════════════════════════════ */}
+               â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
             {vis.map((k, ri) => {
               const ai = fi + ri;
               const x = gx(ai);
@@ -808,9 +804,9 @@ export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
               );
             })}
 
-            {/* ═══════════════════════════════════════════════════════════════════════════
+            {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
                 REAL-TIME LIVE PRICE LINE & TRADINGVIEW ORANGE/AMBER BADGE
-               ═══════════════════════════════════════════════════════════════════════════ */}
+               â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
             {lastClose > 0 && (
               <g>
                 {/* Dashed line across whole chart */}
@@ -868,3 +864,4 @@ export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
 };
 
 export default ApexCandleChart;
+

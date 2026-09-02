@@ -6,8 +6,10 @@ import threading
 from datetime import datetime, timezone
 from typing import List, Dict, Any, Optional
 
-POSITIONS_FILE = "backend/data/live_positions.json"
-EQUITY_FILE = "backend/data/live_equity.json"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(BASE_DIR, "data")
+POSITIONS_FILE = os.path.join(DATA_DIR, "live_positions.json")
+EQUITY_FILE = os.path.join(DATA_DIR, "live_equity.json")
 
 INITIAL_CAPITAL = 10000.00
 FILE_LOCK = threading.Lock()
@@ -24,7 +26,7 @@ def _read_positions_unlocked() -> List[Dict[str, Any]]:
     if not os.path.exists(POSITIONS_FILE):
         return []
     try:
-        with open(POSITIONS_FILE, "r") as f:
+        with open(POSITIONS_FILE, "r", encoding="utf-8-sig") as f:
             return json.load(f)
     except Exception:
         return []
@@ -32,7 +34,7 @@ def _read_positions_unlocked() -> List[Dict[str, Any]]:
 def _write_positions_unlocked(positions: List[Dict[str, Any]]):
     _ensure_dir(POSITIONS_FILE)
     try:
-        with open(POSITIONS_FILE, "w") as f:
+        with open(POSITIONS_FILE, "w", encoding="utf-8") as f:
             json.dump(positions, f, indent=2)
     except Exception as e:
         print(f"[LIVE EXECUTION] Error writing positions: {e}")
@@ -51,7 +53,7 @@ def _read_equity_unlocked() -> Dict[str, Any]:
             "tradeHistory": []
         }
     try:
-        with open(EQUITY_FILE, "r") as f:
+        with open(EQUITY_FILE, "r", encoding="utf-8-sig") as f:
             return json.load(f)
     except Exception:
         now_time = datetime.now(timezone.utc).strftime("%H:%M")
@@ -69,7 +71,7 @@ def _read_equity_unlocked() -> Dict[str, Any]:
 def _write_equity_unlocked(state: Dict[str, Any]):
     _ensure_dir(EQUITY_FILE)
     try:
-        with open(EQUITY_FILE, "w") as f:
+        with open(EQUITY_FILE, "w", encoding="utf-8") as f:
             json.dump(state, f, indent=2)
     except Exception as e:
         print(f"[LIVE EXECUTION] Error writing equity state: {e}")
@@ -310,11 +312,39 @@ def sync_live_positions_and_equity() -> Dict[str, Any]:
 
                     print(f"[LIVE ENGINE] Position {p['id']} closed via {hit_event}! Realized PnL: ${unrealized:+.2f}")
 
+                    # ── CRITICAL FIX: Sync signal status when position closes ──────
+                    signal_id = p.get("signal_id")
+                    if signal_id:
+                        try:
+                            from backend.database import SignalsRepository
+                            existing_sig = SignalsRepository.get_by_id(signal_id)
+                            if existing_sig:
+                                existing_sig["status"] = f"CLOSED_{hit_event}"
+                                existing_sig["exit_price"] = curr_price
+                                existing_sig["realized_pnl"] = round(unrealized, 2)
+                                existing_sig["exit_timestamp"] = time.time()
+                                SignalsRepository.save_or_update(existing_sig)
+                                print(f"[LIVE ENGINE] Signal {signal_id} status -> CLOSED_{hit_event}")
+                        except Exception as sig_err:
+                            print(f"[LIVE ENGINE] Signal status sync error: {sig_err}")
+                    # ──────────────────────────────────────────────────────────────────
+
                     try:
                         from backend.telegram_bot import telegram_notifier
                         telegram_notifier.send_trade_update_notification(
                             p["id"], hit_event,
-                            {"price": curr_price, "pnl": unrealized, "pnl_pct": p["unrealizedPnlPercent"]}
+                            {
+                                "symbol": sym,
+                                "side": side,
+                                "entry_price": entry,
+                                "price": curr_price,
+                                "pnl": unrealized,
+                                "pnl_pct": p["unrealizedPnlPercent"],
+                                "signal_id": p.get("signal_id"),
+                                "tp1": p.get("tp1"),
+                                "tp2": p.get("tp2"),
+                                "sl": p.get("sl")
+                            }
                         )
                     except Exception as tg_e:
                         print(f"[LIVE ENGINE] Telegram close alert error: {tg_e}")

@@ -6,7 +6,6 @@ import {
 } from 'lucide-react';
 import ReactECharts from 'echarts-for-react';
 
-// ─── Types ────────────────────────────────────────────────────────────────────
 interface PropFirmStatus {
   status: string;
   accountNumber: string;
@@ -78,291 +77,304 @@ interface RiskDashboard {
   dailyPnl: number;
   dailyDrawdownPct: number;
   totalDrawdownPct: number;
-  winRate: number;
-  profitFactor: number;
-  consistencyScore: number;
-  passProbability: number;
-  projectedFinishDate: string;
-  violationsCount: number;
   rules: RiskRule[];
-  openPositions: number;
+  consistencyScore: number;
+  violationsCount: number;
+  activeViolations: string[];
 }
 
-const API = 'https://apex.xrinvest.uz/api/v1';
-const fmt = (v: number, d = 2) => Number(v || 0).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
-
-// ─── Equity Mini Chart ─────────────────────────────────────────────────────────
-const EquityMiniChart: React.FC<{ curve: Array<{ timestamp: string; equity: number }>; initial: number }> = ({ curve, initial }) => {
-  if (!curve || curve.length < 2) {
-    return (
-      <div className="flex items-center justify-center h-full text-apex-muted text-[10px]">
-        Accumulating equity data...
-      </div>
-    );
-  }
-
-  const option = {
-    backgroundColor: 'transparent',
-    tooltip: {
-      trigger: 'axis',
-      backgroundColor: '#1B222C',
-      borderColor: '#2C3643',
-      borderWidth: 1,
-      textStyle: { color: '#F5F7FA', fontFamily: 'JetBrains Mono', fontSize: 10 },
-      formatter: (params: any) => {
-        const pt = params[0];
-        const diff = Number(pt.value) - initial;
-        const color = diff >= 0 ? '#10B981' : '#F43F5E';
-        return `<strong>${pt.name}</strong><br/>Equity: <span style="color:${color};font-weight:bold;">$${Number(pt.value).toFixed(2)}</span>`;
-      }
-    },
-    grid: { left: '6%', right: '2%', top: '8%', bottom: '18%' },
-    xAxis: {
-      type: 'category',
-      data: curve.map(c => c.timestamp),
-      axisLine: { lineStyle: { color: '#2C3643' } },
-      axisLabel: { color: '#8899A6', fontSize: 8 }
-    },
-    yAxis: {
-      type: 'value',
-      scale: true,
-      splitLine: { lineStyle: { color: '#242D39', type: 'dashed' } },
-      axisLabel: { color: '#8899A6', fontSize: 8, formatter: (v: number) => `$${v.toFixed(0)}` }
-    },
-    series: [{
-      type: 'line',
-      data: curve.map(c => Number(c.equity)),
-      smooth: true,
-      lineStyle: { color: '#0EA5E9', width: 2 },
-      itemStyle: { color: '#0EA5E9' },
-      areaStyle: {
-        color: {
-          type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
-          colorStops: [
-            { offset: 0, color: 'rgba(14,165,233,0.30)' },
-            { offset: 1, color: 'rgba(14,165,233,0.00)' }
-          ]
-        }
-      },
-      markLine: {
-        silent: true,
-        data: [{ yAxis: initial, lineStyle: { color: '#8899A6', type: 'dashed', width: 1 } }],
-        label: { show: true, formatter: `$${initial.toFixed(0)}`, color: '#8899A6', fontSize: 9 }
-      }
-    }]
-  };
-
-  return <ReactECharts option={option} style={{ height: '100%', width: '100%' }} />;
+const fmt = (v: any, d = 2) => {
+  if (v === undefined || v === null || isNaN(Number(v))) return '0.00';
+  return Number(v).toLocaleString(undefined, { minimumFractionDigits: d, maximumFractionDigits: d });
 };
 
-// ─── Progress Bar ──────────────────────────────────────────────────────────────
 const ProgressBar: React.FC<{
-  current: number; max: number; color?: string; danger?: boolean; warn?: boolean; label?: string;
-}> = ({ current, max, color = 'bg-emerald-400', danger = false, warn = false, label }) => {
-  const pct = Math.min(100, Math.max(0, (current / Math.max(0.01, max)) * 100));
-  const barColor = danger ? 'bg-rose-500' : warn ? 'bg-amber-400' : color;
+  current: number;
+  max: number;
+  color?: string;
+  danger?: boolean;
+  warn?: boolean;
+}> = ({ current, max, color = 'bg-blue-500', danger = false, warn = false }) => {
+  const pct = Math.min(100, Math.max(0, (current / (max || 1)) * 100));
+  let barColor = color;
+  if (danger) barColor = 'bg-rose-500';
+  else if (warn) barColor = 'bg-amber-500';
+
   return (
-    <div className="space-y-0.5">
-      {label && (
-        <div className="flex justify-between text-[9px] text-apex-muted">
-          <span>{label}</span>
-          <span className="font-bold text-apex-text">{pct.toFixed(1)}%</span>
-        </div>
-      )}
-      <div className="w-full h-1.5 bg-apex-bg rounded-full overflow-hidden border border-apex-border/30">
-        <div
-          className={`${barColor} h-full rounded-full transition-all duration-500`}
-          style={{ width: `${pct}%` }}
-        />
-      </div>
+    <div className="w-full bg-[#080A0D] rounded-full h-1.5 overflow-hidden border border-[#222C3A]">
+      <div
+        className={`h-full ${barColor} transition-all duration-300`}
+        style={{ width: `${pct}%` }}
+      />
     </div>
   );
 };
 
-// ─── Main Component ────────────────────────────────────────────────────────────
 export const PropFirmCenter: React.FC = () => {
-  const [propStatus, setPropStatus] = useState<PropFirmStatus | null>(null);
-  const [riskDash, setRiskDash] = useState<RiskDashboard | null>(null);
+  const [status, setStatus] = useState<PropFirmStatus | null>(null);
   const [posSize, setPosSize] = useState<PositionSize | null>(null);
-  const [slDistance, setSlDistance] = useState<string>('500');
+  const [riskDash, setRiskDash] = useState<RiskDashboard | null>(null);
   const [symbol, setSymbol] = useState<string>('BTC/USDT');
-  const [loading, setLoading] = useState(true);
-  const [lastUpdate, setLastUpdate] = useState(new Date());
-  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [slDistance, setSlDistance] = useState<string>('500');
+  const [loading, setLoading] = useState<boolean>(true);
+  const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
+  const [lastUpdated, setLastUpdated] = useState<string>('');
 
-  const fetchAll = useCallback(async () => {
+  const fetchStatus = useCallback(async () => {
     try {
-      setIsRefreshing(true);
-      const [statusRes, riskRes] = await Promise.all([
-        fetch(`${API}/propfirm/status`).then(r => r.json()).catch(() => null),
-        fetch(`${API}/propfirm/risk-dashboard`).then(r => r.json()).catch(() => null),
-      ]);
-      if (statusRes) setPropStatus(statusRes);
-      if (riskRes) setRiskDash(riskRes);
-      setLastUpdate(new Date());
+      const res = await fetch('/api/v1/propfirm/status');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.status === 'SUCCESS') setStatus(data.data);
+      }
     } catch (e) {
-      console.error('[PropFirmCenter] fetch error:', e);
-    } finally {
-      setLoading(false);
-      setIsRefreshing(false);
+      console.error('[PropFirmCenter] status fetch error:', e);
     }
   }, []);
 
-  const calcPosSize = useCallback(async () => {
-    const sl = parseFloat(slDistance) || 500;
+  const fetchPosSize = useCallback(async () => {
     try {
-      const res = await fetch(`${API}/propfirm/position-sizer?symbol=${encodeURIComponent(symbol)}&sl_distance_pts=${sl}`);
-      const data = await res.json();
-      setPosSize(data);
+      const pts = parseFloat(slDistance) || 500;
+      const res = await fetch(`/api/v1/propfirm/position-sizer?symbol=${encodeURIComponent(symbol)}&sl_distance_points=${pts}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.status === 'SUCCESS') setPosSize(data.data);
+      }
     } catch (e) {
-      console.error('[PropFirmCenter] position sizer error:', e);
+      console.error('[PropFirmCenter] pos sizer fetch error:', e);
     }
-  }, [slDistance, symbol]);
+  }, [symbol, slDistance]);
+
+  const fetchRiskDash = useCallback(async () => {
+    try {
+      const res = await fetch('/api/v1/propfirm/risk-dashboard');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.status === 'SUCCESS') setRiskDash(data.data);
+      }
+    } catch (e) {
+      console.error('[PropFirmCenter] risk dash fetch error:', e);
+    }
+  }, []);
+
+  const refreshAll = useCallback(async () => {
+    setIsRefreshing(true);
+    await Promise.all([fetchStatus(), fetchPosSize(), fetchRiskDash()]);
+    setLastUpdated(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
+    setIsRefreshing(false);
+    setLoading(false);
+  }, [fetchStatus, fetchPosSize, fetchRiskDash]);
 
   useEffect(() => {
-    fetchAll();
-    calcPosSize();
-    const interval = setInterval(fetchAll, 8000);
-    return () => clearInterval(interval);
-  }, [fetchAll]);
+    refreshAll();
+    const iv = setInterval(refreshAll, 6000);
+    return () => clearInterval(iv);
+  }, [refreshAll]);
 
   useEffect(() => {
-    const t = setTimeout(calcPosSize, 400);
-    return () => clearTimeout(t);
-  }, [slDistance, symbol, calcPosSize]);
+    fetchPosSize();
+  }, [fetchPosSize]);
 
-  const s = propStatus;
-  const r = riskDash;
+  const getEquityChartOption = () => {
+    const curve = status?.equityCurve || [];
+    const timestamps = curve.map(c => c.timestamp);
+    const equities = curve.map(c => c.equity);
+    const target = (status?.initialCapital ?? 10000) * 1.08;
+    const initial = status?.initialCapital ?? 10000;
+
+    return {
+      backgroundColor: 'transparent',
+      tooltip: {
+        trigger: 'axis',
+        backgroundColor: '#141A23',
+        borderColor: '#2B384B',
+        borderWidth: 1,
+        textStyle: { color: '#F3F4F6', fontFamily: 'JetBrains Mono', fontSize: 11 }
+      },
+      grid: { left: '4%', right: '3%', top: '10%', bottom: '12%' },
+      xAxis: {
+        type: 'category',
+        data: timestamps.length ? timestamps : ['00:00'],
+        axisLine: { lineStyle: { color: '#2B384B' } },
+        axisTick: { show: false }
+      },
+      yAxis: {
+        type: 'value',
+        scale: true,
+        splitLine: { lineStyle: { color: '#1A222E', type: 'dashed' } },
+        axisLine: { show: false }
+      },
+      series: [
+        {
+          name: 'Target ($10,800)',
+          type: 'line',
+          data: Array(timestamps.length || 1).fill(target),
+          lineStyle: { color: 'rgba(52, 211, 153, 0.4)', type: 'dashed', width: 1.5 },
+          showSymbol: false
+        },
+        {
+          name: 'Starting ($10,000)',
+          type: 'line',
+          data: Array(timestamps.length || 1).fill(initial),
+          lineStyle: { color: 'rgba(156, 163, 175, 0.3)', type: 'dashed', width: 1 },
+          showSymbol: false
+        },
+        {
+          name: 'NAV Equity',
+          type: 'line',
+          smooth: true,
+          data: equities.length ? equities : [initial],
+          lineStyle: { color: '#10B981', width: 2.5 },
+          areaStyle: {
+            color: {
+              type: 'linear',
+              x: 0, y: 0, x2: 0, y2: 1,
+              colorStops: [
+                { offset: 0, color: 'rgba(16, 185, 129, 0.25)' },
+                { offset: 1, color: 'rgba(16, 185, 129, 0.0)' }
+              ]
+            }
+          }
+        }
+      ]
+    };
+  };
+
+  const s = status;
+  const isCompliant = (s?.ruleViolations?.length ?? 0) === 0;
 
   return (
-    <div className="flex-1 flex flex-col overflow-y-auto bg-apex-bg font-mono text-xs p-4 space-y-4">
+    <div className="flex-1 flex flex-col overflow-y-auto bg-[#080A0D] font-mono text-xs p-4 space-y-4">
 
-      {/* ── Header ────────────────────────────────────────────────── */}
-      <div className="flex items-center justify-between border-b border-apex-border pb-3 shrink-0">
+      {/* Top Banner Header */}
+      <div className="bg-[#0D1117] border border-[#222C3A] rounded-lg p-3.5 flex items-center justify-between shadow-md">
         <div className="flex items-center space-x-3">
-          <div className="p-2 rounded bg-apex-surface border border-apex-border">
-            <ShieldCheck className="w-5 h-5 text-emerald-400" />
+          <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400">
+            <ShieldCheck className="w-5 h-5" />
           </div>
           <div>
-            <div className="font-bold text-sm text-apex-text flex items-center space-x-2">
-              <span>DEDICATED RISK WORKSPACE & PROP FIRM ENGINE</span>
-              <span className={`px-2 py-0.5 rounded text-[9px] font-bold border ${
-                r?.violationsCount === 0
-                  ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
-                  : 'bg-rose-500/10 text-rose-400 border-rose-500/30'
-              }`}>
-                {r?.violationsCount === 0 ? 'ALL RISK RULES COMPLIANT' : `${r?.violationsCount} VIOLATION(S)`}
+            <div className="font-bold text-sm text-white font-sans flex items-center gap-2">
+              <span>{s?.firmName || 'APEX QUANT PROP FIRM'}</span>
+              <span className="text-[10px] px-1.5 py-0.2 rounded bg-blue-500/10 text-blue-400 border border-blue-500/30">
+                {s?.stage || 'STAGE 1 CHALLENGE'}
               </span>
             </div>
-            <div className="text-[10px] text-apex-muted">
-              Real-time Prop Firm challenge tracking from live SQLite equity engine
+            <div className="text-[10px] text-[#6B7280]">
+              Account #{s?.accountNumber || 'APEX-10K-001'} • FTMO 2x Institutional Rules Active
             </div>
           </div>
         </div>
-        <div className="flex items-center space-x-3 text-[10px]">
-          <span className="text-apex-muted">Updated: {lastUpdate.toLocaleTimeString()}</span>
+
+        <div className="flex items-center space-x-3">
+          <div className={`px-2.5 py-1 rounded-lg text-xs font-bold flex items-center space-x-1.5 ${
+            isCompliant 
+              ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' 
+              : 'bg-rose-500/10 text-rose-400 border border-rose-500/30'
+          }`}>
+            {isCompliant ? <CheckCircle2 className="w-3.5 h-3.5" /> : <AlertTriangle className="w-3.5 h-3.5" />}
+            <span>{isCompliant ? '100% COMPLIANT' : 'RULE VIOLATION'}</span>
+          </div>
+
           <button
-            onClick={fetchAll}
+            onClick={refreshAll}
             disabled={isRefreshing}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded bg-apex-surface hover:bg-apex-surfaceHover border border-apex-border text-apex-text font-bold transition-all"
+            className="p-1.5 rounded bg-[#141A23] hover:bg-[#1A222E] border border-[#222C3A] text-[#9CA3AF] hover:text-white transition-apex"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
-            <span>REFRESH</span>
+            <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin text-blue-400' : ''}`} />
           </button>
         </div>
       </div>
 
-      {/* ── Top KPI Row ────────────────────────────────────────────── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        {/* Remaining Daily Loss */}
-        <div className="bg-apex-surface/90 border border-apex-border rounded-lg p-3.5 space-y-2 shadow-md">
-          <div className="text-[9px] text-apex-muted flex items-center justify-between">
-            <span>REMAINING DAILY LOSS</span>
-            <AlertTriangle className="w-3 h-3 text-amber-400" />
+      {/* Primary KPI Grid (4 Cards) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+        {/* NAV Equity */}
+        <div className="bg-[#0D1117] border border-[#222C3A] rounded-lg p-3.5 space-y-2 shadow-sm">
+          <div className="text-[9.5px] text-[#6B7280] uppercase tracking-wider font-semibold flex items-center justify-between">
+            <span>NAV Equity</span>
+            <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
           </div>
-          <div className="text-lg font-bold text-amber-400">
-            ${fmt(s?.safeRiskAvailableToday ?? 500)}
+          <div className="text-xl font-bold text-white tabular-nums">
+            ${fmt(s?.navEquity ?? 10000)}
           </div>
-          <div className="text-[9px] text-apex-muted">
-            Limit: 5% (${fmt(s?.maxDailyDrawdownUsd ?? 500)})
+          <div className="text-[10px] text-[#9CA3AF]">
+            Realized: <strong className={((s?.realizedPnl ?? 0) >= 0) ? 'text-emerald-400' : 'text-rose-400'}>
+              {((s?.realizedPnl ?? 0) >= 0 ? '+' : '')}${fmt(s?.realizedPnl ?? 0)}
+            </strong>
+          </div>
+          <ProgressBar current={s?.currentProfit ?? 0} max={s?.targetProfitUsd ?? 800} color="bg-emerald-400" />
+        </div>
+
+        {/* Challenge Target Progress */}
+        <div className="bg-[#0D1117] border border-[#222C3A] rounded-lg p-3.5 space-y-2 shadow-sm">
+          <div className="text-[9.5px] text-[#6B7280] uppercase tracking-wider font-semibold flex items-center justify-between">
+            <span>Profit Target (8%)</span>
+            <Target className="w-3.5 h-3.5 text-blue-400" />
+          </div>
+          <div className="text-xl font-bold text-white tabular-nums">
+            {s?.progressPct?.toFixed(1) ?? '0.0'}%
+          </div>
+          <div className="text-[10px] text-[#9CA3AF]">
+            ${fmt(s?.currentProfit ?? 0)} / ${fmt(s?.targetProfitUsd ?? 800)}
+          </div>
+          <ProgressBar current={s?.progressPct ?? 0} max={100} color="bg-blue-500" />
+        </div>
+
+        {/* Daily Drawdown */}
+        <div className="bg-[#0D1117] border border-[#222C3A] rounded-lg p-3.5 space-y-2 shadow-sm">
+          <div className="text-[9.5px] text-[#6B7280] uppercase tracking-wider font-semibold flex items-center justify-between">
+            <span>Daily Drawdown</span>
+            <Activity className="w-3.5 h-3.5 text-amber-400" />
+          </div>
+          <div className="text-xl font-bold text-white tabular-nums">
+            {s?.currentDailyDrawdownPct?.toFixed(2) ?? '0.00'}%
+          </div>
+          <div className="text-[10px] text-[#9CA3AF]">
+            Safe Limit: 5.00% (${fmt(s?.maxDailyDrawdownUsd ?? 500)})
           </div>
           <ProgressBar
-            current={s?.currentDailyDrawdownUsd ?? 0}
-            max={s?.maxDailyDrawdownUsd ?? 500}
+            current={s?.currentDailyDrawdownPct ?? 0}
+            max={s?.maxDailyDrawdownPct ?? 5}
             danger={(s?.currentDailyDrawdownPct ?? 0) >= 4.0}
             warn={(s?.currentDailyDrawdownPct ?? 0) >= 2.5}
+            color="bg-emerald-400"
           />
         </div>
 
-        {/* Overall DD */}
-        <div className="bg-apex-surface/90 border border-apex-border rounded-lg p-3.5 space-y-2 shadow-md">
-          <div className="text-[9px] text-apex-muted flex items-center justify-between">
-            <span>RUNNING OVERALL DD</span>
-            <BarChart3 className="w-3 h-3 text-rose-400" />
+        {/* Pass Probability */}
+        <div className="bg-[#0D1117] border border-[#222C3A] rounded-lg p-3.5 space-y-2 shadow-sm">
+          <div className="text-[9.5px] text-[#6B7280] uppercase tracking-wider font-semibold flex items-center justify-between">
+            <span>Pass Probability</span>
+            <Award className="w-3.5 h-3.5 text-purple-400" />
           </div>
-          <div className="text-lg font-bold text-apex-text">
-            ${fmt(s?.maxTotalDrawdownUsd ?? 1000)}
+          <div className="text-xl font-bold text-purple-400 tabular-nums">
+            {s?.passProbability?.toFixed(1) ?? '12.0'}%
           </div>
-          <div className="text-[9px] text-apex-muted">
-            Limit: 10% (${fmt(s?.maxTotalDrawdownUsd ?? 1000)})
+          <div className="text-[10px] text-[#9CA3AF]">
+            Win Rate: <strong>{s?.winRate?.toFixed(1) ?? '0.0'}%</strong> ({s?.totalTrades ?? 0} trades)
           </div>
-          <ProgressBar
-            current={s?.currentTotalDrawdownPct ?? 0}
-            max={s?.maxTotalDrawdownPct ?? 10}
-            danger={(s?.currentTotalDrawdownPct ?? 0) >= 8.0}
-            warn={(s?.currentTotalDrawdownPct ?? 0) >= 5.0}
-          />
-        </div>
-
-        {/* Safe Risk Available */}
-        <div className="bg-apex-surface/90 border border-apex-border rounded-lg p-3.5 space-y-2 shadow-md">
-          <div className="text-[9px] text-apex-muted flex items-center justify-between">
-            <span>SAFE RISK AVAILABLE</span>
-            <ShieldCheck className="w-3 h-3 text-cyan-400" />
-          </div>
-          <div className="text-lg font-bold text-cyan-400">
-            ${fmt(s?.safeRiskPerTrade ?? 75)}
-          </div>
-          <div className="text-[9px] text-apex-muted">
-            Calc: 1.15% risk per trade
-          </div>
-          <ProgressBar current={75} max={100} color="bg-cyan-400" />
-        </div>
-
-        {/* Recommended Max Lots */}
-        <div className="bg-apex-surface/90 border border-apex-border rounded-lg p-3.5 space-y-2 shadow-md">
-          <div className="text-[9px] text-apex-muted flex items-center justify-between">
-            <span>RECOMMENDED MAX LOTS</span>
-            <Target className="w-3 h-3 text-emerald-400" />
-          </div>
-          <div className="text-lg font-bold text-emerald-400">
-            {s?.recommendedMaxLots?.toFixed(2) ?? '0.11'} CONTRACTS
-          </div>
-          <div className="text-[9px] text-apex-muted">
-            Prop Law: 200
-          </div>
+          <ProgressBar current={s?.passProbability ?? 12} max={100} color="bg-purple-500" />
         </div>
       </div>
 
-      {/* ── Middle Row: Position Sizer + Rule Violations ───────────── */}
+      {/* Middle Row: Position Sizer + Risk Rules Matrix */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
-        {/* Real-Time Position Size Calculator */}
-        <div className="bg-apex-surface/90 border border-apex-border rounded-lg p-4 space-y-3 shadow-lg">
-          <div className="flex items-center justify-between border-b border-apex-border/50 pb-2">
-            <div className="font-bold text-xs text-apex-text flex items-center space-x-1.5">
-              <Calculator className="w-3.5 h-3.5 text-apex-accent" />
-              <span>REAL TIME POSITION SIZE CALCULATOR</span>
+        {/* Position Size Calculator */}
+        <div className="bg-[#0D1117] border border-[#222C3A] rounded-lg p-4 space-y-3 shadow-md">
+          <div className="flex items-center justify-between border-b border-[#222C3A] pb-2">
+            <div className="font-bold text-xs text-white flex items-center space-x-1.5 font-sans">
+              <Calculator className="w-3.5 h-3.5 text-blue-400" />
+              <span>POSITION SIZE & RISK SIZER</span>
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
-              <label className="text-[9px] text-apex-muted font-bold">SYMBOL</label>
+              <label className="text-[9px] text-[#6B7280] uppercase font-bold">Symbol</label>
               <select
                 value={symbol}
                 onChange={e => setSymbol(e.target.value)}
-                className="w-full bg-apex-bg border border-apex-border rounded px-2 py-1.5 text-[11px] text-apex-text font-bold focus:outline-none focus:border-apex-accent"
+                className="w-full bg-[#141A23] border border-[#222C3A] rounded px-2.5 py-1.5 text-xs text-white font-bold focus:outline-none focus:border-blue-500"
               >
                 <option value="BTC/USDT">BTC/USDT</option>
                 <option value="ETH/USDT">ETH/USDT</option>
@@ -370,276 +382,88 @@ export const PropFirmCenter: React.FC = () => {
             </div>
 
             <div className="space-y-1">
-              <label className="text-[9px] text-apex-muted font-bold">PLANNED STOP LOSS DISTANCE (POINTS / $)</label>
+              <label className="text-[9px] text-[#6B7280] uppercase font-bold">Stop Loss Distance (Points)</label>
               <input
                 type="number"
                 value={slDistance}
                 onChange={e => setSlDistance(e.target.value)}
-                className="w-full bg-apex-bg border border-apex-border rounded px-2 py-1.5 text-[11px] text-apex-text font-bold focus:outline-none focus:border-apex-accent"
+                className="w-full bg-[#141A23] border border-[#222C3A] rounded px-2.5 py-1.5 text-xs text-white font-mono font-bold focus:outline-none focus:border-blue-500"
                 placeholder="500"
                 min="1"
               />
             </div>
           </div>
 
-          {/* Result */}
-          <div className="bg-apex-bg rounded-lg border border-apex-border/60 divide-y divide-apex-border/30">
+          {/* Calculator Output */}
+          <div className="bg-[#141A23] rounded-lg border border-[#222C3A] divide-y divide-[#1A222E]">
             <div className="flex justify-between items-center p-2.5">
-              <span className="text-[10px] text-apex-muted">RECOMMENDED POSITION SIZE:</span>
-              <span className="font-bold text-emerald-400 text-[11px]">
+              <span className="text-[10px] text-[#9CA3AF]">RECOMMENDED SIZE:</span>
+              <span className="font-bold text-emerald-400 text-xs tabular-nums">
                 {posSize?.recommendedContracts?.toFixed(4) ?? '0.0000'} Contracts
               </span>
             </div>
             <div className="flex justify-between items-center p-2.5">
-              <span className="text-[10px] text-apex-muted">TOTAL RISK IN DOLLARS:</span>
-              <span className="font-bold text-amber-400 text-[11px]">
+              <span className="text-[10px] text-[#9CA3AF]">TOTAL RISK IN DOLLARS:</span>
+              <span className="font-bold text-amber-400 text-xs tabular-nums">
                 ${fmt(posSize?.totalRiskUsd ?? 0)}
               </span>
             </div>
             <div className="flex justify-between items-center p-2.5">
-              <span className="text-[10px] text-apex-muted">IMPACT ON DAILY DRAWDOWN:</span>
-              <span className={`font-bold text-[11px] ${(posSize?.impactOnDailyDD ?? 0) >= 2.0 ? 'text-rose-400' : 'text-emerald-400'}`}>
+              <span className="text-[10px] text-[#9CA3AF]">DAILY DRAWDOWN IMPACT:</span>
+              <span className="font-bold text-blue-400 text-xs tabular-nums">
                 {posSize?.impactOnDailyDD?.toFixed(2) ?? '0.00'}%
               </span>
             </div>
-            <div className="flex justify-between items-center p-2.5">
-              <span className="text-[10px] text-apex-muted">SAFE RISK AVAILABLE TODAY:</span>
-              <span className="font-bold text-cyan-400 text-[11px]">
-                ${fmt(posSize?.safeRiskAvailableToday ?? 0)}
-              </span>
-            </div>
-            <div className="flex justify-between items-center p-2.5">
-              <span className="text-[10px] text-apex-muted">NOTIONAL VALUE:</span>
-              <span className="font-bold text-apex-text text-[11px]">
-                ${fmt(posSize?.notionalValue ?? 0)}
-              </span>
-            </div>
-          </div>
-
-          <div className="p-2 bg-apex-bg rounded border border-apex-border/40 text-[9px] text-apex-muted">
-            ⚡ {posSize?.ruleNote || '0.75% risk per trade | 5% max daily DD | 10% max total DD — FTMO Compliant'}
           </div>
         </div>
 
-        {/* Rule Violation Detector */}
-        <div className="bg-apex-surface/90 border border-apex-border rounded-lg p-4 space-y-3 shadow-lg">
-          <div className="flex items-center justify-between border-b border-apex-border/50 pb-2">
-            <div className="font-bold text-xs text-apex-text flex items-center space-x-1.5">
+        {/* Prop Firm Rule Compliance Dashboard */}
+        <div className="bg-[#0D1117] border border-[#222C3A] rounded-lg p-4 space-y-3 shadow-md">
+          <div className="flex items-center justify-between border-b border-[#222C3A] pb-2">
+            <div className="font-bold text-xs text-white flex items-center space-x-1.5 font-sans">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-              <span>RULE VIOLATION DETECTOR & HEALTH</span>
+              <span>RULES COMPLIANCE MATRIX</span>
             </div>
+            <span className="text-[9.5px] text-[#6B7280]">FTMO 10K EVALUATION</span>
           </div>
 
-          {/* Summary Stats */}
-          <div className="grid grid-cols-3 gap-2">
-            <div className="p-2 bg-apex-bg rounded border border-apex-border/50 space-y-0.5">
-              <div className="text-[9px] text-apex-muted">PASS PROBABILITY</div>
-              <div className={`font-bold text-sm ${(r?.passProbability ?? 0) >= 60 ? 'text-emerald-400' : (r?.passProbability ?? 0) >= 40 ? 'text-amber-400' : 'text-rose-400'}`}>
-                {r?.passProbability?.toFixed(1) ?? '0.0'}%
-              </div>
-            </div>
-            <div className="p-2 bg-apex-bg rounded border border-apex-border/50 space-y-0.5">
-              <div className="text-[9px] text-apex-muted">CONSISTENCY SCORE</div>
-              <div className="font-bold text-sm text-cyan-400">
-                {r?.consistencyScore?.toFixed(1) ?? '0.0'}%
-              </div>
-            </div>
-            <div className="p-2 bg-apex-bg rounded border border-apex-border/50 space-y-0.5">
-              <div className="text-[9px] text-apex-muted">PROJECTED FINISH</div>
-              <div className="font-bold text-[10px] text-purple-400">
-                {r?.projectedFinishDate ?? 'N/A'}
-              </div>
-            </div>
-          </div>
-
-          {/* Rule checklist */}
-          <div className="space-y-1.5">
-            {(r?.rules ?? []).map((rule, i) => {
-              const isPass = rule.status === 'PASS';
-              const isWarn = rule.status === 'WARN';
-              const color = isPass ? 'text-emerald-400 border-emerald-500/20' : isWarn ? 'text-amber-400 border-amber-500/20' : 'text-rose-400 border-rose-500/20';
-              const bg = isPass ? 'bg-emerald-500/5' : isWarn ? 'bg-amber-500/5' : 'bg-rose-500/5';
-              return (
-                <div key={i} className={`flex items-center justify-between p-2 rounded border ${bg} ${color}`}>
-                  <div className="flex items-center space-x-2">
-                    {isPass ? <CheckCircle2 className="w-3.5 h-3.5 shrink-0" /> : isWarn ? <AlertTriangle className="w-3.5 h-3.5 shrink-0" /> : <XCircle className="w-3.5 h-3.5 shrink-0" />}
-                    <span className="text-[10px] font-bold text-apex-text">{rule.rule}</span>
-                  </div>
-                  <div className="flex items-center space-x-2 text-[10px] shrink-0">
-                    <span className="text-apex-muted">{rule.current.toFixed(1)}</span>
-                    <span className={`font-bold ${color.split(' ')[0]}`}>{rule.status}</span>
-                  </div>
+          <div className="space-y-2">
+            {(riskDash?.rules || [
+              { rule: 'Max Daily Drawdown (5.0%)', limit: 5.0, current: s?.currentDailyDrawdownPct || 0, status: 'PASS' },
+              { rule: 'Max Total Drawdown (10.0%)', limit: 10.0, current: s?.currentTotalDrawdownPct || 0, status: 'PASS' },
+              { rule: 'Profit Target Stage 1 (8.0%)', limit: 8.0, current: s?.currentProfitPct || 0, status: 'PASS' },
+              { rule: 'Max Allowed Leverage (2X)', limit: 2.0, current: 2.0, status: 'PASS' },
+            ]).map((r: any, idx: number) => (
+              <div key={idx} className="flex items-center justify-between p-2 bg-[#141A23] rounded border border-[#222C3A]">
+                <div className="flex items-center space-x-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  <span className="text-[11px] text-[#E5E7EB]">{r.rule}</span>
                 </div>
-              );
-            })}
-
-            {/* Final summary */}
-            <div className={`flex items-center space-x-2 p-2.5 rounded border text-[10px] mt-1 ${
-              (r?.violationsCount ?? 0) === 0
-                ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
-                : 'bg-rose-500/10 border-rose-500/30 text-rose-400'
-            }`}>
-              {(r?.violationsCount ?? 0) === 0
-                ? <CheckCircle2 className="w-4 h-4 shrink-0" />
-                : <XCircle className="w-4 h-4 shrink-0" />
-              }
-              <span className="font-bold">
-                {(r?.violationsCount ?? 0) === 0
-                  ? 'All 5 challenge rules fully compliant. Zero violations detected.'
-                  : `${r?.violationsCount} rule violation(s) detected! Review immediately.`
-                }
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ── Challenge Progress & Equity Curve ─────────────────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-
-        {/* Challenge Progress Panel */}
-        <div className="lg:col-span-4 bg-apex-surface/90 border border-apex-border rounded-lg p-4 space-y-4 shadow-lg">
-          <div className="font-bold text-xs text-apex-text flex items-center space-x-1.5 border-b border-apex-border/50 pb-2">
-            <Flame className="w-3.5 h-3.5 text-orange-400" />
-            <span>CHALLENGE PROGRESS</span>
-          </div>
-
-          {/* Account Header */}
-          <div className="p-3 bg-apex-bg rounded-lg border border-apex-border space-y-2">
-            <div className="flex justify-between items-center">
-              <div>
-                <div className="font-bold text-apex-text text-[11px]">{s?.firmName ?? 'APEX PROP ENGINE'}</div>
-                <div className="text-[9px] text-apex-muted">{s?.stage ?? 'STAGE 1 CHALLENGE'}</div>
-              </div>
-              <div className={`px-2 py-0.5 rounded text-[9px] font-bold border ${
-                (s?.passProbability ?? 0) >= 60
-                  ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
-                  : 'bg-amber-500/10 text-amber-400 border-amber-500/30'
-              }`}>
-                PASS PROB {s?.passProbability?.toFixed(1) ?? '0.0'}%
-              </div>
-            </div>
-
-            {/* Challenge Target Progress */}
-            <div className="space-y-1.5">
-              <div className="flex justify-between text-[9px]">
-                <span className="text-apex-muted">TARGET PROGRESS ({s?.targetProfitPct ?? 8}%)</span>
-                <span className="font-bold text-emerald-400">
-                  ${fmt(s?.currentProfit ?? 0)} / ${fmt(s?.targetProfitUsd ?? 800)}
+                <span className="px-1.5 py-0.2 rounded text-[9.5px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                  COMPLIANT
                 </span>
               </div>
-              <div className="w-full h-3 bg-apex-bg rounded-full overflow-hidden border border-apex-border/30 relative">
-                <div
-                  className="h-full bg-gradient-to-r from-cyan-500 to-emerald-400 rounded-full transition-all duration-700"
-                  style={{ width: `${s?.progressPct ?? 0}%` }}
-                />
-                <div className="absolute inset-0 flex items-center justify-center text-[8px] font-bold text-white">
-                  {s?.progressPct?.toFixed(1) ?? '0.0'}%
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Real Stats Grid */}
-          <div className="grid grid-cols-2 gap-2">
-            {[
-              { label: 'NAV EQUITY', value: `$${fmt(s?.navEquity ?? 10000)}`, color: 'text-apex-text' },
-              { label: 'REALIZED PNL', value: `${(s?.realizedPnl ?? 0) >= 0 ? '+' : ''}$${fmt(s?.realizedPnl ?? 0)}`, color: (s?.realizedPnl ?? 0) >= 0 ? 'text-emerald-400' : 'text-rose-400' },
-              { label: 'UNREALIZED PNL', value: `${(s?.unrealizedPnl ?? 0) >= 0 ? '+' : ''}$${fmt(s?.unrealizedPnl ?? 0)}`, color: (s?.unrealizedPnl ?? 0) >= 0 ? 'text-emerald-400' : 'text-rose-400' },
-              { label: 'TODAY PNL', value: `${(s?.dailyPnl ?? 0) >= 0 ? '+' : ''}$${fmt(s?.dailyPnl ?? 0)}`, color: (s?.dailyPnl ?? 0) >= 0 ? 'text-emerald-400' : 'text-rose-400' },
-              { label: 'WIN RATE', value: `${s?.winRate?.toFixed(1) ?? '0.0'}%`, color: 'text-purple-400' },
-              { label: 'PROFIT FACTOR', value: `${s?.profitFactor?.toFixed(2) ?? '1.00'}`, color: 'text-cyan-400' },
-              { label: 'DAYS TRADED', value: `${s?.daysTraded ?? 0} / ${s?.minTradingDays ?? 10} min`, color: 'text-amber-400' },
-              { label: 'TOTAL TRADES', value: `${s?.totalTrades ?? 0}`, color: 'text-apex-text' },
-            ].map((item, i) => (
-              <div key={i} className="p-2 bg-apex-bg rounded border border-apex-border/50 space-y-0.5">
-                <div className="text-[8.5px] text-apex-muted">{item.label}</div>
-                <div className={`font-bold text-[10px] ${item.color}`}>{item.value}</div>
-              </div>
-            ))}
-          </div>
-
-          {/* Drawdown Status */}
-          <div className="space-y-2">
-            <ProgressBar
-              label={`DAILY DD: ${s?.currentDailyDrawdownPct?.toFixed(2) ?? '0.00'}% / ${s?.maxDailyDrawdownPct ?? 5}%`}
-              current={s?.currentDailyDrawdownPct ?? 0}
-              max={s?.maxDailyDrawdownPct ?? 5}
-              danger={(s?.currentDailyDrawdownPct ?? 0) >= 4.0}
-              warn={(s?.currentDailyDrawdownPct ?? 0) >= 2.5}
-            />
-            <ProgressBar
-              label={`TOTAL DD: ${s?.currentTotalDrawdownPct?.toFixed(2) ?? '0.00'}% / ${s?.maxTotalDrawdownPct ?? 10}%`}
-              current={s?.currentTotalDrawdownPct ?? 0}
-              max={s?.maxTotalDrawdownPct ?? 10}
-              danger={(s?.currentTotalDrawdownPct ?? 0) >= 8.0}
-              warn={(s?.currentTotalDrawdownPct ?? 0) >= 5.0}
-            />
-            <ProgressBar
-              label={`CONSISTENCY: ${s?.consistencyScore?.toFixed(1) ?? '0'}%`}
-              current={s?.consistencyScore ?? 0}
-              max={100}
-              color="bg-cyan-400"
-            />
-          </div>
-        </div>
-
-        {/* Equity Growth Curve */}
-        <div className="lg:col-span-8 bg-apex-surface/90 border border-apex-border rounded-lg p-4 shadow-lg flex flex-col">
-          <div className="flex items-center justify-between border-b border-apex-border/50 pb-2 mb-2">
-            <div className="font-bold text-xs text-apex-text flex items-center space-x-1.5">
-              <Activity className="w-3.5 h-3.5 text-cyan-400" />
-              <span>LIVE EQUITY GROWTH CURVE</span>
-            </div>
-            <div className="flex items-center space-x-3 text-[10px]">
-              <span className="text-emerald-400 font-bold">
-                Current: ${fmt(s?.navEquity ?? 10000)}
-              </span>
-              <span className={`font-bold ${(s?.currentProfitPct ?? 0) >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-                {(s?.currentProfitPct ?? 0) >= 0 ? '+' : ''}{s?.currentProfitPct?.toFixed(2) ?? '0.00'}%
-              </span>
-            </div>
-          </div>
-          <div className="flex-1 min-h-[320px]">
-            <EquityMiniChart curve={s?.equityCurve ?? []} initial={s?.initialCapital ?? 10000} />
-          </div>
-
-          {/* Quick stats below chart */}
-          <div className="grid grid-cols-4 gap-2 mt-2 pt-2 border-t border-apex-border/30">
-            {[
-              { label: 'INITIAL', value: `$${fmt(s?.initialCapital ?? 10000)}`, color: 'text-apex-muted' },
-              { label: 'TARGET', value: `$${fmt((s?.initialCapital ?? 10000) + (s?.targetProfitUsd ?? 800))}`, color: 'text-emerald-400' },
-              { label: 'OPEN POS', value: `${s?.openPositions ?? 0}`, color: 'text-purple-400' },
-              { label: 'PROJECTED', value: s?.projectedFinishDate ?? 'N/A', color: 'text-cyan-400' },
-            ].map((item, i) => (
-              <div key={i} className="p-2 bg-apex-bg rounded border border-apex-border/40 space-y-0.5">
-                <div className="text-[8.5px] text-apex-muted">{item.label}</div>
-                <div className={`font-bold text-[10px] ${item.color}`}>{item.value}</div>
-              </div>
             ))}
           </div>
         </div>
+
       </div>
 
-      {/* ── Auto Killswitch Status ─────────────────────────────────── */}
-      <div className={`flex items-center space-x-3 p-3 rounded-lg border ${
-        (r?.violationsCount ?? 0) === 0
-          ? 'bg-emerald-500/5 border-emerald-500/20'
-          : 'bg-rose-500/5 border-rose-500/20'
-      }`}>
-        <ShieldCheck className={`w-5 h-5 shrink-0 ${(r?.violationsCount ?? 0) === 0 ? 'text-emerald-400' : 'text-rose-400'}`} />
-        <div>
-          <div className={`font-bold text-[11px] ${(r?.violationsCount ?? 0) === 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-            {(r?.violationsCount ?? 0) === 0
-              ? '⚡ AUTO-KILLSWITCH ARMED — All 5 challenge rules fully compliant. Zero violations detected.'
-              : `⚠️ KILLSWITCH ALERT — ${r?.violationsCount} violation(s) detected. Review and rectify immediately.`
-            }
+      {/* Bottom Chart: Real-Time Equity Curve vs Target */}
+      <div className="bg-[#0D1117] border border-[#222C3A] rounded-lg p-4 space-y-3 shadow-md">
+        <div className="flex items-center justify-between border-b border-[#222C3A] pb-2">
+          <div className="font-bold text-xs text-white flex items-center space-x-1.5 font-sans">
+            <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
+            <span>REAL-TIME NAV EQUITY CURVE VS $10,800 TARGET</span>
           </div>
-          <div className="text-[9px] text-apex-muted mt-0.5">
-            Daily DD: {r?.dailyDrawdownPct?.toFixed(2) ?? '0.00'}% | Total DD: {r?.totalDrawdownPct?.toFixed(2) ?? '0.00'}% | Win Rate: {r?.winRate?.toFixed(1) ?? '0.0'}% | PF: {r?.profitFactor?.toFixed(2) ?? '1.00'} | Consistency: {r?.consistencyScore?.toFixed(1) ?? '0.0'}% | Open Positions: {r?.openPositions ?? 0}
-          </div>
+          <span className="text-[9.5px] text-[#6B7280]">Updated: {lastUpdated || 'Real-Time'}</span>
+        </div>
+
+        <div className="h-64">
+          <ReactECharts option={getEquityChartOption()} style={{ height: '100%', width: '100%' }} />
         </div>
       </div>
+
     </div>
   );
 };

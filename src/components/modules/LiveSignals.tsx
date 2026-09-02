@@ -521,8 +521,18 @@ const LiveSignalsContent: React.FC = () => {
     try {
       const d = await SignalsService.fetchLiveSignals();
       if (Array.isArray(d)) {
-        setSig(d.filter(Boolean));
-        if (setGlobalSignals) setGlobalSignals(d.filter(Boolean));
+        // CRITICAL: Filter out any signal that is NOT truly active
+        const isActive = (s: any) => {
+          if (!s) return false;
+          const st = String(s.status || '').toUpperCase();
+          if (st.startsWith('CLOSED_') || st === 'SL_HIT' || st === 'TP1_HIT' ||
+              st === 'TP2_HIT' || st === 'TP3_HIT' || st === 'CLOSED' ||
+              st === 'EXPIRED' || st === 'CANCELLED') return false;
+          return true;
+        };
+        const activeOnly = d.filter(isActive);
+        setSig(activeOnly);
+        if (setGlobalSignals) setGlobalSignals(activeOnly);
         setLU(new Date());
       }
     } catch (e) {
@@ -582,8 +592,17 @@ const LiveSignalsContent: React.FC = () => {
 
   // The API is expected to send active signals only; keep this guard so a
   // completed/expired signal can never remain in the Active Signals panel.
+  // Double filter: only show signals that are genuinely active (not closed/expired)
+  const ACTIVE_STATUSES = new Set(['ACTIVE', 'PENDING', 'CONFIRMED', 'OPEN']);
+  const CLOSED_PREFIXES = ['CLOSED_', 'SL_HIT', 'TP1_HIT', 'TP2_HIT', 'TP3_HIT'];
   const sigs = Array.isArray(signals)
-    ? signals.filter(signal => signal && (['ACTIVE', 'PENDING', 'CONFIRMED', 'OPEN'].includes(String(signal.status || '').toUpperCase())))
+    ? signals.filter(signal => {
+        if (!signal) return false;
+        const st = String(signal.status || '').toUpperCase();
+        if (CLOSED_PREFIXES.some(p => st.startsWith(p) || st === p)) return false;
+        if (st === 'CLOSED' || st === 'EXPIRED' || st === 'CANCELLED') return false;
+        return ACTIVE_STATUSES.has(st);
+      })
     : [];
   const hist = Array.isArray(history) ? history.filter(Boolean) : [];
   const selectedTargets = signalTargets(selected);
@@ -686,7 +705,7 @@ const LiveSignalsContent: React.FC = () => {
           {selected ? (
             <>
               {/* Chart takes the top portion — fixed height for proper proportions */}
-              <div className="h-[380px] shrink-0 border-b border-apex-border">
+              <div className="h-[560px] shrink-0 border-b border-apex-border">
                 <ApexCandleChart symbol={selected.symbol} signal={selected as any}/>
               </div>
               {/* Details below */}

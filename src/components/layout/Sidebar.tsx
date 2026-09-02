@@ -22,87 +22,128 @@ import {
   ShieldAlert
 } from 'lucide-react';
 
-interface NavItem {
-  id: ModuleView;
-  label: string;
-  icon: React.ElementType;
-  badge?: string;
-  isAi?: boolean;
+interface NavSection {
+  title?: string;
+  items: Array<{
+    id: ModuleView;
+    label: string;
+    icon: React.ElementType;
+    badge?: string;
+    isAi?: boolean;
+  }>;
 }
 
 export const Sidebar: React.FC = () => {
   const { activeModule, setActiveModule, logout, positions = [], signals = [] } = useTerminal();
-  const safePositions = Array.isArray(positions) ? positions : [];
-  const safeSignals = Array.isArray(signals) ? signals : [];
+  const safePositions = Array.isArray(positions) ? positions.filter(p => p && String(p.status || 'OPEN').toUpperCase() === 'OPEN') : [];
+  const safeSignals = Array.isArray(signals) ? signals.filter(s => s && String(s.status || 'ACTIVE').toUpperCase() === 'ACTIVE') : [];
 
-  const navItems: NavItem[] = [
-    { id: 'login', label: 'Auth Gate', icon: LogIn },
-    { id: 'home', label: 'Mission Control', icon: LayoutDashboard },
-    { id: 'trades', label: 'Live Trades', icon: TrendingUp, badge: safePositions.length ? `${safePositions.length}` : undefined },
-    { id: 'command-center', label: 'Command Center', icon: SlidersHorizontal, badge: 'LIVE' },
-    { id: 'signals', label: 'AI Signals', icon: Zap, badge: `${safeSignals.length}`, isAi: true },
-    { id: 'backtest', label: 'Backtest Lab', icon: FlaskConical },
-    { id: 'prop-firm', label: 'Prop Firm Center', icon: ShieldCheck },
-    { id: 'intelligence', label: 'Intelligence', icon: BrainCircuit },
-    { id: 'news', label: 'AI News Feed', icon: Newspaper, isAi: true },
-    { id: 'portfolio', label: 'Portfolio', icon: PieChart },
-    { id: 'journal', label: 'Trade Journal', icon: BookOpen },
-    { id: 'analytics', label: 'Analytics', icon: BarChart3 },
-    { id: 'copilot', label: 'XR AI Chat', icon: Bot, badge: 'PRO', isAi: true },
-    { id: 'team', label: 'Team Hub', icon: Users },
-    { id: 'automation', label: 'Automation', icon: Sliders },
-    { id: 'server', label: 'Server Center', icon: Server },
-    { id: 'admin', label: 'Admin Master API', icon: ShieldAlert, badge: 'API' },
-    { id: 'settings', label: 'Settings', icon: Settings },
+  const sections: NavSection[] = [
+    {
+      title: "TRADING",
+      items: [
+        { id: 'home', label: 'Mission Control', icon: LayoutDashboard },
+        { id: 'trades', label: 'Live Trades', icon: TrendingUp, badge: safePositions.length > 0 ? `${safePositions.length}` : undefined },
+        { id: 'command-center', label: 'Command Center', icon: SlidersHorizontal, badge: 'LIVE' },
+        { id: 'signals', label: 'AI Signals', icon: Zap, badge: safeSignals.length > 0 ? `${safeSignals.length}` : undefined, isAi: true },
+      ]
+    },
+    {
+      title: "QUANT & PROP",
+      items: [
+        { id: 'prop-firm', label: 'Prop Firm Center', icon: ShieldCheck },
+        { id: 'portfolio', label: 'Portfolio Analytics', icon: PieChart },
+        { id: 'backtest', label: 'Backtest Lab', icon: FlaskConical },
+        { id: 'analytics', label: 'Execution Metrics', icon: BarChart3 },
+      ]
+    },
+    {
+      title: "INTELLIGENCE",
+      items: [
+        { id: 'intelligence', label: 'Market Radar', icon: BrainCircuit },
+        { id: 'copilot', label: 'XR AI Copilot', icon: Bot, badge: 'PRO', isAi: true },
+        { id: 'news', label: 'Macro News Feed', icon: Newspaper, isAi: true },
+        { id: 'journal', label: 'Trade Journal', icon: BookOpen },
+      ]
+    },
+    {
+      title: "SYSTEM",
+      items: [
+        { id: 'automation', label: 'Automation & Hooks', icon: Sliders },
+        { id: 'server', label: 'Server Center', icon: Server },
+        { id: 'admin', label: 'Admin Master API', icon: ShieldAlert, badge: 'API' },
+        { id: 'settings', label: 'Terminal Settings', icon: Settings },
+      ]
+    }
   ];
 
   return (
-    <aside className="w-14 hover:w-56 transition-all duration-150 bg-apex-bgSecondary border-r border-apex-border flex flex-col justify-between z-20 shrink-0 group overflow-hidden">
+    <aside className="w-12 hover:w-56 transition-all duration-150 ease-out bg-[#0D1117] border-r border-[#222C3A] flex flex-col justify-between z-20 shrink-0 group overflow-hidden shadow-xl">
       {/* Top Module Items */}
-      <div className="py-2 space-y-0.5 overflow-y-auto no-scrollbar">
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = activeModule === item.id;
-          return (
-            <button
-              key={item.id}
-              onClick={() => item.id === 'login' ? logout() : setActiveModule(item.id)}
-              className={`w-full h-9 px-3.5 flex items-center space-x-3 transition-apex relative text-xs font-medium ${
-                isActive 
-                  ? 'bg-apex-surface text-apex-accent border-r-2 border-apex-accent' 
-                  : 'text-apex-muted hover:text-apex-text hover:bg-apex-hover'
-              }`}
-              title={item.label}
-            >
-              <Icon className={`w-4 h-4 shrink-0 ${
-                isActive 
-                  ? 'text-apex-accent' 
-                  : item.isAi 
-                    ? 'text-apex-ai' 
-                    : 'text-apex-muted group-hover:text-apex-textSecondary'
-              }`} />
-              <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-150">
-                {item.label}
-              </span>
-              
-              {/* Badge counter */}
-              {item.badge && (
-                <span className={`ml-auto opacity-0 group-hover:opacity-100 text-[10px] font-mono font-medium px-1.5 py-0.2 rounded ${
-                  item.isAi ? 'bg-apex-ai/15 text-apex-ai border border-apex-ai/30' : 'bg-apex-surface text-apex-textSecondary border border-apex-border'
-                }`}>
-                  {item.badge}
-                </span>
-              )}
-            </button>
-          );
-        })}
+      <div className="py-2 overflow-y-auto no-scrollbar space-y-3">
+        {sections.map((sec, sIdx) => (
+          <div key={sIdx} className="space-y-0.5">
+            {sec.title && (
+              <div className="px-3 py-1 text-[8.5px] font-bold tracking-wider text-[#6B7280] uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-150 font-mono">
+                {sec.title}
+              </div>
+            )}
+            {sec.items.map((item) => {
+              const Icon = item.icon;
+              const isActive = activeModule === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => setActiveModule(item.id)}
+                  className={`w-full h-8 px-3 flex items-center space-x-2.5 transition-apex relative text-xs font-medium ${
+                    isActive 
+                      ? 'bg-blue-500/10 text-white font-semibold' 
+                      : 'text-[#9CA3AF] hover:text-white hover:bg-[#141A23]'
+                  }`}
+                  title={item.label}
+                >
+                  {/* Active Indicator Strip */}
+                  {isActive && (
+                    <div className="absolute left-0 top-1 bottom-1 w-0.5 bg-blue-400 rounded-r shadow-[0_0_8px_rgba(59,130,246,0.8)]" />
+                  )}
+
+                  <Icon className={`w-3.5 h-3.5 shrink-0 ${
+                    isActive 
+                      ? 'text-blue-400' 
+                      : item.isAi 
+                        ? 'text-purple-400' 
+                        : 'text-[#6B7280] group-hover:text-[#9CA3AF]'
+                  }`} />
+                  
+                  <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-150 text-[11.5px] font-sans">
+                    {item.label}
+                  </span>
+                  
+                  {/* Badge counter */}
+                  {item.badge && (
+                    <span className={`ml-auto opacity-0 group-hover:opacity-100 text-[9px] font-mono font-bold px-1.5 py-0.2 rounded ${
+                      item.isAi ? 'bg-purple-500/15 text-purple-300 border border-purple-500/30' : 'bg-[#1A222E] text-[#9CA3AF] border border-[#2B384B]'
+                    }`}>
+                      {item.badge}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        ))}
       </div>
 
       {/* Footer System Status */}
-      <div className="p-2.5 border-t border-apex-border bg-apex-bg text-[10px] font-mono text-apex-muted flex items-center justify-center group-hover:justify-between px-3">
-        <div className="w-1.5 h-1.5 rounded-full bg-apex-success shrink-0" />
-        <span className="hidden group-hover:inline opacity-0 group-hover:opacity-100 transition-opacity uppercase tracking-wider">
-          EVENT ENGINE ACTIVE
+      <div className="p-2 border-t border-[#222C3A] bg-[#080A0D] text-[9.5px] font-mono text-[#6B7280] flex items-center justify-center group-hover:justify-between px-3">
+        <div className="flex items-center space-x-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 live-pulse-green shrink-0" />
+          <span className="hidden group-hover:inline opacity-0 group-hover:opacity-100 transition-opacity uppercase tracking-wider font-bold text-[#9CA3AF]">
+            ENGINE ONLINE
+          </span>
+        </div>
+        <span className="hidden group-hover:inline opacity-0 group-hover:opacity-100 text-[8.5px] text-[#6B7280]">
+          v5.2
         </span>
       </div>
     </aside>

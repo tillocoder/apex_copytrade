@@ -128,7 +128,7 @@
   "tradeHistory": [
     {
       "id": "pos_solusdt_1786906307",
-      "account": "PAPER EXECUTION \u00b7 REAL BINANCE DATA",
+      "account": "PAPER EXECUTION · REAL BINANCE DATA",
       "symbol": "SOL/USDT",
       "side": "SELL",
       "entryPrice": 75.23,
@@ -181,7 +181,7 @@
     },
     {
       "id": "pos_ethusdt_1786921436",
-      "account": "PAPER EXECUTION \u00b7 REAL BINANCE DATA",
+      "account": "PAPER EXECUTION · REAL BINANCE DATA",
       "symbol": "ETH/USDT",
       "side": "SELL",
       "entryPrice": 1876.43,
@@ -234,7 +234,7 @@
     },
     {
       "id": "pos_solusdt_1786924187",
-      "account": "PAPER EXECUTION \u00b7 REAL BINANCE DATA",
+      "account": "PAPER EXECUTION · REAL BINANCE DATA",
       "symbol": "SOL/USDT",
       "side": "SELL",
       "entryPrice": 74.63,
@@ -287,7 +287,7 @@
     },
     {
       "id": "pos_solusdt_1786953797",
-      "account": "PAPER EXECUTION \u00b7 REAL BINANCE DATA",
+      "account": "PAPER EXECUTION · REAL BINANCE DATA",
       "symbol": "SOL/USDT",
       "side": "BUY",
       "entryPrice": 75.73,
@@ -340,7 +340,7 @@
     },
     {
       "id": "pos_btcusdt_1786977285",
-      "account": "PAPER EXECUTION \u00b7 REAL BINANCE DATA",
+      "account": "PAPER EXECUTION · REAL BINANCE DATA",
       "symbol": "BTC/USDT",
       "side": "BUY",
       "entryPrice": 63692.04,
@@ -393,7 +393,7 @@
     },
     {
       "id": "pos_ethusdt_1786982801",
-      "account": "PAPER EXECUTION \u00b7 REAL BINANCE DATA",
+      "account": "PAPER EXECUTION · REAL BINANCE DATA",
       "symbol": "ETH/USDT",
       "side": "BUY",
       "entryPrice": 1911.53,
@@ -446,7 +446,7 @@
     },
     {
       "id": "pos_btcusdt_1786981879",
-      "account": "PAPER EXECUTION \u00b7 REAL BINANCE DATA",
+      "account": "PAPER EXECUTION · REAL BINANCE DATA",
       "symbol": "BTC/USDT",
       "side": "BUY",
       "entryPrice": 64189.3,
@@ -499,7 +499,7 @@
     },
     {
       "id": "pos_ethusdt_1787037670",
-      "account": "PAPER EXECUTION \u00b7 REAL BINANCE DATA",
+      "account": "PAPER EXECUTION · REAL BINANCE DATA",
       "symbol": "ETH/USDT",
       "side": "BUY",
       "entryPrice": 1901.32,
@@ -552,7 +552,7 @@
     },
     {
       "id": "pos_ethusdt_1787146882",
-      "account": "PAPER EXECUTION \u00b7 REAL BINANCE DATA",
+      "account": "PAPER EXECUTION · REAL BINANCE DATA",
       "symbol": "ETH/USDT",
       "side": "BUY",
       "entryPrice": 1930.5,
@@ -605,7 +605,7 @@
     },
     {
       "id": "pos_solusdt_1787150855",
-      "account": "PAPER EXECUTION \u00b7 REAL BINANCE DATA",
+      "account": "PAPER EXECUTION · REAL BINANCE DATA",
       "symbol": "SOL/USDT",
       "side": "BUY",
       "entryPrice": 79.11,
@@ -658,7 +658,7 @@
     },
     {
       "id": "pos_solusdt_1787241136",
-      "account": "PAPER EXECUTION \u00b7 REAL BINANCE DATA",
+      "account": "PAPER EXECUTION · REAL BINANCE DATA",
       "symbol": "SOL/USDT",
       "side": "SELL",
       "entryPrice": 87.31,
@@ -711,7 +711,7 @@
     },
     {
       "id": "pos_btcusdt_1787249097",
-      "account": "PAPER EXECUTION \u00b7 REAL BINANCE DATA",
+      "account": "PAPER EXECUTION · REAL BINANCE DATA",
       "symbol": "BTC/USDT",
       "side": "SELL",
       "entryPrice": 72615.94,
@@ -764,7 +764,7 @@
     },
     {
       "id": "pos_solusdt_1787268067",
-      "account": "PAPER EXECUTION \u00b7 REAL BINANCE DATA",
+      "account": "PAPER EXECUTION · REAL BINANCE DATA",
       "symbol": "SOL/USDT",
       "side": "SELL",
       "entryPrice": 87.51,
@@ -817,7 +817,7 @@
     },
     {
       "id": "pos_btcusdt_1787282198",
-      "account": "PAPER EXECUTION \u00b7 REAL BINANCE DATA",
+      "account": "PAPER EXECUTION · REAL BINANCE DATA",
       "symbol": "BTC/USDT",
       "side": "SELL",
       "entryPrice": 74399.16,
@@ -870,7 +870,7 @@
     },
     {
       "id": "pos_btcusdt_1787284353",
-      "account": "PAPER EXECUTION \u00b7 REAL BINANCE DATA",
+      "account": "PAPER EXECUTION · REAL BINANCE DATA",
       "symbol": "BTC/USDT",
       "side": "SELL",
       "entryPrice": 74744.0,
@@ -923,7 +923,7 @@
     },
     {
       "id": "pos_solusdt_1787288630",
-      "account": "PAPER EXECUTION \u00b7 REAL BINANCE DATA",
+      "account": "PAPER EXECUTION · REAL BINANCE DATA",
       "symbol": "SOL/USDT",
       "side": "SELL",
       "entryPrice": 89.36,
@@ -976,7 +976,7 @@
     },
     {
       "id": "pos_btcusdt_1787291075",
-      "account": "PAPER EXECUTION \u00b7 REAL BINANCE DATA",
+      "account": "PAPER EXECUTION · REAL BINANCE DATA",
       "symbol": "BTC/USDT",
       "side": "SELL",
       "entryPrice": 75297.06,
@@ -1029,7 +1029,7 @@
     },
     {
       "id": "pos_btcusdt_1787295942",
-      "account": "PAPER EXECUTION \u00b7 REAL BINANCE DATA",
+      "account": "PAPER EXECUTION · REAL BINANCE DATA",
       "symbol": "BTC/USDT",
       "side": "SELL",
       "entryPrice": 75724.0,
@@ -1082,7 +1082,7 @@
     },
     {
       "id": "pos_solusdt_1787297485",
-      "account": "PAPER EXECUTION \u00b7 REAL BINANCE DATA",
+      "account": "PAPER EXECUTION · REAL BINANCE DATA",
       "symbol": "SOL/USDT",
       "side": "SELL",
       "entryPrice": 90.23,
@@ -1135,7 +1135,7 @@
     },
     {
       "id": "pos_btcusdt_1787315013",
-      "account": "PAPER EXECUTION \u00b7 REAL BINANCE DATA",
+      "account": "PAPER EXECUTION · REAL BINANCE DATA",
       "symbol": "BTC/USDT",
       "side": "SELL",
       "entryPrice": 76794.23,
@@ -1188,7 +1188,7 @@
     },
     {
       "id": "pos_solusdt_1787308286",
-      "account": "PAPER EXECUTION \u00b7 REAL BINANCE DATA",
+      "account": "PAPER EXECUTION · REAL BINANCE DATA",
       "symbol": "SOL/USDT",
       "side": "SELL",
       "entryPrice": 91.27,
@@ -1241,7 +1241,7 @@
     },
     {
       "id": "pos_btcusdt_1787319611",
-      "account": "PAPER EXECUTION \u00b7 REAL BINANCE DATA",
+      "account": "PAPER EXECUTION · REAL BINANCE DATA",
       "symbol": "BTC/USDT",
       "side": "BUY",
       "entryPrice": 77023.04,
@@ -1294,7 +1294,7 @@
     },
     {
       "id": "pos_solusdt_1787349961",
-      "account": "PAPER EXECUTION \u00b7 REAL BINANCE DATA",
+      "account": "PAPER EXECUTION · REAL BINANCE DATA",
       "symbol": "SOL/USDT",
       "side": "SELL",
       "entryPrice": 93.92,
@@ -1347,7 +1347,7 @@
     },
     {
       "id": "pos_solusdt_1787354832",
-      "account": "PAPER EXECUTION \u00b7 REAL BINANCE DATA",
+      "account": "PAPER EXECUTION · REAL BINANCE DATA",
       "symbol": "SOL/USDT",
       "side": "SELL",
       "entryPrice": 94.64,
@@ -1400,7 +1400,7 @@
     },
     {
       "id": "pos_btcusdt_1787348120",
-      "account": "PAPER EXECUTION \u00b7 REAL BINANCE DATA",
+      "account": "PAPER EXECUTION · REAL BINANCE DATA",
       "symbol": "BTC/USDT",
       "side": "SELL",
       "entryPrice": 78415.73,
@@ -1453,7 +1453,7 @@
     },
     {
       "id": "pos_solusdt_1787356378",
-      "account": "PAPER EXECUTION \u00b7 REAL BINANCE DATA",
+      "account": "PAPER EXECUTION · REAL BINANCE DATA",
       "symbol": "SOL/USDT",
       "side": "SELL",
       "entryPrice": 93.64,
@@ -1506,7 +1506,7 @@
     },
     {
       "id": "pos_btcusdt_1787367955",
-      "account": "PAPER EXECUTION \u00b7 REAL BINANCE DATA",
+      "account": "PAPER EXECUTION · REAL BINANCE DATA",
       "symbol": "BTC/USDT",
       "side": "BUY",
       "entryPrice": 78581.27,
@@ -1559,7 +1559,7 @@
     },
     {
       "id": "pos_solusdt_1787375507",
-      "account": "PAPER EXECUTION \u00b7 REAL BINANCE DATA",
+      "account": "PAPER EXECUTION · REAL BINANCE DATA",
       "symbol": "SOL/USDT",
       "side": "BUY",
       "entryPrice": 89.47,
@@ -1612,7 +1612,7 @@
     },
     {
       "id": "pos_solusdt_1787375825",
-      "account": "PAPER EXECUTION \u00b7 REAL BINANCE DATA",
+      "account": "PAPER EXECUTION · REAL BINANCE DATA",
       "symbol": "SOL/USDT",
       "side": "BUY",
       "entryPrice": 92.31,
