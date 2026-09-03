@@ -1339,20 +1339,9 @@ def generate_signals() -> List[Dict[str, Any]]:
         except Exception as e:
             logger.error(f"[ENGINE ERROR] Failed signal evaluation for {sym}: {e}", exc_info=True)
 
-    # Save to history & dispatch Telegram alerts
+    # Save to history (Execution manager will dispatch real trade notification when position opens)
     if generated_signals:
         _cache_ts = now
-        try:
-            from backend.telegram_bot import telegram_notifier
-            for sig in generated_signals:
-                try:
-                    if sig.get("status") in ("PENDING", "CONFIRMED"):
-                        msg_id = telegram_notifier.send_ai_signal_notification(sig)
-                        sig["telegram_message_id"] = msg_id
-                except Exception as tg_err:
-                    logger.error(f"Telegram notifier error: {tg_err}")
-        except Exception:
-            pass
 
         merged_history = generated_signals + get_signals_history()
         # Keep 60-day history window

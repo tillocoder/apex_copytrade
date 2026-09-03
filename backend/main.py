@@ -150,7 +150,7 @@ async def periodic_signals_task():
             for s in signals:
                 SignalsRepository.save_or_update(s)
                 sig_status = str(s.get("status", "")).upper()
-                if sig_status in ("ACTIVE", "CONFIRMED"):
+                if sig_status in ("ACTIVE", "CONFIRMED", "PENDING"):
                     await run_async(open_position_from_signal, s)
         except Exception as e:
             print(f"[SIGNALS TASK ERROR] {e}")

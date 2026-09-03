@@ -110,10 +110,14 @@ def open_position_from_signal(signal: Dict[str, Any]) -> Optional[Dict[str, Any]
             if p.get("symbol") == sym and p.get("status") == "OPEN":
                 return None
 
-        entry = float(signal.get("entry", 0.0))
-        sl = float(signal.get("sl", 0.0))
-        tp = float(signal.get("tp1", signal.get("tp", 0.0)) or 0.0)
-        side = signal.get("side", "BUY").upper()
+        entry = float(signal.get("entry_price") or signal.get("entry") or signal.get("price") or 0.0)
+        sl = float(signal.get("sl") or signal.get("stop_loss") or 0.0)
+        tp = float(signal.get("tp1") or signal.get("tp") or signal.get("take_profit") or 0.0)
+        side = str(signal.get("side") or signal.get("direction", "BUY")).upper()
+        if side in ("LONG", "BUY"):
+            side = "BUY"
+        else:
+            side = "SELL"
         
         if entry <= 0 or sl <= 0 or tp <= 0:
             print(f"[PAPER ENGINE REJECT] {sym} rejected: signal is missing a valid entry, stop, or TP1.")
@@ -156,7 +160,7 @@ def open_position_from_signal(signal: Dict[str, Any]) -> Optional[Dict[str, Any]
             open_positions=open_pos_list,
             pending_orders=[],
             prop_rules=GLOBAL_PROP_RULES,
-            confidence_score=float(signal.get("confidence", 80.0))
+            confidence_score=float(signal.get("score") or signal.get("confidence") or 80.0)
         )
 
         if not sizing_res.is_approved or sizing_res.final_size <= 0:
