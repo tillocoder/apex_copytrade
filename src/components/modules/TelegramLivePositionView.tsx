@@ -4,25 +4,37 @@ import { ApexCandleChart } from '../common/ApexCandleChart';
 import { 
   Target, 
   Activity, 
-  RefreshCw, 
   Zap, 
-  ArrowUpRight,
-  ArrowDownRight,
-  ShieldAlert
+  CheckCircle2,
+  XCircle
 } from 'lucide-react';
 
 export const TelegramLivePositionView: React.FC = () => {
-  const [positions, setPositions] = useState<Position[]>([]);
+  const [positions, setPositions] = useState<any[]>([]);
+  const [targetPos, setTargetPos] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
-  const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
   const [liveBinancePrice, setLiveBinancePrice] = useState<number | null>(null);
 
-  // Extract pos_id from URL query string
+  // Extract pos_id and symbol from URL query string
   const urlParams = new URLSearchParams(window.location.search);
   const targetPosId = urlParams.get('pos');
   const targetSymbol = urlParams.get('symbol') || 'BTC/USDT';
 
-  // Fetch live positions from backend
+  // Fetch position by specific ID (covers both OPEN and CLOSED positions)
+  const fetchTargetPosition = async () => {
+    if (!targetPosId) return;
+    try {
+      const res = await fetch(`https://apex.xrinvest.uz/api/v1/positions/${targetPosId}`);
+      if (res.ok) {
+        const data = await res.json();
+        setTargetPos(data);
+      }
+    } catch (e) {
+      console.error('Failed to fetch target position:', e);
+    }
+  };
+
+  // Fetch all live positions
   const fetchLivePositions = async () => {
     try {
       const res = await fetch('https://apex.xrinvest.uz/api/v1/positions/live');
@@ -30,7 +42,9 @@ export const TelegramLivePositionView: React.FC = () => {
         const data = await res.json();
         setPositions(Array.isArray(data) ? data : []);
       }
-      setLastUpdated(new Date());
+      if (targetPosId) {
+        await fetchTargetPosition();
+      }
     } catch (e) {
       console.error('Failed to fetch positions:', e);
     } finally {
@@ -42,10 +56,11 @@ export const TelegramLivePositionView: React.FC = () => {
     fetchLivePositions();
     const interval = setInterval(fetchLivePositions, 2000);
     return () => clearInterval(interval);
-  }, []);
+  }, [targetPosId]);
 
-  // Find target position or fallback to first open position
+  // Priority: 1) Target Pos by ID, 2) Matched open pos, 3) First open pos
   const currentPos = useMemo(() => {
+    if (targetPos) return targetPos;
     if (targetPosId) {
       const found = positions.find(p => p.id === targetPosId);
       if (found) return found;
@@ -54,7 +69,7 @@ export const TelegramLivePositionView: React.FC = () => {
       return positions[0];
     }
     return null;
-  }, [positions, targetPosId]);
+  }, [targetPos, positions, targetPosId]);
 
   const sym = currentPos?.symbol || targetSymbol;
   const cleanSym = sym.replace('/', '').toUpperCase();
@@ -73,204 +88,213 @@ export const TelegramLivePositionView: React.FC = () => {
       }
     };
     return () => {
-      try { ws.close(); } catch (_) {}
+      ws.close();
     };
   }, [cleanSym]);
 
-  const entry = Number(currentPos?.entryPrice || 0);
-  const mark = liveBinancePrice || Number(currentPos?.currentPrice || entry);
-  const sl = Number(currentPos?.sl || 0);
-  const tp1 = Number(currentPos?.tp1 || 0);
-  const isBuy = (currentPos?.side || 'BUY').toUpperCase() === 'BUY';
-  const size = Number(currentPos?.size || 0.05);
-  const margin = Number(currentPos?.marginUsed || 1000);
+  if (loading && !currentPos) {
+    return (
+      <div className="min-h-screen bg-[#0a0e17] text-white flex flex-col items-center justify-center p-4">
+        <div className="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mb-4" />
+        <p className="text-gray-400 font-mono text-sm animate-pulse">APEX Jonli Telemetriya Yuklanmoqda...</p>
+      </div>
+    );
+  }
 
-  // Compute live floating PnL
-  const pnl = entry > 0 
-    ? (isBuy ? (mark - entry) * size : (entry - mark) * size)
-    : Number(currentPos?.unrealizedPnl || 0);
-  const pnlPct = margin > 0 ? (pnl / margin) * 100 : 0;
+  // Format calculations
+  const rawSide = String(currentPos?.side || currentPos?.direction || 'BUY').toUpperCase();
+  const isBuy = rawSide === 'BUY' || rawSide === 'LONG';
+  const side = isBuy ? 'BUY' : 'SELL';
+  const entryPrice = Number(currentPos?.entryPrice || currentPos?.entry_price || 0);
+  
+  const statusStr = String(currentPos?.status || 'OPEN').toUpperCase();
+  const isClosed = statusStr !== 'OPEN';
+  const currentPrice = isClosed 
+    ? Number(currentPos?.closePrice || currentPos?.currentPrice || entryPrice)
+    : (liveBinancePrice || Number(currentPos?.currentPrice || entryPrice));
+
+  const tp1 = Number(currentPos?.tp1 || currentPos?.takeProfit || 0);
+  const tp2 = Number(currentPos?.tp2 || 0);
+  const sl = Number(currentPos?.sl || currentPos?.stopLoss || 0);
+  const size = Number(currentPos?.size || 0);
+  const marginUsed = Number(currentPos?.marginUsed || currentPos?.margin || 0);
+
+  // Realized PnL for closed vs Unrealized for open
+  const pnl = isClosed 
+    ? Number(currentPos?.realizedPnl ?? (isBuy ? (currentPrice - entryPrice) * size : (entryPrice - currentPrice) * size))
+    : (isBuy ? (currentPrice - entryPrice) * size : (entryPrice - currentPrice) * size);
+
+  const pnlPercent = marginUsed > 0 ? (pnl / marginUsed) * 100 : 0;
   const isProfit = pnl >= 0;
 
-  // Calculate distance to TP1 and SL
-  const distToTp1 = tp1 > 0 ? Math.abs(tp1 - mark) : 0;
-  const distToSl = sl > 0 ? Math.abs(mark - sl) : 0;
+  const distanceToTp1 = isBuy ? (tp1 - currentPrice) : (currentPrice - tp1);
+  const distanceToSl = isBuy ? (currentPrice - sl) : (sl - currentPrice);
 
-  // Progress gauge (0 to 100%)
-  const totalRange = Math.abs(tp1 - sl);
-  const progressToTp1 = totalRange > 0 
-    ? Math.max(0, Math.min(100, isBuy ? ((mark - sl) / totalRange) * 100 : ((sl - mark) / totalRange) * 100))
-    : 50;
+  // Status Badge Helper
+  const getStatusBadge = () => {
+    if (!currentPos || statusStr === 'OPEN') {
+      return (
+        <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+          JONLI FAOL
+        </span>
+      );
+    }
+    if (statusStr.includes('TP') || statusStr.includes('PROFIT')) {
+      return (
+        <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1">
+          <CheckCircle2 className="w-3.5 h-3.5" />
+          YOPILGAN (FOYDA: +${Math.abs(pnl).toFixed(2)})
+        </span>
+      );
+    }
+    if (statusStr.includes('SL') || statusStr.includes('LOSS')) {
+      return (
+        <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30 flex items-center gap-1">
+          <XCircle className="w-3.5 h-3.5" />
+          YOPILGAN (STOP LOSS: -${Math.abs(pnl).toFixed(2)})
+        </span>
+      );
+    }
+    return (
+      <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-gray-500/20 text-gray-300 border border-gray-500/30">
+        {statusStr}
+      </span>
+    );
+  };
 
   return (
-    <div className="min-h-screen bg-[#080A0D] text-[#F3F4F6] font-sans antialiased pb-6 select-none flex flex-col">
-      {/* 1. TOP TELEGRAM WEBAPP HEADER */}
-      <header className="px-4 py-2.5 bg-[#0D1117] border-b border-[#1E293B] sticky top-0 z-50 flex items-center justify-between shadow-md">
-        <div className="flex items-center space-x-2">
-          <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-          <div>
-            <div className="text-[9px] font-mono tracking-widest text-emerald-400 font-bold uppercase">
-              PROP 10K // LIVE
-            </div>
-            <div className="text-xs font-black tracking-tight text-white flex items-center gap-1.5">
-              <span>{sym}</span>
-              <span className={`px-1.5 py-0.2 text-[9px] font-bold rounded ${isBuy ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40' : 'bg-rose-500/20 text-rose-400 border border-rose-500/40'}`}>
-                {isBuy ? 'BUY' : 'SELL'} {currentPos?.leverage || 2}X
+    <div className="min-h-screen bg-[#070b12] text-slate-100 flex flex-col font-sans select-none pb-8">
+      {/* Header HUD Bar */}
+      <div className="bg-[#0e1626]/90 backdrop-blur border-b border-slate-800/80 px-4 py-3 sticky top-0 z-20 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="flex flex-col">
+            <span className="text-[10px] font-mono text-emerald-400 tracking-wider font-semibold">PROP 10K // {isClosed ? 'ARXIV' : 'LIVE'}</span>
+            <div className="flex items-center gap-2">
+              <span className="font-black tracking-wide text-base">{sym}</span>
+              <span className={`px-2 py-0.2 rounded text-[11px] font-black uppercase ${
+                isBuy ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-400 border border-rose-500/30'
+              }`}>
+                {side} {currentPos?.leverage || 2}X
               </span>
             </div>
           </div>
         </div>
 
-        <div className="text-right">
-          <div className={`text-base font-black font-mono tracking-tight leading-none ${isProfit ? 'text-emerald-400' : 'text-rose-400'}`}>
-            {isProfit ? '+' : ''}${pnl.toFixed(2)} USD
+        {/* Live PnL Pill */}
+        <div className="flex flex-col items-end">
+          <div className={`text-lg font-black font-mono flex items-center gap-0.5 ${isProfit ? 'text-emerald-400' : 'text-rose-400'}`}>
+            {isProfit ? '+' : ''}${pnl.toFixed(2)} <span className="text-xs font-bold">USD</span>
           </div>
-          <div className={`text-[10px] font-mono font-bold mt-0.5 ${isProfit ? 'text-emerald-500' : 'text-rose-500'}`}>
-            {isProfit ? '+' : ''}{pnlPct.toFixed(2)}% PnL
-          </div>
-        </div>
-      </header>
-
-      {/* 2. SPATIOUS FULL-HEIGHT CANDLESTICK CHART */}
-      <div className="px-2 pt-2 pb-1">
-        <div className="bg-[#131722] border border-[#1E293B] rounded-xl overflow-hidden shadow-2xl">
-          {/* Chart Header Bar */}
-          <div className="px-3 py-1.5 bg-[#181C27] border-b border-[#2A2E39] flex items-center justify-between text-xs">
-            <div className="flex items-center gap-1.5">
-              <Activity className="w-3.5 h-3.5 text-blue-400 animate-pulse" />
-              <span className="font-bold text-slate-200 text-[11px] uppercase tracking-wider">
-                {sym} M15
-              </span>
-            </div>
-            <div className="text-[11px] font-mono text-slate-300 font-bold flex items-center gap-1">
-              <span className="text-slate-500 text-[9px] font-normal">MARK:</span>
-              <span className="text-amber-400">${mark.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-            </div>
-          </div>
-
-          {/* Clean Full-Height Canvas Container (No ugly text squeeze!) */}
-          <div className="h-[360px] w-full relative">
-            <ApexCandleChart 
-              symbol={sym}
-              position={currentPos}
-              defaultTimeframe="15m"
-              hideHeader={true}
-              className="h-full w-full"
-            />
-          </div>
-
-          {/* Clean Compact Price Targets Footer */}
-          <div className="px-3 py-1.5 bg-[#0F141C] border-t border-[#1E293B] flex items-center justify-between text-[10px] font-mono">
-            <div className="text-blue-400 font-bold flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-              <span>ENTRY ${entry.toFixed(2)}</span>
-            </div>
-            <div className="text-emerald-400 font-bold flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-              <span>TP1 ${tp1.toFixed(2)}</span>
-            </div>
-            <div className="text-rose-400 font-bold flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
-              <span>SL ${sl.toFixed(2)}</span>
-            </div>
-          </div>
+          <span className={`text-[11px] font-mono font-semibold ${isProfit ? 'text-emerald-400/80' : 'text-rose-400/80'}`}>
+            {isProfit ? '+' : ''}{pnlPercent.toFixed(2)}% PnL
+          </span>
         </div>
       </div>
 
-      {/* 3. TRADE TARGET PROGRESS GAUGE */}
-      <div className="px-2 pt-1 pb-2">
-        <div className="p-3 bg-[#0D1117] border border-[#1E293B] rounded-xl shadow-md space-y-1.5">
-          <div className="flex justify-between items-center text-xs font-mono">
+      {/* Main Container */}
+      <div className="p-3.5 flex flex-col gap-3 max-w-lg mx-auto w-full">
+        {/* Status Indicator Banner */}
+        <div className="flex items-center justify-between bg-slate-900/60 border border-slate-800 rounded-lg px-3 py-2">
+          <div className="flex items-center gap-2">
+            <Activity className="w-4 h-4 text-emerald-400 animate-pulse" />
+            <span className="text-xs font-bold text-slate-300">Holat:</span>
+          </div>
+          {getStatusBadge()}
+        </div>
+
+        {/* Live Candlestick Canvas (Mobile Cleaned - 360px height) */}
+        <div className="relative rounded-xl border border-slate-800 bg-[#090e17] overflow-hidden shadow-2xl h-[360px]">
+          <ApexCandleChart 
+            symbol={sym} 
+            position={currentPos ? (currentPos as Position) : undefined} 
+            hideHeader={true} 
+          />
+        </div>
+
+        {/* Target Progress Bar */}
+        <div className="bg-[#0e1626] border border-slate-800/80 rounded-xl p-3.5 flex flex-col gap-2">
+          <div className="flex items-center justify-between text-xs">
             <span className="text-slate-400 font-semibold flex items-center gap-1">
-              <Target className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Take Profit 1 Gacha:</span>
+              <Target className="w-3.5 h-3.5 text-emerald-400" /> Take Profit 1 Gacha:
             </span>
-            <span className="font-bold text-emerald-400">
-              ${distToTp1.toFixed(2)} masofa qoldi
+            <span className={`font-mono font-bold ${distanceToTp1 <= 0 ? 'text-emerald-400' : 'text-emerald-300'}`}>
+              {distanceToTp1 <= 0 ? '🎯 TP1 Qisman Olingan!' : `$${Math.abs(distanceToTp1).toFixed(2)} masofa qoldi`}
             </span>
           </div>
 
-          {/* Progress Bar */}
-          <div className="w-full bg-[#1A2230] h-2 rounded-full overflow-hidden p-0.5 relative">
-            <div 
-              className={`h-full rounded-full transition-all duration-500 ${isProfit ? 'bg-gradient-to-r from-emerald-500 to-teal-400' : 'bg-gradient-to-r from-rose-500 to-amber-500'}`}
-              style={{ width: `${progressToTp1}%` }}
-            />
-          </div>
-
-          <div className="flex justify-between text-[9px] font-mono text-slate-500">
-            <span>SL: ${sl.toFixed(2)}</span>
-            <span className="text-slate-400 font-bold">Hozirgi: ${mark.toFixed(2)}</span>
-            <span className="text-emerald-400">TP1: ${tp1.toFixed(2)}</span>
-          </div>
-        </div>
-      </div>
-
-      {/* 4. INSTITUTIONAL TELEMETRY 4-GRID */}
-      <div className="px-2 pb-2 grid grid-cols-2 gap-1.5 text-xs font-mono">
-        <div className="p-2.5 bg-[#0D1117] border border-[#1E293B] rounded-xl space-y-0.5">
-          <div className="text-[9px] text-slate-500 uppercase font-semibold">Kirish / Hozirgi</div>
-          <div className="text-white font-bold">${entry.toFixed(2)}</div>
-          <div className={`text-[10px] font-bold ${isProfit ? 'text-emerald-400' : 'text-rose-400'}`}>
-            ${mark.toFixed(2)} ({isProfit ? '+' : ''}{pnlPct.toFixed(2)}%)
-          </div>
-        </div>
-
-        <div className="p-2.5 bg-[#0D1117] border border-[#1E293B] rounded-xl space-y-0.5">
-          <div className="text-[9px] text-slate-500 uppercase font-semibold">Hajm / Margin</div>
-          <div className="text-white font-bold">{size} {sym.split('/')[0]}</div>
-          <div className="text-[10px] text-slate-400 font-semibold">${margin.toFixed(2)} USD</div>
-        </div>
-
-        <div className="p-2.5 bg-[#0D1117] border border-emerald-900/30 bg-emerald-950/10 rounded-xl space-y-0.5">
-          <div className="text-[9px] text-emerald-400 uppercase font-semibold flex items-center gap-1">
-            <ArrowUpRight className="w-3 h-3" />
-            <span>Kutilayotgan TP1</span>
-          </div>
-          <div className="text-emerald-400 font-bold">${tp1.toFixed(2)}</div>
-          <div className="text-[10px] text-emerald-500 font-semibold">
-            +${(currentPos?.expectedProfit || (Math.abs(tp1 - entry) * size)).toFixed(2)} USD (1.5R)
-          </div>
-        </div>
-
-        <div className="p-2.5 bg-[#0D1117] border border-rose-900/30 bg-rose-950/10 rounded-xl space-y-0.5">
-          <div className="text-[9px] text-rose-400 uppercase font-semibold flex items-center gap-1">
-            <ArrowDownRight className="w-3 h-3" />
-            <span>Maksimal Risk (SL)</span>
-          </div>
-          <div className="text-rose-400 font-bold">${sl.toFixed(2)}</div>
-          <div className="text-[10px] text-rose-500 font-semibold">
-            -${(currentPos?.expectedLoss || (Math.abs(entry - sl) * size)).toFixed(2)} USD (0.13%)
-          </div>
-        </div>
-      </div>
-
-      {/* 5. AI STRATEGY & SMC REASONING */}
-      <div className="px-2 pb-2">
-        <div className="p-3 bg-[#0D1117] border border-[#1E293B] rounded-xl space-y-1.5">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5">
-              <Zap className="w-3 h-3 text-purple-400" />
-              <span className="text-[10px] font-bold text-purple-300 uppercase tracking-wide">
-                SMC Strategiya & Kvant Tahlili
-              </span>
+          <div className="grid grid-cols-3 gap-2 pt-1 border-t border-slate-800/60 text-[11px] font-mono text-center">
+            <div className="bg-slate-900/80 rounded p-1.5 border border-slate-800">
+              <div className="text-slate-500 text-[9px] uppercase">SL: ${sl.toFixed(2)}</div>
+              <div className={`font-bold ${distanceToSl > 0 ? 'text-rose-400' : 'text-rose-500'}`}>
+                ${Math.abs(distanceToSl).toFixed(2)}
+              </div>
             </div>
-            <span className="px-1.5 py-0.2 bg-purple-500/20 text-purple-300 text-[9px] font-mono font-bold rounded border border-purple-500/30">
-              Score: {currentPos?.aiConfidence || 77.9}%
-            </span>
+
+            <div className="bg-slate-900/80 rounded p-1.5 border border-slate-800">
+              <div className="text-slate-500 text-[9px] uppercase">Hozirgi: ${currentPrice.toFixed(2)}</div>
+              <div className="font-bold text-amber-400">${currentPrice.toFixed(2)}</div>
+            </div>
+
+            <div className="bg-slate-900/80 rounded p-1.5 border border-slate-800">
+              <div className="text-slate-500 text-[9px] uppercase">TP1: ${tp1.toFixed(2)}</div>
+              <div className="font-bold text-emerald-400">${tp1.toFixed(2)}</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Position Metadata Card */}
+        <div className="bg-[#0e1626] border border-slate-800/80 rounded-xl p-3.5 flex flex-col gap-2.5">
+          <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold border-b border-slate-800/60 pb-1.5">
+            Savdo Parametrlari (Execution Forensics)
           </div>
 
-          <p className="text-[10px] text-slate-300 leading-relaxed font-sans">
-            {currentPos?.aiExplanation || "Senior Institutional Analysis: LIQUIDITY_SWEEP in M15 Intraday structure confirmed with 77.9% quantitative confluence and 2.80 R:R."}
-          </p>
-        </div>
-      </div>
+          <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs">
+            <div className="flex justify-between">
+              <span className="text-slate-500">Kirish Narxi:</span>
+              <span className="font-mono font-bold text-slate-200">${entryPrice.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-slate-500">Hozirgi Narx:</span>
+              <span className="font-mono font-bold text-amber-400">${currentPrice.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-slate-500">Hajm (Size):</span>
+              <span className="font-mono font-bold text-slate-200">{size} {sym.split('/')[0]}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-slate-500">Band Margin:</span>
+              <span className="font-mono font-bold text-slate-200">${marginUsed.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-slate-500">Stop Loss:</span>
+              <span className="font-mono font-bold text-rose-400">${sl.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-slate-500">Take Profit 2:</span>
+              <span className="font-mono font-bold text-emerald-400">${tp2.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-slate-500">Ochilgan Vaqt:</span>
+              <span className="font-mono text-slate-300">{currentPos?.timeOpen || '11:18'} UTC</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-slate-500">AI Ishonch:</span>
+              <span className="font-mono font-bold text-emerald-400">{currentPos?.aiConfidence || 77.9}%</span>
+            </div>
+          </div>
 
-      {/* 6. BOTTOM STATUS TICKER */}
-      <div className="mt-auto px-4 text-center">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#0D1117] border border-[#1E293B] rounded-full text-[9px] font-mono text-slate-400">
-          <RefreshCw className="w-2.5 h-2.5 text-emerald-400 animate-spin" />
-          <span>Binance Feed: {lastUpdated.toLocaleTimeString()}</span>
+          {currentPos?.aiExplanation && (
+            <div className="bg-slate-900/60 rounded-lg p-2 border border-slate-800 text-[11px] text-slate-400 flex items-start gap-1.5 mt-1">
+              <Zap className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
+              <span>{currentPos.aiExplanation}</span>
+            </div>
+          )}
+        </div>
+
+        {/* Footer Brand */}
+        <div className="text-center text-[10px] text-slate-600 font-mono pt-1">
+          APEX QUANT // @xrpropbot · High-Frequency Real Binance Stream
         </div>
       </div>
     </div>

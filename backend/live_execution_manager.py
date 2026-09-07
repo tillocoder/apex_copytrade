@@ -389,16 +389,22 @@ def sync_live_positions_and_equity() -> Dict[str, Any]:
                         
                         try:
                             from backend.telegram_bot import telegram_notifier
-                            telegram_notifier.send_direct_message(
-                                5563813326,
-                                f"🎯 <b>{sym} TP1 URILDI! (+${partial_pnl:.2f} USD)</b>\n"
-                                f"━━━━━━━━━━━━━━━━━━━━━━\n"
-                                f"💰 <b>50% Foyda Naqd Qilindi:</b> +${partial_pnl:.2f}\n"
-                                f"🚀 <b>Qolgan 50%:</b> TP2 (${tp2_val:,.2f}) tomon davom etmoqda.\n"
-                                f"🛡️ <i>Narx TP2 tomon kengayishi bilan SL avtomatik Break-Even'ga ko'chiriladi!</i>"
+                            telegram_notifier.send_trade_update_notification(
+                                p["id"], "TP1",
+                                {
+                                    "symbol": sym,
+                                    "side": side,
+                                    "entry_price": entry,
+                                    "price": curr_price,
+                                    "pnl": partial_pnl,
+                                    "signal_id": p.get("signal_id"),
+                                    "tp1": tp1_val,
+                                    "tp2": tp2_val,
+                                    "sl": p.get("sl")
+                                }
                             )
-                        except Exception:
-                            pass
+                        except Exception as tg_e:
+                            print(f"[LIVE ENGINE] Telegram SELL TP1 alert error: {tg_e}")
 
                     # 2. Dynamic Trailing After TP1 for SELL
                     if p.get("tp1_hit", False):
@@ -408,6 +414,22 @@ def sync_live_positions_and_equity() -> Dict[str, Any]:
                             p["trailingStopActive"] = True
                             positions_updated = True
                             print(f"[LIVE ENGINE] {sym} expanded towards TP2! Trailed SL to Entry+Buffer: ${p['sl']:.2f}")
+                            try:
+                                from backend.telegram_bot import telegram_notifier
+                                telegram_notifier.send_trade_update_notification(
+                                    p["id"], "TRAILING_SL",
+                                    {
+                                        "symbol": sym,
+                                        "side": side,
+                                        "entry_price": entry,
+                                        "price": curr_price,
+                                        "sl": p["sl"],
+                                        "tp2": tp2_val,
+                                        "signal_id": p.get("signal_id")
+                                    }
+                                )
+                            except Exception as tg_e:
+                                print(f"[LIVE ENGINE] Telegram SELL Trailing alert error: {tg_e}")
 
                     # 3. TP2 Hit
                     if curr_price <= tp2_val:

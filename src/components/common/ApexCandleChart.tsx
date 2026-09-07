@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import type { Position, Signal } from '../../types';
 import { subscribeBinanceLivePrices } from '../../services/marketDataService';
 import { 
@@ -13,7 +13,7 @@ import {
   Sparkles
 } from 'lucide-react';
 
-// â”€â”€â”€ Types & Timeframes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Types & Timeframes ───────────────────────────────────────────────────────
 export interface TimeframeOption {
   label: string;
   interval: string;
@@ -32,16 +32,16 @@ export const TIMEFRAMES: TimeframeOption[] = [
 
 export interface ApexCandleChartProps {
   symbol?: string;
+  hideHeader?: boolean;
   position?: Position | null;
   signal?: Signal | null;
   defaultTimeframe?: string;
   onTimeframeChange?: (tf: string) => void;
   showVolume?: boolean;
   className?: string;
-  hideHeader?: boolean;
 }
 
-// â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Helpers ─────────────────────────────────────────────────────────────────
 const fmt = (v: any, d = 2) => {
   if (v === undefined || v === null || isNaN(Number(v))) return '0.00';
   const numVal = Number(v);
@@ -55,19 +55,67 @@ const num = (v: unknown) => {
 };
 
 const epochSeconds = (v: unknown) => {
-  if (!v) return 0;
-  if (typeof v === 'number') {
-    return v > 10_000_000_000 ? Math.floor(v / 1000) : Math.floor(v);
+  const value = num(v);
+  return value > 10_000_000_000 ? value / 1000 : value;
+};
+
+const extractEntryTimestamp = (pos: any, sig: any): number => {
+  if (!pos && !sig) return 0;
+  
+  // 1. Direct numeric timestamp fields
+  const numCandidates = [
+    pos?.entry_timestamp,
+    pos?.timestamp,
+    pos?.created_at,
+    pos?.openTime,
+    sig?.entry_timestamp,
+    sig?.timestamp,
+    sig?.created_at,
+    sig?.createdAt
+  ];
+
+  for (const val of numCandidates) {
+    if (typeof val === 'number' && val > 0) {
+      return val > 10_000_000_000 ? Math.floor(val / 1000) : Math.floor(val);
+    }
+    if (typeof val === 'string' && /^\d+(\.\d+)?$/.test(val.trim())) {
+      const parsed = parseFloat(val);
+      if (parsed > 0) {
+        return parsed > 10_000_000_000 ? Math.floor(parsed / 1000) : Math.floor(parsed);
+      }
+    }
   }
-  const str = String(v).trim();
-  const numVal = Number(str);
-  if (!isNaN(numVal) && numVal > 1_000_000) {
-    return numVal > 10_000_000_000 ? Math.floor(numVal / 1000) : Math.floor(numVal);
+
+  // 2. Position ID extraction (pos_ethusdt_1788525444 -> 1788525444)
+  const idStr = pos?.id || sig?.id || '';
+  if (typeof idStr === 'string') {
+    const m = idStr.match(/_(\d{10,13})/);
+    if (m) {
+      const parsedId = parseInt(m[1], 10);
+      if (parsedId > 0) {
+        return parsedId > 10_000_000_000 ? Math.floor(parsedId / 1000) : parsedId;
+      }
+    }
   }
-  const parsed = Date.parse(str.replace(' UTC', 'Z'));
-  if (!isNaN(parsed) && parsed > 0) {
-    return Math.floor(parsed / 1000);
+
+  // 3. String date formats (formatted_entry_time "2026-09-04 12:37 UTC")
+  const strCandidates = [
+    pos?.formatted_entry_time,
+    pos?.timeOpen,
+    pos?.openTime,
+    sig?.createdAt,
+    sig?.created_at
+  ];
+
+  for (const s of strCandidates) {
+    if (typeof s === 'string' && s.length > 5) {
+      const t = Date.parse(s.replace(' UTC', 'Z').replace(' ', 'T'));
+      if (!isNaN(t) && t > 0) {
+        return Math.floor(t / 1000);
+      }
+    }
   }
+
   return 0;
 };
 
@@ -78,8 +126,8 @@ export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
   defaultTimeframe = '15m',
   onTimeframeChange,
   showVolume = true,
-  className = '',
-  hideHeader = false
+  hideHeader = false,
+  className = ''
 }) => {
   const activeSymbol = (position?.symbol || signal?.symbol || propSymbol || 'BTC/USDT').toUpperCase();
   const wrapRef = React.useRef<HTMLDivElement>(null);
@@ -139,7 +187,7 @@ export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
     return list.filter(t => isBuy ? t.value > entryPrice : t.value < entryPrice);
   }, [position, signal, entryPrice, isBuy]);
 
-  const hasStop = entryPrice > 0 && stopLoss > 0;
+  const hasStop = entryPrice > 0 && stopLoss > 0 && (isBuy ? stopLoss < entryPrice : stopLoss > entryPrice);
 
   // Calculated Risk/Reward
   const calculatedRR = React.useMemo(() => {
@@ -200,9 +248,10 @@ export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
       const delta = e.deltaY > 0 ? -0.14 : 0.14;
       const newZoom = Math.max(0.15, Math.min(16, curZoom * (1 + delta)));
       const newStep = Math.max(3, (cw2 / Math.max(1, nData)) * newZoom);
-      const newOff = Math.max(0, priceIdxUnderCursor * newStep - mouseX);
-      const maxO2 = Math.max(0, nData * newStep - cw2);
-      const finalOff = Math.min(newOff, maxO2);
+      const minO2 = -newStep * 40;
+      const maxO2 = Math.max(minO2, nData * newStep - cw2 + newStep * 40);
+      const newOff = priceIdxUnderCursor * newStep - mouseX;
+      const finalOff = Math.max(minO2, Math.min(newOff, maxO2));
 
       zoomRef.current = newZoom;
       offsetRef.current = finalOff;
@@ -223,7 +272,7 @@ export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
     setLoadingK(true);
     try {
       const formattedSymbol = activeSymbol.replace('/', '').toUpperCase();
-      const res = await fetch(`/api/v1/market/klines?symbol=${encodeURIComponent(formattedSymbol)}&interval=${tf.interval}&limit=200`);
+      const res = await fetch(`/api/v1/market/klines?symbol=${encodeURIComponent(formattedSymbol)}&interval=${tf.interval}&limit=1000`);
       if (res.ok) {
         const j = await res.json();
         if (j?.status === 'SUCCESS' && Array.isArray(j.data)) {
@@ -237,7 +286,7 @@ export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
       }
       
       // Direct Binance fallback
-      const bRes = await fetch(`https://api.binance.com/api/v3/klines?symbol=${formattedSymbol}&interval=${tf.interval}&limit=200`);
+      const bRes = await fetch(`https://api.binance.com/api/v3/klines?symbol=${formattedSymbol}&interval=${tf.interval}&limit=1000`);
       if (bRes.ok) {
         const raw = await bRes.json();
         const mapped = raw.map((d: any) => ({
@@ -299,7 +348,7 @@ export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
     dataRef.current = data.length;
   }, [data.length]);
 
-  // â”€â”€â”€ Center / Position Logic like TradingView â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ─── Center / Position Logic like TradingView ───────────────────────────────
   // FUTURE_BARS adds empty space on the right (like TradingView's right margin)
   const FUTURE_BARS = 35;
   const totalSlots = Math.max(1, data.length + FUTURE_BARS);
@@ -312,36 +361,41 @@ export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
     const SHOW = 65; // standard TradingView visible candles
     const newZoom = Math.max(0.4, Math.min(6, totalSlots / SHOW));
     const newStep = Math.max(3, (cw2 / totalSlots) * newZoom);
-    const maxO = Math.max(0, totalSlots * newStep - cw2);
+    const minO = -newStep * 40;
+    const maxO = Math.max(minO, totalSlots * newStep - cw2 + newStep * 40);
 
     let targetOffset = 0;
     if (mode === 'center_entry' && entryPrice > 0) {
-      // Find entry index
-      let entryIdx = Math.max(0, data.length - 2);
-        const rawTime = (position as any)?.entry_timestamp || 
-                        (position as any)?.formatted_entry_time || 
-                        position?.timeOpen || 
-                        signal?.timestamp || 
-                        signal?.createdAt;
-        const entryTime = epochSeconds(rawTime);
-        if (entryTime > 0) {
-          data.forEach((k, i) => {
-            if (k.timestamp && entryTime >= k.timestamp && entryTime < k.timestamp + tf.dur) {
-              entryIdx = i;
-            }
-          });
+      // Find entry index using exact timestamp across any timeframe
+      let entryIdx = data.length - 1;
+      const entryTime = extractEntryTimestamp(position, signal);
+      if (entryTime > 0 && data.length > 0) {
+        let matched = false;
+        data.forEach((k, i) => {
+          if (k.timestamp && entryTime >= k.timestamp && entryTime < k.timestamp + tf.dur) {
+            entryIdx = i;
+            matched = true;
+          }
+        });
+        if (!matched) {
+          const timeDiffs = data.map((k, i) => ({ i, d: Math.abs((k.timestamp || 0) - entryTime) }));
+          timeDiffs.sort((a, b) => a.d - b.d);
+          if (timeDiffs.length) entryIdx = timeDiffs[0].i;
         }
-        const entryPx = entryIdx * newStep;
-        targetOffset = Math.max(0, entryPx - cw2 * 0.42);
+      }
+      // Place entry at 45% from left, giving beautiful breathing room on both sides!
+      const entryPx = entryIdx * newStep;
+      targetOffset = entryPx - cw2 * 0.45;
     } else {
-      // Latest candle at 68% from left (leaving 32% future space on the right, NOT glued!)
+      // Latest candle at 68% from left (leaving 32% future space on the right)
       const latestPx = (data.length - 1) * newStep;
-      targetOffset = Math.max(0, latestPx - cw2 * 0.68);
+      targetOffset = latestPx - cw2 * 0.68;
     }
 
+    const finalTargetOff = Math.max(minO, Math.min(targetOffset, maxO));
     setZoom(newZoom);
     setVScale(1);
-    setOffsetX(Math.min(targetOffset, maxO));
+    setOffsetX(finalTargetOff);
     setDragDelta(0);
   }, [data, W, totalSlots, entryPrice, position?.timeOpen, signal?.timestamp, signal?.createdAt, tf.dur]);
 
@@ -357,12 +411,14 @@ export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
   const n = data.length;
   const step = Math.max(3, (cW / totalSlots) * zoom);
   const cndW = Math.max(1.8, step * 0.72);
-  const maxOff = Math.max(0, totalSlots * step - cW);
-  const off = Math.max(0, Math.min(offsetX + dragDelta, maxOff));
+  const minOff = -step * 40;
+  const maxOff = Math.max(minOff, totalSlots * step - cW + step * 40);
+  const off = Math.max(minOff, Math.min(offsetX + dragDelta, maxOff));
 
-  const fi = Math.max(0, Math.floor(off / step));
-  const li = Math.min(n - 1, Math.ceil((off + cW) / step) + 1);
-  const vis = data.slice(fi, Math.max(fi + 1, li + 1));
+  // Fluid visible window calculation
+  const startIdx = Math.max(0, Math.floor((off - PL) / step) - 3);
+  const endIdx = Math.min(n - 1, Math.ceil((off + cW) / step) + 3);
+  const vis = (startIdx <= endIdx && n > 0) ? data.slice(startIdx, endIdx + 1) : [];
 
   const lastClose = livePrice || num(data[data.length - 1]?.close);
 
@@ -390,30 +446,37 @@ export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
   // Max volume for volume histogram
   const maxVol = Math.max(...vis.map(k => k.volume || 0), 1);
 
-  const gx = (ai: number) => PL + (ai - fi) * step + step / 2 - (off % step);
+  // Exact pixel X coordinate for any candle index ai
+  const gx = (ai: number) => PL + ai * step + step / 2 - off;
   const gy = (p: number) => PT + cH - ((p - lo) / PR2) * cH;
 
-  // Find Entry candle index
-  let entryIndex = Math.max(0, n - 2);
-    if (entryPrice > 0) {
-      const rawTime = (position as any)?.entry_timestamp || 
-                      (position as any)?.formatted_entry_time || 
-                      position?.timeOpen || 
-                      signal?.timestamp || 
-                      signal?.createdAt;
-      const entryTime = epochSeconds(rawTime);
-      let found = false;
-      if (entryTime > 0) {
-        data.forEach((k, i) => {
-          if (k.timestamp && entryTime >= k.timestamp && entryTime < k.timestamp + tf.dur) {
-            entryIndex = i;
-            found = true;
-          }
-        });
+  // Find Entry candle index for ANY timeframe (1m, 3m, 5m, 15m, 1h, 4h, 1D)
+  let entryIndex = Math.max(0, n - 1);
+  let hasEntryMatch = false;
+  if (entryPrice > 0) {
+    const entryTime = extractEntryTimestamp(position, signal);
+    if (entryTime > 0 && data.length > 0) {
+      // 1. Exact range match within timeframe candle duration
+      data.forEach((k, i) => {
+        if (k.timestamp && entryTime >= k.timestamp && entryTime < k.timestamp + tf.dur) {
+          entryIndex = i;
+          hasEntryMatch = true;
+        }
+      });
+      // 2. Nearest timestamp match if slightly between candles
+      if (!hasEntryMatch) {
+        const timeDiffs = data.map((k, i) => ({ i, d: Math.abs((k.timestamp || 0) - entryTime) }));
+        timeDiffs.sort((a, b) => a.d - b.d);
+        if (timeDiffs.length && timeDiffs[0].d <= tf.dur * 30) {
+          entryIndex = timeDiffs[0].i;
+          hasEntryMatch = true;
+        }
       }
-      if (!found) {
-        entryIndex = Math.max(0, n - 2);
-      }
+    }
+    // 3. Fallback: If position was created during latest stream
+    if (!hasEntryMatch && data.length > 0) {
+      entryIndex = data.length - 1;
+    }
   }
 
   // Position Box (TradingView Long / Short Tool)
@@ -482,7 +545,7 @@ export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
   const onMU = () => {
     if (dragging && dragMode === 'pan') {
       setOffsetX(p => {
-        const finalOff = Math.max(0, Math.min(p + dragDelta, maxOff));
+        const finalOff = Math.max(minOff, Math.min(p + dragDelta, maxOff));
         offsetRef.current = finalOff;
         return finalOff;
       });
@@ -503,10 +566,10 @@ export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
     <div className={`w-full h-full flex flex-col font-mono select-none bg-[#131722] text-[#d1d4dc] ${className}`}>
       {/* Top TradingView-Style Bar */}
       {!hideHeader && (
-      <div className="flex items-center justify-between px-3 py-1.5 bg-[#1e222d] border-b border-[#2a2e39] shrink-0 gap-2 overflow-x-auto no-scrollbar">
+        <div className="flex items-center justify-between px-3 py-1.5 bg-[#1e222d] border-b border-[#2a2e39] shrink-0 gap-2 overflow-x-auto no-scrollbar">
         <div className="flex items-center gap-1.5 text-[11px] font-mono font-bold overflow-hidden flex-wrap">
           <span className="text-white font-bold">{activeSymbol}</span>
-          <span className="text-[#50535e]">Â·</span>
+          <span className="text-[#50535e]">·</span>
           
           {/* Timeframe Selector Pills */}
           <div className="flex items-center bg-[#131722] p-0.5 rounded border border-[#2a2e39]">
@@ -525,12 +588,12 @@ export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
             ))}
           </div>
           
-          <span className="text-[#50535e]">Â·</span>
+          <span className="text-[#50535e]">·</span>
           <span className="text-[#787b86] text-[10px]">BINANCE PERPETUAL</span>
 
           {entryPrice > 0 && (
             <>
-              <span className="text-[#50535e]">Â·</span>
+              <span className="text-[#50535e]">·</span>
               <span className={`px-1.5 py-0.2 rounded text-[9px] font-bold ${
                 isBuy ? 'bg-[#089981]/20 text-[#089981] border border-[#089981]/40' : 'bg-[#f23645]/20 text-[#f23645] border border-[#f23645]/40'
               }`}>
@@ -656,7 +719,7 @@ export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
 
             {/* Vertical Time Grid Ticks */}
             {vis.filter((_, i) => i % Math.max(1, Math.floor(vis.length / 8)) === 0).map((k, i) => {
-              const ai = fi + i * Math.max(1, Math.floor(vis.length / 8));
+              const ai = startIdx + i * Math.max(1, Math.floor(vis.length / 8));
               const x = gx(ai);
               const lbl = k.timestamp ? new Date(k.timestamp * 1000).toLocaleDateString([], { month: 'short', day: 'numeric' }) : k.time || '';
               return (
@@ -673,7 +736,7 @@ export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
 
             {/* Volume Histogram (TradingView subtle bottom bars) */}
             {showVolume && vis.map((k, ri) => {
-              const ai = fi + ri;
+              const ai = startIdx + ri;
               const x = gx(ai);
               if (x < PL - cndW || x > W - PR + cndW) return null;
               const volRatio = (k.volume || 0) / maxVol;
@@ -685,30 +748,104 @@ export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
               );
             })}
 
-            {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-                TRADINGVIEW POSITION TOOL (EXACT MATCH TO REFERENCE SCREENSHOT)
-               â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
-            {entryPrice > 0 && finalTarget && (
-              <g>
-                {/* 1. Subtle TP zone tint - lines only, no box */}
-                <rect
-                  x={PL}
-                  y={Math.min(gy(entryPrice), gy(finalTarget.value))}
-                  width={Math.max(0, plotRight - PL)}
-                  height={Math.abs(gy(entryPrice) - gy(finalTarget.value))}
-                  fill="rgba(8,153,129,0.04)"
-                  stroke="none"
+                        {/* ═══════════════════════════════════════════════════════════════════════════
+                LONG VERTICAL ENTRY CANDLE ANCHOR LINE (ANY TIMEFRAME)
+               ═══════════════════════════════════════════════════════════════════════════ */}
+            {entryPrice > 0 && !['1m', '3m', '5m'].includes(tf.label.toLowerCase()) && posStartX >= PL - 20 && posStartX <= plotRight + 20 && (
+              <g key="vertical_entry_anchor" pointerEvents="none">
+                {/* 1. Subtle Outer Glow */}
+                <line
+                  x1={posStartX}
+                  y1={PT}
+                  x2={posStartX}
+                  y2={H - PB}
+                  stroke="#38bdf8"
+                  strokeWidth={4}
+                  strokeOpacity={0.20}
+                />
+                
+                {/* 2. Crisp Long Dashed Vertical Line */}
+                <line
+                  x1={posStartX}
+                  y1={PT}
+                  x2={posStartX}
+                  y2={H - PB}
+                  stroke="#38bdf8"
+                  strokeWidth={1.5}
+                  strokeDasharray="4 3"
+                  strokeOpacity={0.90}
                 />
 
-                {/* 2. Subtle SL zone tint - lines only, no box */}
+                {/* 3. Top Floating Badge: 📍 ENTRY {tf.label} */}
+                <rect
+                  x={posStartX - 36}
+                  y={PT + 2}
+                  width={72}
+                  height={15}
+                  rx={3}
+                  fill="#0284c7"
+                  stroke="#38bdf8"
+                  strokeWidth={1}
+                />
+                <text
+                  x={posStartX}
+                  y={PT + 12.5}
+                  fill="#ffffff"
+                  fontSize={8.5}
+                  fontWeight="bold"
+                  fontFamily="sans-serif"
+                  textAnchor="middle"
+                >
+                  📍 ENTRY {tf.label}
+                </text>
+
+                {/* 4. Exact Entry Point Glowing Circular Anchor */}
+                <circle
+                  cx={posStartX}
+                  cy={gy(entryPrice)}
+                  r={8}
+                  fill="#38bdf8"
+                  fillOpacity={0.30}
+                />
+                <circle
+                  cx={posStartX}
+                  cy={gy(entryPrice)}
+                  r={4}
+                  fill="#38bdf8"
+                  stroke="#ffffff"
+                  strokeWidth={1.5}
+                />
+              </g>
+            )}
+
+            {/* ═══════════════════════════════════════════════════════════════════════════
+                TRADINGVIEW POSITION TOOL (EXACT MATCH TO REFERENCE SCREENSHOT)
+               ═══════════════════════════════════════════════════════════════════════════ */}
+            {entryPrice > 0 && finalTarget && (
+              <g>
+                {/* 1. Green TP Box (Upper Half) */}
+                <rect
+                  x={posStartX}
+                  y={Math.min(gy(entryPrice), gy(finalTarget.value))}
+                  width={Math.max(20, posEndX - posStartX)}
+                  height={Math.abs(gy(entryPrice) - gy(finalTarget.value))}
+                  fill="url(#tv_green_zone)"
+                  stroke="#089981"
+                  strokeWidth={1.5}
+                  strokeOpacity={0.8}
+                />
+
+                {/* 2. Red SL Box (Lower Half) */}
                 {hasStop && (
                   <rect
-                    x={PL}
+                    x={posStartX}
                     y={Math.min(gy(entryPrice), gy(stopLoss))}
-                    width={Math.max(0, plotRight - PL)}
+                    width={Math.max(20, posEndX - posStartX)}
                     height={Math.abs(gy(entryPrice) - gy(stopLoss))}
-                    fill="rgba(242,54,69,0.04)"
-                    stroke="none"
+                    fill="url(#tv_red_zone)"
+                    stroke="#f23645"
+                    strokeWidth={1.5}
+                    strokeOpacity={0.8}
                   />
                 )}
 
@@ -805,11 +942,11 @@ export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
               </g>
             )}
 
-            {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+            {/* ═══════════════════════════════════════════════════════════════════════════
                 CANDLESTICKS (SHARP PIXEL TRADINGVIEW RENDER)
-               â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+               ═══════════════════════════════════════════════════════════════════════════ */}
             {vis.map((k, ri) => {
-              const ai = fi + ri;
+              const ai = startIdx + ri;
               const x = gx(ai);
               if (x < PL - cndW * 2 || x > W - PR + cndW * 2) return null;
               
@@ -828,9 +965,9 @@ export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
               );
             })}
 
-            {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+            {/* ═══════════════════════════════════════════════════════════════════════════
                 REAL-TIME LIVE PRICE LINE & TRADINGVIEW ORANGE/AMBER BADGE
-               â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+               ═══════════════════════════════════════════════════════════════════════════ */}
             {lastClose > 0 && (
               <g>
                 {/* Dashed line across whole chart */}
@@ -865,7 +1002,6 @@ export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
       </div>
 
       {/* Bottom Status / Navigation Bar */}
-      {!hideHeader && (
       <div className="h-6 bg-[#1e222d] border-t border-[#2a2e39] px-3 flex items-center justify-between text-[9px] font-mono text-[#787b86] shrink-0">
         <div className="flex items-center gap-3">
           <span className="flex items-center gap-1 text-white">
@@ -884,10 +1020,8 @@ export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
           <span>Box Edge = Stretch</span>
         </div>
       </div>
-      )}
     </div>
   );
 };
 
 export default ApexCandleChart;
-
