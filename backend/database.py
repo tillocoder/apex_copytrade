@@ -216,7 +216,7 @@ class PositionsRepository:
     def get_live() -> List[Dict[str, Any]]:
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM positions WHERE status IN ('OPEN', 'ACTIVE', 'PENDING') ORDER BY opened_at DESC")
+        cursor.execute("SELECT * FROM positions WHERE status IN ('OPEN', 'ACTIVE', 'PENDING') AND symbol = 'BTC/USDT' ORDER BY opened_at DESC")
         rows = cursor.fetchall()
         conn.close()
         return [dict(r) for r in rows]

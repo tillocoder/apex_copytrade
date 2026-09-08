@@ -433,13 +433,13 @@ async def get_signals_history():
 
 @app.get("/api/v1/positions/live")
 async def get_live_positions():
-    """Returns ONLY genuinely OPEN positions (filters out CLOSED_SL, CLOSED_TP1, etc)."""
+    """Returns ONLY genuinely OPEN BTC/USDT positions (strictly no ETH or other assets)."""
     raw_pos = load_positions()
-    if not raw_pos:
-        db_pos = PositionsRepository.get_live()
-        raw_pos = db_pos if db_pos else []
-    # STRICT FILTER: Only return OPEN positions
-    open_only = [p for p in raw_pos if str(p.get("status", "")).upper() == "OPEN"]
+    open_only = [
+        p for p in raw_pos 
+        if str(p.get("status", "")).upper() == "OPEN" 
+        and p.get("symbol") == "BTC/USDT"
+    ]
     return [format_position_for_api(p) for p in open_only]
 
 
@@ -531,9 +531,7 @@ async def trigger_signal_scan_now():
 # =====================================================================
 # 3. POSITIONS & ORDERS CONTROLLER (FULL CRUD)
 # =====================================================================
-@app.get("/api/v1/positions/live")
-async def get_live_positions():
-    return load_positions()
+# Duplicate route removed - see line 434
 
 @app.get("/api/v1/positions/{pos_id}")
 async def get_position_by_id(pos_id: str):

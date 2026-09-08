@@ -28,7 +28,7 @@ export const LiveTrades: React.FC = () => {
   
   // STRICT: Only genuine OPEN positions appear in the OPEN tab
   const rawPositions = Array.isArray(positions) ? positions : [];
-  const safePositions = rawPositions.filter(p => p && String(p.status || 'OPEN').toUpperCase() === 'OPEN');
+  const safePositions = rawPositions.filter(p => p && String(p.status || 'OPEN').toUpperCase() === 'OPEN' && p.symbol === 'BTC/USDT');
   
   const [activeTab, setActiveTab] = useState<'OPEN' | 'HISTORY'>('OPEN');
   const [selectedPosId, setSelectedPosId] = useState<string>('');
