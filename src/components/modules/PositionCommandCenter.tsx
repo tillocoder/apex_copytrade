@@ -176,7 +176,7 @@ export const PositionCommandCenter: React.FC = () => {
           </div>
 
           <div className="flex-1 overflow-y-auto divide-y divide-apex-border/40">
-            {tickers.map((t) => {
+            {tickers.filter(t => t.symbol === "BTC/USDT").map((t) => {
               const matchingPos = safePositions.find(p => p.symbol === t.symbol);
               const isSelected = activePosition?.symbol === t.symbol;
 

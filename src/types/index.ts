@@ -143,10 +143,12 @@ export interface Signal {
 }
 
 export interface BacktestResult {
-  id: string;
+  status?: string;
+  id?: string;
   strategyName: string;
   symbol: string;
   timeframe: string;
+  period?: string;
   initialBalance: number;
   finalBalance: number;
   netProfit: number;
@@ -157,12 +159,24 @@ export interface BacktestResult {
   sortinoRatio: number;
   maxDrawdown: number;
   totalTrades: number;
+  backtestTradesCount?: number;
+  liveTradesCount?: number;
   avgRR: number;
   avgHoldingTime: string;
   monthlyReturns: { month: string; returnPct: number }[];
-  equityCurve: { timestamp: string; equity: number; drawdown: number }[];
-  portfolioEquityCurve?: { timestamp: string; equity: number }[];
-  passedChallenges?: { id: string; stage1PassTime: string; stage2PassTime: string; daysTaken: number; status: string }[];
+  equityCurve: { timestamp: string; equity: number; drawdown?: number; type?: string }[];
+  liveEquityCurve?: { timestamp: string; equity: number; drawdown?: number; type?: string; pnl?: number; symbol?: string }[];
+  portfolioEquityCurve?: { timestamp: string; equity: number; type?: 'backtest' | 'live'; pnl?: number; symbol?: string }[];
+  passedChallenges?: { 
+    id: string; 
+    firm?: string;
+    size?: string;
+    stage1PassTime: string; 
+    stage2PassTime: string; 
+    daysTaken: number; 
+    status: string;
+    payout?: string;
+  }[];
   propSummary?: {
     completedChallenges: number;
     stage1Passed: number;
@@ -170,6 +184,8 @@ export interface BacktestResult {
     failedChallenges: number;
     successRatePct: number;
     avgDaysPerChallenge: number;
+    totalPropPayouts?: string;
+    activeAccount?: string;
   };
 }
 

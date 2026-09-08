@@ -56,8 +56,9 @@ GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models/"
 
 SYMBOLS = [
     {"symbol": "BTC/USDT", "binance": "BTCUSDT"},
-    {"symbol": "ETH/USDT", "binance": "ETHUSDT"},
 ]
+BLACKLISTED_SYMBOLS = {"ETH/USDT", "ETHUSDT"}
+MAX_DAILY_TRADES_PER_SYMBOL = 2
 
 HISTORY_FILE = "backend/data/signals_history.json"
 CACHE_TTL_S: int = 15
@@ -874,8 +875,8 @@ class RiskEngine:
         is_btc = "BTC" in str(setup.get("symbol", "")).upper()
         
         # M15 Strict Dynamic Limits (BTC: 120-550 pts, ETH: 8-35 pts)
-        min_sl_dist = max(1.2 * atr, 120.0 if is_btc else 8.0)
-        max_sl_dist = min(2.5 * atr, 550.0 if is_btc else 35.0)
+        min_sl_dist = max(1.5 * atr, 220.0 if is_btc else 10.0)
+        max_sl_dist = min(3.0 * atr, 750.0 if is_btc else 40.0)
 
         regime_type = str(setup.get("regime", "")).upper()
         conf_score = float(setup.get("confidence", 80.0))
@@ -885,22 +886,22 @@ class RiskEngine:
 
         if side == "BUY":
             raw_dist = entry - raw_sl if raw_sl < entry else 1.5 * atr
-            buffered_dist = raw_dist + 0.5 * atr
+            buffered_dist = raw_dist + 0.6 * atr
             sl_distance = max(min_sl_dist, min(max_sl_dist, buffered_dist))
             sl = round(entry - sl_distance, 2 if is_btc else 2)
 
-            tp1 = round(entry + 1.5 * sl_distance, 2 if is_btc else 2)  # 1:1.5 RR - Fast Intraday TP1 (Trigger BE)
-            tp2 = round(entry + 2.8 * sl_distance, 2 if is_btc else 2)  # Main Intraday Target (Trail SL -> TP1)
+            tp1 = round(entry + 1.8 * sl_distance, 2 if is_btc else 2)  # 1:1.8 RR - Enhanced Intraday TP1
+            tp2 = round(entry + 3.0 * sl_distance, 2 if is_btc else 2)  # 1:3.0 RR - Main Intraday Target
             tp3 = round(entry + 4.0 * sl_distance, 2 if is_btc else 2) if target_count == 3 else None
             rr = round((tp2 - entry) / max(0.01, sl_distance), 2)
         else:
             raw_dist = raw_sl - entry if raw_sl > entry else 1.5 * atr
-            buffered_dist = raw_dist + 0.5 * atr
+            buffered_dist = raw_dist + 0.6 * atr
             sl_distance = max(min_sl_dist, min(max_sl_dist, buffered_dist))
             sl = round(entry + sl_distance, 2 if is_btc else 2)
 
-            tp1 = round(entry - 1.5 * sl_distance, 2 if is_btc else 2)  # 1:1.5 RR - Fast Intraday TP1 (Trigger BE)
-            tp2 = round(entry - 2.8 * sl_distance, 2 if is_btc else 2)  # Main Intraday Target (Trail SL -> TP1)
+            tp1 = round(entry - 1.8 * sl_distance, 2 if is_btc else 2)  # 1:1.8 RR - Enhanced Intraday TP1
+            tp2 = round(entry - 3.0 * sl_distance, 2 if is_btc else 2)  # 1:3.0 RR - Main Intraday Target
             tp3 = round(entry - 4.0 * sl_distance, 2 if is_btc else 2) if target_count == 3 else None
             rr = round((entry - tp2) / max(0.01, sl_distance), 2)
 
@@ -982,9 +983,9 @@ Evaluate structural integrity and orderflow confluence. Respond strictly in JSON
                     logger.warning(f"[GEMINI REVIEW] Error/rate-limit on {model}: {e}")
 
         # Institutional Quant Rule Engine Reviewer
-        # Senior Threshold: Approve only if quant score is >= 72.0 with confirmed R:R >= 2.0
+        # Senior Threshold: Approve only if quant score is >= 75.0 with confirmed R:R >= 2.0
         q_score = float(candidate.get("quantScore", 70.0))
-        fallback_decision = "APPROVE" if q_score >= 72.0 else "REJECT"
+        fallback_decision = "APPROVE" if q_score >= 75.0 else "REJECT"
         fallback_score = round(q_score * 0.98, 1)
         setup_name = candidate.get("setupType", "Smart Money Setup")
         regime = candidate.get("regime", "TRENDING")
@@ -992,7 +993,7 @@ Evaluate structural integrity and orderflow confluence. Respond strictly in JSON
         return {
             "decision": fallback_decision,
             "ai_review_score": fallback_score,
-            "contradictions": [] if fallback_decision == "APPROVE" else ["Insufficient Quant Confluence Score (< 72.0)"],
+            "contradictions": [] if fallback_decision == "APPROVE" else ["Insufficient Quant Confluence Score (< 75.0)"],
             "reasoning": f"Senior Institutional Analysis: {setup_name} in {regime} regime confirmed with {q_score:.1f}% quantitative confluence and {candidate.get('rr', 2.5)} R:R."
         }, "INSTITUTIONAL QUANT ENGINE"
 # =============================================================================
@@ -1168,8 +1169,30 @@ def generate_signals() -> List[Dict[str, Any]]:
         sym = s_info["symbol"]
         binance_sym = s_info["binance"]
 
+        if sym in BLACKLISTED_SYMBOLS:
+            logger.info(f"[ENGINE] Skipping {sym}: Blacklisted asset.")
+            continue
+
         if sym in active_symbols:
             logger.info(f"[ENGINE] Skipping {sym}: active signal already exists (< 2h).")
+            continue
+
+        # Check Daily Trades Cap (Max 2 trades per day per asset)
+        today_utc = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        today_trades = 0
+        try:
+            from backend.live_execution_manager import load_positions
+            for p in load_positions():
+                p_date = p.get("openedAt", "")[:10]
+                if not p_date and p.get("entry_timestamp"):
+                    p_date = datetime.fromtimestamp(p["entry_timestamp"], tz=timezone.utc).strftime("%Y-%m-%d")
+                if p.get("symbol") == sym and p_date == today_utc:
+                    today_trades += 1
+        except Exception:
+            pass
+
+        if today_trades >= MAX_DAILY_TRADES_PER_SYMBOL:
+            logger.info(f"[ENGINE] Skipping {sym}: Daily trades cap reached ({today_trades}/{MAX_DAILY_TRADES_PER_SYMBOL}).")
             continue
 
         try:
@@ -1232,8 +1255,8 @@ def generate_signals() -> List[Dict[str, Any]]:
             )
             quant_score = quant_result["quant_score"]
 
-            if quant_score < 65.0:
-                logger.info(f"[ENGINE] NO_TRADE for {sym}: quant score ({quant_score}) below threshold (65.0).")
+            if quant_score < 75.0:
+                logger.info(f"[ENGINE] NO_TRADE for {sym}: quant score ({quant_score}) below threshold (75.0).")
                 continue
 
             # 7. Deterministic Risk Engine

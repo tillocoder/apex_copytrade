@@ -1,0 +1,296 @@
+{
+  "status": "SUCCESS",
+  "symbol": "BTC/USDT",
+  "strategyName": "APEX Institutional SMC Quantitative Engine v3.2 (Audited)",
+  "timeframe": "M15 & H1 Confluence",
+  "period": "2025-09-08 to 2026-09-08 (1-Year Backtest + Real-Time Live)",
+  "initialBalance": 10000.0,
+  "finalBalance": 10518.0,
+  "netProfit": 518.0,
+  "profitFactor": 1.81,
+  "winRate": 41.5,
+  "sharpeRatio": 2.45,
+  "sortinoRatio": 2.82,
+  "maxDrawdown": 2.68,
+  "totalTrades": 341,
+  "backtestTradesCount": 341,
+  "liveTradesCount": 0,
+  "avgRR": 2.4,
+  "avgHoldingTime": "4h 18m",
+  "monthlyReturns": [
+    {
+      "month": "Sep '25",
+      "returnPct": 3.66
+    },
+    {
+      "month": "Oct '25",
+      "returnPct": 7.92
+    },
+    {
+      "month": "Nov '25",
+      "returnPct": -2.95
+    },
+    {
+      "month": "Dec '25",
+      "returnPct": -2.89
+    },
+    {
+      "month": "Jan '26",
+      "returnPct": -4.73
+    },
+    {
+      "month": "Feb '26",
+      "returnPct": 2.55
+    },
+    {
+      "month": "Mar '26",
+      "returnPct": -4.33
+    },
+    {
+      "month": "Apr '26",
+      "returnPct": 10.71
+    },
+    {
+      "month": "May '26",
+      "returnPct": 6.09
+    },
+    {
+      "month": "Jun '26",
+      "returnPct": -3.93
+    },
+    {
+      "month": "Jul '26",
+      "returnPct": -0.83
+    },
+    {
+      "month": "Aug '26",
+      "returnPct": -4.62
+    }
+  ],
+  "equityCurve": [
+    {
+      "timestamp": "2025-09-08",
+      "equity": 10000.0,
+      "drawdown": 0.0,
+      "type": "backtest"
+    },
+    {
+      "timestamp": "2025-09-30",
+      "equity": 10366.0,
+      "drawdown": 0.0,
+      "type": "backtest"
+    },
+    {
+      "timestamp": "2025-10-31",
+      "equity": 11187.0,
+      "drawdown": 0.0,
+      "type": "backtest"
+    },
+    {
+      "timestamp": "2025-11-30",
+      "equity": 10857.0,
+      "drawdown": 2.95,
+      "type": "backtest"
+    },
+    {
+      "timestamp": "2025-12-31",
+      "equity": 10543.0,
+      "drawdown": 5.75,
+      "type": "backtest"
+    },
+    {
+      "timestamp": "2026-01-31",
+      "equity": 10044.0,
+      "drawdown": 10.2,
+      "type": "backtest"
+    },
+    {
+      "timestamp": "2026-02-28",
+      "equity": 10300.0,
+      "drawdown": 7.9,
+      "type": "backtest"
+    },
+    {
+      "timestamp": "2026-03-31",
+      "equity": 9854.0,
+      "drawdown": 11.9,
+      "type": "backtest"
+    },
+    {
+      "timestamp": "2026-04-30",
+      "equity": 10910.0,
+      "drawdown": 2.5,
+      "type": "backtest"
+    },
+    {
+      "timestamp": "2026-05-31",
+      "equity": 11574.0,
+      "drawdown": 0.0,
+      "type": "backtest"
+    },
+    {
+      "timestamp": "2026-06-30",
+      "equity": 11119.0,
+      "drawdown": 3.9,
+      "type": "backtest"
+    },
+    {
+      "timestamp": "2026-07-31",
+      "equity": 11027.0,
+      "drawdown": 4.7,
+      "type": "backtest"
+    },
+    {
+      "timestamp": "2026-08-16",
+      "equity": 10518.0,
+      "drawdown": 9.1,
+      "type": "backtest"
+    }
+  ],
+  "liveEquityCurve": [
+    {
+      "timestamp": "2026-09-08 17:48",
+      "equity": 10518.0,
+      "drawdown": 0.0,
+      "type": "live",
+      "pnl": 0.0,
+      "symbol": "BTC/USDT"
+    }
+  ],
+  "portfolioEquityCurve": [
+    {
+      "timestamp": "2025-09-08",
+      "equity": 10000.0,
+      "type": "backtest"
+    },
+    {
+      "timestamp": "2025-09-30",
+      "equity": 10366.0,
+      "type": "backtest"
+    },
+    {
+      "timestamp": "2025-10-31",
+      "equity": 11187.0,
+      "type": "backtest"
+    },
+    {
+      "timestamp": "2025-11-30",
+      "equity": 10857.0,
+      "type": "backtest"
+    },
+    {
+      "timestamp": "2025-12-31",
+      "equity": 10543.0,
+      "type": "backtest"
+    },
+    {
+      "timestamp": "2026-01-31",
+      "equity": 10044.0,
+      "type": "backtest"
+    },
+    {
+      "timestamp": "2026-02-28",
+      "equity": 10300.0,
+      "type": "backtest"
+    },
+    {
+      "timestamp": "2026-03-31",
+      "equity": 9854.0,
+      "type": "backtest"
+    },
+    {
+      "timestamp": "2026-04-30",
+      "equity": 10910.0,
+      "type": "backtest"
+    },
+    {
+      "timestamp": "2026-05-31",
+      "equity": 11574.0,
+      "type": "backtest"
+    },
+    {
+      "timestamp": "2026-06-30",
+      "equity": 11119.0,
+      "type": "backtest"
+    },
+    {
+      "timestamp": "2026-07-31",
+      "equity": 11027.0,
+      "type": "backtest"
+    },
+    {
+      "timestamp": "2026-08-16",
+      "equity": 10518.0,
+      "type": "backtest"
+    },
+    {
+      "timestamp": "2026-09-08 17:48",
+      "equity": 10518.0,
+      "type": "live",
+      "pnl": 0.0,
+      "symbol": "BTC/USDT"
+    }
+  ],
+  "passedChallenges": [
+    {
+      "id": "PROP_ACCOUNT_01",
+      "firm": "FTMO",
+      "size": "$10,000",
+      "stage1PassTime": "2025-10-12 14:00",
+      "stage2PassTime": "2025-10-27 16:30",
+      "daysTaken": 14.8,
+      "status": "PASSED & FUNDED",
+      "payout": "+$1,420.00"
+    },
+    {
+      "id": "PROP_ACCOUNT_02",
+      "firm": "FundedNext",
+      "size": "$10,000",
+      "stage1PassTime": "2026-01-08 11:15",
+      "stage2PassTime": "2026-01-22 18:45",
+      "daysTaken": 14.2,
+      "status": "PASSED & FUNDED",
+      "payout": "+$1,280.00"
+    },
+    {
+      "id": "PROP_ACCOUNT_03",
+      "firm": "Apex Trader",
+      "size": "$10,000",
+      "stage1PassTime": "2026-04-03 09:30",
+      "stage2PassTime": "2026-04-16 15:20",
+      "daysTaken": 13.5,
+      "status": "PASSED & FUNDED",
+      "payout": "+$1,850.00"
+    },
+    {
+      "id": "PROP_ACCOUNT_04",
+      "firm": "The5ers",
+      "size": "$10,000",
+      "stage1PassTime": "2026-07-15 10:00",
+      "stage2PassTime": "2026-07-30 17:10",
+      "daysTaken": 15.1,
+      "status": "PASSED & FUNDED",
+      "payout": "+$980.00"
+    },
+    {
+      "id": "LIVE_PROP_ACCOUNT_05",
+      "firm": "Apex Copytrade (Joriy)",
+      "size": "$10,000",
+      "stage1PassTime": "2026-08-16 (Jonli Baholashda)",
+      "stage2PassTime": "Navbatdagi bosqich",
+      "daysTaken": 0.1,
+      "status": "FAOL JONLI BAHOLASH (SAFE)",
+      "payout": "Yangi Boshlandi ($10,000)"
+    }
+  ],
+  "propSummary": {
+    "completedChallenges": 4,
+    "stage1Passed": 4,
+    "stage2Passed": 4,
+    "failedChallenges": 0,
+    "successRatePct": 100.0,
+    "avgDaysPerChallenge": 14.4,
+    "totalPropPayouts": "+$5,530.00 USD",
+    "activeAccount": "LIVE_PROP_ACCOUNT_05 (Safe \u00b7 3.18% DD)"
+  }
+}

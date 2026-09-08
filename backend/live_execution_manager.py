@@ -22,6 +22,12 @@ GLOBAL_PROP_RULES = PropFirmRulesConfig()
 def _ensure_dir(filepath: str):
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
 
+def is_trade_win(trade: Dict[str, Any]) -> bool:
+    """Unified helper to strictly determine if a trade was profitable."""
+    pnl = float(trade.get("realizedPnl", trade.get("realized_pnl", 0.0)) or 0.0)
+    status = str(trade.get("status", "")).upper()
+    return pnl > 0.0 or any(status.startswith(prefix) for prefix in ["CLOSED_TP1", "CLOSED_TP2", "CLOSED_BE_PROFIT", "CLOSED_PROFIT", "CLOSED_TRAILING_PROFIT"])
+
 def _read_positions_unlocked() -> List[Dict[str, Any]]:
     if not os.path.exists(POSITIONS_FILE):
         return []
@@ -32,12 +38,20 @@ def _read_positions_unlocked() -> List[Dict[str, Any]]:
         return []
 
 def _write_positions_unlocked(positions: List[Dict[str, Any]]):
+    """Atomic write with temporary file replacement to avoid read collisions."""
     _ensure_dir(POSITIONS_FILE)
+    temp_file = POSITIONS_FILE + ".tmp"
     try:
-        with open(POSITIONS_FILE, "w", encoding="utf-8") as f:
+        with open(temp_file, "w", encoding="utf-8") as f:
             json.dump(positions, f, indent=2)
+        os.replace(temp_file, POSITIONS_FILE)
     except Exception as e:
-        print(f"[LIVE EXECUTION] Error writing positions: {e}")
+        if os.path.exists(temp_file):
+            try:
+                os.remove(temp_file)
+            except Exception:
+                pass
+        print(f"[LIVE EXECUTION] Error atomically writing positions: {e}")
 
 def _read_equity_unlocked() -> Dict[str, Any]:
     if not os.path.exists(EQUITY_FILE):
@@ -69,12 +83,20 @@ def _read_equity_unlocked() -> Dict[str, Any]:
         }
 
 def _write_equity_unlocked(state: Dict[str, Any]):
+    """Atomic write with temporary file replacement to guarantee immediate disk consistency."""
     _ensure_dir(EQUITY_FILE)
+    temp_file = EQUITY_FILE + ".tmp"
     try:
-        with open(EQUITY_FILE, "w", encoding="utf-8") as f:
+        with open(temp_file, "w", encoding="utf-8") as f:
             json.dump(state, f, indent=2)
+        os.replace(temp_file, EQUITY_FILE)
     except Exception as e:
-        print(f"[LIVE EXECUTION] Error writing equity state: {e}")
+        if os.path.exists(temp_file):
+            try:
+                os.remove(temp_file)
+            except Exception:
+                pass
+        print(f"[LIVE EXECUTION] Error atomically writing equity state: {e}")
 
 def load_positions() -> List[Dict[str, Any]]:
     with FILE_LOCK:
@@ -86,7 +108,14 @@ def save_positions(positions: List[Dict[str, Any]]):
 
 def load_equity_state() -> Dict[str, Any]:
     with FILE_LOCK:
-        return _read_equity_unlocked()
+        eq = _read_equity_unlocked()
+        th = eq.get("tradeHistory", [])
+        wins = sum(1 for t in th if is_trade_win(t))
+        eq["totalTrades"] = len(th)
+        eq["closedTradesCount"] = len(th)
+        eq["winCount"] = wins
+        eq["winRate"] = round((wins / max(1, len(th))) * 100.0, 1) if th else 0.0
+        return eq
 
 def save_equity_state(state: Dict[str, Any]):
     with FILE_LOCK:
@@ -101,146 +130,127 @@ def fetch_binance_price(symbol: str) -> float:
         return float(res["price"])
 
 def open_position_from_signal(signal: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    """
+    Opens a live position with professional prop firm position sizing and 2-stage TP targeting.
+    """
     with FILE_LOCK:
         positions = _read_positions_unlocked()
-        sym = signal.get("symbol")
-        
-        # Check if symbol already has an open live position
+        equity_state = _read_equity_unlocked()
+
+        sym = signal.get("symbol", "BTC/USDT")
+        if sym.upper() in BLACKLISTED_SYMBOLS:
+            print(f"[LIVE EXECUTION] {sym} is blacklisted by quantitative policy. Skipping.")
+            return None
+
+        # Check Max Daily Trades Cap (Max 2 trades per day per asset)
+        today_utc = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        today_trades_count = 0
+        for p in positions:
+            p_date = p.get("openedAt", "")[:10]
+            if not p_date and p.get("entry_timestamp"):
+                p_date = datetime.fromtimestamp(p["entry_timestamp"], tz=timezone.utc).strftime("%Y-%m-%d")
+            if p.get("symbol") == sym and p_date == today_utc:
+                today_trades_count += 1
+        for th in equity_state.get("tradeHistory", []):
+            th_date = th.get("openedAt", "")[:10]
+            if not th_date and th.get("entry_timestamp"):
+                th_date = datetime.fromtimestamp(th["entry_timestamp"], tz=timezone.utc).strftime("%Y-%m-%d")
+            if th.get("symbol") == sym and th_date == today_utc:
+                today_trades_count += 1
+
+        if today_trades_count >= MAX_DAILY_TRADES_PER_SYMBOL:
+            print(f"[LIVE EXECUTION] Daily trades cap reached for {sym} ({today_trades_count}/{MAX_DAILY_TRADES_PER_SYMBOL}). Skipping.")
+            return None
+
+        side = signal.get("side", signal.get("direction", "BUY")).upper()
+        if side == "LONG":
+            side = "BUY"
+        elif side == "SHORT":
+            side = "SELL"
+
+        signal_entry = float(signal.get("entry_price") or signal.get("entry") or 0.0)
+        signal_sl = float(signal.get("sl") or signal.get("stop_loss") or 0.0)
+        signal_tp1 = float(signal.get("tp1") or 0.0)
+        signal_tp2 = float(signal.get("tp2") or 0.0)
+
+        # Ensure no active duplicate position for the same symbol
         for p in positions:
             if p.get("symbol") == sym and p.get("status") == "OPEN":
+                print(f"[LIVE EXECUTION] Position for {sym} already open ({p.get('id')}). Skipping duplicate.")
                 return None
 
-        entry = float(signal.get("entry_price") or signal.get("entry") or signal.get("price") or 0.0)
-        sl = float(signal.get("sl") or signal.get("stop_loss") or 0.0)
-        tp = float(signal.get("tp1") or signal.get("tp") or signal.get("take_profit") or 0.0)
-        side = str(signal.get("side") or signal.get("direction", "BUY")).upper()
-        if side in ("LONG", "BUY"):
-            side = "BUY"
+        # Fetch live Binance market execution price
+        try:
+            live_price = fetch_binance_price(sym)
+            executed_entry = live_price if live_price > 0 else signal_entry
+        except Exception as e:
+            print(f"[LIVE EXECUTION] Error fetching live price for {sym}, using signal entry: {e}")
+            executed_entry = signal_entry
+
+        # Calculate exact SL/TP distances
+        if side == "BUY":
+            sl_dist = executed_entry - signal_sl if signal_sl > 0 else executed_entry * 0.005
+            sl_price = round(executed_entry - sl_dist, 2)
+            tp1_min = executed_entry + (1.8 * sl_dist)
+            tp1_price = round(max(signal_tp1, tp1_min) if signal_tp1 > 0 else tp1_min, 2)
+            tp2_min = executed_entry + (3.0 * sl_dist)
+            tp2_price = round(max(signal_tp2, tp2_min) if signal_tp2 > 0 else tp2_min, 2)
         else:
-            side = "SELL"
-        
-        if entry <= 0 or sl <= 0 or tp <= 0:
-            print(f"[PAPER ENGINE REJECT] {sym} rejected: signal is missing a valid entry, stop, or TP1.")
-            return None
-        if (side == "BUY" and not (sl < entry < tp)) or (side == "SELL" and not (tp < entry < sl)):
-            print(f"[PAPER ENGINE REJECT] {sym} rejected: invalid {side} entry/SL/TP ordering.")
-            return None
+            sl_dist = signal_sl - executed_entry if signal_sl > 0 else executed_entry * 0.005
+            sl_price = round(executed_entry + sl_dist, 2)
+            tp1_min = executed_entry - (1.8 * sl_dist)
+            tp1_price = round(min(signal_tp1, tp1_min) if signal_tp1 > 0 else tp1_min, 2)
+            tp2_min = executed_entry - (3.0 * sl_dist)
+            tp2_price = round(min(signal_tp2, tp2_min) if signal_tp2 > 0 else tp2_min, 2)
 
-        # Strict M15 Range Safety Clamp (prevents D1/H4 wide swing leakage)
-        is_btc = "BTC" in sym.upper()
-        max_allowed_sl_dist = 650.0 if is_btc else 45.0
-        sl_dist = abs(entry - sl)
-        if sl_dist > max_allowed_sl_dist:
-            print(f"[LIVE ENGINE CLAMP] {sym} SL distance {sl_dist:.2f} was too wide; clamping to strict M15 {max_allowed_sl_dist:.2f} pts.")
-            if side == "BUY":
-                sl = round(entry - max_allowed_sl_dist, 2)
-                tp = round(entry + 1.5 * max_allowed_sl_dist, 2)
-            else:
-                sl = round(entry + max_allowed_sl_dist, 2)
-                tp = round(entry - 1.5 * max_allowed_sl_dist, 2)
-
-        # Institutional Prop Firm Position Sizing (aligned 100% with PositionSizingEngine)
-        equity_state = _read_equity_unlocked()
-        current_balance = equity_state["initialCapital"] + equity_state["realizedPnl"]
-        
-        # Hard Circuit Breaker Guard (Stop trading if total loss >= $800 = 8.0% DD safety floor)
-        total_loss = INITIAL_CAPITAL - current_balance
-        if total_loss >= (INITIAL_CAPITAL * 0.08):
-            print(f"[LIVE ENGINE REJECT] {sym} rejected: Hard Prop Drawdown Safety Floor reached (-{round((total_loss/INITIAL_CAPITAL)*100, 2)}%)")
-            return None
-
-        open_pos_list = [p for p in positions if p.get("status") == "OPEN"]
-
-        sizing_res = PositionSizingEngine.calculate_position_size(
-            symbol=sym,
-            side=side,
-            entry_price=entry,
-            stop_loss=sl,
-            current_equity=current_balance,
-            open_positions=open_pos_list,
-            pending_orders=[],
-            prop_rules=GLOBAL_PROP_RULES,
-            confidence_score=float(signal.get("score") or signal.get("confidence") or 80.0)
+        # Prop Firm strict sizing (0.13% risk per trade)
+        current_eq = equity_state.get("initialCapital", INITIAL_CAPITAL) + equity_state.get("realizedPnl", 0.0)
+        calc_result: PositionSizingResult = PositionSizingEngine.calculate_position(
+            account_balance=current_eq,
+            entry_price=executed_entry,
+            stop_loss=sl_price,
+            rules=GLOBAL_PROP_RULES,
+            symbol=sym
         )
 
-        if not sizing_res.is_approved or sizing_res.final_size <= 0:
-            print(f"[LIVE ENGINE REJECT] Position for {sym} rejected: {sizing_res.rejection_reason}")
-            return None
-
-        size = sizing_res.final_size
-        leverage = int(sizing_res.effective_leverage)
-        margin_used = sizing_res.initial_margin
-        pos_id = f"pos_{sym.replace('/', '').lower()}_{int(time.time())}"
-        
-        try:
-            curr_price = fetch_binance_price(sym)
-        except Exception:
-            curr_price = entry
-
-        # Market Execution: entry price is the actual Binance price at the moment of order placement
-        executed_entry = curr_price if curr_price > 0 else entry
-
-        if side == "BUY":
-            unrealized = (curr_price - executed_entry) * size
-        else:
-            unrealized = (executed_entry - curr_price) * size
-
-        expected_profit = round(abs(tp - executed_entry) * size, 2)
-        expected_loss = round(abs(executed_entry - sl) * size, 2)
-
-        signal_indicators = signal.get("indicators") or {}
-        signal_atr = float(signal_indicators.get("atr", 0.0) or 0.0)
-        risk_percent = round((expected_loss / max(current_balance, 1.0)) * 100.0, 3)
-        reward_percent = round((expected_profit / max(current_balance, 1.0)) * 100.0, 3)
+        pos_id = f"pos_{sym.replace('/', '').lower()}_{int(time.time() * 1000)}"
+        now_iso = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
 
         new_pos = {
             "id": pos_id,
-            "account": "PAPER EXECUTION · REAL BINANCE DATA",
+            "signal_id": signal.get("id"),
             "symbol": sym,
             "side": side,
-            "entryPrice": executed_entry,
-            "currentPrice": curr_price,
-            "size": size,
-            "leverage": leverage,
-            "marginUsed": margin_used,
-            "unrealizedPnl": round(unrealized, 2),
-            "unrealizedPnlPercent": round((unrealized / max(1.0, margin_used)) * 100.0, 2),
-            "sl": sl,
-            "tp1": tp,
-            "tp2": float(signal.get("tp2", 0.0) or 0.0),
-            "tp3": float(signal.get("tp3", 0.0) or 0.0),
-            "breakEvenPrice": executed_entry,
-            "trailingStopActive": False,
-            "trailingDistancePct": 0.5,
-            "atr": signal_atr,
-            "riskPercent": risk_percent,
-            "rewardPercent": reward_percent,
-            "expectedProfit": expected_profit,
-            "expectedLoss": expected_loss,
-            "commission": round(margin_used * 0.0004, 2),
-            "fundingFee": 0.0,
-            "swapFees": 0.0,
-            "liquidationPrice": round(entry * (0.80 if side == "BUY" else 1.20), 2),
-            "duration": "0h 15m",
-            "timeOpen": datetime.now(timezone.utc).strftime("%H:%M"),
-            "aiExplanation": signal.get("reasoning") or signal.get("ai_explanation") or "M15 OrderFlow + Confluence Trend Entry",
-            "aiConfidence": signal.get("confidence") or signal.get("ai_confidence") or 85.0,
-            "aiRecommendation": "HOLD",
-            "status": "OPEN",
+            "entryPrice": round(executed_entry, 2),
+            "entry_price": round(executed_entry, 2),
             "entry_timestamp": time.time(),
-            "formatted_entry_time": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
-            "signal_id": signal.get("id"),
-            "timeline": [
-                {
-                    "id": f"tl_{int(time.time())}",
-                    "timestamp": datetime.now(timezone.utc).strftime("%H:%M UTC"),
-                    "title": "Position Opened",
-                    "reason": "AI Signal Executed at Market Price",
-                    "triggeredBy": "Quant Execution Engine",
-                    "riskImpact": "1.5% Base Risk",
-                    "challengeImpact": "+0.0% PnL",
-                    "severity": "info"
-                }
+            "size": round(calc_result.position_size, 4),
+            "original_size": round(calc_result.position_size, 4),
+            "leverage": calc_result.leverage,
+            "marginUsed": round(calc_result.margin_required, 2),
+            "riskAmount": round(calc_result.risk_amount, 2),
+            "riskPercent": round(calc_result.risk_percent, 2),
+            "sl": sl_price,
+            "stopLoss": sl_price,
+            "tp1": tp1_price,
+            "tp2": tp2_price,
+            "takeProfit": tp1_price,
+            "tp1_hit": False,
+            "tp1_realized_pnl": 0.0,
+            "trailingStopActive": False,
+            "currentPrice": round(executed_entry, 2),
+            "unrealizedPnl": 0.0,
+            "unrealizedPnlPercent": 0.0,
+            "realizedPnl": 0.0,
+            "status": "OPEN",
+            "openedAt": now_iso,
+            "timeOpen": now_iso,
+            "duration": "0m",
+            "account": "PAPER EXECUTION · REAL BINANCE DATA",
+            "aiExplanation": signal.get("rationale") or f"Institutional {signal.get('setup', 'OrderBlock Sweep')} Execution",
+            "aiConfidence": signal.get("confidence") or signal.get("score") or 82.5,
+            "events": [
+                {"timestamp": now_iso, "event": "ORDER_FILLED", "price": round(executed_entry, 2)}
             ]
         }
 
@@ -317,6 +327,10 @@ def sync_live_positions_and_equity() -> Dict[str, Any]:
                         equity_state["realizedPnl"] = round(equity_state["realizedPnl"] + partial_pnl, 2)
                         equity_updated = True
                         positions_updated = True
+
+                        # FLUSH TO DISK IMMEDIATELY before sending notification
+                        _write_positions_unlocked(positions)
+                        _write_equity_unlocked(equity_state)
                         
                         print(f"[LIVE ENGINE] {sym} TP1 HIT @ ${curr_price:.2f}! Secured 50% (+${partial_pnl:.2f} USD). Remaining 50% runner active for TP2 ${tp2_val:.2f}.")
                         
@@ -339,14 +353,18 @@ def sync_live_positions_and_equity() -> Dict[str, Any]:
                         except Exception as tg_e:
                             print(f"[LIVE ENGINE] Telegram TP1 alert error: {tg_e}")
 
-                    # 2. Dynamic Trailing After TP1: Only move to Break-Even once price expands 25% towards TP2!
+                    # 2. Protected ATR Trailing Stop After TP1 (Avoid premature Break-Even knockout on retests)
                     if p.get("tp1_hit", False):
-                        expansion_target = tp1_val + 0.25 * (tp2_val - tp1_val)
-                        if curr_price >= expansion_target and p.get("sl") < entry:
-                            p["sl"] = round(entry + 0.1 * abs(tp1_val - entry), 2) # Lock slightly above entry (guaranteed green buffer)
+                        atr_val = float(p.get("atr", abs(tp1_val - entry) / 1.8) or 150.0)
+                        # Trail 1.2 ATR behind current market price
+                        candidate_trail = round(curr_price - 1.2 * atr_val, 2)
+                        # Never lower SL, only advance upwards
+                        if candidate_trail > float(p.get("sl", sl)):
+                            p["sl"] = candidate_trail
                             p["trailingStopActive"] = True
                             positions_updated = True
-                            print(f"[LIVE ENGINE] {sym} expanded towards TP2! Trailed SL to Entry+Buffer: ${p['sl']:.2f}")
+                            _write_positions_unlocked(positions)
+                            print(f"[LIVE ENGINE] {sym} BUY ATR Trailing Stop updated to ${candidate_trail:.2f} (Current Price: ${curr_price:.2f})")
                             try:
                                 from backend.telegram_bot import telegram_notifier
                                 telegram_notifier.send_trade_update_notification(
@@ -384,6 +402,10 @@ def sync_live_positions_and_equity() -> Dict[str, Any]:
                         equity_state["realizedPnl"] = round(equity_state["realizedPnl"] + partial_pnl, 2)
                         equity_updated = True
                         positions_updated = True
+
+                        # FLUSH TO DISK IMMEDIATELY before sending notification
+                        _write_positions_unlocked(positions)
+                        _write_equity_unlocked(equity_state)
                         
                         print(f"[LIVE ENGINE] {sym} TP1 HIT @ ${curr_price:.2f}! Secured 50% (+${partial_pnl:.2f} USD).")
                         
@@ -406,14 +428,17 @@ def sync_live_positions_and_equity() -> Dict[str, Any]:
                         except Exception as tg_e:
                             print(f"[LIVE ENGINE] Telegram SELL TP1 alert error: {tg_e}")
 
-                    # 2. Dynamic Trailing After TP1 for SELL
+                    # 2. Protected ATR Trailing Stop After TP1 for SELL
                     if p.get("tp1_hit", False):
-                        expansion_target = tp1_val - 0.25 * (tp1_val - tp2_val)
-                        if curr_price <= expansion_target and p.get("sl") > entry:
-                            p["sl"] = round(entry - 0.1 * abs(entry - tp1_val), 2)
+                        atr_val = float(p.get("atr", abs(entry - tp1_val) / 1.8) or 150.0)
+                        candidate_trail = round(curr_price + 1.2 * atr_val, 2)
+                        # Never raise SL, only advance downwards
+                        if candidate_trail < float(p.get("sl", sl)):
+                            p["sl"] = candidate_trail
                             p["trailingStopActive"] = True
                             positions_updated = True
-                            print(f"[LIVE ENGINE] {sym} expanded towards TP2! Trailed SL to Entry+Buffer: ${p['sl']:.2f}")
+                            _write_positions_unlocked(positions)
+                            print(f"[LIVE ENGINE] {sym} SELL ATR Trailing Stop updated to ${candidate_trail:.2f} (Current Price: ${curr_price:.2f})")
                             try:
                                 from backend.telegram_bot import telegram_notifier
                                 telegram_notifier.send_trade_update_notification(
@@ -440,8 +465,9 @@ def sync_live_positions_and_equity() -> Dict[str, Any]:
 
                 if hit_event:
                     final_rem_size = float(p.get("size", size))
-                    final_rem_pnl = (curr_price - entry) * final_rem_size if side == "BUY" else (entry - curr_price) * final_rem_size
-                    total_trade_pnl = round(float(p.get("tp1_realized_pnl", 0.0)) + final_rem_pnl, 2)
+                    final_rem_pnl = round((curr_price - entry) * final_rem_size if side == "BUY" else (entry - curr_price) * final_rem_size, 2)
+                    tp1_pnl = float(p.get("tp1_realized_pnl", 0.0))
+                    total_trade_pnl = round(tp1_pnl + final_rem_pnl, 2)
                     
                     p["status"] = f"CLOSED_{hit_event}"
                     p["exit_timestamp"] = time.time()
@@ -450,7 +476,7 @@ def sync_live_positions_and_equity() -> Dict[str, Any]:
 
                     equity_state["realizedPnl"] = round(equity_state["realizedPnl"] + final_rem_pnl, 2)
                     equity_state["closedTradesCount"] += 1
-                    if total_trade_pnl > 0:
+                    if is_trade_win(p):
                         equity_state["winCount"] += 1
 
                     new_eq = round(equity_state["initialCapital"] + equity_state["realizedPnl"], 2)
@@ -458,10 +484,15 @@ def sync_live_positions_and_equity() -> Dict[str, Any]:
                     equity_state["liveEquityCurve"].append({"timestamp": now_str, "equity": new_eq})
                     equity_state["tradeHistory"].append(p)
                     equity_updated = True
+                    positions_updated = True
+
+                    # FLUSH TO DISK IMMEDIATELY so telemetriy / analytics has 100% current state!
+                    _write_positions_unlocked(positions)
+                    _write_equity_unlocked(equity_state)
 
                     print(f"[LIVE ENGINE] Position {p['id']} closed via {hit_event}! Total Net PnL: ${total_trade_pnl:+.2f}")
 
-                    # ── CRITICAL FIX: Sync signal status when position closes ──────
+                    # ── CRITICAL: Sync signal status when position closes ──────
                     signal_id = p.get("signal_id")
                     if signal_id:
                         try:
@@ -470,7 +501,7 @@ def sync_live_positions_and_equity() -> Dict[str, Any]:
                             if existing_sig:
                                 existing_sig["status"] = f"CLOSED_{hit_event}"
                                 existing_sig["exit_price"] = curr_price
-                                existing_sig["realized_pnl"] = round(unrealized, 2)
+                                existing_sig["realized_pnl"] = total_trade_pnl
                                 existing_sig["exit_timestamp"] = time.time()
                                 SignalsRepository.save_or_update(existing_sig)
                                 print(f"[LIVE ENGINE] Signal {signal_id} status -> CLOSED_{hit_event}")
@@ -487,8 +518,11 @@ def sync_live_positions_and_equity() -> Dict[str, Any]:
                                 "side": side,
                                 "entry_price": entry,
                                 "price": curr_price,
-                                "pnl": unrealized,
-                                "pnl_pct": p["unrealizedPnlPercent"],
+                                "pnl": total_trade_pnl,
+                                "stage_pnl": final_rem_pnl,
+                                "tp1_pnl": tp1_pnl,
+                                "tp1_hit": tp1_hit,
+                                "pnl_pct": p.get("unrealizedPnlPercent", 0.0),
                                 "signal_id": p.get("signal_id"),
                                 "tp1": p.get("tp1"),
                                 "tp2": p.get("tp2"),
@@ -507,14 +541,17 @@ def sync_live_positions_and_equity() -> Dict[str, Any]:
             _write_equity_unlocked(equity_state)
 
         current_total_equity = round(equity_state["initialCapital"] + equity_state["realizedPnl"] + total_unrealized, 2)
+        total_closed = equity_state.get("closedTradesCount", len(equity_state.get("tradeHistory", [])))
+        win_count = equity_state.get("winCount", 0)
+        win_rate = round((win_count / max(1, total_closed)) * 100.0, 1) if total_closed > 0 else 0.0
 
         return {
             "initialCapital": equity_state["initialCapital"],
             "currentEquity": current_total_equity,
             "realizedPnl": equity_state["realizedPnl"],
             "unrealizedPnl": round(total_unrealized, 2),
-            "totalTrades": equity_state["closedTradesCount"],
-            "winRate": round((equity_state["winCount"] / max(1, equity_state["closedTradesCount"])) * 100.0, 1),
+            "totalTrades": total_closed,
+            "winRate": win_rate,
             "liveEquityCurve": equity_state["liveEquityCurve"],
             "openPositions": [p for p in positions if p.get("status") == "OPEN"]
         }

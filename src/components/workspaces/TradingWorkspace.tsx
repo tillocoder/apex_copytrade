@@ -1,14 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTerminal } from '../../context/TerminalContext';
 import { ApexCandleChart } from '../common/ApexCandleChart';
 import { 
-  Flame, 
   Bot, 
   ShieldCheck, 
   Sparkles, 
   Activity, 
   Lock, 
-  AlertTriangle,
   Zap,
   CheckCircle2,
   SlidersHorizontal
@@ -18,7 +16,6 @@ export const TradingWorkspace: React.FC = () => {
   const { 
     selectedSymbol, 
     setSelectedSymbol, 
-    tickers, 
     positions, 
     propAccounts,
     backtest,
@@ -28,55 +25,28 @@ export const TradingWorkspace: React.FC = () => {
 
   const [copyTradeRatio, setCopyTradeRatio] = useState<number>(1.0);
 
-  const currentTicker = tickers.find(t => t.symbol === selectedSymbol) || tickers[0];
-  const activePosition = positions.find(p => p.symbol === selectedSymbol);
+  // Guarantee BTC/USDT is always active
+  useEffect(() => {
+    if (selectedSymbol !== 'BTC/USDT') {
+      setSelectedSymbol('BTC/USDT');
+    }
+  }, [selectedSymbol, setSelectedSymbol]);
+
+  const activePosition = positions.find(p => p.symbol === 'BTC/USDT');
   const activePropAccount = propAccounts[0];
 
   return (
     <div className="flex-1 flex overflow-hidden bg-apex-bg font-sans text-xs">
-      {/* Watchlist Panel (Left 18%) */}
-      <div className="w-56 bg-apex-bgSecondary border-r border-apex-border flex flex-col shrink-0 font-mono">
-        <div className="p-2.5 border-b border-apex-border bg-apex-surface flex justify-between items-center font-bold">
-          <span className="flex items-center gap-1.5 text-apex-text">
-            <Flame className="w-3.5 h-3.5 text-apex-accent" /> WATCHLIST
-          </span>
-          <span className="text-[10px] text-apex-muted">STREAMING</span>
-        </div>
-
-        <div className="flex-1 overflow-y-auto divide-y divide-apex-border/40">
-          {tickers.map((t) => (
-            <div
-              key={t.symbol}
-              onClick={() => setSelectedSymbol(t.symbol)}
-              className={`p-2.5 hover:bg-apex-hover cursor-pointer transition-apex flex justify-between ${
-                t.symbol === selectedSymbol ? 'bg-apex-surface border-l-2 border-apex-accent' : ''
-              }`}
-            >
-              <div>
-                <div className="font-bold text-apex-text text-xs">{t.symbol}</div>
-                <div className="text-[10px] text-apex-muted">Vol ${(t.volume24h / 1e9).toFixed(1)}B</div>
-              </div>
-              <div className="text-right">
-                <div className="font-bold text-apex-text text-xs">${t.price.toLocaleString()}</div>
-                <div className={`text-[10px] font-bold ${t.change24h >= 0 ? 'text-apex-success' : 'text-apex-danger'}`}>
-                  {t.change24h >= 0 ? '+' : ''}{t.change24h}%
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Large Chart Canvas (Center 57%) */}
+      {/* Large Full-Width Chart Canvas (Center/Left Area) */}
       <div className="flex-1 flex flex-col border-r border-apex-border bg-apex-bgSecondary overflow-hidden min-w-0">
         <ApexCandleChart
-          symbol={selectedSymbol}
+          symbol="BTC/USDT"
           position={activePosition}
           defaultTimeframe="15m"
         />
       </div>
 
-      {/* Autonomous Engine Copy-Trade & Prop Risk Telemetry Panel (Right 25%) */}
+      {/* Autonomous Engine Copy-Trade & Prop Risk Telemetry Panel (Right 280-320px) */}
       <div className="w-80 bg-apex-bgSecondary p-3 overflow-y-auto space-y-3 font-mono shrink-0 border-l border-apex-border">
         
         {/* Header Title */}
@@ -85,7 +55,7 @@ export const TradingWorkspace: React.FC = () => {
             <Bot className="w-4 h-4 text-apex-accent" /> ENGINE COPY DISPATCH
           </span>
           <span className="text-[10px] text-apex-success bg-apex-success/15 border border-apex-success/30 px-1.5 py-0.5 rounded">
-            SYNCED
+            BTC/USDT EXCLUSIVE
           </span>
         </div>
 
@@ -95,7 +65,7 @@ export const TradingWorkspace: React.FC = () => {
             <Lock className="w-3 h-3 text-apex-accent" /> AUTONOMOUS MONITORING MODE
           </div>
           <p className="text-apex-muted leading-relaxed font-sans text-[11px]">
-            Signals use real Binance market data; execution is paper-mode until an exchange account is explicitly connected.
+            Signals use real Binance BTC/USDT market data; execution is paper-mode until an exchange account is explicitly connected.
           </p>
         </div>
 
@@ -110,6 +80,10 @@ export const TradingWorkspace: React.FC = () => {
 
           <div className="space-y-1.5 pt-1 border-t border-apex-border/50 font-mono text-[10px]">
             <div className="flex justify-between">
+              <span className="text-apex-muted">ACTIVE PAIR:</span>
+              <span className="font-bold text-apex-accent">BTC/USDT ONLY</span>
+            </div>
+            <div className="flex justify-between">
               <span className="text-apex-muted">POSITION SIZING:</span>
               <span className="font-bold text-apex-accent">0.50% FIXED RISK / TRADE</span>
             </div>
@@ -119,7 +93,11 @@ export const TradingWorkspace: React.FC = () => {
             </div>
             <div className="flex justify-between">
               <span className="text-apex-muted">SL / TP EXECUTION:</span>
-              <span className="font-bold text-apex-text">1.5x ATR SL / 3.0x ATR TP</span>
+              <span className="font-bold text-apex-text">1.5x ATR SL / 1.8R-3.0R TP</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-apex-muted">MAX DAILY TRADES:</span>
+              <span className="font-bold text-emerald-400">2 TRADES / DAY (A+ ONLY)</span>
             </div>
           </div>
         </div>
@@ -164,7 +142,7 @@ export const TradingWorkspace: React.FC = () => {
           <div className="text-[10px] font-mono text-apex-ai font-bold flex items-center gap-1 uppercase">
             <Sparkles className="w-3.5 h-3.5 text-apex-ai" /> LIVE SIGNAL CONFLUENCE
           </div>
-          <div className="text-xs font-bold text-apex-text">{selectedSymbol} SMC Demand Block Sweep</div>
+          <div className="text-xs font-bold text-apex-text">BTC/USDT SMC Demand Block Sweep</div>
           <div className="text-[10px] text-apex-muted">Confidence Score: <strong className="text-apex-ai">94.8%</strong></div>
         </div>
 
