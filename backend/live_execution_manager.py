@@ -162,19 +162,21 @@ def open_position_from_signal(signal: Dict[str, Any]) -> Optional[Dict[str, Any]
 
         # Check Max Daily Trades Cap (Max 2 trades per day per asset)
         today_utc = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-        today_trades_count = 0
+        today_seen_ids = set()
         for p in positions:
             p_date = p.get("openedAt", "")[:10]
             if not p_date and p.get("entry_timestamp"):
                 p_date = datetime.fromtimestamp(p["entry_timestamp"], tz=timezone.utc).strftime("%Y-%m-%d")
             if p.get("symbol") == sym and p_date == today_utc:
-                today_trades_count += 1
+                today_seen_ids.add(p.get("id"))
         for th in equity_state.get("tradeHistory", []):
             th_date = th.get("openedAt", "")[:10]
             if not th_date and th.get("entry_timestamp"):
                 th_date = datetime.fromtimestamp(th["entry_timestamp"], tz=timezone.utc).strftime("%Y-%m-%d")
             if th.get("symbol") == sym and th_date == today_utc:
-                today_trades_count += 1
+                today_seen_ids.add(th.get("id"))
+
+        today_trades_count = len(today_seen_ids)
 
         if today_trades_count >= MAX_DAILY_TRADES_PER_SYMBOL:
             print(f"[LIVE EXECUTION] Daily trades cap reached for {sym} ({today_trades_count}/{MAX_DAILY_TRADES_PER_SYMBOL}). Skipping.")
