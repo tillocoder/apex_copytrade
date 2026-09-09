@@ -58,7 +58,7 @@ SYMBOLS = [
     {"symbol": "BTC/USDT", "binance": "BTCUSDT"},
 ]
 BLACKLISTED_SYMBOLS = {"ETH/USDT", "ETHUSDT"}
-MAX_DAILY_TRADES_PER_SYMBOL = 2
+MAX_DAILY_TRADES_PER_SYMBOL = 4
 
 HISTORY_FILE = "backend/data/signals_history.json"
 CACHE_TTL_S: int = 15
@@ -1209,6 +1209,11 @@ def generate_signals() -> List[Dict[str, Any]]:
 
         if today_trades >= MAX_DAILY_TRADES_PER_SYMBOL:
             logger.info(f"[ENGINE] Skipping {sym}: Daily trades cap reached ({today_trades}/{MAX_DAILY_TRADES_PER_SYMBOL}).")
+            try:
+                from backend.telegram_bot import telegram_notifier
+                telegram_notifier.send_daily_limit_reached_notification(sym, today_trades, MAX_DAILY_TRADES_PER_SYMBOL)
+            except Exception as e:
+                logger.error(f"[ENGINE] Error sending daily cap alert: {e}")
             continue
 
         try:

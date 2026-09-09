@@ -662,4 +662,31 @@ class TelegramNotifier:
                 msg_ids.append(mid)
         return msg_ids[0] if msg_ids else None
 
+    _daily_cap_notified: Set[str] = set()
+
+    def send_daily_limit_reached_notification(self, symbol: str, current_count: int, max_limit: int):
+        """Sends a throttled alert when the daily trades cap is reached (sent once per day per symbol)."""
+        from datetime import datetime, timezone
+        today_utc = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        cache_key = f"{today_utc}:{symbol}"
+        if cache_key in self._daily_cap_notified:
+            return
+
+        self._daily_cap_notified.add(cache_key)
+
+        metrics = self._get_live_performance_metrics()
+        text = (
+            f"⚠️ <b>KUNLIK SAVDO LIMITIGA YETILDI — {symbol}</b>\n"
+            f"━━━━━━━━━━━━━━━━━━━━━━\n"
+            f"📊 <b>Bugungi Savdolar Soni:</b> <b>{current_count}/{max_limit} ta</b>\n"
+            f"🛡️ <b>Risk Boshqaruvi:</b> Kunlik savdo limiti to'ldi. Kapitalni asrash va ortiqcha xavfga kirmaslik maqsadida bugun yangi pozitsiyalar ochilmaydi.\n"
+            f"📈 <b>Joriy Win Rate:</b> <b>{metrics['win_rate']:.1f}%</b> ({metrics['wins']}W / {metrics['losses']}L | Jami: {metrics['total_closed']} ta)\n"
+            f"💵 <b>Realized PnL:</b> <b>{'+' if metrics['total_pnl'] >= 0 else ''}${metrics['total_pnl']:,.2f} USD</b>\n"
+            f"⏰ <b>Yangi Savdolar:</b> UTC 00:00 (Toshkent vaqti 05:00) dan boshlab avtomatik qayta tiklanadi.\n"
+            f"━━━━━━━━━━━━━━━━━━━━━━\n"
+            f"<i>💡 Barcha ochiq bitimlar yoki hisob holatini ko'rish uchun pastdagi tugmalardan foydalanishingiz mumkin.</i>"
+        )
+        for cid in list(self.chat_ids):
+            self.send_direct_message(cid, text)
+
 telegram_notifier = TelegramNotifier()

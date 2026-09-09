@@ -20,7 +20,7 @@ from backend.quant_engine.config import PropFirmRulesConfig
 GLOBAL_PROP_RULES = PropFirmRulesConfig()
 
 BLACKLISTED_SYMBOLS = {"ETH/USDT", "ETHUSDT"}
-MAX_DAILY_TRADES_PER_SYMBOL = 2
+MAX_DAILY_TRADES_PER_SYMBOL = 4
 
 def _ensure_dir(filepath: str):
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
@@ -178,6 +178,11 @@ def open_position_from_signal(signal: Dict[str, Any]) -> Optional[Dict[str, Any]
 
         if today_trades_count >= MAX_DAILY_TRADES_PER_SYMBOL:
             print(f"[LIVE EXECUTION] Daily trades cap reached for {sym} ({today_trades_count}/{MAX_DAILY_TRADES_PER_SYMBOL}). Skipping.")
+            try:
+                from backend.telegram_bot import telegram_notifier
+                telegram_notifier.send_daily_limit_reached_notification(sym, today_trades_count, MAX_DAILY_TRADES_PER_SYMBOL)
+            except Exception as e:
+                print(f"[LIVE EXECUTION] Error sending daily cap alert: {e}")
             return None
 
         side = signal.get("side", signal.get("direction", "BUY")).upper()
