@@ -23,9 +23,10 @@ class TelegramNotifier:
     persistent message reply tracking, and mathematically bulletproof live telemetry.
     """
     def __init__(self):
-        self.bot_token: Optional[str] = os.getenv("TELEGRAM_BOT_TOKEN", "8032766355:AAEz0B00q85xU2tU1n0T66gQ7w90_y6k4_s")
-        self.chat_ids: Set[int] = set()
-        self.public_app_url: str = "http://192.168.1.136:8000"
+        self.bot_token: Optional[str] = os.getenv("TELEGRAM_BOT_TOKEN", "8922592987:AAEKfszGRuNsgGVy95f649rf8MHdrKiw6QI")
+        default_cid = os.getenv("TELEGRAM_CHAT_ID", "5563813326")
+        self.chat_ids: Set[int] = {int(default_cid)} if default_cid else {5563813326}
+        self.public_app_url: str = os.getenv("PUBLIC_APP_URL", "https://apex.xrinvest.uz")
         self.account_balance: float = INITIAL_PROP_CAPITAL
         self.last_update_id: int = 0
         self.message_map: Dict[str, int] = {}
@@ -37,11 +38,15 @@ class TelegramNotifier:
         os.makedirs(os.path.dirname(path), exist_ok=True)
 
     def _load_state(self):
+        default_cid = os.getenv("TELEGRAM_CHAT_ID", "5563813326")
+        if default_cid:
+            self.chat_ids.add(int(default_cid))
         if os.path.exists(self.state_file):
             try:
                 with open(self.state_file, "r", encoding="utf-8") as f:
                     data = json.load(f)
-                    self.chat_ids = set(data.get("chat_ids", []))
+                    for cid in data.get("chat_ids", []):
+                        self.chat_ids.add(int(cid))
                     self.last_update_id = data.get("last_update_id", 0)
                     self.message_map = data.get("message_map", {})
                     self.signals_active = data.get("signals_active", True)
@@ -232,7 +237,7 @@ class TelegramNotifier:
         url = f"https://api.telegram.org/bot{self.bot_token}/getUpdates"
         params = {"offset": self.last_update_id + 1, "timeout": 0}
         try:
-            res = requests.get(url, params=params, timeout=5)
+            res = requests.get(url, params=params, timeout=10)
             if res.status_code == 200:
                 updates = res.json().get("result", [])
                 for u in updates:

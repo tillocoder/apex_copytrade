@@ -19,6 +19,9 @@ from backend.quant_engine.config import PropFirmRulesConfig
 
 GLOBAL_PROP_RULES = PropFirmRulesConfig()
 
+BLACKLISTED_SYMBOLS = {"ETH/USDT", "ETHUSDT"}
+MAX_DAILY_TRADES_PER_SYMBOL = 2
+
 def _ensure_dir(filepath: str):
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
 
@@ -115,6 +118,11 @@ def load_equity_state() -> Dict[str, Any]:
         eq["closedTradesCount"] = len(th)
         eq["winCount"] = wins
         eq["winRate"] = round((wins / max(1, len(th))) * 100.0, 1) if th else 0.0
+        curr_eq = round(float(eq.get("initialCapital", INITIAL_CAPITAL)) + float(eq.get("realizedPnl", 0.0)), 2)
+        eq["currentEquity"] = curr_eq
+        eq["equity"] = curr_eq
+        eq["balance"] = curr_eq
+        eq["nav"] = curr_eq
         return eq
 
 def save_equity_state(state: Dict[str, Any]):
@@ -123,11 +131,21 @@ def save_equity_state(state: Dict[str, Any]):
 
 def fetch_binance_price(symbol: str) -> float:
     sym = symbol.replace("/", "").upper()
-    url = f"https://api.binance.com/api/v3/ticker/price?symbol={sym}"
-    req = urllib.request.Request(url, headers={"User-Agent": "ApexLiveEngine/5.0"})
-    with urllib.request.urlopen(req, timeout=3) as resp:
-        res = json.loads(resp.read().decode())
-        return float(res["price"])
+    endpoints = [
+        f"https://api.binance.com/api/v3/ticker/price?symbol={sym}",
+        f"https://data-api.binance.vision/api/v3/ticker/price?symbol={sym}",
+        f"https://api1.binance.com/api/v3/ticker/price?symbol={sym}",
+        f"https://api3.binance.com/api/v3/ticker/price?symbol={sym}"
+    ]
+    for url in endpoints:
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": "ApexLiveEngine/5.0"})
+            with urllib.request.urlopen(req, timeout=6) as resp:
+                res = json.loads(resp.read().decode())
+                return float(res["price"])
+        except Exception:
+            continue
+    return 0.0
 
 def open_position_from_signal(signal: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     """
@@ -281,6 +299,8 @@ def sync_live_positions_and_equity() -> Dict[str, Any]:
             sym = p.get("symbol")
             try:
                 curr_price = fetch_binance_price(sym)
+                if curr_price <= 0:
+                    curr_price = float(p.get("currentPrice") or p.get("entryPrice", 0.0))
                 p["currentPrice"] = curr_price
                 
                 entry = float(p.get("entryPrice", curr_price))
@@ -356,9 +376,7 @@ def sync_live_positions_and_equity() -> Dict[str, Any]:
                     # 2. Protected ATR Trailing Stop After TP1 (Avoid premature Break-Even knockout on retests)
                     if p.get("tp1_hit", False):
                         atr_val = float(p.get("atr", abs(tp1_val - entry) / 1.8) or 150.0)
-                        # Trail 1.2 ATR behind current market price
                         candidate_trail = round(curr_price - 1.2 * atr_val, 2)
-                        # Never lower SL, only advance upwards
                         if candidate_trail > float(p.get("sl", sl)):
                             p["sl"] = candidate_trail
                             p["trailingStopActive"] = True
@@ -432,7 +450,6 @@ def sync_live_positions_and_equity() -> Dict[str, Any]:
                     if p.get("tp1_hit", False):
                         atr_val = float(p.get("atr", abs(entry - tp1_val) / 1.8) or 150.0)
                         candidate_trail = round(curr_price + 1.2 * atr_val, 2)
-                        # Never raise SL, only advance downwards
                         if candidate_trail < float(p.get("sl", sl)):
                             p["sl"] = candidate_trail
                             p["trailingStopActive"] = True
@@ -486,13 +503,11 @@ def sync_live_positions_and_equity() -> Dict[str, Any]:
                     equity_updated = True
                     positions_updated = True
 
-                    # FLUSH TO DISK IMMEDIATELY so telemetriy / analytics has 100% current state!
                     _write_positions_unlocked(positions)
                     _write_equity_unlocked(equity_state)
 
                     print(f"[LIVE ENGINE] Position {p['id']} closed via {hit_event}! Total Net PnL: ${total_trade_pnl:+.2f}")
 
-                    # ── CRITICAL: Sync signal status when position closes ──────
                     signal_id = p.get("signal_id")
                     if signal_id:
                         try:
@@ -507,7 +522,6 @@ def sync_live_positions_and_equity() -> Dict[str, Any]:
                                 print(f"[LIVE ENGINE] Signal {signal_id} status -> CLOSED_{hit_event}")
                         except Exception as sig_err:
                             print(f"[LIVE ENGINE] Signal status sync error: {sig_err}")
-                    # ──────────────────────────────────────────────────────────────────
 
                     try:
                         from backend.telegram_bot import telegram_notifier

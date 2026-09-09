@@ -1098,23 +1098,39 @@ def calculate_historical_performance() -> Dict[str, Any]:
 
 def fetch_klines_multi_tf(symbol: str, interval: str = "15m", limit: int = 200) -> Dict[str, Any]:
     sym = symbol.replace("/", "").upper()
-    url = f"https://api.binance.com/api/v3/klines?symbol={sym}&interval={interval}&limit={limit}"
-    req = urllib.request.Request(url, headers={"User-Agent": "ApexQuantEngine/5.0"})
-    with urllib.request.urlopen(req, timeout=5) as resp:
-        raw = json.loads(resp.read().decode())
+    endpoints = [
+        f"https://api.binance.com/api/v3/klines?symbol={sym}&interval={interval}&limit={limit}",
+        f"https://data-api.binance.vision/api/v3/klines?symbol={sym}&interval={interval}&limit={limit}",
+        f"https://api1.binance.com/api/v3/klines?symbol={sym}&interval={interval}&limit={limit}",
+        f"https://api3.binance.com/api/v3/klines?symbol={sym}&interval={interval}&limit={limit}"
+    ]
+    last_err = None
+    for url in endpoints:
+        for _ in range(2):
+            try:
+                req = urllib.request.Request(url, headers={"User-Agent": "ApexQuantEngine/5.0"})
+                with urllib.request.urlopen(req, timeout=8) as resp:
+                    raw = json.loads(resp.read().decode())
 
-    opens = [float(d[1]) for d in raw]
-    highs = [float(d[2]) for d in raw]
-    lows = [float(d[3]) for d in raw]
-    closes = [float(d[4]) for d in raw]
-    volumes = [float(d[5]) for d in raw]
-    times = [d[0] for d in raw]
+                opens = [float(d[1]) for d in raw]
+                highs = [float(d[2]) for d in raw]
+                lows = [float(d[3]) for d in raw]
+                closes = [float(d[4]) for d in raw]
+                volumes = [float(d[5]) for d in raw]
+                times = [d[0] for d in raw]
 
-    return {
-        "raw": raw,
-        "opens": opens, "highs": highs, "lows": lows,
-        "closes": closes, "volumes": volumes, "times": times
-    }
+                return {
+                    "raw": raw,
+                    "opens": opens, "highs": highs, "lows": lows,
+                    "closes": closes, "volumes": volumes, "times": times
+                }
+            except Exception as err:
+                last_err = err
+                time.sleep(0.3)
+    if last_err:
+        raise last_err
+    raise RuntimeError(f"Failed to fetch klines for {sym} {interval}")
+
 
 
 # =============================================================================

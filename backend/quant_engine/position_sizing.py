@@ -21,11 +21,56 @@ class PositionSizingResult:
     rejection_reason: Optional[str]
     audit_log: Dict[str, Any]
 
+    @property
+    def position_size(self) -> float:
+        return self.final_size
+
+    @property
+    def leverage(self) -> float:
+        return self.effective_leverage
+
+    @property
+    def margin_required(self) -> float:
+        return self.initial_margin
+
+    @property
+    def risk_amount(self) -> float:
+        return self.risk_budget_usd
+
+    @property
+    def risk_percent(self) -> float:
+        return round((self.risk_budget_usd / max(1.0, self.final_notional or 10000.0)) * 100.0, 2)
+
 class PositionSizingEngine:
     """
     Institutional Multi-Layer Risk, Sizing & Margin Engine.
     Shared identically by both Backtest Engine and LIVE Execution Manager.
     """
+
+    @classmethod
+    def calculate_position(
+        cls,
+        account_balance: float,
+        entry_price: float,
+        stop_loss: float,
+        rules: PropFirmRulesConfig,
+        symbol: str,
+        side: str = "BUY",
+        open_positions: Optional[List[Dict[str, Any]]] = None,
+        pending_orders: Optional[List[Dict[str, Any]]] = None,
+        **kwargs
+    ) -> PositionSizingResult:
+        """Backward-compatible caller for live execution manager."""
+        return cls.calculate_position_size(
+            symbol=symbol,
+            side=side,
+            entry_price=entry_price,
+            stop_loss=stop_loss,
+            current_equity=account_balance,
+            open_positions=open_positions or [],
+            pending_orders=pending_orders or [],
+            prop_rules=rules
+        )
 
     @staticmethod
     def calculate_position_size(
