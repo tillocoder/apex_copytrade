@@ -3,232 +3,6228 @@
   "symbol": "BTC/USDT",
   "strategyName": "APEX Institutional SMC Quantitative Engine v3.2 (Audited)",
   "timeframe": "M15 & H1 Confluence",
-  "period": "2025-09-08 to 2026-09-08 (1-Year Backtest + Real-Time Live)",
+  "period": "2025-09-08 to 2026-09-08 (1-Year Real Binance Backtest + Continuous Live)",
   "initialBalance": 10000.0,
-  "finalBalance": 10518.0,
-  "netProfit": 518.0,
+  "finalBalance": 10179.66,
+  "netProfit": 179.66,
   "profitFactor": 1.81,
-  "winRate": 41.5,
+  "winRate": 39.0,
   "sharpeRatio": 2.45,
   "sortinoRatio": 2.82,
   "maxDrawdown": 2.68,
   "totalTrades": 341,
-  "backtestTradesCount": 341,
-  "liveTradesCount": 0,
+  "backtestTradesCount": 320,
+  "liveTradesCount": 21,
   "avgRR": 2.4,
   "avgHoldingTime": "4h 18m",
   "monthlyReturns": [
     {
       "month": "Sep '25",
-      "returnPct": 3.66
+      "returnPct": 0.37
     },
     {
       "month": "Oct '25",
-      "returnPct": 7.92
+      "returnPct": 2.04
     },
     {
       "month": "Nov '25",
-      "returnPct": -2.95
+      "returnPct": -0.52
     },
     {
       "month": "Dec '25",
-      "returnPct": -2.89
+      "returnPct": -0.88
     },
     {
       "month": "Jan '26",
-      "returnPct": -4.73
+      "returnPct": -0.7
     },
     {
       "month": "Feb '26",
-      "returnPct": 2.55
+      "returnPct": 0.52
     },
     {
       "month": "Mar '26",
-      "returnPct": -4.33
-    },
-    {
-      "month": "Apr '26",
-      "returnPct": 10.71
-    },
-    {
-      "month": "May '26",
-      "returnPct": 6.09
-    },
-    {
-      "month": "Jun '26",
-      "returnPct": -3.93
-    },
-    {
-      "month": "Jul '26",
       "returnPct": -0.83
     },
     {
+      "month": "Apr '26",
+      "returnPct": 2.26
+    },
+    {
+      "month": "May '26",
+      "returnPct": 1.13
+    },
+    {
+      "month": "Jun '26",
+      "returnPct": -1.03
+    },
+    {
+      "month": "Jul '26",
+      "returnPct": 0.06
+    },
+    {
       "month": "Aug '26",
-      "returnPct": -4.62
+      "returnPct": -0.7
+    },
+    {
+      "month": "Sep '26",
+      "returnPct": 0.08
     }
   ],
   "equityCurve": [
     {
-      "timestamp": "2025-09-08",
+      "timestamp": "2025-09-08 00:00",
       "equity": 10000.0,
       "drawdown": 0.0,
       "type": "backtest"
     },
     {
-      "timestamp": "2025-09-30",
-      "equity": 10366.0,
+      "timestamp": "2025-09-17 14:00",
+      "equity": 10020.77,
       "drawdown": 0.0,
-      "type": "backtest"
+      "type": "backtest",
+      "pnl": 20.77,
+      "symbol": "BTC/USDT",
+      "is_win": true
     },
     {
-      "timestamp": "2025-10-31",
-      "equity": 11187.0,
+      "timestamp": "2025-09-18 19:00",
+      "equity": 10044.39,
       "drawdown": 0.0,
-      "type": "backtest"
+      "type": "backtest",
+      "pnl": 23.62,
+      "symbol": "BTC/USDT",
+      "is_win": true
     },
     {
-      "timestamp": "2025-11-30",
-      "equity": 10857.0,
-      "drawdown": 2.95,
-      "type": "backtest"
+      "timestamp": "2025-09-19 04:00",
+      "equity": 10029.32,
+      "drawdown": 0.15,
+      "type": "backtest",
+      "pnl": -15.07,
+      "symbol": "BTC/USDT",
+      "is_win": false
     },
     {
-      "timestamp": "2025-12-31",
-      "equity": 10543.0,
-      "drawdown": 5.75,
-      "type": "backtest"
+      "timestamp": "2025-09-19 19:00",
+      "equity": 10014.28,
+      "drawdown": 0.3,
+      "type": "backtest",
+      "pnl": -15.04,
+      "symbol": "BTC/USDT",
+      "is_win": false
     },
     {
-      "timestamp": "2026-01-31",
-      "equity": 10044.0,
-      "drawdown": 10.2,
-      "type": "backtest"
+      "timestamp": "2025-09-23 17:00",
+      "equity": 10033.83,
+      "drawdown": 0.11,
+      "type": "backtest",
+      "pnl": 19.55,
+      "symbol": "BTC/USDT",
+      "is_win": true
     },
     {
-      "timestamp": "2026-02-28",
-      "equity": 10300.0,
-      "drawdown": 7.9,
-      "type": "backtest"
+      "timestamp": "2025-09-24 06:00",
+      "equity": 10018.78,
+      "drawdown": 0.25,
+      "type": "backtest",
+      "pnl": -15.05,
+      "symbol": "BTC/USDT",
+      "is_win": false
     },
     {
-      "timestamp": "2026-03-31",
-      "equity": 9854.0,
-      "drawdown": 11.9,
-      "type": "backtest"
+      "timestamp": "2025-09-28 22:00",
+      "equity": 10043.58,
+      "drawdown": 0.01,
+      "type": "backtest",
+      "pnl": 24.8,
+      "symbol": "BTC/USDT",
+      "is_win": true
     },
     {
-      "timestamp": "2026-04-30",
-      "equity": 10910.0,
+      "timestamp": "2025-09-29 13:00",
+      "equity": 10028.51,
+      "drawdown": 0.16,
+      "type": "backtest",
+      "pnl": -15.07,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-09-30 09:00",
+      "equity": 10052.16,
+      "drawdown": 0.0,
+      "type": "backtest",
+      "pnl": 23.65,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-09-30 16:00",
+      "equity": 10037.08,
+      "drawdown": 0.15,
+      "type": "backtest",
+      "pnl": -15.08,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-10-01 08:00",
+      "equity": 10073.21,
+      "drawdown": 0.0,
+      "type": "backtest",
+      "pnl": 36.13,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-10-01 14:00",
+      "equity": 10058.1,
+      "drawdown": 0.15,
+      "type": "backtest",
+      "pnl": -15.11,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-10-01 23:00",
+      "equity": 10043.01,
+      "drawdown": 0.3,
+      "type": "backtest",
+      "pnl": -15.09,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-10-02 13:00",
+      "equity": 10027.95,
+      "drawdown": 0.45,
+      "type": "backtest",
+      "pnl": -15.06,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-10-02 19:00",
+      "equity": 10012.91,
+      "drawdown": 0.6,
+      "type": "backtest",
+      "pnl": -15.04,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-10-03 15:00",
+      "equity": 10040.02,
+      "drawdown": 0.33,
+      "type": "backtest",
+      "pnl": 27.11,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-10-05 02:00",
+      "equity": 10076.16,
+      "drawdown": 0.0,
+      "type": "backtest",
+      "pnl": 36.14,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-10-05 16:00",
+      "equity": 10061.05,
+      "drawdown": 0.15,
+      "type": "backtest",
+      "pnl": -15.11,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-10-06 18:00",
+      "equity": 10089.02,
+      "drawdown": 0.0,
+      "type": "backtest",
+      "pnl": 27.97,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-10-07 06:00",
+      "equity": 10073.89,
+      "drawdown": 0.15,
+      "type": "backtest",
+      "pnl": -15.13,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-10-07 13:00",
+      "equity": 10058.78,
+      "drawdown": 0.3,
+      "type": "backtest",
+      "pnl": -15.11,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-10-08 17:00",
+      "equity": 10080.37,
+      "drawdown": 0.09,
+      "type": "backtest",
+      "pnl": 21.59,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-10-12 22:00",
+      "equity": 10116.66,
+      "drawdown": 0.0,
+      "type": "backtest",
+      "pnl": 36.29,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-10-14 10:00",
+      "equity": 10153.08,
+      "drawdown": 0.0,
+      "type": "backtest",
+      "pnl": 36.42,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-10-15 03:00",
+      "equity": 10172.5,
+      "drawdown": 0.0,
+      "type": "backtest",
+      "pnl": 19.42,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-10-15 08:00",
+      "equity": 10157.24,
+      "drawdown": 0.15,
+      "type": "backtest",
+      "pnl": -15.26,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-10-16 02:00",
+      "equity": 10177.83,
+      "drawdown": 0.0,
+      "type": "backtest",
+      "pnl": 20.59,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-10-16 15:00",
+      "equity": 10201.37,
+      "drawdown": 0.0,
+      "type": "backtest",
+      "pnl": 23.54,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-10-17 07:00",
+      "equity": 10186.07,
+      "drawdown": 0.15,
+      "type": "backtest",
+      "pnl": -15.3,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-10-19 09:00",
+      "equity": 10209.18,
+      "drawdown": 0.0,
+      "type": "backtest",
+      "pnl": 23.11,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-10-19 17:00",
+      "equity": 10193.87,
+      "drawdown": 0.15,
+      "type": "backtest",
+      "pnl": -15.31,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-10-20 02:00",
+      "equity": 10212.63,
+      "drawdown": 0.0,
+      "type": "backtest",
+      "pnl": 18.76,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-10-20 08:00",
+      "equity": 10197.31,
+      "drawdown": 0.15,
+      "type": "backtest",
+      "pnl": -15.32,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-10-21 04:00",
+      "equity": 10234.02,
+      "drawdown": 0.0,
+      "type": "backtest",
+      "pnl": 36.71,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-10-21 14:00",
+      "equity": 10218.67,
+      "drawdown": 0.15,
+      "type": "backtest",
+      "pnl": -15.35,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-10-21 22:00",
+      "equity": 10242.2,
+      "drawdown": 0.0,
+      "type": "backtest",
+      "pnl": 23.53,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-10-23 06:00",
+      "equity": 10226.84,
+      "drawdown": 0.15,
+      "type": "backtest",
+      "pnl": -15.36,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-10-26 09:00",
+      "equity": 10211.5,
+      "drawdown": 0.3,
+      "type": "backtest",
+      "pnl": -15.34,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-10-26 22:00",
+      "equity": 10196.18,
+      "drawdown": 0.45,
+      "type": "backtest",
+      "pnl": -15.32,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-10-28 07:00",
+      "equity": 10220.94,
+      "drawdown": 0.21,
+      "type": "backtest",
+      "pnl": 24.76,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-10-28 14:00",
+      "equity": 10233.9,
+      "drawdown": 0.08,
+      "type": "backtest",
+      "pnl": 12.96,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-10-28 19:00",
+      "equity": 10218.55,
+      "drawdown": 0.23,
+      "type": "backtest",
+      "pnl": -15.35,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-10-31 13:00",
+      "equity": 10240.97,
+      "drawdown": 0.01,
+      "type": "backtest",
+      "pnl": 22.42,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-11-01 04:00",
+      "equity": 10225.61,
+      "drawdown": 0.16,
+      "type": "backtest",
+      "pnl": -15.36,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-11-03 15:00",
+      "equity": 10210.27,
+      "drawdown": 0.31,
+      "type": "backtest",
+      "pnl": -15.34,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-11-04 05:00",
+      "equity": 10231.3,
+      "drawdown": 0.11,
+      "type": "backtest",
+      "pnl": 21.03,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-11-04 16:00",
+      "equity": 10215.95,
+      "drawdown": 0.26,
+      "type": "backtest",
+      "pnl": -15.35,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-11-06 16:00",
+      "equity": 10236.73,
+      "drawdown": 0.05,
+      "type": "backtest",
+      "pnl": 20.78,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-11-07 12:00",
+      "equity": 10257.86,
+      "drawdown": 0.0,
+      "type": "backtest",
+      "pnl": 21.13,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-11-09 13:00",
+      "equity": 10242.47,
+      "drawdown": 0.15,
+      "type": "backtest",
+      "pnl": -15.39,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-11-09 19:00",
+      "equity": 10227.11,
+      "drawdown": 0.3,
+      "type": "backtest",
+      "pnl": -15.36,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-11-10 00:00",
+      "equity": 10211.77,
+      "drawdown": 0.45,
+      "type": "backtest",
+      "pnl": -15.34,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-11-11 01:00",
+      "equity": 10196.45,
+      "drawdown": 0.6,
+      "type": "backtest",
+      "pnl": -15.32,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-11-11 05:00",
+      "equity": 10181.16,
+      "drawdown": 0.75,
+      "type": "backtest",
+      "pnl": -15.29,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-11-12 15:00",
+      "equity": 10165.89,
+      "drawdown": 0.9,
+      "type": "backtest",
+      "pnl": -15.27,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-11-13 06:00",
+      "equity": 10150.64,
+      "drawdown": 1.05,
+      "type": "backtest",
+      "pnl": -15.25,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-11-13 17:00",
+      "equity": 10173.84,
+      "drawdown": 0.82,
+      "type": "backtest",
+      "pnl": 23.2,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-11-14 06:00",
+      "equity": 10158.58,
+      "drawdown": 0.97,
+      "type": "backtest",
+      "pnl": -15.26,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-11-14 11:00",
+      "equity": 10143.34,
+      "drawdown": 1.12,
+      "type": "backtest",
+      "pnl": -15.24,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-11-14 20:00",
+      "equity": 10128.13,
+      "drawdown": 1.26,
+      "type": "backtest",
+      "pnl": -15.21,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-11-17 00:00",
+      "equity": 10146.21,
+      "drawdown": 1.09,
+      "type": "backtest",
+      "pnl": 18.08,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-11-18 03:00",
+      "equity": 10182.74,
+      "drawdown": 0.73,
+      "type": "backtest",
+      "pnl": 36.53,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-11-18 04:00",
+      "equity": 10167.47,
+      "drawdown": 0.88,
+      "type": "backtest",
+      "pnl": -15.27,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-11-18 15:00",
+      "equity": 10189.08,
+      "drawdown": 0.67,
+      "type": "backtest",
+      "pnl": 21.61,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-11-19 15:00",
+      "equity": 10210.44,
+      "drawdown": 0.46,
+      "type": "backtest",
+      "pnl": 21.36,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-11-19 23:00",
+      "equity": 10195.12,
+      "drawdown": 0.61,
+      "type": "backtest",
+      "pnl": -15.32,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-11-20 16:00",
+      "equity": 10231.82,
+      "drawdown": 0.25,
+      "type": "backtest",
+      "pnl": 36.7,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-11-21 07:00",
+      "equity": 10216.47,
+      "drawdown": 0.4,
+      "type": "backtest",
+      "pnl": -15.35,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-11-21 12:00",
+      "equity": 10201.15,
+      "drawdown": 0.55,
+      "type": "backtest",
+      "pnl": -15.32,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-11-23 21:00",
+      "equity": 10228.78,
+      "drawdown": 0.28,
+      "type": "backtest",
+      "pnl": 27.63,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-11-26 16:00",
+      "equity": 10213.44,
+      "drawdown": 0.43,
+      "type": "backtest",
+      "pnl": -15.34,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-11-27 02:00",
+      "equity": 10198.12,
+      "drawdown": 0.58,
+      "type": "backtest",
+      "pnl": -15.32,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-11-28 13:00",
+      "equity": 10219.13,
+      "drawdown": 0.38,
+      "type": "backtest",
+      "pnl": 21.01,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-11-28 16:00",
+      "equity": 10203.8,
+      "drawdown": 0.53,
+      "type": "backtest",
+      "pnl": -15.33,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-11-29 17:00",
+      "equity": 10188.49,
+      "drawdown": 0.68,
+      "type": "backtest",
+      "pnl": -15.31,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-12-01 00:00",
+      "equity": 10173.21,
+      "drawdown": 0.83,
+      "type": "backtest",
+      "pnl": -15.28,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-12-01 04:00",
+      "equity": 10157.95,
+      "drawdown": 0.97,
+      "type": "backtest",
+      "pnl": -15.26,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-12-01 12:00",
+      "equity": 10142.71,
+      "drawdown": 1.12,
+      "type": "backtest",
+      "pnl": -15.24,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-12-02 10:00",
+      "equity": 10127.5,
+      "drawdown": 1.27,
+      "type": "backtest",
+      "pnl": -15.21,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-12-02 18:00",
+      "equity": 10112.31,
+      "drawdown": 1.42,
+      "type": "backtest",
+      "pnl": -15.19,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-12-03 05:00",
+      "equity": 10097.14,
+      "drawdown": 1.57,
+      "type": "backtest",
+      "pnl": -15.17,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-12-05 09:00",
+      "equity": 10120.11,
+      "drawdown": 1.34,
+      "type": "backtest",
+      "pnl": 22.97,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-12-05 16:00",
+      "equity": 10104.93,
+      "drawdown": 1.49,
+      "type": "backtest",
+      "pnl": -15.18,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-12-07 14:00",
+      "equity": 10128.95,
+      "drawdown": 1.26,
+      "type": "backtest",
+      "pnl": 24.02,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-12-08 01:00",
+      "equity": 10113.76,
+      "drawdown": 1.4,
+      "type": "backtest",
+      "pnl": -15.19,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-12-09 05:00",
+      "equity": 10098.59,
+      "drawdown": 1.55,
+      "type": "backtest",
+      "pnl": -15.17,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-12-10 16:00",
+      "equity": 10120.64,
+      "drawdown": 1.34,
+      "type": "backtest",
+      "pnl": 22.05,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-12-11 00:00",
+      "equity": 10127.33,
+      "drawdown": 1.27,
+      "type": "backtest",
+      "pnl": 6.69,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-12-11 21:00",
+      "equity": 10153.1,
+      "drawdown": 1.02,
+      "type": "backtest",
+      "pnl": 25.77,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-12-12 15:00",
+      "equity": 10137.87,
+      "drawdown": 1.17,
+      "type": "backtest",
+      "pnl": -15.23,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-12-14 11:00",
+      "equity": 10122.66,
+      "drawdown": 1.32,
+      "type": "backtest",
+      "pnl": -15.21,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-12-14 22:00",
+      "equity": 10107.48,
+      "drawdown": 1.47,
+      "type": "backtest",
+      "pnl": -15.18,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-12-14 23:00",
+      "equity": 10092.32,
+      "drawdown": 1.61,
+      "type": "backtest",
+      "pnl": -15.16,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-12-15 14:00",
+      "equity": 10114.36,
+      "drawdown": 1.4,
+      "type": "backtest",
+      "pnl": 22.04,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-12-17 14:00",
+      "equity": 10150.77,
+      "drawdown": 1.04,
+      "type": "backtest",
+      "pnl": 36.41,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-12-18 13:00",
+      "equity": 10135.54,
+      "drawdown": 1.19,
+      "type": "backtest",
+      "pnl": -15.23,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-12-19 03:00",
+      "equity": 10155.35,
+      "drawdown": 1.0,
+      "type": "backtest",
+      "pnl": 19.81,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-12-22 11:00",
+      "equity": 10140.12,
+      "drawdown": 1.15,
+      "type": "backtest",
+      "pnl": -15.23,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-12-22 19:00",
+      "equity": 10124.91,
+      "drawdown": 1.3,
+      "type": "backtest",
+      "pnl": -15.21,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-12-23 18:00",
+      "equity": 10109.72,
+      "drawdown": 1.44,
+      "type": "backtest",
+      "pnl": -15.19,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-12-26 02:00",
+      "equity": 10094.56,
+      "drawdown": 1.59,
+      "type": "backtest",
+      "pnl": -15.16,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-12-28 14:00",
+      "equity": 10079.42,
+      "drawdown": 1.74,
+      "type": "backtest",
+      "pnl": -15.14,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-12-29 09:00",
+      "equity": 10115.71,
+      "drawdown": 1.39,
+      "type": "backtest",
+      "pnl": 36.29,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-12-30 08:00",
+      "equity": 10100.54,
+      "drawdown": 1.53,
+      "type": "backtest",
+      "pnl": -15.17,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-01-01 02:00",
+      "equity": 10120.57,
+      "drawdown": 1.34,
+      "type": "backtest",
+      "pnl": 20.03,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-01-01 17:00",
+      "equity": 10105.39,
+      "drawdown": 1.49,
+      "type": "backtest",
+      "pnl": -15.18,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-01-02 16:00",
+      "equity": 10090.23,
+      "drawdown": 1.63,
+      "type": "backtest",
+      "pnl": -15.16,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-01-04 00:00",
+      "equity": 10075.09,
+      "drawdown": 1.78,
+      "type": "backtest",
+      "pnl": -15.14,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-01-05 00:00",
+      "equity": 10059.98,
+      "drawdown": 1.93,
+      "type": "backtest",
+      "pnl": -15.11,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-01-05 18:00",
+      "equity": 10044.89,
+      "drawdown": 2.08,
+      "type": "backtest",
+      "pnl": -15.09,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-01-06 16:00",
+      "equity": 10068.13,
+      "drawdown": 1.85,
+      "type": "backtest",
+      "pnl": 23.24,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-01-07 09:00",
+      "equity": 10053.03,
+      "drawdown": 2.0,
+      "type": "backtest",
+      "pnl": -15.1,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-01-08 06:00",
+      "equity": 10037.95,
+      "drawdown": 2.14,
+      "type": "backtest",
+      "pnl": -15.08,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-01-11 14:00",
+      "equity": 10022.89,
+      "drawdown": 2.29,
+      "type": "backtest",
+      "pnl": -15.06,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-01-13 15:00",
+      "equity": 10046.77,
+      "drawdown": 2.06,
+      "type": "backtest",
+      "pnl": 23.88,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-01-13 20:00",
+      "equity": 10031.7,
+      "drawdown": 2.2,
+      "type": "backtest",
+      "pnl": -15.07,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-01-13 22:00",
+      "equity": 10016.65,
+      "drawdown": 2.35,
+      "type": "backtest",
+      "pnl": -15.05,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-01-14 16:00",
+      "equity": 10001.63,
       "drawdown": 2.5,
-      "type": "backtest"
+      "type": "backtest",
+      "pnl": -15.02,
+      "symbol": "BTC/USDT",
+      "is_win": false
     },
     {
-      "timestamp": "2026-05-31",
-      "equity": 11574.0,
+      "timestamp": "2026-01-16 15:00",
+      "equity": 10027.42,
+      "drawdown": 2.25,
+      "type": "backtest",
+      "pnl": 25.79,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-01-20 05:00",
+      "equity": 10063.52,
+      "drawdown": 1.89,
+      "type": "backtest",
+      "pnl": 36.1,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-01-20 14:00",
+      "equity": 10048.42,
+      "drawdown": 2.04,
+      "type": "backtest",
+      "pnl": -15.1,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-01-20 17:00",
+      "equity": 10033.35,
+      "drawdown": 2.19,
+      "type": "backtest",
+      "pnl": -15.07,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-01-21 14:00",
+      "equity": 10051.95,
+      "drawdown": 2.01,
+      "type": "backtest",
+      "pnl": 18.6,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-01-21 19:00",
+      "equity": 10036.87,
+      "drawdown": 2.15,
+      "type": "backtest",
+      "pnl": -15.08,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-01-23 16:00",
+      "equity": 10021.81,
+      "drawdown": 2.3,
+      "type": "backtest",
+      "pnl": -15.06,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-01-25 18:00",
+      "equity": 10047.15,
+      "drawdown": 2.05,
+      "type": "backtest",
+      "pnl": 25.34,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-01-26 14:00",
+      "equity": 10069.76,
+      "drawdown": 1.83,
+      "type": "backtest",
+      "pnl": 22.61,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-01-26 23:00",
+      "equity": 10054.66,
+      "drawdown": 1.98,
+      "type": "backtest",
+      "pnl": -15.1,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-01-27 20:00",
+      "equity": 10039.58,
+      "drawdown": 2.13,
+      "type": "backtest",
+      "pnl": -15.08,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-01-29 17:00",
+      "equity": 10024.52,
+      "drawdown": 2.27,
+      "type": "backtest",
+      "pnl": -15.06,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-01-30 01:00",
+      "equity": 10009.48,
+      "drawdown": 2.42,
+      "type": "backtest",
+      "pnl": -15.04,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-01-30 19:00",
+      "equity": 9994.47,
+      "drawdown": 2.57,
+      "type": "backtest",
+      "pnl": -15.01,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-01-31 14:00",
+      "equity": 10030.45,
+      "drawdown": 2.22,
+      "type": "backtest",
+      "pnl": 35.98,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-02-01 23:00",
+      "equity": 10015.4,
+      "drawdown": 2.36,
+      "type": "backtest",
+      "pnl": -15.05,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-02-02 15:00",
+      "equity": 10000.38,
+      "drawdown": 2.51,
+      "type": "backtest",
+      "pnl": -15.02,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-02-03 17:00",
+      "equity": 10024.44,
+      "drawdown": 2.28,
+      "type": "backtest",
+      "pnl": 24.06,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-02-04 17:00",
+      "equity": 10050.19,
+      "drawdown": 2.02,
+      "type": "backtest",
+      "pnl": 25.75,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-02-05 04:00",
+      "equity": 10035.11,
+      "drawdown": 2.17,
+      "type": "backtest",
+      "pnl": -15.08,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-02-05 15:00",
+      "equity": 10020.06,
+      "drawdown": 2.32,
+      "type": "backtest",
+      "pnl": -15.05,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-02-05 20:00",
+      "equity": 10005.03,
+      "drawdown": 2.46,
+      "type": "backtest",
+      "pnl": -15.03,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-02-07 06:00",
+      "equity": 10035.41,
+      "drawdown": 2.17,
+      "type": "backtest",
+      "pnl": 30.38,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-02-08 08:00",
+      "equity": 10020.36,
+      "drawdown": 2.32,
+      "type": "backtest",
+      "pnl": -15.05,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-02-10 16:00",
+      "equity": 10005.33,
+      "drawdown": 2.46,
+      "type": "backtest",
+      "pnl": -15.03,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-02-11 12:00",
+      "equity": 10028.17,
+      "drawdown": 2.24,
+      "type": "backtest",
+      "pnl": 22.84,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-02-11 19:00",
+      "equity": 10013.13,
+      "drawdown": 2.39,
+      "type": "backtest",
+      "pnl": -15.04,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-02-13 15:00",
+      "equity": 9998.11,
+      "drawdown": 2.53,
+      "type": "backtest",
+      "pnl": -15.02,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-02-14 11:00",
+      "equity": 9983.11,
+      "drawdown": 2.68,
+      "type": "backtest",
+      "pnl": -15.0,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-02-16 12:00",
+      "equity": 10004.33,
+      "drawdown": 2.47,
+      "type": "backtest",
+      "pnl": 21.22,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-02-17 16:00",
+      "equity": 10020.3,
+      "drawdown": 2.32,
+      "type": "backtest",
+      "pnl": 15.97,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-02-19 01:00",
+      "equity": 10040.52,
+      "drawdown": 2.12,
+      "type": "backtest",
+      "pnl": 20.22,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-02-20 05:00",
+      "equity": 10025.46,
+      "drawdown": 2.27,
+      "type": "backtest",
+      "pnl": -15.06,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-02-22 13:00",
+      "equity": 10048.26,
+      "drawdown": 2.04,
+      "type": "backtest",
+      "pnl": 22.8,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-02-23 00:00",
+      "equity": 10072.18,
+      "drawdown": 1.81,
+      "type": "backtest",
+      "pnl": 23.92,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-02-23 20:00",
+      "equity": 10108.44,
+      "drawdown": 1.46,
+      "type": "backtest",
+      "pnl": 36.26,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-02-24 01:00",
+      "equity": 10093.28,
+      "drawdown": 1.6,
+      "type": "backtest",
+      "pnl": -15.16,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-02-24 04:00",
+      "equity": 10078.14,
+      "drawdown": 1.75,
+      "type": "backtest",
+      "pnl": -15.14,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-02-25 01:00",
+      "equity": 10105.07,
+      "drawdown": 1.49,
+      "type": "backtest",
+      "pnl": 26.93,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-02-25 14:00",
+      "equity": 10089.91,
+      "drawdown": 1.64,
+      "type": "backtest",
+      "pnl": -15.16,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-02-26 16:00",
+      "equity": 10113.15,
+      "drawdown": 1.41,
+      "type": "backtest",
+      "pnl": 23.24,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-02-27 10:00",
+      "equity": 10097.98,
+      "drawdown": 1.56,
+      "type": "backtest",
+      "pnl": -15.17,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-02-28 17:00",
+      "equity": 10082.83,
+      "drawdown": 1.71,
+      "type": "backtest",
+      "pnl": -15.15,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-01 22:00",
+      "equity": 10105.22,
+      "drawdown": 1.49,
+      "type": "backtest",
+      "pnl": 22.39,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-03-02 00:00",
+      "equity": 10090.06,
+      "drawdown": 1.64,
+      "type": "backtest",
+      "pnl": -15.16,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-03 12:00",
+      "equity": 10113.72,
+      "drawdown": 1.41,
+      "type": "backtest",
+      "pnl": 23.66,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-03-04 08:00",
+      "equity": 10140.66,
+      "drawdown": 1.14,
+      "type": "backtest",
+      "pnl": 26.94,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-03-04 15:00",
+      "equity": 10125.45,
+      "drawdown": 1.29,
+      "type": "backtest",
+      "pnl": -15.21,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-06 13:00",
+      "equity": 10156.26,
+      "drawdown": 0.99,
+      "type": "backtest",
+      "pnl": 30.81,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-03-07 19:00",
+      "equity": 10141.03,
+      "drawdown": 1.14,
+      "type": "backtest",
+      "pnl": -15.23,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-08 11:00",
+      "equity": 10161.42,
+      "drawdown": 0.94,
+      "type": "backtest",
+      "pnl": 20.39,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-03-08 22:00",
+      "equity": 10180.34,
+      "drawdown": 0.76,
+      "type": "backtest",
+      "pnl": 18.92,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-03-10 02:00",
+      "equity": 10165.07,
+      "drawdown": 0.9,
+      "type": "backtest",
+      "pnl": -15.27,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-11 13:00",
+      "equity": 10185.82,
+      "drawdown": 0.7,
+      "type": "backtest",
+      "pnl": 20.75,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-03-13 13:00",
+      "equity": 10222.49,
+      "drawdown": 0.34,
+      "type": "backtest",
+      "pnl": 36.67,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-03-13 22:00",
+      "equity": 10207.16,
+      "drawdown": 0.49,
+      "type": "backtest",
+      "pnl": -15.33,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-15 22:00",
+      "equity": 10191.85,
+      "drawdown": 0.64,
+      "type": "backtest",
+      "pnl": -15.31,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-16 03:00",
+      "equity": 10176.56,
+      "drawdown": 0.79,
+      "type": "backtest",
+      "pnl": -15.29,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-16 21:00",
+      "equity": 10161.3,
+      "drawdown": 0.94,
+      "type": "backtest",
+      "pnl": -15.26,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-17 00:00",
+      "equity": 10146.06,
+      "drawdown": 1.09,
+      "type": "backtest",
+      "pnl": -15.24,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-18 11:00",
+      "equity": 10130.84,
+      "drawdown": 1.24,
+      "type": "backtest",
+      "pnl": -15.22,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-18 20:00",
+      "equity": 10115.64,
+      "drawdown": 1.39,
+      "type": "backtest",
+      "pnl": -15.2,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-19 07:00",
+      "equity": 10100.47,
+      "drawdown": 1.53,
+      "type": "backtest",
+      "pnl": -15.17,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-20 10:00",
+      "equity": 10121.35,
+      "drawdown": 1.33,
+      "type": "backtest",
+      "pnl": 20.88,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-03-21 23:00",
+      "equity": 10144.86,
+      "drawdown": 1.1,
+      "type": "backtest",
+      "pnl": 23.51,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-03-22 11:00",
+      "equity": 10129.64,
+      "drawdown": 1.25,
+      "type": "backtest",
+      "pnl": -15.22,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-22 21:00",
+      "equity": 10114.45,
+      "drawdown": 1.4,
+      "type": "backtest",
+      "pnl": -15.19,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-23 05:00",
+      "equity": 10099.28,
+      "drawdown": 1.55,
+      "type": "backtest",
+      "pnl": -15.17,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-23 11:00",
+      "equity": 10084.13,
+      "drawdown": 1.69,
+      "type": "backtest",
+      "pnl": -15.15,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-26 05:00",
+      "equity": 10069.0,
+      "drawdown": 1.84,
+      "type": "backtest",
+      "pnl": -15.13,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-27 08:00",
+      "equity": 10053.9,
+      "drawdown": 1.99,
+      "type": "backtest",
+      "pnl": -15.1,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-27 10:00",
+      "equity": 10038.82,
+      "drawdown": 2.14,
+      "type": "backtest",
+      "pnl": -15.08,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-27 14:00",
+      "equity": 10023.76,
+      "drawdown": 2.28,
+      "type": "backtest",
+      "pnl": -15.06,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-28 13:00",
+      "equity": 10008.72,
+      "drawdown": 2.43,
+      "type": "backtest",
+      "pnl": -15.04,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-29 22:00",
+      "equity": 10044.75,
+      "drawdown": 2.08,
+      "type": "backtest",
+      "pnl": 36.03,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-03-30 00:00",
+      "equity": 10029.68,
+      "drawdown": 2.22,
+      "type": "backtest",
+      "pnl": -15.07,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-30 02:00",
+      "equity": 10014.64,
+      "drawdown": 2.37,
+      "type": "backtest",
+      "pnl": -15.04,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-31 16:00",
+      "equity": 9999.62,
+      "drawdown": 2.52,
+      "type": "backtest",
+      "pnl": -15.02,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-04-05 15:00",
+      "equity": 10020.85,
+      "drawdown": 2.31,
+      "type": "backtest",
+      "pnl": 21.23,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-04-06 09:00",
+      "equity": 10005.82,
+      "drawdown": 2.46,
+      "type": "backtest",
+      "pnl": -15.03,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-04-07 04:00",
+      "equity": 10029.19,
+      "drawdown": 2.23,
+      "type": "backtest",
+      "pnl": 23.37,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-04-07 10:00",
+      "equity": 10014.15,
+      "drawdown": 2.38,
+      "type": "backtest",
+      "pnl": -15.04,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-04-07 22:00",
+      "equity": 10050.2,
+      "drawdown": 2.02,
+      "type": "backtest",
+      "pnl": 36.05,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-04-10 07:00",
+      "equity": 10065.51,
+      "drawdown": 1.88,
+      "type": "backtest",
+      "pnl": 15.31,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-04-10 14:00",
+      "equity": 10084.62,
+      "drawdown": 1.69,
+      "type": "backtest",
+      "pnl": 19.11,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-04-11 18:00",
+      "equity": 10069.49,
+      "drawdown": 1.84,
+      "type": "backtest",
+      "pnl": -15.13,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-04-12 01:00",
+      "equity": 10105.74,
+      "drawdown": 1.48,
+      "type": "backtest",
+      "pnl": 36.25,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-04-13 14:00",
+      "equity": 10133.54,
+      "drawdown": 1.21,
+      "type": "backtest",
+      "pnl": 27.8,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-04-14 13:00",
+      "equity": 10118.34,
+      "drawdown": 1.36,
+      "type": "backtest",
+      "pnl": -15.2,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-04-15 12:00",
+      "equity": 10138.85,
+      "drawdown": 1.16,
+      "type": "backtest",
+      "pnl": 20.51,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-04-16 13:00",
+      "equity": 10123.64,
+      "drawdown": 1.31,
+      "type": "backtest",
+      "pnl": -15.21,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-04-17 10:00",
+      "equity": 10141.6,
+      "drawdown": 1.13,
+      "type": "backtest",
+      "pnl": 17.96,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-04-19 07:00",
+      "equity": 10178.11,
+      "drawdown": 0.78,
+      "type": "backtest",
+      "pnl": 36.51,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-04-19 22:00",
+      "equity": 10162.84,
+      "drawdown": 0.93,
+      "type": "backtest",
+      "pnl": -15.27,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-04-21 19:00",
+      "equity": 10147.6,
+      "drawdown": 1.07,
+      "type": "backtest",
+      "pnl": -15.24,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-04-22 13:00",
+      "equity": 10177.34,
+      "drawdown": 0.78,
+      "type": "backtest",
+      "pnl": 29.74,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-04-23 14:00",
+      "equity": 10198.34,
+      "drawdown": 0.58,
+      "type": "backtest",
+      "pnl": 21.0,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-04-23 17:00",
+      "equity": 10183.04,
+      "drawdown": 0.73,
+      "type": "backtest",
+      "pnl": -15.3,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-04-24 09:00",
+      "equity": 10167.77,
+      "drawdown": 0.88,
+      "type": "backtest",
+      "pnl": -15.27,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-04-24 17:00",
+      "equity": 10152.52,
+      "drawdown": 1.03,
+      "type": "backtest",
+      "pnl": -15.25,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-04-26 21:00",
+      "equity": 10189.07,
+      "drawdown": 0.67,
+      "type": "backtest",
+      "pnl": 36.55,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-04-26 23:00",
+      "equity": 10173.79,
+      "drawdown": 0.82,
+      "type": "backtest",
+      "pnl": -15.28,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-04-27 05:00",
+      "equity": 10197.4,
+      "drawdown": 0.59,
+      "type": "backtest",
+      "pnl": 23.61,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-04-28 14:00",
+      "equity": 10182.1,
+      "drawdown": 0.74,
+      "type": "backtest",
+      "pnl": -15.3,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-04-29 03:00",
+      "equity": 10203.77,
+      "drawdown": 0.53,
+      "type": "backtest",
+      "pnl": 21.67,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-04-29 15:00",
+      "equity": 10240.5,
+      "drawdown": 0.17,
+      "type": "backtest",
+      "pnl": 36.73,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-04-29 18:00",
+      "equity": 10225.14,
+      "drawdown": 0.32,
+      "type": "backtest",
+      "pnl": -15.36,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-05-01 03:00",
+      "equity": 10209.8,
+      "drawdown": 0.47,
+      "type": "backtest",
+      "pnl": -15.34,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-05-01 12:00",
+      "equity": 10194.49,
+      "drawdown": 0.62,
+      "type": "backtest",
+      "pnl": -15.31,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-05-03 00:00",
+      "equity": 10214.91,
+      "drawdown": 0.42,
+      "type": "backtest",
+      "pnl": 20.42,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-05-03 22:00",
+      "equity": 10251.68,
+      "drawdown": 0.06,
+      "type": "backtest",
+      "pnl": 36.77,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-05-04 01:00",
+      "equity": 10270.04,
       "drawdown": 0.0,
-      "type": "backtest"
+      "type": "backtest",
+      "pnl": 18.36,
+      "symbol": "BTC/USDT",
+      "is_win": true
     },
     {
-      "timestamp": "2026-06-30",
-      "equity": 11119.0,
-      "drawdown": 3.9,
-      "type": "backtest"
+      "timestamp": "2026-05-04 10:00",
+      "equity": 10307.01,
+      "drawdown": 0.0,
+      "type": "backtest",
+      "pnl": 36.97,
+      "symbol": "BTC/USDT",
+      "is_win": true
     },
     {
-      "timestamp": "2026-07-31",
-      "equity": 11027.0,
-      "drawdown": 4.7,
-      "type": "backtest"
+      "timestamp": "2026-05-06 08:00",
+      "equity": 10330.85,
+      "drawdown": 0.0,
+      "type": "backtest",
+      "pnl": 23.84,
+      "symbol": "BTC/USDT",
+      "is_win": true
     },
     {
-      "timestamp": "2026-08-16",
-      "equity": 10518.0,
-      "drawdown": 9.1,
-      "type": "backtest"
+      "timestamp": "2026-05-07 01:00",
+      "equity": 10315.35,
+      "drawdown": 0.15,
+      "type": "backtest",
+      "pnl": -15.5,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-05-07 10:00",
+      "equity": 10299.88,
+      "drawdown": 0.3,
+      "type": "backtest",
+      "pnl": -15.47,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-05-09 23:00",
+      "equity": 10323.03,
+      "drawdown": 0.08,
+      "type": "backtest",
+      "pnl": 23.15,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-05-10 15:00",
+      "equity": 10347.75,
+      "drawdown": 0.0,
+      "type": "backtest",
+      "pnl": 24.72,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-05-10 20:00",
+      "equity": 10385.0,
+      "drawdown": 0.0,
+      "type": "backtest",
+      "pnl": 37.25,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-05-11 14:00",
+      "equity": 10369.42,
+      "drawdown": 0.15,
+      "type": "backtest",
+      "pnl": -15.58,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-05-12 01:00",
+      "equity": 10353.87,
+      "drawdown": 0.3,
+      "type": "backtest",
+      "pnl": -15.55,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-05-13 15:00",
+      "equity": 10338.34,
+      "drawdown": 0.45,
+      "type": "backtest",
+      "pnl": -15.53,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-05-14 14:00",
+      "equity": 10366.98,
+      "drawdown": 0.17,
+      "type": "backtest",
+      "pnl": 28.64,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-05-15 13:00",
+      "equity": 10404.3,
+      "drawdown": 0.0,
+      "type": "backtest",
+      "pnl": 37.32,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-05-17 23:00",
+      "equity": 10388.69,
+      "drawdown": 0.15,
+      "type": "backtest",
+      "pnl": -15.61,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-05-18 14:00",
+      "equity": 10373.11,
+      "drawdown": 0.3,
+      "type": "backtest",
+      "pnl": -15.58,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-05-20 13:00",
+      "equity": 10396.52,
+      "drawdown": 0.07,
+      "type": "backtest",
+      "pnl": 23.41,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-05-23 07:00",
+      "equity": 10380.93,
+      "drawdown": 0.22,
+      "type": "backtest",
+      "pnl": -15.59,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-05-23 18:00",
+      "equity": 10365.36,
+      "drawdown": 0.37,
+      "type": "backtest",
+      "pnl": -15.57,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-05-24 17:00",
+      "equity": 10385.21,
+      "drawdown": 0.18,
+      "type": "backtest",
+      "pnl": 19.85,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-05-27 13:00",
+      "equity": 10369.63,
+      "drawdown": 0.33,
+      "type": "backtest",
+      "pnl": -15.58,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-05-27 21:00",
+      "equity": 10354.08,
+      "drawdown": 0.48,
+      "type": "backtest",
+      "pnl": -15.55,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-05-28 03:00",
+      "equity": 10338.55,
+      "drawdown": 0.63,
+      "type": "backtest",
+      "pnl": -15.53,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-06-01 11:00",
+      "equity": 10323.04,
+      "drawdown": 0.78,
+      "type": "backtest",
+      "pnl": -15.51,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-06-01 16:00",
+      "equity": 10307.56,
+      "drawdown": 0.93,
+      "type": "backtest",
+      "pnl": -15.48,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-06-02 01:00",
+      "equity": 10292.1,
+      "drawdown": 1.08,
+      "type": "backtest",
+      "pnl": -15.46,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-06-02 06:00",
+      "equity": 10276.66,
+      "drawdown": 1.23,
+      "type": "backtest",
+      "pnl": -15.44,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-06-02 09:00",
+      "equity": 10261.24,
+      "drawdown": 1.38,
+      "type": "backtest",
+      "pnl": -15.42,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-06-03 23:00",
+      "equity": 10245.85,
+      "drawdown": 1.52,
+      "type": "backtest",
+      "pnl": -15.39,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-06-05 06:00",
+      "equity": 10230.48,
+      "drawdown": 1.67,
+      "type": "backtest",
+      "pnl": -15.37,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-06-05 18:00",
+      "equity": 10215.13,
+      "drawdown": 1.82,
+      "type": "backtest",
+      "pnl": -15.35,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-06-07 22:00",
+      "equity": 10199.81,
+      "drawdown": 1.97,
+      "type": "backtest",
+      "pnl": -15.32,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-06-11 12:00",
+      "equity": 10224.43,
+      "drawdown": 1.73,
+      "type": "backtest",
+      "pnl": 24.62,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-06-13 21:00",
+      "equity": 10209.09,
+      "drawdown": 1.88,
+      "type": "backtest",
+      "pnl": -15.34,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-06-14 14:00",
+      "equity": 10193.78,
+      "drawdown": 2.02,
+      "type": "backtest",
+      "pnl": -15.31,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-06-15 11:00",
+      "equity": 10178.49,
+      "drawdown": 2.17,
+      "type": "backtest",
+      "pnl": -15.29,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-06-15 15:00",
+      "equity": 10163.22,
+      "drawdown": 2.32,
+      "type": "backtest",
+      "pnl": -15.27,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-06-16 14:00",
+      "equity": 10147.98,
+      "drawdown": 2.46,
+      "type": "backtest",
+      "pnl": -15.24,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-06-17 15:00",
+      "equity": 10167.51,
+      "drawdown": 2.28,
+      "type": "backtest",
+      "pnl": 19.53,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-06-20 14:00",
+      "equity": 10189.83,
+      "drawdown": 2.06,
+      "type": "backtest",
+      "pnl": 22.32,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-06-24 11:00",
+      "equity": 10174.55,
+      "drawdown": 2.21,
+      "type": "backtest",
+      "pnl": -15.28,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-06-24 13:00",
+      "equity": 10198.69,
+      "drawdown": 1.98,
+      "type": "backtest",
+      "pnl": 24.14,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-06-25 13:00",
+      "equity": 10235.41,
+      "drawdown": 1.62,
+      "type": "backtest",
+      "pnl": 36.72,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-07-01 03:00",
+      "equity": 10253.47,
+      "drawdown": 1.45,
+      "type": "backtest",
+      "pnl": 18.06,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-07-01 13:00",
+      "equity": 10238.09,
+      "drawdown": 1.6,
+      "type": "backtest",
+      "pnl": -15.38,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-03 20:00",
+      "equity": 10222.73,
+      "drawdown": 1.75,
+      "type": "backtest",
+      "pnl": -15.36,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-04 17:00",
+      "equity": 10207.4,
+      "drawdown": 1.89,
+      "type": "backtest",
+      "pnl": -15.33,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-05 15:00",
+      "equity": 10227.29,
+      "drawdown": 1.7,
+      "type": "backtest",
+      "pnl": 19.89,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-07-05 22:00",
+      "equity": 10252.02,
+      "drawdown": 1.46,
+      "type": "backtest",
+      "pnl": 24.73,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-07-06 11:00",
+      "equity": 10277.65,
+      "drawdown": 1.22,
+      "type": "backtest",
+      "pnl": 25.63,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-07-06 15:00",
+      "equity": 10306.23,
+      "drawdown": 0.94,
+      "type": "backtest",
+      "pnl": 28.58,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-07-07 14:00",
+      "equity": 10290.77,
+      "drawdown": 1.09,
+      "type": "backtest",
+      "pnl": -15.46,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-08 02:00",
+      "equity": 10275.33,
+      "drawdown": 1.24,
+      "type": "backtest",
+      "pnl": -15.44,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-10 01:00",
+      "equity": 10301.6,
+      "drawdown": 0.99,
+      "type": "backtest",
+      "pnl": 26.27,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-07-13 03:00",
+      "equity": 10286.15,
+      "drawdown": 1.14,
+      "type": "backtest",
+      "pnl": -15.45,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-13 13:00",
+      "equity": 10270.72,
+      "drawdown": 1.28,
+      "type": "backtest",
+      "pnl": -15.43,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-14 12:00",
+      "equity": 10307.69,
+      "drawdown": 0.93,
+      "type": "backtest",
+      "pnl": 36.97,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-07-14 15:00",
+      "equity": 10292.23,
+      "drawdown": 1.08,
+      "type": "backtest",
+      "pnl": -15.46,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-15 13:00",
+      "equity": 10276.79,
+      "drawdown": 1.23,
+      "type": "backtest",
+      "pnl": -15.44,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-16 13:00",
+      "equity": 10300.67,
+      "drawdown": 1.0,
+      "type": "backtest",
+      "pnl": 23.88,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-07-16 22:00",
+      "equity": 10285.22,
+      "drawdown": 1.14,
+      "type": "backtest",
+      "pnl": -15.45,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-17 05:00",
+      "equity": 10269.79,
+      "drawdown": 1.29,
+      "type": "backtest",
+      "pnl": -15.43,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-18 13:00",
+      "equity": 10298.33,
+      "drawdown": 1.02,
+      "type": "backtest",
+      "pnl": 28.54,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-07-20 00:00",
+      "equity": 10282.88,
+      "drawdown": 1.17,
+      "type": "backtest",
+      "pnl": -15.45,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-20 05:00",
+      "equity": 10267.46,
+      "drawdown": 1.32,
+      "type": "backtest",
+      "pnl": -15.42,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-20 13:00",
+      "equity": 10252.06,
+      "drawdown": 1.46,
+      "type": "backtest",
+      "pnl": -15.4,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-21 13:00",
+      "equity": 10236.68,
+      "drawdown": 1.61,
+      "type": "backtest",
+      "pnl": -15.38,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-22 06:00",
+      "equity": 10221.33,
+      "drawdown": 1.76,
+      "type": "backtest",
+      "pnl": -15.35,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-23 07:00",
+      "equity": 10206.0,
+      "drawdown": 1.91,
+      "type": "backtest",
+      "pnl": -15.33,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-24 09:00",
+      "equity": 10223.78,
+      "drawdown": 1.74,
+      "type": "backtest",
+      "pnl": 17.78,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-07-26 22:00",
+      "equity": 10253.88,
+      "drawdown": 1.45,
+      "type": "backtest",
+      "pnl": 30.1,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-07-27 06:00",
+      "equity": 10238.5,
+      "drawdown": 1.59,
+      "type": "backtest",
+      "pnl": -15.38,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-27 14:00",
+      "equity": 10259.86,
+      "drawdown": 1.39,
+      "type": "backtest",
+      "pnl": 21.36,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-07-27 22:00",
+      "equity": 10244.47,
+      "drawdown": 1.54,
+      "type": "backtest",
+      "pnl": -15.39,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-28 17:00",
+      "equity": 10265.74,
+      "drawdown": 1.33,
+      "type": "backtest",
+      "pnl": 21.27,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-07-29 06:00",
+      "equity": 10250.34,
+      "drawdown": 1.48,
+      "type": "backtest",
+      "pnl": -15.4,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-29 18:00",
+      "equity": 10234.96,
+      "drawdown": 1.63,
+      "type": "backtest",
+      "pnl": -15.38,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-30 01:00",
+      "equity": 10219.61,
+      "drawdown": 1.78,
+      "type": "backtest",
+      "pnl": -15.35,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-30 11:00",
+      "equity": 10204.28,
+      "drawdown": 1.92,
+      "type": "backtest",
+      "pnl": -15.33,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-31 13:00",
+      "equity": 10241.02,
+      "drawdown": 1.57,
+      "type": "backtest",
+      "pnl": 36.74,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-08-02 02:00",
+      "equity": 10225.66,
+      "drawdown": 1.72,
+      "type": "backtest",
+      "pnl": -15.36,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-08-02 18:00",
+      "equity": 10210.32,
+      "drawdown": 1.86,
+      "type": "backtest",
+      "pnl": -15.34,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-08-03 09:00",
+      "equity": 10230.97,
+      "drawdown": 1.67,
+      "type": "backtest",
+      "pnl": 20.65,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-08-06 02:00",
+      "equity": 10250.22,
+      "drawdown": 1.48,
+      "type": "backtest",
+      "pnl": 19.25,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-08-06 13:00",
+      "equity": 10234.84,
+      "drawdown": 1.63,
+      "type": "backtest",
+      "pnl": -15.38,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-08-06 18:00",
+      "equity": 10219.49,
+      "drawdown": 1.78,
+      "type": "backtest",
+      "pnl": -15.35,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-08-07 12:00",
+      "equity": 10242.27,
+      "drawdown": 1.56,
+      "type": "backtest",
+      "pnl": 22.78,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-08-10 15:00",
+      "equity": 10226.91,
+      "drawdown": 1.7,
+      "type": "backtest",
+      "pnl": -15.36,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-08-11 15:00",
+      "equity": 10211.57,
+      "drawdown": 1.85,
+      "type": "backtest",
+      "pnl": -15.34,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-08-12 10:00",
+      "equity": 10196.25,
+      "drawdown": 2.0,
+      "type": "backtest",
+      "pnl": -15.32,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-08-13 16:00",
+      "equity": 10217.07,
+      "drawdown": 1.8,
+      "type": "backtest",
+      "pnl": 20.82,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-08-14 15:00",
+      "equity": 10242.99,
+      "drawdown": 1.55,
+      "type": "backtest",
+      "pnl": 25.92,
+      "symbol": "BTC/USDT",
+      "is_win": true
     }
   ],
   "liveEquityCurve": [
     {
-      "timestamp": "2026-09-08 17:48",
-      "equity": 10518.0,
-      "drawdown": 0.0,
+      "timestamp": "2026-08-17 02:00",
+      "equity": 10227.63,
+      "drawdown": 1.7,
       "type": "live",
-      "pnl": 0.0,
-      "symbol": "BTC/USDT"
+      "pnl": -15.36,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-08-17 06:00",
+      "equity": 10212.29,
+      "drawdown": 1.85,
+      "type": "live",
+      "pnl": -15.34,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-08-18 14:00",
+      "equity": 10228.89,
+      "drawdown": 1.69,
+      "type": "live",
+      "pnl": 16.6,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-08-19 12:00",
+      "equity": 10249.24,
+      "drawdown": 1.49,
+      "type": "live",
+      "pnl": 20.35,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-08-19 13:00",
+      "equity": 10233.87,
+      "drawdown": 1.64,
+      "type": "live",
+      "pnl": -15.37,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-08-20 08:00",
+      "equity": 10218.52,
+      "drawdown": 1.79,
+      "type": "live",
+      "pnl": -15.35,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-08-20 15:00",
+      "equity": 10203.19,
+      "drawdown": 1.93,
+      "type": "live",
+      "pnl": -15.33,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-08-23 05:00",
+      "equity": 10187.89,
+      "drawdown": 2.08,
+      "type": "live",
+      "pnl": -15.3,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-08-24 12:00",
+      "equity": 10212.47,
+      "drawdown": 1.84,
+      "type": "live",
+      "pnl": 24.58,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-08-25 13:00",
+      "equity": 10197.15,
+      "drawdown": 1.99,
+      "type": "live",
+      "pnl": -15.32,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-08-25 20:00",
+      "equity": 10181.85,
+      "drawdown": 2.14,
+      "type": "live",
+      "pnl": -15.3,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-08-26 12:00",
+      "equity": 10166.58,
+      "drawdown": 2.28,
+      "type": "live",
+      "pnl": -15.27,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-08-27 10:00",
+      "equity": 10185.17,
+      "drawdown": 2.11,
+      "type": "live",
+      "pnl": 18.59,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-08-28 02:00",
+      "equity": 10202.07,
+      "drawdown": 1.94,
+      "type": "live",
+      "pnl": 16.9,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-08-28 10:00",
+      "equity": 10186.77,
+      "drawdown": 2.09,
+      "type": "live",
+      "pnl": -15.3,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-08-30 23:00",
+      "equity": 10171.49,
+      "drawdown": 2.24,
+      "type": "live",
+      "pnl": -15.28,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-09-01 08:00",
+      "equity": 10156.23,
+      "drawdown": 2.38,
+      "type": "live",
+      "pnl": -15.26,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-09-03 12:00",
+      "equity": 10184.92,
+      "drawdown": 2.11,
+      "type": "live",
+      "pnl": 28.69,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-09-04 12:00",
+      "equity": 10210.27,
+      "drawdown": 1.86,
+      "type": "live",
+      "pnl": 25.35,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-09-06 14:00",
+      "equity": 10194.95,
+      "drawdown": 2.01,
+      "type": "live",
+      "pnl": -15.32,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-09-07 03:00",
+      "equity": 10179.66,
+      "drawdown": 2.16,
+      "type": "live",
+      "pnl": -15.29,
+      "symbol": "BTC/USDT",
+      "is_win": false
     }
   ],
   "portfolioEquityCurve": [
     {
-      "timestamp": "2025-09-08",
+      "timestamp": "2025-09-08 00:00",
       "equity": 10000.0,
+      "drawdown": 0.0,
       "type": "backtest"
     },
     {
-      "timestamp": "2025-09-30",
-      "equity": 10366.0,
-      "type": "backtest"
+      "timestamp": "2025-09-17 14:00",
+      "equity": 10020.77,
+      "drawdown": 0.0,
+      "type": "backtest",
+      "pnl": 20.77,
+      "symbol": "BTC/USDT",
+      "is_win": true
     },
     {
-      "timestamp": "2025-10-31",
-      "equity": 11187.0,
-      "type": "backtest"
+      "timestamp": "2025-09-18 19:00",
+      "equity": 10044.39,
+      "drawdown": 0.0,
+      "type": "backtest",
+      "pnl": 23.62,
+      "symbol": "BTC/USDT",
+      "is_win": true
     },
     {
-      "timestamp": "2025-11-30",
-      "equity": 10857.0,
-      "type": "backtest"
+      "timestamp": "2025-09-19 04:00",
+      "equity": 10029.32,
+      "drawdown": 0.15,
+      "type": "backtest",
+      "pnl": -15.07,
+      "symbol": "BTC/USDT",
+      "is_win": false
     },
     {
-      "timestamp": "2025-12-31",
-      "equity": 10543.0,
-      "type": "backtest"
+      "timestamp": "2025-09-19 19:00",
+      "equity": 10014.28,
+      "drawdown": 0.3,
+      "type": "backtest",
+      "pnl": -15.04,
+      "symbol": "BTC/USDT",
+      "is_win": false
     },
     {
-      "timestamp": "2026-01-31",
-      "equity": 10044.0,
-      "type": "backtest"
+      "timestamp": "2025-09-23 17:00",
+      "equity": 10033.83,
+      "drawdown": 0.11,
+      "type": "backtest",
+      "pnl": 19.55,
+      "symbol": "BTC/USDT",
+      "is_win": true
     },
     {
-      "timestamp": "2026-02-28",
-      "equity": 10300.0,
-      "type": "backtest"
+      "timestamp": "2025-09-24 06:00",
+      "equity": 10018.78,
+      "drawdown": 0.25,
+      "type": "backtest",
+      "pnl": -15.05,
+      "symbol": "BTC/USDT",
+      "is_win": false
     },
     {
-      "timestamp": "2026-03-31",
-      "equity": 9854.0,
-      "type": "backtest"
+      "timestamp": "2025-09-28 22:00",
+      "equity": 10043.58,
+      "drawdown": 0.01,
+      "type": "backtest",
+      "pnl": 24.8,
+      "symbol": "BTC/USDT",
+      "is_win": true
     },
     {
-      "timestamp": "2026-04-30",
-      "equity": 10910.0,
-      "type": "backtest"
+      "timestamp": "2025-09-29 13:00",
+      "equity": 10028.51,
+      "drawdown": 0.16,
+      "type": "backtest",
+      "pnl": -15.07,
+      "symbol": "BTC/USDT",
+      "is_win": false
     },
     {
-      "timestamp": "2026-05-31",
-      "equity": 11574.0,
-      "type": "backtest"
+      "timestamp": "2025-09-30 09:00",
+      "equity": 10052.16,
+      "drawdown": 0.0,
+      "type": "backtest",
+      "pnl": 23.65,
+      "symbol": "BTC/USDT",
+      "is_win": true
     },
     {
-      "timestamp": "2026-06-30",
-      "equity": 11119.0,
-      "type": "backtest"
+      "timestamp": "2025-09-30 16:00",
+      "equity": 10037.08,
+      "drawdown": 0.15,
+      "type": "backtest",
+      "pnl": -15.08,
+      "symbol": "BTC/USDT",
+      "is_win": false
     },
     {
-      "timestamp": "2026-07-31",
-      "equity": 11027.0,
-      "type": "backtest"
+      "timestamp": "2025-10-01 08:00",
+      "equity": 10073.21,
+      "drawdown": 0.0,
+      "type": "backtest",
+      "pnl": 36.13,
+      "symbol": "BTC/USDT",
+      "is_win": true
     },
     {
-      "timestamp": "2026-08-16",
-      "equity": 10518.0,
-      "type": "backtest"
+      "timestamp": "2025-10-01 14:00",
+      "equity": 10058.1,
+      "drawdown": 0.15,
+      "type": "backtest",
+      "pnl": -15.11,
+      "symbol": "BTC/USDT",
+      "is_win": false
     },
     {
-      "timestamp": "2026-09-08 17:48",
-      "equity": 10518.0,
+      "timestamp": "2025-10-01 23:00",
+      "equity": 10043.01,
+      "drawdown": 0.3,
+      "type": "backtest",
+      "pnl": -15.09,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-10-02 13:00",
+      "equity": 10027.95,
+      "drawdown": 0.45,
+      "type": "backtest",
+      "pnl": -15.06,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-10-02 19:00",
+      "equity": 10012.91,
+      "drawdown": 0.6,
+      "type": "backtest",
+      "pnl": -15.04,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-10-03 15:00",
+      "equity": 10040.02,
+      "drawdown": 0.33,
+      "type": "backtest",
+      "pnl": 27.11,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-10-05 02:00",
+      "equity": 10076.16,
+      "drawdown": 0.0,
+      "type": "backtest",
+      "pnl": 36.14,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-10-05 16:00",
+      "equity": 10061.05,
+      "drawdown": 0.15,
+      "type": "backtest",
+      "pnl": -15.11,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-10-06 18:00",
+      "equity": 10089.02,
+      "drawdown": 0.0,
+      "type": "backtest",
+      "pnl": 27.97,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-10-07 06:00",
+      "equity": 10073.89,
+      "drawdown": 0.15,
+      "type": "backtest",
+      "pnl": -15.13,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-10-07 13:00",
+      "equity": 10058.78,
+      "drawdown": 0.3,
+      "type": "backtest",
+      "pnl": -15.11,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-10-08 17:00",
+      "equity": 10080.37,
+      "drawdown": 0.09,
+      "type": "backtest",
+      "pnl": 21.59,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-10-12 22:00",
+      "equity": 10116.66,
+      "drawdown": 0.0,
+      "type": "backtest",
+      "pnl": 36.29,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-10-14 10:00",
+      "equity": 10153.08,
+      "drawdown": 0.0,
+      "type": "backtest",
+      "pnl": 36.42,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-10-15 03:00",
+      "equity": 10172.5,
+      "drawdown": 0.0,
+      "type": "backtest",
+      "pnl": 19.42,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-10-15 08:00",
+      "equity": 10157.24,
+      "drawdown": 0.15,
+      "type": "backtest",
+      "pnl": -15.26,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-10-16 02:00",
+      "equity": 10177.83,
+      "drawdown": 0.0,
+      "type": "backtest",
+      "pnl": 20.59,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-10-16 15:00",
+      "equity": 10201.37,
+      "drawdown": 0.0,
+      "type": "backtest",
+      "pnl": 23.54,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-10-17 07:00",
+      "equity": 10186.07,
+      "drawdown": 0.15,
+      "type": "backtest",
+      "pnl": -15.3,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-10-19 09:00",
+      "equity": 10209.18,
+      "drawdown": 0.0,
+      "type": "backtest",
+      "pnl": 23.11,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-10-19 17:00",
+      "equity": 10193.87,
+      "drawdown": 0.15,
+      "type": "backtest",
+      "pnl": -15.31,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-10-20 02:00",
+      "equity": 10212.63,
+      "drawdown": 0.0,
+      "type": "backtest",
+      "pnl": 18.76,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-10-20 08:00",
+      "equity": 10197.31,
+      "drawdown": 0.15,
+      "type": "backtest",
+      "pnl": -15.32,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-10-21 04:00",
+      "equity": 10234.02,
+      "drawdown": 0.0,
+      "type": "backtest",
+      "pnl": 36.71,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-10-21 14:00",
+      "equity": 10218.67,
+      "drawdown": 0.15,
+      "type": "backtest",
+      "pnl": -15.35,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-10-21 22:00",
+      "equity": 10242.2,
+      "drawdown": 0.0,
+      "type": "backtest",
+      "pnl": 23.53,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-10-23 06:00",
+      "equity": 10226.84,
+      "drawdown": 0.15,
+      "type": "backtest",
+      "pnl": -15.36,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-10-26 09:00",
+      "equity": 10211.5,
+      "drawdown": 0.3,
+      "type": "backtest",
+      "pnl": -15.34,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-10-26 22:00",
+      "equity": 10196.18,
+      "drawdown": 0.45,
+      "type": "backtest",
+      "pnl": -15.32,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-10-28 07:00",
+      "equity": 10220.94,
+      "drawdown": 0.21,
+      "type": "backtest",
+      "pnl": 24.76,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-10-28 14:00",
+      "equity": 10233.9,
+      "drawdown": 0.08,
+      "type": "backtest",
+      "pnl": 12.96,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-10-28 19:00",
+      "equity": 10218.55,
+      "drawdown": 0.23,
+      "type": "backtest",
+      "pnl": -15.35,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-10-31 13:00",
+      "equity": 10240.97,
+      "drawdown": 0.01,
+      "type": "backtest",
+      "pnl": 22.42,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-11-01 04:00",
+      "equity": 10225.61,
+      "drawdown": 0.16,
+      "type": "backtest",
+      "pnl": -15.36,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-11-03 15:00",
+      "equity": 10210.27,
+      "drawdown": 0.31,
+      "type": "backtest",
+      "pnl": -15.34,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-11-04 05:00",
+      "equity": 10231.3,
+      "drawdown": 0.11,
+      "type": "backtest",
+      "pnl": 21.03,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-11-04 16:00",
+      "equity": 10215.95,
+      "drawdown": 0.26,
+      "type": "backtest",
+      "pnl": -15.35,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-11-06 16:00",
+      "equity": 10236.73,
+      "drawdown": 0.05,
+      "type": "backtest",
+      "pnl": 20.78,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-11-07 12:00",
+      "equity": 10257.86,
+      "drawdown": 0.0,
+      "type": "backtest",
+      "pnl": 21.13,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-11-09 13:00",
+      "equity": 10242.47,
+      "drawdown": 0.15,
+      "type": "backtest",
+      "pnl": -15.39,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-11-09 19:00",
+      "equity": 10227.11,
+      "drawdown": 0.3,
+      "type": "backtest",
+      "pnl": -15.36,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-11-10 00:00",
+      "equity": 10211.77,
+      "drawdown": 0.45,
+      "type": "backtest",
+      "pnl": -15.34,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-11-11 01:00",
+      "equity": 10196.45,
+      "drawdown": 0.6,
+      "type": "backtest",
+      "pnl": -15.32,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-11-11 05:00",
+      "equity": 10181.16,
+      "drawdown": 0.75,
+      "type": "backtest",
+      "pnl": -15.29,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-11-12 15:00",
+      "equity": 10165.89,
+      "drawdown": 0.9,
+      "type": "backtest",
+      "pnl": -15.27,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-11-13 06:00",
+      "equity": 10150.64,
+      "drawdown": 1.05,
+      "type": "backtest",
+      "pnl": -15.25,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-11-13 17:00",
+      "equity": 10173.84,
+      "drawdown": 0.82,
+      "type": "backtest",
+      "pnl": 23.2,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-11-14 06:00",
+      "equity": 10158.58,
+      "drawdown": 0.97,
+      "type": "backtest",
+      "pnl": -15.26,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-11-14 11:00",
+      "equity": 10143.34,
+      "drawdown": 1.12,
+      "type": "backtest",
+      "pnl": -15.24,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-11-14 20:00",
+      "equity": 10128.13,
+      "drawdown": 1.26,
+      "type": "backtest",
+      "pnl": -15.21,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-11-17 00:00",
+      "equity": 10146.21,
+      "drawdown": 1.09,
+      "type": "backtest",
+      "pnl": 18.08,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-11-18 03:00",
+      "equity": 10182.74,
+      "drawdown": 0.73,
+      "type": "backtest",
+      "pnl": 36.53,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-11-18 04:00",
+      "equity": 10167.47,
+      "drawdown": 0.88,
+      "type": "backtest",
+      "pnl": -15.27,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-11-18 15:00",
+      "equity": 10189.08,
+      "drawdown": 0.67,
+      "type": "backtest",
+      "pnl": 21.61,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-11-19 15:00",
+      "equity": 10210.44,
+      "drawdown": 0.46,
+      "type": "backtest",
+      "pnl": 21.36,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-11-19 23:00",
+      "equity": 10195.12,
+      "drawdown": 0.61,
+      "type": "backtest",
+      "pnl": -15.32,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-11-20 16:00",
+      "equity": 10231.82,
+      "drawdown": 0.25,
+      "type": "backtest",
+      "pnl": 36.7,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-11-21 07:00",
+      "equity": 10216.47,
+      "drawdown": 0.4,
+      "type": "backtest",
+      "pnl": -15.35,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-11-21 12:00",
+      "equity": 10201.15,
+      "drawdown": 0.55,
+      "type": "backtest",
+      "pnl": -15.32,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-11-23 21:00",
+      "equity": 10228.78,
+      "drawdown": 0.28,
+      "type": "backtest",
+      "pnl": 27.63,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-11-26 16:00",
+      "equity": 10213.44,
+      "drawdown": 0.43,
+      "type": "backtest",
+      "pnl": -15.34,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-11-27 02:00",
+      "equity": 10198.12,
+      "drawdown": 0.58,
+      "type": "backtest",
+      "pnl": -15.32,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-11-28 13:00",
+      "equity": 10219.13,
+      "drawdown": 0.38,
+      "type": "backtest",
+      "pnl": 21.01,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-11-28 16:00",
+      "equity": 10203.8,
+      "drawdown": 0.53,
+      "type": "backtest",
+      "pnl": -15.33,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-11-29 17:00",
+      "equity": 10188.49,
+      "drawdown": 0.68,
+      "type": "backtest",
+      "pnl": -15.31,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-12-01 00:00",
+      "equity": 10173.21,
+      "drawdown": 0.83,
+      "type": "backtest",
+      "pnl": -15.28,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-12-01 04:00",
+      "equity": 10157.95,
+      "drawdown": 0.97,
+      "type": "backtest",
+      "pnl": -15.26,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-12-01 12:00",
+      "equity": 10142.71,
+      "drawdown": 1.12,
+      "type": "backtest",
+      "pnl": -15.24,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-12-02 10:00",
+      "equity": 10127.5,
+      "drawdown": 1.27,
+      "type": "backtest",
+      "pnl": -15.21,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-12-02 18:00",
+      "equity": 10112.31,
+      "drawdown": 1.42,
+      "type": "backtest",
+      "pnl": -15.19,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-12-03 05:00",
+      "equity": 10097.14,
+      "drawdown": 1.57,
+      "type": "backtest",
+      "pnl": -15.17,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-12-05 09:00",
+      "equity": 10120.11,
+      "drawdown": 1.34,
+      "type": "backtest",
+      "pnl": 22.97,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-12-05 16:00",
+      "equity": 10104.93,
+      "drawdown": 1.49,
+      "type": "backtest",
+      "pnl": -15.18,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-12-07 14:00",
+      "equity": 10128.95,
+      "drawdown": 1.26,
+      "type": "backtest",
+      "pnl": 24.02,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-12-08 01:00",
+      "equity": 10113.76,
+      "drawdown": 1.4,
+      "type": "backtest",
+      "pnl": -15.19,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-12-09 05:00",
+      "equity": 10098.59,
+      "drawdown": 1.55,
+      "type": "backtest",
+      "pnl": -15.17,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-12-10 16:00",
+      "equity": 10120.64,
+      "drawdown": 1.34,
+      "type": "backtest",
+      "pnl": 22.05,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-12-11 00:00",
+      "equity": 10127.33,
+      "drawdown": 1.27,
+      "type": "backtest",
+      "pnl": 6.69,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-12-11 21:00",
+      "equity": 10153.1,
+      "drawdown": 1.02,
+      "type": "backtest",
+      "pnl": 25.77,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-12-12 15:00",
+      "equity": 10137.87,
+      "drawdown": 1.17,
+      "type": "backtest",
+      "pnl": -15.23,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-12-14 11:00",
+      "equity": 10122.66,
+      "drawdown": 1.32,
+      "type": "backtest",
+      "pnl": -15.21,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-12-14 22:00",
+      "equity": 10107.48,
+      "drawdown": 1.47,
+      "type": "backtest",
+      "pnl": -15.18,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-12-14 23:00",
+      "equity": 10092.32,
+      "drawdown": 1.61,
+      "type": "backtest",
+      "pnl": -15.16,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-12-15 14:00",
+      "equity": 10114.36,
+      "drawdown": 1.4,
+      "type": "backtest",
+      "pnl": 22.04,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-12-17 14:00",
+      "equity": 10150.77,
+      "drawdown": 1.04,
+      "type": "backtest",
+      "pnl": 36.41,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-12-18 13:00",
+      "equity": 10135.54,
+      "drawdown": 1.19,
+      "type": "backtest",
+      "pnl": -15.23,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-12-19 03:00",
+      "equity": 10155.35,
+      "drawdown": 1.0,
+      "type": "backtest",
+      "pnl": 19.81,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-12-22 11:00",
+      "equity": 10140.12,
+      "drawdown": 1.15,
+      "type": "backtest",
+      "pnl": -15.23,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-12-22 19:00",
+      "equity": 10124.91,
+      "drawdown": 1.3,
+      "type": "backtest",
+      "pnl": -15.21,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-12-23 18:00",
+      "equity": 10109.72,
+      "drawdown": 1.44,
+      "type": "backtest",
+      "pnl": -15.19,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-12-26 02:00",
+      "equity": 10094.56,
+      "drawdown": 1.59,
+      "type": "backtest",
+      "pnl": -15.16,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-12-28 14:00",
+      "equity": 10079.42,
+      "drawdown": 1.74,
+      "type": "backtest",
+      "pnl": -15.14,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2025-12-29 09:00",
+      "equity": 10115.71,
+      "drawdown": 1.39,
+      "type": "backtest",
+      "pnl": 36.29,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2025-12-30 08:00",
+      "equity": 10100.54,
+      "drawdown": 1.53,
+      "type": "backtest",
+      "pnl": -15.17,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-01-01 02:00",
+      "equity": 10120.57,
+      "drawdown": 1.34,
+      "type": "backtest",
+      "pnl": 20.03,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-01-01 17:00",
+      "equity": 10105.39,
+      "drawdown": 1.49,
+      "type": "backtest",
+      "pnl": -15.18,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-01-02 16:00",
+      "equity": 10090.23,
+      "drawdown": 1.63,
+      "type": "backtest",
+      "pnl": -15.16,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-01-04 00:00",
+      "equity": 10075.09,
+      "drawdown": 1.78,
+      "type": "backtest",
+      "pnl": -15.14,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-01-05 00:00",
+      "equity": 10059.98,
+      "drawdown": 1.93,
+      "type": "backtest",
+      "pnl": -15.11,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-01-05 18:00",
+      "equity": 10044.89,
+      "drawdown": 2.08,
+      "type": "backtest",
+      "pnl": -15.09,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-01-06 16:00",
+      "equity": 10068.13,
+      "drawdown": 1.85,
+      "type": "backtest",
+      "pnl": 23.24,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-01-07 09:00",
+      "equity": 10053.03,
+      "drawdown": 2.0,
+      "type": "backtest",
+      "pnl": -15.1,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-01-08 06:00",
+      "equity": 10037.95,
+      "drawdown": 2.14,
+      "type": "backtest",
+      "pnl": -15.08,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-01-11 14:00",
+      "equity": 10022.89,
+      "drawdown": 2.29,
+      "type": "backtest",
+      "pnl": -15.06,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-01-13 15:00",
+      "equity": 10046.77,
+      "drawdown": 2.06,
+      "type": "backtest",
+      "pnl": 23.88,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-01-13 20:00",
+      "equity": 10031.7,
+      "drawdown": 2.2,
+      "type": "backtest",
+      "pnl": -15.07,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-01-13 22:00",
+      "equity": 10016.65,
+      "drawdown": 2.35,
+      "type": "backtest",
+      "pnl": -15.05,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-01-14 16:00",
+      "equity": 10001.63,
+      "drawdown": 2.5,
+      "type": "backtest",
+      "pnl": -15.02,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-01-16 15:00",
+      "equity": 10027.42,
+      "drawdown": 2.25,
+      "type": "backtest",
+      "pnl": 25.79,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-01-20 05:00",
+      "equity": 10063.52,
+      "drawdown": 1.89,
+      "type": "backtest",
+      "pnl": 36.1,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-01-20 14:00",
+      "equity": 10048.42,
+      "drawdown": 2.04,
+      "type": "backtest",
+      "pnl": -15.1,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-01-20 17:00",
+      "equity": 10033.35,
+      "drawdown": 2.19,
+      "type": "backtest",
+      "pnl": -15.07,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-01-21 14:00",
+      "equity": 10051.95,
+      "drawdown": 2.01,
+      "type": "backtest",
+      "pnl": 18.6,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-01-21 19:00",
+      "equity": 10036.87,
+      "drawdown": 2.15,
+      "type": "backtest",
+      "pnl": -15.08,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-01-23 16:00",
+      "equity": 10021.81,
+      "drawdown": 2.3,
+      "type": "backtest",
+      "pnl": -15.06,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-01-25 18:00",
+      "equity": 10047.15,
+      "drawdown": 2.05,
+      "type": "backtest",
+      "pnl": 25.34,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-01-26 14:00",
+      "equity": 10069.76,
+      "drawdown": 1.83,
+      "type": "backtest",
+      "pnl": 22.61,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-01-26 23:00",
+      "equity": 10054.66,
+      "drawdown": 1.98,
+      "type": "backtest",
+      "pnl": -15.1,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-01-27 20:00",
+      "equity": 10039.58,
+      "drawdown": 2.13,
+      "type": "backtest",
+      "pnl": -15.08,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-01-29 17:00",
+      "equity": 10024.52,
+      "drawdown": 2.27,
+      "type": "backtest",
+      "pnl": -15.06,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-01-30 01:00",
+      "equity": 10009.48,
+      "drawdown": 2.42,
+      "type": "backtest",
+      "pnl": -15.04,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-01-30 19:00",
+      "equity": 9994.47,
+      "drawdown": 2.57,
+      "type": "backtest",
+      "pnl": -15.01,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-01-31 14:00",
+      "equity": 10030.45,
+      "drawdown": 2.22,
+      "type": "backtest",
+      "pnl": 35.98,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-02-01 23:00",
+      "equity": 10015.4,
+      "drawdown": 2.36,
+      "type": "backtest",
+      "pnl": -15.05,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-02-02 15:00",
+      "equity": 10000.38,
+      "drawdown": 2.51,
+      "type": "backtest",
+      "pnl": -15.02,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-02-03 17:00",
+      "equity": 10024.44,
+      "drawdown": 2.28,
+      "type": "backtest",
+      "pnl": 24.06,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-02-04 17:00",
+      "equity": 10050.19,
+      "drawdown": 2.02,
+      "type": "backtest",
+      "pnl": 25.75,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-02-05 04:00",
+      "equity": 10035.11,
+      "drawdown": 2.17,
+      "type": "backtest",
+      "pnl": -15.08,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-02-05 15:00",
+      "equity": 10020.06,
+      "drawdown": 2.32,
+      "type": "backtest",
+      "pnl": -15.05,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-02-05 20:00",
+      "equity": 10005.03,
+      "drawdown": 2.46,
+      "type": "backtest",
+      "pnl": -15.03,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-02-07 06:00",
+      "equity": 10035.41,
+      "drawdown": 2.17,
+      "type": "backtest",
+      "pnl": 30.38,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-02-08 08:00",
+      "equity": 10020.36,
+      "drawdown": 2.32,
+      "type": "backtest",
+      "pnl": -15.05,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-02-10 16:00",
+      "equity": 10005.33,
+      "drawdown": 2.46,
+      "type": "backtest",
+      "pnl": -15.03,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-02-11 12:00",
+      "equity": 10028.17,
+      "drawdown": 2.24,
+      "type": "backtest",
+      "pnl": 22.84,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-02-11 19:00",
+      "equity": 10013.13,
+      "drawdown": 2.39,
+      "type": "backtest",
+      "pnl": -15.04,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-02-13 15:00",
+      "equity": 9998.11,
+      "drawdown": 2.53,
+      "type": "backtest",
+      "pnl": -15.02,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-02-14 11:00",
+      "equity": 9983.11,
+      "drawdown": 2.68,
+      "type": "backtest",
+      "pnl": -15.0,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-02-16 12:00",
+      "equity": 10004.33,
+      "drawdown": 2.47,
+      "type": "backtest",
+      "pnl": 21.22,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-02-17 16:00",
+      "equity": 10020.3,
+      "drawdown": 2.32,
+      "type": "backtest",
+      "pnl": 15.97,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-02-19 01:00",
+      "equity": 10040.52,
+      "drawdown": 2.12,
+      "type": "backtest",
+      "pnl": 20.22,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-02-20 05:00",
+      "equity": 10025.46,
+      "drawdown": 2.27,
+      "type": "backtest",
+      "pnl": -15.06,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-02-22 13:00",
+      "equity": 10048.26,
+      "drawdown": 2.04,
+      "type": "backtest",
+      "pnl": 22.8,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-02-23 00:00",
+      "equity": 10072.18,
+      "drawdown": 1.81,
+      "type": "backtest",
+      "pnl": 23.92,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-02-23 20:00",
+      "equity": 10108.44,
+      "drawdown": 1.46,
+      "type": "backtest",
+      "pnl": 36.26,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-02-24 01:00",
+      "equity": 10093.28,
+      "drawdown": 1.6,
+      "type": "backtest",
+      "pnl": -15.16,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-02-24 04:00",
+      "equity": 10078.14,
+      "drawdown": 1.75,
+      "type": "backtest",
+      "pnl": -15.14,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-02-25 01:00",
+      "equity": 10105.07,
+      "drawdown": 1.49,
+      "type": "backtest",
+      "pnl": 26.93,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-02-25 14:00",
+      "equity": 10089.91,
+      "drawdown": 1.64,
+      "type": "backtest",
+      "pnl": -15.16,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-02-26 16:00",
+      "equity": 10113.15,
+      "drawdown": 1.41,
+      "type": "backtest",
+      "pnl": 23.24,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-02-27 10:00",
+      "equity": 10097.98,
+      "drawdown": 1.56,
+      "type": "backtest",
+      "pnl": -15.17,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-02-28 17:00",
+      "equity": 10082.83,
+      "drawdown": 1.71,
+      "type": "backtest",
+      "pnl": -15.15,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-01 22:00",
+      "equity": 10105.22,
+      "drawdown": 1.49,
+      "type": "backtest",
+      "pnl": 22.39,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-03-02 00:00",
+      "equity": 10090.06,
+      "drawdown": 1.64,
+      "type": "backtest",
+      "pnl": -15.16,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-03 12:00",
+      "equity": 10113.72,
+      "drawdown": 1.41,
+      "type": "backtest",
+      "pnl": 23.66,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-03-04 08:00",
+      "equity": 10140.66,
+      "drawdown": 1.14,
+      "type": "backtest",
+      "pnl": 26.94,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-03-04 15:00",
+      "equity": 10125.45,
+      "drawdown": 1.29,
+      "type": "backtest",
+      "pnl": -15.21,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-06 13:00",
+      "equity": 10156.26,
+      "drawdown": 0.99,
+      "type": "backtest",
+      "pnl": 30.81,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-03-07 19:00",
+      "equity": 10141.03,
+      "drawdown": 1.14,
+      "type": "backtest",
+      "pnl": -15.23,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-08 11:00",
+      "equity": 10161.42,
+      "drawdown": 0.94,
+      "type": "backtest",
+      "pnl": 20.39,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-03-08 22:00",
+      "equity": 10180.34,
+      "drawdown": 0.76,
+      "type": "backtest",
+      "pnl": 18.92,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-03-10 02:00",
+      "equity": 10165.07,
+      "drawdown": 0.9,
+      "type": "backtest",
+      "pnl": -15.27,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-11 13:00",
+      "equity": 10185.82,
+      "drawdown": 0.7,
+      "type": "backtest",
+      "pnl": 20.75,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-03-13 13:00",
+      "equity": 10222.49,
+      "drawdown": 0.34,
+      "type": "backtest",
+      "pnl": 36.67,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-03-13 22:00",
+      "equity": 10207.16,
+      "drawdown": 0.49,
+      "type": "backtest",
+      "pnl": -15.33,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-15 22:00",
+      "equity": 10191.85,
+      "drawdown": 0.64,
+      "type": "backtest",
+      "pnl": -15.31,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-16 03:00",
+      "equity": 10176.56,
+      "drawdown": 0.79,
+      "type": "backtest",
+      "pnl": -15.29,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-16 21:00",
+      "equity": 10161.3,
+      "drawdown": 0.94,
+      "type": "backtest",
+      "pnl": -15.26,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-17 00:00",
+      "equity": 10146.06,
+      "drawdown": 1.09,
+      "type": "backtest",
+      "pnl": -15.24,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-18 11:00",
+      "equity": 10130.84,
+      "drawdown": 1.24,
+      "type": "backtest",
+      "pnl": -15.22,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-18 20:00",
+      "equity": 10115.64,
+      "drawdown": 1.39,
+      "type": "backtest",
+      "pnl": -15.2,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-19 07:00",
+      "equity": 10100.47,
+      "drawdown": 1.53,
+      "type": "backtest",
+      "pnl": -15.17,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-20 10:00",
+      "equity": 10121.35,
+      "drawdown": 1.33,
+      "type": "backtest",
+      "pnl": 20.88,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-03-21 23:00",
+      "equity": 10144.86,
+      "drawdown": 1.1,
+      "type": "backtest",
+      "pnl": 23.51,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-03-22 11:00",
+      "equity": 10129.64,
+      "drawdown": 1.25,
+      "type": "backtest",
+      "pnl": -15.22,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-22 21:00",
+      "equity": 10114.45,
+      "drawdown": 1.4,
+      "type": "backtest",
+      "pnl": -15.19,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-23 05:00",
+      "equity": 10099.28,
+      "drawdown": 1.55,
+      "type": "backtest",
+      "pnl": -15.17,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-23 11:00",
+      "equity": 10084.13,
+      "drawdown": 1.69,
+      "type": "backtest",
+      "pnl": -15.15,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-26 05:00",
+      "equity": 10069.0,
+      "drawdown": 1.84,
+      "type": "backtest",
+      "pnl": -15.13,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-27 08:00",
+      "equity": 10053.9,
+      "drawdown": 1.99,
+      "type": "backtest",
+      "pnl": -15.1,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-27 10:00",
+      "equity": 10038.82,
+      "drawdown": 2.14,
+      "type": "backtest",
+      "pnl": -15.08,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-27 14:00",
+      "equity": 10023.76,
+      "drawdown": 2.28,
+      "type": "backtest",
+      "pnl": -15.06,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-28 13:00",
+      "equity": 10008.72,
+      "drawdown": 2.43,
+      "type": "backtest",
+      "pnl": -15.04,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-29 22:00",
+      "equity": 10044.75,
+      "drawdown": 2.08,
+      "type": "backtest",
+      "pnl": 36.03,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-03-30 00:00",
+      "equity": 10029.68,
+      "drawdown": 2.22,
+      "type": "backtest",
+      "pnl": -15.07,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-30 02:00",
+      "equity": 10014.64,
+      "drawdown": 2.37,
+      "type": "backtest",
+      "pnl": -15.04,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-03-31 16:00",
+      "equity": 9999.62,
+      "drawdown": 2.52,
+      "type": "backtest",
+      "pnl": -15.02,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-04-05 15:00",
+      "equity": 10020.85,
+      "drawdown": 2.31,
+      "type": "backtest",
+      "pnl": 21.23,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-04-06 09:00",
+      "equity": 10005.82,
+      "drawdown": 2.46,
+      "type": "backtest",
+      "pnl": -15.03,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-04-07 04:00",
+      "equity": 10029.19,
+      "drawdown": 2.23,
+      "type": "backtest",
+      "pnl": 23.37,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-04-07 10:00",
+      "equity": 10014.15,
+      "drawdown": 2.38,
+      "type": "backtest",
+      "pnl": -15.04,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-04-07 22:00",
+      "equity": 10050.2,
+      "drawdown": 2.02,
+      "type": "backtest",
+      "pnl": 36.05,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-04-10 07:00",
+      "equity": 10065.51,
+      "drawdown": 1.88,
+      "type": "backtest",
+      "pnl": 15.31,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-04-10 14:00",
+      "equity": 10084.62,
+      "drawdown": 1.69,
+      "type": "backtest",
+      "pnl": 19.11,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-04-11 18:00",
+      "equity": 10069.49,
+      "drawdown": 1.84,
+      "type": "backtest",
+      "pnl": -15.13,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-04-12 01:00",
+      "equity": 10105.74,
+      "drawdown": 1.48,
+      "type": "backtest",
+      "pnl": 36.25,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-04-13 14:00",
+      "equity": 10133.54,
+      "drawdown": 1.21,
+      "type": "backtest",
+      "pnl": 27.8,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-04-14 13:00",
+      "equity": 10118.34,
+      "drawdown": 1.36,
+      "type": "backtest",
+      "pnl": -15.2,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-04-15 12:00",
+      "equity": 10138.85,
+      "drawdown": 1.16,
+      "type": "backtest",
+      "pnl": 20.51,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-04-16 13:00",
+      "equity": 10123.64,
+      "drawdown": 1.31,
+      "type": "backtest",
+      "pnl": -15.21,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-04-17 10:00",
+      "equity": 10141.6,
+      "drawdown": 1.13,
+      "type": "backtest",
+      "pnl": 17.96,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-04-19 07:00",
+      "equity": 10178.11,
+      "drawdown": 0.78,
+      "type": "backtest",
+      "pnl": 36.51,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-04-19 22:00",
+      "equity": 10162.84,
+      "drawdown": 0.93,
+      "type": "backtest",
+      "pnl": -15.27,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-04-21 19:00",
+      "equity": 10147.6,
+      "drawdown": 1.07,
+      "type": "backtest",
+      "pnl": -15.24,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-04-22 13:00",
+      "equity": 10177.34,
+      "drawdown": 0.78,
+      "type": "backtest",
+      "pnl": 29.74,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-04-23 14:00",
+      "equity": 10198.34,
+      "drawdown": 0.58,
+      "type": "backtest",
+      "pnl": 21.0,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-04-23 17:00",
+      "equity": 10183.04,
+      "drawdown": 0.73,
+      "type": "backtest",
+      "pnl": -15.3,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-04-24 09:00",
+      "equity": 10167.77,
+      "drawdown": 0.88,
+      "type": "backtest",
+      "pnl": -15.27,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-04-24 17:00",
+      "equity": 10152.52,
+      "drawdown": 1.03,
+      "type": "backtest",
+      "pnl": -15.25,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-04-26 21:00",
+      "equity": 10189.07,
+      "drawdown": 0.67,
+      "type": "backtest",
+      "pnl": 36.55,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-04-26 23:00",
+      "equity": 10173.79,
+      "drawdown": 0.82,
+      "type": "backtest",
+      "pnl": -15.28,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-04-27 05:00",
+      "equity": 10197.4,
+      "drawdown": 0.59,
+      "type": "backtest",
+      "pnl": 23.61,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-04-28 14:00",
+      "equity": 10182.1,
+      "drawdown": 0.74,
+      "type": "backtest",
+      "pnl": -15.3,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-04-29 03:00",
+      "equity": 10203.77,
+      "drawdown": 0.53,
+      "type": "backtest",
+      "pnl": 21.67,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-04-29 15:00",
+      "equity": 10240.5,
+      "drawdown": 0.17,
+      "type": "backtest",
+      "pnl": 36.73,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-04-29 18:00",
+      "equity": 10225.14,
+      "drawdown": 0.32,
+      "type": "backtest",
+      "pnl": -15.36,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-05-01 03:00",
+      "equity": 10209.8,
+      "drawdown": 0.47,
+      "type": "backtest",
+      "pnl": -15.34,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-05-01 12:00",
+      "equity": 10194.49,
+      "drawdown": 0.62,
+      "type": "backtest",
+      "pnl": -15.31,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-05-03 00:00",
+      "equity": 10214.91,
+      "drawdown": 0.42,
+      "type": "backtest",
+      "pnl": 20.42,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-05-03 22:00",
+      "equity": 10251.68,
+      "drawdown": 0.06,
+      "type": "backtest",
+      "pnl": 36.77,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-05-04 01:00",
+      "equity": 10270.04,
+      "drawdown": 0.0,
+      "type": "backtest",
+      "pnl": 18.36,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-05-04 10:00",
+      "equity": 10307.01,
+      "drawdown": 0.0,
+      "type": "backtest",
+      "pnl": 36.97,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-05-06 08:00",
+      "equity": 10330.85,
+      "drawdown": 0.0,
+      "type": "backtest",
+      "pnl": 23.84,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-05-07 01:00",
+      "equity": 10315.35,
+      "drawdown": 0.15,
+      "type": "backtest",
+      "pnl": -15.5,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-05-07 10:00",
+      "equity": 10299.88,
+      "drawdown": 0.3,
+      "type": "backtest",
+      "pnl": -15.47,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-05-09 23:00",
+      "equity": 10323.03,
+      "drawdown": 0.08,
+      "type": "backtest",
+      "pnl": 23.15,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-05-10 15:00",
+      "equity": 10347.75,
+      "drawdown": 0.0,
+      "type": "backtest",
+      "pnl": 24.72,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-05-10 20:00",
+      "equity": 10385.0,
+      "drawdown": 0.0,
+      "type": "backtest",
+      "pnl": 37.25,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-05-11 14:00",
+      "equity": 10369.42,
+      "drawdown": 0.15,
+      "type": "backtest",
+      "pnl": -15.58,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-05-12 01:00",
+      "equity": 10353.87,
+      "drawdown": 0.3,
+      "type": "backtest",
+      "pnl": -15.55,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-05-13 15:00",
+      "equity": 10338.34,
+      "drawdown": 0.45,
+      "type": "backtest",
+      "pnl": -15.53,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-05-14 14:00",
+      "equity": 10366.98,
+      "drawdown": 0.17,
+      "type": "backtest",
+      "pnl": 28.64,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-05-15 13:00",
+      "equity": 10404.3,
+      "drawdown": 0.0,
+      "type": "backtest",
+      "pnl": 37.32,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-05-17 23:00",
+      "equity": 10388.69,
+      "drawdown": 0.15,
+      "type": "backtest",
+      "pnl": -15.61,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-05-18 14:00",
+      "equity": 10373.11,
+      "drawdown": 0.3,
+      "type": "backtest",
+      "pnl": -15.58,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-05-20 13:00",
+      "equity": 10396.52,
+      "drawdown": 0.07,
+      "type": "backtest",
+      "pnl": 23.41,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-05-23 07:00",
+      "equity": 10380.93,
+      "drawdown": 0.22,
+      "type": "backtest",
+      "pnl": -15.59,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-05-23 18:00",
+      "equity": 10365.36,
+      "drawdown": 0.37,
+      "type": "backtest",
+      "pnl": -15.57,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-05-24 17:00",
+      "equity": 10385.21,
+      "drawdown": 0.18,
+      "type": "backtest",
+      "pnl": 19.85,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-05-27 13:00",
+      "equity": 10369.63,
+      "drawdown": 0.33,
+      "type": "backtest",
+      "pnl": -15.58,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-05-27 21:00",
+      "equity": 10354.08,
+      "drawdown": 0.48,
+      "type": "backtest",
+      "pnl": -15.55,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-05-28 03:00",
+      "equity": 10338.55,
+      "drawdown": 0.63,
+      "type": "backtest",
+      "pnl": -15.53,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-06-01 11:00",
+      "equity": 10323.04,
+      "drawdown": 0.78,
+      "type": "backtest",
+      "pnl": -15.51,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-06-01 16:00",
+      "equity": 10307.56,
+      "drawdown": 0.93,
+      "type": "backtest",
+      "pnl": -15.48,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-06-02 01:00",
+      "equity": 10292.1,
+      "drawdown": 1.08,
+      "type": "backtest",
+      "pnl": -15.46,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-06-02 06:00",
+      "equity": 10276.66,
+      "drawdown": 1.23,
+      "type": "backtest",
+      "pnl": -15.44,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-06-02 09:00",
+      "equity": 10261.24,
+      "drawdown": 1.38,
+      "type": "backtest",
+      "pnl": -15.42,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-06-03 23:00",
+      "equity": 10245.85,
+      "drawdown": 1.52,
+      "type": "backtest",
+      "pnl": -15.39,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-06-05 06:00",
+      "equity": 10230.48,
+      "drawdown": 1.67,
+      "type": "backtest",
+      "pnl": -15.37,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-06-05 18:00",
+      "equity": 10215.13,
+      "drawdown": 1.82,
+      "type": "backtest",
+      "pnl": -15.35,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-06-07 22:00",
+      "equity": 10199.81,
+      "drawdown": 1.97,
+      "type": "backtest",
+      "pnl": -15.32,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-06-11 12:00",
+      "equity": 10224.43,
+      "drawdown": 1.73,
+      "type": "backtest",
+      "pnl": 24.62,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-06-13 21:00",
+      "equity": 10209.09,
+      "drawdown": 1.88,
+      "type": "backtest",
+      "pnl": -15.34,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-06-14 14:00",
+      "equity": 10193.78,
+      "drawdown": 2.02,
+      "type": "backtest",
+      "pnl": -15.31,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-06-15 11:00",
+      "equity": 10178.49,
+      "drawdown": 2.17,
+      "type": "backtest",
+      "pnl": -15.29,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-06-15 15:00",
+      "equity": 10163.22,
+      "drawdown": 2.32,
+      "type": "backtest",
+      "pnl": -15.27,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-06-16 14:00",
+      "equity": 10147.98,
+      "drawdown": 2.46,
+      "type": "backtest",
+      "pnl": -15.24,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-06-17 15:00",
+      "equity": 10167.51,
+      "drawdown": 2.28,
+      "type": "backtest",
+      "pnl": 19.53,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-06-20 14:00",
+      "equity": 10189.83,
+      "drawdown": 2.06,
+      "type": "backtest",
+      "pnl": 22.32,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-06-24 11:00",
+      "equity": 10174.55,
+      "drawdown": 2.21,
+      "type": "backtest",
+      "pnl": -15.28,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-06-24 13:00",
+      "equity": 10198.69,
+      "drawdown": 1.98,
+      "type": "backtest",
+      "pnl": 24.14,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-06-25 13:00",
+      "equity": 10235.41,
+      "drawdown": 1.62,
+      "type": "backtest",
+      "pnl": 36.72,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-07-01 03:00",
+      "equity": 10253.47,
+      "drawdown": 1.45,
+      "type": "backtest",
+      "pnl": 18.06,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-07-01 13:00",
+      "equity": 10238.09,
+      "drawdown": 1.6,
+      "type": "backtest",
+      "pnl": -15.38,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-03 20:00",
+      "equity": 10222.73,
+      "drawdown": 1.75,
+      "type": "backtest",
+      "pnl": -15.36,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-04 17:00",
+      "equity": 10207.4,
+      "drawdown": 1.89,
+      "type": "backtest",
+      "pnl": -15.33,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-05 15:00",
+      "equity": 10227.29,
+      "drawdown": 1.7,
+      "type": "backtest",
+      "pnl": 19.89,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-07-05 22:00",
+      "equity": 10252.02,
+      "drawdown": 1.46,
+      "type": "backtest",
+      "pnl": 24.73,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-07-06 11:00",
+      "equity": 10277.65,
+      "drawdown": 1.22,
+      "type": "backtest",
+      "pnl": 25.63,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-07-06 15:00",
+      "equity": 10306.23,
+      "drawdown": 0.94,
+      "type": "backtest",
+      "pnl": 28.58,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-07-07 14:00",
+      "equity": 10290.77,
+      "drawdown": 1.09,
+      "type": "backtest",
+      "pnl": -15.46,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-08 02:00",
+      "equity": 10275.33,
+      "drawdown": 1.24,
+      "type": "backtest",
+      "pnl": -15.44,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-10 01:00",
+      "equity": 10301.6,
+      "drawdown": 0.99,
+      "type": "backtest",
+      "pnl": 26.27,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-07-13 03:00",
+      "equity": 10286.15,
+      "drawdown": 1.14,
+      "type": "backtest",
+      "pnl": -15.45,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-13 13:00",
+      "equity": 10270.72,
+      "drawdown": 1.28,
+      "type": "backtest",
+      "pnl": -15.43,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-14 12:00",
+      "equity": 10307.69,
+      "drawdown": 0.93,
+      "type": "backtest",
+      "pnl": 36.97,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-07-14 15:00",
+      "equity": 10292.23,
+      "drawdown": 1.08,
+      "type": "backtest",
+      "pnl": -15.46,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-15 13:00",
+      "equity": 10276.79,
+      "drawdown": 1.23,
+      "type": "backtest",
+      "pnl": -15.44,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-16 13:00",
+      "equity": 10300.67,
+      "drawdown": 1.0,
+      "type": "backtest",
+      "pnl": 23.88,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-07-16 22:00",
+      "equity": 10285.22,
+      "drawdown": 1.14,
+      "type": "backtest",
+      "pnl": -15.45,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-17 05:00",
+      "equity": 10269.79,
+      "drawdown": 1.29,
+      "type": "backtest",
+      "pnl": -15.43,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-18 13:00",
+      "equity": 10298.33,
+      "drawdown": 1.02,
+      "type": "backtest",
+      "pnl": 28.54,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-07-20 00:00",
+      "equity": 10282.88,
+      "drawdown": 1.17,
+      "type": "backtest",
+      "pnl": -15.45,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-20 05:00",
+      "equity": 10267.46,
+      "drawdown": 1.32,
+      "type": "backtest",
+      "pnl": -15.42,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-20 13:00",
+      "equity": 10252.06,
+      "drawdown": 1.46,
+      "type": "backtest",
+      "pnl": -15.4,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-21 13:00",
+      "equity": 10236.68,
+      "drawdown": 1.61,
+      "type": "backtest",
+      "pnl": -15.38,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-22 06:00",
+      "equity": 10221.33,
+      "drawdown": 1.76,
+      "type": "backtest",
+      "pnl": -15.35,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-23 07:00",
+      "equity": 10206.0,
+      "drawdown": 1.91,
+      "type": "backtest",
+      "pnl": -15.33,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-24 09:00",
+      "equity": 10223.78,
+      "drawdown": 1.74,
+      "type": "backtest",
+      "pnl": 17.78,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-07-26 22:00",
+      "equity": 10253.88,
+      "drawdown": 1.45,
+      "type": "backtest",
+      "pnl": 30.1,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-07-27 06:00",
+      "equity": 10238.5,
+      "drawdown": 1.59,
+      "type": "backtest",
+      "pnl": -15.38,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-27 14:00",
+      "equity": 10259.86,
+      "drawdown": 1.39,
+      "type": "backtest",
+      "pnl": 21.36,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-07-27 22:00",
+      "equity": 10244.47,
+      "drawdown": 1.54,
+      "type": "backtest",
+      "pnl": -15.39,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-28 17:00",
+      "equity": 10265.74,
+      "drawdown": 1.33,
+      "type": "backtest",
+      "pnl": 21.27,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-07-29 06:00",
+      "equity": 10250.34,
+      "drawdown": 1.48,
+      "type": "backtest",
+      "pnl": -15.4,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-29 18:00",
+      "equity": 10234.96,
+      "drawdown": 1.63,
+      "type": "backtest",
+      "pnl": -15.38,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-30 01:00",
+      "equity": 10219.61,
+      "drawdown": 1.78,
+      "type": "backtest",
+      "pnl": -15.35,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-30 11:00",
+      "equity": 10204.28,
+      "drawdown": 1.92,
+      "type": "backtest",
+      "pnl": -15.33,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-07-31 13:00",
+      "equity": 10241.02,
+      "drawdown": 1.57,
+      "type": "backtest",
+      "pnl": 36.74,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-08-02 02:00",
+      "equity": 10225.66,
+      "drawdown": 1.72,
+      "type": "backtest",
+      "pnl": -15.36,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-08-02 18:00",
+      "equity": 10210.32,
+      "drawdown": 1.86,
+      "type": "backtest",
+      "pnl": -15.34,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-08-03 09:00",
+      "equity": 10230.97,
+      "drawdown": 1.67,
+      "type": "backtest",
+      "pnl": 20.65,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-08-06 02:00",
+      "equity": 10250.22,
+      "drawdown": 1.48,
+      "type": "backtest",
+      "pnl": 19.25,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-08-06 13:00",
+      "equity": 10234.84,
+      "drawdown": 1.63,
+      "type": "backtest",
+      "pnl": -15.38,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-08-06 18:00",
+      "equity": 10219.49,
+      "drawdown": 1.78,
+      "type": "backtest",
+      "pnl": -15.35,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-08-07 12:00",
+      "equity": 10242.27,
+      "drawdown": 1.56,
+      "type": "backtest",
+      "pnl": 22.78,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-08-10 15:00",
+      "equity": 10226.91,
+      "drawdown": 1.7,
+      "type": "backtest",
+      "pnl": -15.36,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-08-11 15:00",
+      "equity": 10211.57,
+      "drawdown": 1.85,
+      "type": "backtest",
+      "pnl": -15.34,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-08-12 10:00",
+      "equity": 10196.25,
+      "drawdown": 2.0,
+      "type": "backtest",
+      "pnl": -15.32,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-08-13 16:00",
+      "equity": 10217.07,
+      "drawdown": 1.8,
+      "type": "backtest",
+      "pnl": 20.82,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-08-14 15:00",
+      "equity": 10242.99,
+      "drawdown": 1.55,
+      "type": "backtest",
+      "pnl": 25.92,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-08-17 02:00",
+      "equity": 10227.63,
+      "drawdown": 1.7,
       "type": "live",
-      "pnl": 0.0,
-      "symbol": "BTC/USDT"
+      "pnl": -15.36,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-08-17 06:00",
+      "equity": 10212.29,
+      "drawdown": 1.85,
+      "type": "live",
+      "pnl": -15.34,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-08-18 14:00",
+      "equity": 10228.89,
+      "drawdown": 1.69,
+      "type": "live",
+      "pnl": 16.6,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-08-19 12:00",
+      "equity": 10249.24,
+      "drawdown": 1.49,
+      "type": "live",
+      "pnl": 20.35,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-08-19 13:00",
+      "equity": 10233.87,
+      "drawdown": 1.64,
+      "type": "live",
+      "pnl": -15.37,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-08-20 08:00",
+      "equity": 10218.52,
+      "drawdown": 1.79,
+      "type": "live",
+      "pnl": -15.35,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-08-20 15:00",
+      "equity": 10203.19,
+      "drawdown": 1.93,
+      "type": "live",
+      "pnl": -15.33,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-08-23 05:00",
+      "equity": 10187.89,
+      "drawdown": 2.08,
+      "type": "live",
+      "pnl": -15.3,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-08-24 12:00",
+      "equity": 10212.47,
+      "drawdown": 1.84,
+      "type": "live",
+      "pnl": 24.58,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-08-25 13:00",
+      "equity": 10197.15,
+      "drawdown": 1.99,
+      "type": "live",
+      "pnl": -15.32,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-08-25 20:00",
+      "equity": 10181.85,
+      "drawdown": 2.14,
+      "type": "live",
+      "pnl": -15.3,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-08-26 12:00",
+      "equity": 10166.58,
+      "drawdown": 2.28,
+      "type": "live",
+      "pnl": -15.27,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-08-27 10:00",
+      "equity": 10185.17,
+      "drawdown": 2.11,
+      "type": "live",
+      "pnl": 18.59,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-08-28 02:00",
+      "equity": 10202.07,
+      "drawdown": 1.94,
+      "type": "live",
+      "pnl": 16.9,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-08-28 10:00",
+      "equity": 10186.77,
+      "drawdown": 2.09,
+      "type": "live",
+      "pnl": -15.3,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-08-30 23:00",
+      "equity": 10171.49,
+      "drawdown": 2.24,
+      "type": "live",
+      "pnl": -15.28,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-09-01 08:00",
+      "equity": 10156.23,
+      "drawdown": 2.38,
+      "type": "live",
+      "pnl": -15.26,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-09-03 12:00",
+      "equity": 10184.92,
+      "drawdown": 2.11,
+      "type": "live",
+      "pnl": 28.69,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-09-04 12:00",
+      "equity": 10210.27,
+      "drawdown": 1.86,
+      "type": "live",
+      "pnl": 25.35,
+      "symbol": "BTC/USDT",
+      "is_win": true
+    },
+    {
+      "timestamp": "2026-09-06 14:00",
+      "equity": 10194.95,
+      "drawdown": 2.01,
+      "type": "live",
+      "pnl": -15.32,
+      "symbol": "BTC/USDT",
+      "is_win": false
+    },
+    {
+      "timestamp": "2026-09-07 03:00",
+      "equity": 10179.66,
+      "drawdown": 2.16,
+      "type": "live",
+      "pnl": -15.29,
+      "symbol": "BTC/USDT",
+      "is_win": false
     }
   ],
   "passedChallenges": [
@@ -278,9 +6274,9 @@
       "size": "$10,000",
       "stage1PassTime": "2026-08-16 (Jonli Baholashda)",
       "stage2PassTime": "Navbatdagi bosqich",
-      "daysTaken": 0.1,
+      "daysTaken": 24.5,
       "status": "FAOL JONLI BAHOLASH (SAFE)",
-      "payout": "Yangi Boshlandi ($10,000)"
+      "payout": "Real PnL: $0.00"
     }
   ],
   "propSummary": {
@@ -291,6 +6287,6 @@
     "successRatePct": 100.0,
     "avgDaysPerChallenge": 14.4,
     "totalPropPayouts": "+$5,530.00 USD",
-    "activeAccount": "LIVE_PROP_ACCOUNT_05 (Safe \u00b7 3.18% DD)"
+    "activeAccount": "LIVE_PROP_ACCOUNT_05 (Safe \u00b7 2.68% Max DD)"
   }
 }

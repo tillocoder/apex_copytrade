@@ -2,21 +2,17 @@ import React from 'react';
 import { useTerminal } from '../../context/TerminalContext';
 import type { ModuleView } from '../../types';
 import { 
-  LayoutDashboard, 
   TrendingUp, 
   SlidersHorizontal,
   Zap, 
   FlaskConical, 
-  ShieldCheck, 
   BrainCircuit, 
   Newspaper, 
-  PieChart, 
   BookOpen, 
   BarChart3, 
   Bot, 
   Users, 
   Sliders, 
-  Server, 
   Settings,
   LogIn,
   ShieldAlert
@@ -42,7 +38,6 @@ export const Sidebar: React.FC = () => {
     {
       title: "TRADING",
       items: [
-        { id: 'home', label: 'Mission Control', icon: LayoutDashboard },
         { id: 'trades', label: 'Live Trades', icon: TrendingUp, badge: safePositions.length > 0 ? `${safePositions.length}` : undefined },
         { id: 'command-center', label: 'Command Center', icon: SlidersHorizontal, badge: 'LIVE' },
         { id: 'signals', label: 'AI Signals', icon: Zap, badge: safeSignals.length > 0 ? `${safeSignals.length}` : undefined, isAi: true },
@@ -51,8 +46,6 @@ export const Sidebar: React.FC = () => {
     {
       title: "QUANT & PROP",
       items: [
-        { id: 'prop-firm', label: 'Prop Firm Center', icon: ShieldCheck },
-        { id: 'portfolio', label: 'Portfolio Analytics', icon: PieChart },
         { id: 'backtest', label: 'Backtest Lab', icon: FlaskConical },
         { id: 'analytics', label: 'Execution Metrics', icon: BarChart3 },
       ]
@@ -70,7 +63,6 @@ export const Sidebar: React.FC = () => {
       title: "SYSTEM",
       items: [
         { id: 'automation', label: 'Automation & Hooks', icon: Sliders },
-        { id: 'server', label: 'Server Center', icon: Server },
         { id: 'admin', label: 'Admin Master API', icon: ShieldAlert, badge: 'API' },
         { id: 'settings', label: 'Terminal Settings', icon: Settings },
       ]

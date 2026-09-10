@@ -19,7 +19,6 @@ import { MarketIntelligence } from './components/modules/MarketIntelligence';
 import { AICopilot } from './components/modules/AICopilot';
 import { TeamHub } from './components/modules/TeamHub';
 import { AutomationCenter } from './components/modules/AutomationCenter';
-import { ServerCenter } from './components/modules/ServerCenter';
 import { SettingsModule } from './components/modules/SettingsModule';
 import { StandaloneAdminDashboard } from './components/admin/StandaloneAdminDashboard';
 
@@ -78,24 +77,23 @@ const ModuleContainer: React.FC = () => {
 
   const renderModule = () => {
     switch (activeModule) {
-      case 'home': 
-        return safePositions.length > 0 ? <MissionControlHome /> : <TradingWorkspace />;
+      case 'home':
       case 'trades': return <LiveTrades />;
       case 'command-center': return <PositionCommandCenter />;
       case 'signals': return <LiveSignals />;
       case 'backtest': return <BacktestLab />;
-      case 'prop-firm': return <RiskWorkspace />;
+      case 'prop-firm':
+      case 'portfolio':
+      case 'analytics': return <AnalyticsModule />;
       case 'intelligence': return <MarketIntelligence />;
       case 'news': return <NewsWorkspace />;
-      case 'portfolio': return <RiskWorkspace />;
       case 'journal': return <JournalWorkspace />;
-      case 'analytics': return <AnalyticsModule />;
       case 'copilot': return <AICopilot />;
       case 'team': return <TeamHub />;
-      case 'automation': return <AutomationCenter />;
-      case 'server': return <ServerCenter />;
+      case 'automation':
+      case 'server': return <AutomationCenter />;
       case 'settings': return <SettingsModule />;
-      default: return <MissionControlHome />;
+      default: return <LiveTrades />;
     }
   };
 

@@ -168,7 +168,7 @@ const loadInitialAuthSession = (): { user: User; module: ModuleView } => {
       if (session && session.expiresAt && Date.now() < session.expiresAt && session.user) {
         return { 
           user: session.user, 
-          module: resolvedFromUrl === 'login' ? 'home' : resolvedFromUrl 
+          module: resolvedFromUrl === 'login' ? 'trades' : resolvedFromUrl 
         };
       }
       localStorage.removeItem(AUTH_SESSION_KEY);
@@ -178,7 +178,7 @@ const loadInitialAuthSession = (): { user: User; module: ModuleView } => {
   }
 
   // If user opens a specific URL like /aisignals directly, keep that view
-  if (resolvedFromUrl !== 'home' && resolvedFromUrl !== 'login') {
+  if (resolvedFromUrl !== 'trades' && resolvedFromUrl !== 'login') {
     return { user: GUEST_USER, module: resolvedFromUrl };
   }
 
@@ -222,7 +222,7 @@ export const TerminalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     } else {
       clearAuthSession();
     }
-    setActiveModule('home');
+    setActiveModule('trades');
   };
 
   const logout = () => {

@@ -3,20 +3,16 @@ import { useTerminal } from '../../context/TerminalContext';
 import type { ModuleView } from '../../types';
 import { 
   Search, 
-  Terminal, 
   TrendingUp, 
   Zap, 
   FlaskConical, 
-  ShieldCheck, 
   BrainCircuit, 
   Newspaper, 
-  PieChart, 
   BookOpen, 
   BarChart3, 
   Bot, 
   Users, 
   Sliders, 
-  Server, 
   Settings,
   X,
   ShieldAlert
@@ -29,20 +25,16 @@ export const CommandPalette: React.FC = () => {
   if (!commandPaletteOpen) return null;
 
   const moduleActions: { id: ModuleView; label: string; icon: React.ElementType; desc: string; isAi?: boolean }[] = [
-    { id: 'home', label: 'Mission Control', icon: Terminal, desc: 'Multi-chart workstation view & AI decision radar' },
     { id: 'trades', label: 'Live Positions', icon: TrendingUp, desc: 'Active execution trades, TP/SL levels, and risk' },
     { id: 'signals', label: 'Institutional Signals', icon: Zap, desc: 'AI confidence score & confluence matrix', isAi: true },
     { id: 'backtest', label: 'Backtest Lab', icon: FlaskConical, desc: 'Historical equity curves & Sharpe ratio' },
-    { id: 'prop-firm', label: 'Prop Firm Rules', icon: ShieldCheck, desc: 'FTMO, FundedNext, and drawdown violation detection' },
+    { id: 'analytics', label: 'Strategy Performance & Metrics', icon: BarChart3, desc: 'Win rate, trade replays, Sharpe ratio & telemetry' },
     { id: 'intelligence', label: 'Market Intelligence', icon: BrainCircuit, desc: 'Orderbook heatmap, liquidations & macro data' },
     { id: 'news', label: 'AI News Feed', icon: Newspaper, desc: 'Sentiment scoring and economic calendar', isAi: true },
-    { id: 'portfolio', label: 'Portfolio Analytics', icon: PieChart, desc: 'Exposure, tax report, & asset allocation' },
     { id: 'journal', label: 'Trade Journal', icon: BookOpen, desc: 'Psychology rating, trade notes, and mistake log' },
-    { id: 'analytics', label: 'Strategy Performance', icon: BarChart3, desc: 'Best trading hours, win rate by day and symbol' },
     { id: 'copilot', label: 'XR AI Chat', icon: Bot, desc: 'Natural language strategy diagnostic assistant', isAi: true },
     { id: 'team', label: 'Team Collaboration Hub', icon: Users, desc: 'Shared notes, live user cursors & chat' },
     { id: 'automation', label: 'Automation & Webhooks', icon: Sliders, desc: 'TradingView alerts, Telegram & Discord bots' },
-    { id: 'server', label: 'Server & Infra Health', icon: Server, desc: 'CPU, RAM, Docker containers, and Python logs' },
     { id: 'settings', label: 'Settings', icon: Settings, desc: 'Exchange API keys, dark themes, & keybindings' }
   ];
 
@@ -62,7 +54,7 @@ export const CommandPalette: React.FC = () => {
 
   const handleSelectSymbol = (sym: string) => {
     setSelectedSymbol(sym);
-    setActiveModule('home');
+    setActiveModule('trades');
     setCommandPaletteOpen(false);
   };
 

@@ -1,0 +1,208 @@
+{
+  "timestamp": "2026-09-09T19:50:02.563367+00:00",
+  "strategy_name": "Strategy V2: HTF-Aligned Volatility Breakout & Trail Engine",
+  "dataset": {
+    "symbol": "BTC/USDT",
+    "timeframe": "1H execution, 4H directional bias",
+    "total_candles": 8760,
+    "start": "2025-09-08 13:00",
+    "end": "2026-09-08 12:00",
+    "fee_model": "0.04% entry + 0.04% exit + 0.02% slippage each side = 0.12% round trip",
+    "execution_model": "Conservative intra-bar SL order (SL first on conflict)"
+  },
+  "kpi_metrics": {
+    "trades_count": 123,
+    "win_rate": 32.52,
+    "profit_factor": 1.11,
+    "net_pnl": 357.63,
+    "expectancy_r": 0.087,
+    "avg_win_r": 2.58,
+    "avg_loss_r": 1.11,
+    "max_dd_pct": 5.88,
+    "max_loss_streak": 13
+  },
+  "long_vs_short": {
+    "long": {
+      "trades": 54,
+      "wr": 33.33,
+      "pf": 1.16,
+      "net": 239.85,
+      "avg_win_r": 2.66,
+      "avg_loss_r": 1.13
+    },
+    "short": {
+      "trades": 69,
+      "wr": 31.88,
+      "pf": 1.06,
+      "net": 117.78,
+      "avg_win_r": 2.51,
+      "avg_loss_r": 1.1
+    }
+  },
+  "walk_forward": {
+    "in_sample_h1": {
+      "trades": 61,
+      "wr": 34.43,
+      "pf": 1.19,
+      "net": 311.34,
+      "avg_win_r": 2.54,
+      "avg_loss_r": 1.11
+    },
+    "validation_m7_9": {
+      "trades": 32,
+      "wr": 37.5,
+      "pf": 1.32,
+      "net": 261.48,
+      "avg_win_r": 2.47,
+      "avg_loss_r": 1.11
+    },
+    "out_of_sample_m10_12": {
+      "trades": 30,
+      "wr": 23.33,
+      "pf": 0.77,
+      "net": -215.19,
+      "avg_win_r": 2.9,
+      "avg_loss_r": 1.13
+    },
+    "quarters": {
+      "q1": {
+        "trades": 25,
+        "wr": 40.0,
+        "pf": 1.56,
+        "net": 333.88,
+        "avg_win_r": 2.6,
+        "avg_loss_r": 1.1
+      },
+      "q2": {
+        "trades": 36,
+        "wr": 30.56,
+        "pf": 0.98,
+        "net": -22.54,
+        "avg_win_r": 2.48,
+        "avg_loss_r": 1.11
+      },
+      "q3": {
+        "trades": 32,
+        "wr": 37.5,
+        "pf": 1.32,
+        "net": 261.48,
+        "avg_win_r": 2.47,
+        "avg_loss_r": 1.11
+      },
+      "q4": {
+        "trades": 30,
+        "wr": 23.33,
+        "pf": 0.77,
+        "net": -215.19,
+        "avg_win_r": 2.9,
+        "avg_loss_r": 1.13
+      }
+    }
+  },
+  "perturbation_robustness": {
+    "Base (LB=48, SL=1.8, TP=3.0)": {
+      "trades": 123,
+      "wr": 32.52,
+      "pf": 1.11,
+      "net": 357.63,
+      "exp": 0.087,
+      "dd": 5.88
+    },
+    "LB -16% (LB=40)": {
+      "trades": 141,
+      "wr": 27.66,
+      "pf": 0.89,
+      "net": -444.03,
+      "exp": -0.087,
+      "dd": 10.19
+    },
+    "LB +16% (LB=56)": {
+      "trades": 122,
+      "wr": 30.33,
+      "pf": 1.0,
+      "net": -3.31,
+      "exp": 0.004,
+      "dd": 8.01
+    },
+    "SL -11% (SL=1.6)": {
+      "trades": 139,
+      "wr": 29.5,
+      "pf": 0.95,
+      "net": -205.56,
+      "exp": -0.038,
+      "dd": 10.4
+    },
+    "SL +11% (SL=2.0)": {
+      "trades": 119,
+      "wr": 31.09,
+      "pf": 1.03,
+      "net": 106.1,
+      "exp": 0.03,
+      "dd": 6.81
+    },
+    "TP -13% (TP=2.6)": {
+      "trades": 133,
+      "wr": 33.08,
+      "pf": 0.97,
+      "net": -116.69,
+      "exp": -0.021,
+      "dd": 9.22
+    },
+    "TP +13% (TP=3.4)": {
+      "trades": 122,
+      "wr": 28.69,
+      "pf": 1.04,
+      "net": 130.41,
+      "exp": 0.036,
+      "dd": 8.0
+    },
+    "VolMult -11% (Vol=1.20)": {
+      "trades": 124,
+      "wr": 33.06,
+      "pf": 1.14,
+      "net": 468.27,
+      "exp": 0.111,
+      "dd": 5.62
+    },
+    "VolMult +11% (Vol=1.50)": {
+      "trades": 119,
+      "wr": 33.61,
+      "pf": 1.16,
+      "net": 511.87,
+      "exp": 0.125,
+      "dd": 5.6
+    }
+  },
+  "monte_carlo_drawdown": {
+    "dd_p50": 5.81,
+    "dd_p75": 7.81,
+    "dd_p90": 10.17,
+    "dd_p95": 11.85,
+    "dd_p99": 15.18,
+    "dd_worst": 25.77,
+    "streak_p50": 10,
+    "streak_p75": 12,
+    "streak_p90": 14,
+    "streak_p95": 16,
+    "streak_p99": 20,
+    "streak_worst": 46
+  },
+  "prop_challenge_monte_carlo": {
+    "simulations": 100000,
+    "phase_1_pass_prob": 70.69,
+    "phase_2_pass_prob": 80.98,
+    "overall_pass_prob": 57.25,
+    "median_days_p1": 108,
+    "median_days_p2": 62,
+    "median_total_days": 170
+  },
+  "career_1y_simulation": {
+    "simulations": 100000,
+    "p_0": 38.09,
+    "p_ge_1": 61.91,
+    "p_ge_2": 14.42,
+    "p_ge_3": 1.1,
+    "p_ge_4": 0.02,
+    "p_ge_5": 0.0
+  }
+}

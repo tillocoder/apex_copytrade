@@ -65,6 +65,19 @@ export interface ForensicTradeItem {
   leverage: number;
   marginUsed: number;
   aiConfidence?: number;
+  stopLoss?: number;
+  sl?: number;
+  tp1?: number;
+  tp2?: number;
+  tp1_hit?: boolean;
+  trailingStopActive?: boolean;
+  riskAmount?: number;
+  riskPercent?: number;
+  size?: number;
+  original_size?: number;
+  entry_timestamp?: number;
+  exit_timestamp?: number;
+  events?: Array<{ timestamp: string; event: string; price: number; note?: string }>;
 }
 
 export interface PerformanceAnalyticsData {
@@ -147,6 +160,27 @@ export class AnalyticsService {
     } catch (err) {
       console.error('[AnalyticsService] fetchAnalyticsPerformance failed:', err);
       return null;
+    }
+  }
+
+  static async fetchTradeKlines(
+    symbol: string = 'BTC/USDT',
+    interval: string = '15m',
+    startTime?: number,
+    endTime?: number,
+    limit: number = 60
+  ): Promise<Array<{ time: number; open: number; high: number; low: number; close: number; volume: number }>> {
+    try {
+      const params = new URLSearchParams({ symbol, interval, limit: String(limit) });
+      if (startTime) params.append('startTime', String(Math.floor(startTime)));
+      if (endTime) params.append('endTime', String(Math.floor(endTime)));
+
+      const res = await fetch(`/api/v1/market/klines?${params.toString()}`);
+      if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+      return await res.json();
+    } catch (err) {
+      console.warn('[AnalyticsService] fetchTradeKlines fallback:', err);
+      return [];
     }
   }
 }

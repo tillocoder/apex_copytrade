@@ -48,7 +48,7 @@ export const Header: React.FC = () => {
       <div className="flex items-center space-x-3">
         <div 
           className="flex items-center space-x-2.5 cursor-pointer group"
-          onClick={() => setActiveModule('home')}
+          onClick={() => setActiveModule('trades')}
         >
           <div className="w-7 h-7 rounded-lg bg-[#141A23] border border-[#2B384B] flex items-center justify-center text-blue-400 group-hover:border-blue-500/60 group-hover:text-blue-300 transition-apex shadow-inner">
             <Terminal className="w-3.5 h-3.5" />

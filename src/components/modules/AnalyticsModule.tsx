@@ -6,6 +6,7 @@ import {
   SlidersHorizontal, Check, AlertCircle, Info, PieChart, Hash
 } from 'lucide-react';
 import ReactECharts from 'echarts-for-react';
+import { TradeReplayModal } from './TradeReplayModal';
 import {
   AnalyticsService,
   type PerformanceAnalyticsData,
@@ -1117,7 +1118,7 @@ export const AnalyticsModule: React.FC = () => {
                 filteredTrades.map((t, idx) => {
                   const isWin = t.is_win;
                   return (
-                    <tr key={t.id || idx} className="hover:bg-[#111A2E]/60 transition-colors">
+                    <tr key={t.id || idx} onClick={() => setInspectedTrade(t)} className="hover:bg-[#131F38] transition-colors cursor-pointer group" title="Batafsil tahlil va Qayta Ijroni ochish uchun bosing">
                       <td className="py-3 px-3 text-slate-400">
                         <span className="text-cyan-400 font-bold">#{t.trade_number || idx + 1}</span>
                         <div className="text-[10px] text-slate-500 truncate max-w-[90px]">{t.id}</div>
@@ -1179,11 +1180,15 @@ export const AnalyticsModule: React.FC = () => {
 
                       <td className="py-3 px-3 text-center">
                         <button
-                          onClick={() => setInspectedTrade(t)}
-                          className="p-1.5 rounded-lg bg-[#152138] hover:bg-cyan-500/20 text-cyan-400 hover:text-white border border-[#223354] transition-all"
-                          title="Savdo Tahlili"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setInspectedTrade(t);
+                          }}
+                          className="px-2.5 py-1 rounded-lg bg-cyan-500/10 group-hover:bg-cyan-500/25 text-cyan-400 group-hover:text-white border border-cyan-500/30 transition-all flex items-center gap-1.5 mx-auto text-[11px] font-bold shadow-sm"
+                          title="Savdo Tahlili & Visual Replay"
                         >
-                          <Info className="w-3.5 h-3.5" />
+                          <Activity className="w-3.5 h-3.5" />
+                          <span>Tahlil</span>
                         </button>
                       </td>
                     </tr>
@@ -1195,96 +1200,12 @@ export const AnalyticsModule: React.FC = () => {
         </div>
       </div>
 
-      {/* ── MODAL: TRADE FORENSIC INSPECTOR ────────────────────────────────────────── */}
+      {/* ── MODAL: TRADE FORENSIC INSPECTOR & REPLAY ─────────────────────────── */}
       {inspectedTrade && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#0D1424] border border-[#1E2E4E] rounded-2xl w-full max-w-xl overflow-hidden shadow-2xl animate-in fade-in duration-200">
-            <div className="p-4 lg:p-5 border-b border-[#1B2844] flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <div className={`p-2 rounded-xl border ${
-                  inspectedTrade.is_win ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' : 'bg-rose-500/10 border-rose-500/30 text-rose-400'
-                }`}>
-                  <Activity className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="text-base font-black font-mono text-white">
-                    {inspectedTrade.symbol} · {inspectedTrade.side} {inspectedTrade.leverage}x
-                  </h3>
-                  <p className="text-xs text-slate-400 font-mono">
-                    ID: {inspectedTrade.id}
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={() => setInspectedTrade(null)}
-                className="p-1.5 rounded-lg bg-[#152138] text-slate-400 hover:text-white border border-[#20304E]"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            <div className="p-5 space-y-4 font-mono text-xs">
-              <div className="grid grid-cols-2 gap-3 bg-[#090F1C] border border-[#16223A] rounded-xl p-3">
-                <div>
-                  <span className="text-slate-500 text-[10px]">SOF NATIJA</span>
-                  <div className={`text-lg font-black ${
-                    inspectedTrade.realizedPnl >= 0 ? 'text-emerald-400' : 'text-rose-400'
-                  }`}>
-                    {inspectedTrade.realizedPnl >= 0 ? '+' : ''}${inspectedTrade.realizedPnl.toFixed(2)} USD
-                  </div>
-                </div>
-                <div>
-                  <span className="text-slate-500 text-[10px]">R-MULTIPLE</span>
-                  <div className="text-lg font-black text-cyan-400">
-                    {inspectedTrade.r_multiple}
-                  </div>
-                </div>
-                <div>
-                  <span className="text-slate-500 text-[10px]">KIRISH NARXI</span>
-                  <div className="text-white font-bold">${inspectedTrade.entryPrice.toLocaleString()}</div>
-                </div>
-                <div>
-                  <span className="text-slate-500 text-[10px]">CHIQISH NARXI</span>
-                  <div className="text-white font-bold">${inspectedTrade.closePrice.toLocaleString()}</div>
-                </div>
-              </div>
-
-              <div className="bg-[#090F1C] border border-[#16223A] rounded-xl p-3 space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-slate-400">Strategiya (SMC):</span>
-                  <span className="text-cyan-300 font-bold">{inspectedTrade.setup}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-400">Holat:</span>
-                  <span className={`font-bold ${inspectedTrade.is_win ? 'text-emerald-400' : 'text-rose-400'}`}>
-                    {inspectedTrade.status}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-400">Sana & Vaqt:</span>
-                  <span className="text-slate-200">{inspectedTrade.date_str} {inspectedTrade.time_str}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-400">Davomiyligi:</span>
-                  <span className="text-slate-200">{inspectedTrade.duration}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-400">Ishlatilgan Margin:</span>
-                  <span className="text-slate-200">${inspectedTrade.marginUsed?.toFixed(2) || '100.00'}</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-4 border-t border-[#182643] bg-[#090F1C] flex justify-end">
-              <button
-                onClick={() => setInspectedTrade(null)}
-                className="px-4 py-2 bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500/30 border border-cyan-500/40 rounded-xl text-xs font-mono font-bold"
-              >
-                Yopish
-              </button>
-            </div>
-          </div>
-        </div>
+        <TradeReplayModal
+          trade={inspectedTrade}
+          onClose={() => setInspectedTrade(null)}
+        />
       )}
     </div>
   );

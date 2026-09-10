@@ -3,7 +3,6 @@ import { useTerminal } from '../../context/TerminalContext';
 import ReactECharts from 'echarts-for-react';
 import { 
   FlaskConical, 
-  Play, 
   ShieldCheck, 
   CheckCircle2, 
   Trophy, 
@@ -20,8 +19,7 @@ import { BacktestService } from '../../services/backtestService';
 
 export const BacktestLab: React.FC = () => {
   const { backtest, setBacktest, addLog } = useTerminal();
-  const [isOptimizing, setIsOptimizing] = useState(false);
-  const [curveMode, setCurveMode] = useState<'master' | 'backtest' | 'live' | 'reset'>('master');
+  const [curveMode, setCurveMode] = useState<'master' | 'backtest' | 'live'>('master');
   const [loading, setLoading] = useState(false);
   const [lastSyncTime, setLastSyncTime] = useState<string>('Hozir');
   const pollTimerRef = useRef<any>(null);
@@ -71,19 +69,6 @@ export const BacktestLab: React.FC = () => {
     };
   }, []);
 
-  const handleRunOptimization = async () => {
-    try {
-      setIsOptimizing(true);
-      addLog('Execution', 'INFO', 'Triggered Python Quant Engine 500-Simulation Monte Carlo re-optimization...');
-      await loadBacktestData(true);
-      addLog('Execution', 'SUCCESS', 'Quant Engine optimization job completed successfully.');
-    } catch (err) {
-      addLog('Error', 'WARN', 'Backend optimization request failed, running offline calculation.');
-    } finally {
-      setTimeout(() => setIsOptimizing(false), 2500);
-    }
-  };
-
   const getActiveCurveData = () => {
     if (curveMode === 'master') {
       if (backtest.portfolioEquityCurve && backtest.portfolioEquityCurve.length > 0) {
@@ -108,7 +93,8 @@ export const BacktestLab: React.FC = () => {
     const isMaster = curveMode === 'master';
     const isLiveOnly = curveMode === 'live';
     const isBacktestOnly = curveMode === 'backtest';
-    const transitionDate = '2026-08-16';
+    const liveFirstPoint = activeCurve.find(p => p.type === 'live');
+    const transitionDate = liveFirstPoint ? liveFirstPoint.timestamp : '2026-08-16';
 
     return {
       backgroundColor: '#151A21',
@@ -324,14 +310,6 @@ export const BacktestLab: React.FC = () => {
             <RefreshCw className={`w-3.5 h-3.5 text-apex-accent ${loading ? 'animate-spin' : ''}`} />
             <span>{loading ? 'YANGILANMOQDA...' : 'YANGILASH'}</span>
           </button>
-          <button 
-            onClick={handleRunOptimization}
-            disabled={isOptimizing}
-            className="flex items-center space-x-1.5 bg-apex-surface hover:bg-apex-hover border border-apex-accent text-apex-accent font-bold px-3 py-1.5 rounded-btn transition-apex disabled:opacity-50"
-          >
-            <Play className={`w-3.5 h-3.5 fill-apex-accent ${isOptimizing ? 'animate-spin' : ''}`} />
-            <span>{isOptimizing ? 'SIMULATSIYA OCHILMOQDA...' : 'MONTE CARLO OPTIMIZATION'}</span>
-          </button>
         </div>
       </div>
 
@@ -417,12 +395,6 @@ export const BacktestLab: React.FC = () => {
                 >
                   <Activity className="w-3 h-3" />
                   <span>Jonli Real-Time</span>
-                </button>
-                <button
-                  onClick={() => setCurveMode('reset')}
-                  className={`px-2 py-0.5 rounded transition-all ${curveMode === 'reset' ? 'bg-amber-500/20 text-amber-400 font-bold border border-amber-500/30' : 'text-apex-muted hover:text-apex-text'}`}
-                >
-                  Challenge Reset
                 </button>
               </div>
             </div>
