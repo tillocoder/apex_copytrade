@@ -1,20 +1,20 @@
 @import "tailwindcss";
 
 @theme {
-  --color-apex-bg: #080A0D;
-  --color-apex-bg-secondary: #0D1117;
-  --color-apex-surface: #141A23;
-  --color-apex-surface-hover: #1A222E;
-  --color-apex-hover: #1F2937;
-  --color-apex-border: #222C3A;
-  --color-apex-border-subtle: rgba(255, 255, 255, 0.07);
-  --color-apex-divider: #283446;
-  --color-apex-text: #F3F4F6;
-  --color-apex-text-secondary: #9CA3AF;
-  --color-apex-muted: #6B7280;
-  --color-apex-disabled: #4B5563;
-  --color-apex-accent: #3B82F6;
-  --color-apex-accent-glow: rgba(59, 130, 246, 0.15);
+  --color-apex-bg: #070B14;
+  --color-apex-bg-secondary: #0A1224;
+  --color-apex-surface: #0C152B;
+  --color-apex-surface-hover: #0E1B38;
+  --color-apex-hover: #122144;
+  --color-apex-border: #1C2E52;
+  --color-apex-border-subtle: #152442;
+  --color-apex-divider: #1C2D4E;
+  --color-apex-text: #F1F5F9;
+  --color-apex-text-secondary: #94A3B8;
+  --color-apex-muted: #64748B;
+  --color-apex-disabled: #334155;
+  --color-apex-accent: #06B6D4;
+  --color-apex-accent-glow: rgba(6, 182, 212, 0.25);
   --color-apex-success: #10B981;
   --color-apex-danger: #F43F5E;
   --color-apex-warning: #F59E0B;
@@ -33,7 +33,7 @@
     border-color: var(--color-apex-border);
   }
   body {
-    background-color: #080A0D;
+    background-color: #070B14;
     color: #F3F4F6;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     overflow-x: hidden;
@@ -54,11 +54,11 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #080A0D;
+  background: #070B14;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #222C3A;
+  background: #1C2E52;
   border-radius: 4px;
 }
 
@@ -68,17 +68,17 @@
 
 /* Institutional Panel Elevation & Workstation Shadows */
 .workstation-panel {
-  background-color: #141A23;
-  border: 1px solid #222C3A;
-  border-radius: 10px;
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05), 0 4px 12px rgba(0, 0, 0, 0.4);
+  background: linear-gradient(135deg, #0C152B 0%, #0A1224 100%);
+  border: 1px solid #1C2E52;
+  border-radius: 12px;
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05), 0 4px 16px rgba(0, 0, 0, 0.5);
 }
 
 .glass-panel {
-  background: rgba(20, 26, 35, 0.75);
+  background: rgba(12, 21, 43, 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  border: 1px solid #1C2E52;
 }
 
 /* Glowing Indicator Dots */
@@ -110,4 +110,26 @@
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Cyber-Navy Matrix System Utilities */
+.matrix-hero-panel {
+  background: linear-gradient(to right, #0C152B, #0E1B38, #0A1224);
+  border: 1px solid #1C2E52;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.matrix-card {
+  background-color: #080E1C;
+  border: 1px solid #1C2D4E;
+  border-radius: 12px;
+}
+
+.glow-cyan {
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.35);
+}
+
+.glow-emerald {
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.35);
 }

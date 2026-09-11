@@ -1,0 +1,70 @@
+{
+  "method": "Time-sliced walk-forward (n_splits=4)",
+  "total_trades": 27,
+  "windows": [
+    {
+      "window": "W1",
+      "date_start": "2025-09-30",
+      "date_end": "2025-12-02",
+      "trades": 6,
+      "win_rate": 50.0,
+      "profit_factor": 1.43,
+      "expectancy_r": 0.239,
+      "net_pnl": 49.55,
+      "avg_win_r": 1.58,
+      "avg_loss_r": 1.1
+    },
+    {
+      "window": "W2",
+      "date_start": "2025-12-17",
+      "date_end": "2026-01-27",
+      "trades": 6,
+      "win_rate": 33.33,
+      "profit_factor": 0.73,
+      "expectancy_r": -0.198,
+      "net_pnl": -42.33,
+      "avg_win_r": 1.64,
+      "avg_loss_r": 1.12
+    },
+    {
+      "window": "W3",
+      "date_start": "2026-02-06",
+      "date_end": "2026-05-17",
+      "trades": 6,
+      "win_rate": 50.0,
+      "profit_factor": 1.36,
+      "expectancy_r": 0.197,
+      "net_pnl": 40.85,
+      "avg_win_r": 1.47,
+      "avg_loss_r": 1.08
+    },
+    {
+      "window": "W4",
+      "date_start": "2026-06-07",
+      "date_end": "2026-08-27",
+      "trades": 9,
+      "win_rate": 55.56,
+      "profit_factor": 1.6,
+      "expectancy_r": 0.321,
+      "net_pnl": 101.13,
+      "avg_win_r": 1.53,
+      "avg_loss_r": 1.19
+    }
+  ],
+  "oos_window": {
+    "window": "W4",
+    "date_start": "2026-06-07",
+    "date_end": "2026-08-27",
+    "trades": 9,
+    "win_rate": 55.56,
+    "profit_factor": 1.6,
+    "expectancy_r": 0.321,
+    "net_pnl": 101.13,
+    "avg_win_r": 1.53,
+    "avg_loss_r": 1.19
+  },
+  "avg_is_pf": 1.17,
+  "oos_pf": 1.6,
+  "oos_status": "PASS (PF>=1.0)",
+  "note": "Last window is untouched OOS \u2014 NOT used for parameter selection"
+}

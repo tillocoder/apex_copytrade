@@ -101,7 +101,7 @@ const ProgressBar: React.FC<{
   else if (warn) barColor = 'bg-amber-500';
 
   return (
-    <div className="w-full bg-[#080A0D] rounded-full h-1.5 overflow-hidden border border-[#222C3A]">
+    <div className="w-full bg-[#070B14] rounded-full h-1.5 overflow-hidden border border-[#1C2E52]">
       <div
         className={`h-full ${barColor} transition-all duration-300`}
         style={{ width: `${pct}%` }}
@@ -244,18 +244,18 @@ export const PropFirmCenter: React.FC = () => {
   const isCompliant = (s?.ruleViolations?.length ?? 0) === 0;
 
   return (
-    <div className="flex-1 flex flex-col overflow-y-auto bg-[#080A0D] font-mono text-xs p-4 space-y-4">
+    <div className="flex-1 flex flex-col overflow-y-auto bg-[#070B14] font-mono text-xs p-4 space-y-4">
 
       {/* Top Banner Header */}
-      <div className="bg-[#0D1117] border border-[#222C3A] rounded-lg p-3.5 flex items-center justify-between shadow-md">
+      <div className="bg-[#0A1224] border border-[#1C2E52] rounded-lg p-3.5 flex items-center justify-between shadow-md">
         <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400">
+          <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-cyan-400">
             <ShieldCheck className="w-5 h-5" />
           </div>
           <div>
             <div className="font-bold text-sm text-white font-sans flex items-center gap-2">
               <span>{s?.firmName || 'APEX QUANT PROP FIRM'}</span>
-              <span className="text-[10px] px-1.5 py-0.2 rounded bg-blue-500/10 text-blue-400 border border-blue-500/30">
+              <span className="text-[10px] px-1.5 py-0.2 rounded bg-cyan-500/15 text-cyan-300 border border-cyan-500/35 shadow-[0_0_10px_rgba(6,182,212,0.2)]">
                 {s?.stage || 'STAGE 1 CHALLENGE'}
               </span>
             </div>
@@ -278,9 +278,9 @@ export const PropFirmCenter: React.FC = () => {
           <button
             onClick={refreshAll}
             disabled={isRefreshing}
-            className="p-1.5 rounded bg-[#141A23] hover:bg-[#1A222E] border border-[#222C3A] text-[#9CA3AF] hover:text-white transition-apex"
+            className="p-1.5 rounded bg-[#0C152B] hover:bg-[#0E1B38] border border-[#1C2E52] text-[#9CA3AF] hover:text-white transition-apex"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin text-blue-400' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin text-cyan-400' : ''}`} />
           </button>
         </div>
       </div>
@@ -288,7 +288,7 @@ export const PropFirmCenter: React.FC = () => {
       {/* Primary KPI Grid (4 Cards) */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
         {/* NAV Equity */}
-        <div className="bg-[#0D1117] border border-[#222C3A] rounded-lg p-3.5 space-y-2 shadow-sm">
+        <div className="bg-[#0A1224] border border-[#1C2E52] rounded-lg p-3.5 space-y-2 shadow-sm">
           <div className="text-[9.5px] text-[#6B7280] uppercase tracking-wider font-semibold flex items-center justify-between">
             <span>NAV Equity</span>
             <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
@@ -305,10 +305,10 @@ export const PropFirmCenter: React.FC = () => {
         </div>
 
         {/* Challenge Target Progress */}
-        <div className="bg-[#0D1117] border border-[#222C3A] rounded-lg p-3.5 space-y-2 shadow-sm">
+        <div className="bg-[#0A1224] border border-[#1C2E52] rounded-lg p-3.5 space-y-2 shadow-sm">
           <div className="text-[9.5px] text-[#6B7280] uppercase tracking-wider font-semibold flex items-center justify-between">
             <span>Profit Target (8%)</span>
-            <Target className="w-3.5 h-3.5 text-blue-400" />
+            <Target className="w-3.5 h-3.5 text-cyan-400" />
           </div>
           <div className="text-xl font-bold text-white tabular-nums">
             {s?.progressPct?.toFixed(1) ?? '0.0'}%
@@ -320,7 +320,7 @@ export const PropFirmCenter: React.FC = () => {
         </div>
 
         {/* Daily Drawdown */}
-        <div className="bg-[#0D1117] border border-[#222C3A] rounded-lg p-3.5 space-y-2 shadow-sm">
+        <div className="bg-[#0A1224] border border-[#1C2E52] rounded-lg p-3.5 space-y-2 shadow-sm">
           <div className="text-[9.5px] text-[#6B7280] uppercase tracking-wider font-semibold flex items-center justify-between">
             <span>Daily Drawdown</span>
             <Activity className="w-3.5 h-3.5 text-amber-400" />
@@ -341,7 +341,7 @@ export const PropFirmCenter: React.FC = () => {
         </div>
 
         {/* Pass Probability */}
-        <div className="bg-[#0D1117] border border-[#222C3A] rounded-lg p-3.5 space-y-2 shadow-sm">
+        <div className="bg-[#0A1224] border border-[#1C2E52] rounded-lg p-3.5 space-y-2 shadow-sm">
           <div className="text-[9.5px] text-[#6B7280] uppercase tracking-wider font-semibold flex items-center justify-between">
             <span>Pass Probability</span>
             <Award className="w-3.5 h-3.5 text-purple-400" />
@@ -360,10 +360,10 @@ export const PropFirmCenter: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
         {/* Position Size Calculator */}
-        <div className="bg-[#0D1117] border border-[#222C3A] rounded-lg p-4 space-y-3 shadow-md">
-          <div className="flex items-center justify-between border-b border-[#222C3A] pb-2">
+        <div className="bg-[#0A1224] border border-[#1C2E52] rounded-lg p-4 space-y-3 shadow-md">
+          <div className="flex items-center justify-between border-b border-[#1C2E52] pb-2">
             <div className="font-bold text-xs text-white flex items-center space-x-1.5 font-sans">
-              <Calculator className="w-3.5 h-3.5 text-blue-400" />
+              <Calculator className="w-3.5 h-3.5 text-cyan-400" />
               <span>POSITION SIZE & RISK SIZER</span>
             </div>
           </div>
@@ -374,7 +374,7 @@ export const PropFirmCenter: React.FC = () => {
               <select
                 value={symbol}
                 onChange={e => setSymbol(e.target.value)}
-                className="w-full bg-[#141A23] border border-[#222C3A] rounded px-2.5 py-1.5 text-xs text-white font-bold focus:outline-none focus:border-blue-500"
+                className="w-full bg-[#0C152B] border border-[#1C2E52] rounded px-2.5 py-1.5 text-xs text-white font-bold focus:outline-none focus:border-cyan-400"
               >
                 <option value="BTC/USDT">BTC/USDT</option>
                 <option value="ETH/USDT">ETH/USDT</option>
@@ -387,7 +387,7 @@ export const PropFirmCenter: React.FC = () => {
                 type="number"
                 value={slDistance}
                 onChange={e => setSlDistance(e.target.value)}
-                className="w-full bg-[#141A23] border border-[#222C3A] rounded px-2.5 py-1.5 text-xs text-white font-mono font-bold focus:outline-none focus:border-blue-500"
+                className="w-full bg-[#0C152B] border border-[#1C2E52] rounded px-2.5 py-1.5 text-xs text-white font-mono font-bold focus:outline-none focus:border-cyan-400"
                 placeholder="500"
                 min="1"
               />
@@ -395,7 +395,7 @@ export const PropFirmCenter: React.FC = () => {
           </div>
 
           {/* Calculator Output */}
-          <div className="bg-[#141A23] rounded-lg border border-[#222C3A] divide-y divide-[#1A222E]">
+          <div className="bg-[#0C152B] rounded-lg border border-[#1C2E52] divide-y divide-[#1A222E]">
             <div className="flex justify-between items-center p-2.5">
               <span className="text-[10px] text-[#9CA3AF]">RECOMMENDED SIZE:</span>
               <span className="font-bold text-emerald-400 text-xs tabular-nums">
@@ -410,7 +410,7 @@ export const PropFirmCenter: React.FC = () => {
             </div>
             <div className="flex justify-between items-center p-2.5">
               <span className="text-[10px] text-[#9CA3AF]">DAILY DRAWDOWN IMPACT:</span>
-              <span className="font-bold text-blue-400 text-xs tabular-nums">
+              <span className="font-bold text-cyan-400 text-xs tabular-nums">
                 {posSize?.impactOnDailyDD?.toFixed(2) ?? '0.00'}%
               </span>
             </div>
@@ -418,8 +418,8 @@ export const PropFirmCenter: React.FC = () => {
         </div>
 
         {/* Prop Firm Rule Compliance Dashboard */}
-        <div className="bg-[#0D1117] border border-[#222C3A] rounded-lg p-4 space-y-3 shadow-md">
-          <div className="flex items-center justify-between border-b border-[#222C3A] pb-2">
+        <div className="bg-[#0A1224] border border-[#1C2E52] rounded-lg p-4 space-y-3 shadow-md">
+          <div className="flex items-center justify-between border-b border-[#1C2E52] pb-2">
             <div className="font-bold text-xs text-white flex items-center space-x-1.5 font-sans">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
               <span>RULES COMPLIANCE MATRIX</span>
@@ -434,7 +434,7 @@ export const PropFirmCenter: React.FC = () => {
               { rule: 'Profit Target Stage 1 (8.0%)', limit: 8.0, current: s?.currentProfitPct || 0, status: 'PASS' },
               { rule: 'Max Allowed Leverage (2X)', limit: 2.0, current: 2.0, status: 'PASS' },
             ]).map((r: any, idx: number) => (
-              <div key={idx} className="flex items-center justify-between p-2 bg-[#141A23] rounded border border-[#222C3A]">
+              <div key={idx} className="flex items-center justify-between p-2 bg-[#0C152B] rounded border border-[#1C2E52]">
                 <div className="flex items-center space-x-2">
                   <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                   <span className="text-[11px] text-[#E5E7EB]">{r.rule}</span>
@@ -450,8 +450,8 @@ export const PropFirmCenter: React.FC = () => {
       </div>
 
       {/* Bottom Chart: Real-Time Equity Curve vs Target */}
-      <div className="bg-[#0D1117] border border-[#222C3A] rounded-lg p-4 space-y-3 shadow-md">
-        <div className="flex items-center justify-between border-b border-[#222C3A] pb-2">
+      <div className="bg-[#0A1224] border border-[#1C2E52] rounded-lg p-4 space-y-3 shadow-md">
+        <div className="flex items-center justify-between border-b border-[#1C2E52] pb-2">
           <div className="font-bold text-xs text-white flex items-center space-x-1.5 font-sans">
             <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
             <span>REAL-TIME NAV EQUITY CURVE VS $10,800 TARGET</span>

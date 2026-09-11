@@ -70,13 +70,13 @@ export const Sidebar: React.FC = () => {
   ];
 
   return (
-    <aside className="w-12 hover:w-56 transition-all duration-150 ease-out bg-[#0D1117] border-r border-[#222C3A] flex flex-col justify-between z-20 shrink-0 group overflow-hidden shadow-xl">
+    <aside className="w-12 hover:w-56 transition-all duration-150 ease-out bg-[#0A1224] border-r border-[#1C2E52] flex flex-col justify-between z-20 shrink-0 group overflow-hidden shadow-xl">
       {/* Top Module Items */}
       <div className="py-2 overflow-y-auto no-scrollbar space-y-3">
         {sections.map((sec, sIdx) => (
           <div key={sIdx} className="space-y-0.5">
             {sec.title && (
-              <div className="px-3 py-1 text-[8.5px] font-bold tracking-wider text-[#6B7280] uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-150 font-mono">
+              <div className="px-3 py-1 text-[8.5px] font-bold tracking-wider text-slate-400 uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-150 font-mono">
                 {sec.title}
               </div>
             )}
@@ -89,22 +89,22 @@ export const Sidebar: React.FC = () => {
                   onClick={() => setActiveModule(item.id)}
                   className={`w-full h-8 px-3 flex items-center space-x-2.5 transition-apex relative text-xs font-medium ${
                     isActive 
-                      ? 'bg-blue-500/10 text-white font-semibold' 
-                      : 'text-[#9CA3AF] hover:text-white hover:bg-[#141A23]'
+                      ? 'bg-cyan-500/15 text-cyan-200 font-semibold' 
+                      : 'text-slate-400 hover:text-white hover:bg-[#0E1B38]'
                   }`}
                   title={item.label}
                 >
                   {/* Active Indicator Strip */}
                   {isActive && (
-                    <div className="absolute left-0 top-1 bottom-1 w-0.5 bg-blue-400 rounded-r shadow-[0_0_8px_rgba(59,130,246,0.8)]" />
+                    <div className="absolute left-0 top-1 bottom-1 w-0.5 bg-cyan-400 rounded-r shadow-[0_0_10px_rgba(6,182,212,0.9)]" />
                   )}
 
                   <Icon className={`w-3.5 h-3.5 shrink-0 ${
                     isActive 
-                      ? 'text-blue-400' 
+                      ? 'text-cyan-400' 
                       : item.isAi 
                         ? 'text-purple-400' 
-                        : 'text-[#6B7280] group-hover:text-[#9CA3AF]'
+                        : 'text-slate-400 group-hover:text-[#9CA3AF]'
                   }`} />
                   
                   <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-150 text-[11.5px] font-sans">
@@ -114,7 +114,7 @@ export const Sidebar: React.FC = () => {
                   {/* Badge counter */}
                   {item.badge && (
                     <span className={`ml-auto opacity-0 group-hover:opacity-100 text-[9px] font-mono font-bold px-1.5 py-0.2 rounded ${
-                      item.isAi ? 'bg-purple-500/15 text-purple-300 border border-purple-500/30' : 'bg-[#1A222E] text-[#9CA3AF] border border-[#2B384B]'
+                      item.isAi ? 'bg-purple-500/15 text-purple-300 border border-purple-500/30' : 'bg-[#080E1C] text-slate-300 border border-[#1C2E52]'
                     }`}>
                       {item.badge}
                     </span>
@@ -127,14 +127,14 @@ export const Sidebar: React.FC = () => {
       </div>
 
       {/* Footer System Status */}
-      <div className="p-2 border-t border-[#222C3A] bg-[#080A0D] text-[9.5px] font-mono text-[#6B7280] flex items-center justify-center group-hover:justify-between px-3">
+      <div className="p-2 border-t border-[#1C2E52] bg-[#080A0D] text-[9.5px] font-mono text-slate-400 flex items-center justify-center group-hover:justify-between px-3">
         <div className="flex items-center space-x-2">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 live-pulse-green shrink-0" />
           <span className="hidden group-hover:inline opacity-0 group-hover:opacity-100 transition-opacity uppercase tracking-wider font-bold text-[#9CA3AF]">
             ENGINE ONLINE
           </span>
         </div>
-        <span className="hidden group-hover:inline opacity-0 group-hover:opacity-100 text-[8.5px] text-[#6B7280]">
+        <span className="hidden group-hover:inline opacity-0 group-hover:opacity-100 text-[8.5px] text-slate-400">
           v5.2
         </span>
       </div>

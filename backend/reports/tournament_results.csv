@@ -1,0 +1,7 @@
+candidate,trades,win_rate,profit_factor,net_pnl,expectancy_r,avg_win_r,avg_loss_r,max_dd_pct,max_loss_streak
+A - EMA Trend Pullback,27,48.15,1.27,149.2,0.16,1.54,1.13,1.92,3
+B - Donchian 48H Breakout + 4H HTF (Strict prev 4H),107,34.58,1.23,646.79,0.173,2.6,1.11,3.75,8
+C - SMC Liquidity Sweep + MSS,226,27.88,0.67,-2009.93,-0.28,2.04,1.18,21.78,10
+D - BB/KC Squeeze Expansion,171,30.41,0.78,-1022.96,-0.176,2.04,1.14,11.02,14
+E - Regime-Adaptive Asymmetric (4H EMA200),192,30.21,0.82,-927.69,-0.141,2.11,1.11,11.42,12
+F - Ensemble (B+C Agreement),0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0

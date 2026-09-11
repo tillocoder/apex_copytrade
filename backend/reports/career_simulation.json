@@ -1,0 +1,24 @@
+{
+  "num_sims": 100000,
+  "seed": 42,
+  "method": "SYNTHETIC CAREER RESAMPLING (Bootstrap day sequences, not sequential real history)",
+  "p_0_count": 13277,
+  "p_ge_1_count": 86723,
+  "p_ge_2_count": 30797,
+  "p_ge_3_count": 1884,
+  "p_ge_4_count": 12,
+  "p_ge_5_count": 0,
+  "p_0": 13.28,
+  "p_ge_1": 86.72,
+  "p_ge_2": 30.8,
+  "p_ge_3": 1.88,
+  "p_ge_4": 0.01,
+  "p_ge_5": 0.0,
+  "raw_pass_distribution": {
+    "0": 13277,
+    "1": 55926,
+    "2": 28913,
+    "3": 1872,
+    "4": 12
+  }
+}

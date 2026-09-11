@@ -563,24 +563,24 @@ export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
   };
 
   return (
-    <div className={`w-full h-full flex flex-col font-mono select-none bg-[#131722] text-[#d1d4dc] ${className}`}>
+    <div className={`w-full h-full flex flex-col font-mono select-none bg-[#070B14] text-[#d1d4dc] ${className}`}>
       {/* Top TradingView-Style Bar */}
       {!hideHeader && (
-        <div className="flex items-center justify-between px-3 py-1.5 bg-[#1e222d] border-b border-[#2a2e39] shrink-0 gap-2 overflow-x-auto no-scrollbar">
+        <div className="flex items-center justify-between px-3 py-1.5 bg-[#0A1224] border-b border-[#1C2E52] shrink-0 gap-2 overflow-x-auto no-scrollbar">
         <div className="flex items-center gap-1.5 text-[11px] font-mono font-bold overflow-hidden flex-wrap">
           <span className="text-white font-bold">{activeSymbol}</span>
           <span className="text-[#50535e]">·</span>
           
           {/* Timeframe Selector Pills */}
-          <div className="flex items-center bg-[#131722] p-0.5 rounded border border-[#2a2e39]">
+          <div className="flex items-center bg-[#070B14] p-0.5 rounded border border-[#1C2E52]">
             {TIMEFRAMES.map(t => (
               <button
                 key={t.label}
                 onClick={() => handleTimeframeSelect(t)}
                 className={`px-2 py-0.5 rounded text-[10px] font-bold transition-all ${
                   tf.label === t.label
-                    ? 'bg-[#2962ff] text-white shadow-sm'
-                    : 'text-[#787b86] hover:text-white hover:bg-[#2a2e39]'
+                    ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm'
+                    : 'text-[#787b86] hover:text-white hover:bg-[#0C152B]'
                 }`}
               >
                 {t.label}
@@ -604,7 +604,7 @@ export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
               {targets.map(target => (
                 <span key={target.label} className="text-[#089981]">{target.label}: ${fmt(target.value)}</span>
               ))}
-              <span className="text-[#2962ff] font-bold">R:R 1:{calculatedRR}</span>
+              <span className="text-cyan-400 font-bold">R:R 1:{calculatedRR}</span>
             </>
           )}
         </div>
@@ -613,7 +613,7 @@ export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
         <div className="flex items-center gap-1.5 shrink-0">
           <button
             onClick={() => setZoom(z => Math.min(16, z * 1.25))}
-            className="p-1 text-[#787b86] hover:text-white hover:bg-[#2a2e39] rounded transition-colors"
+            className="p-1 text-[#787b86] hover:text-white hover:bg-[#0C152B] rounded transition-colors"
             title="Zoom In"
           >
             <ZoomIn className="w-3.5 h-3.5" />
@@ -621,7 +621,7 @@ export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
           
           <button
             onClick={() => setZoom(z => Math.max(0.15, z / 1.25))}
-            className="p-1 text-[#787b86] hover:text-white hover:bg-[#2a2e39] rounded transition-colors"
+            className="p-1 text-[#787b86] hover:text-white hover:bg-[#0C152B] rounded transition-colors"
             title="Zoom Out"
           >
             <ZoomOut className="w-3.5 h-3.5" />
@@ -629,16 +629,16 @@ export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
 
           <button
             onClick={() => centerOnTradeOrLatest('center_entry')}
-            className="px-2 py-0.5 text-[10px] text-white bg-[#2a2e39] hover:bg-[#363a45] rounded font-bold transition-colors flex items-center gap-1"
+            className="px-2 py-0.5 text-[10px] text-white bg-[#0C152B] hover:bg-[#363a45] rounded font-bold transition-colors flex items-center gap-1"
             title="Center Trade on Screen"
           >
-            <Crosshair className="w-3 h-3 text-[#2962ff]" />
+            <Crosshair className="w-3 h-3 text-cyan-400" />
             <span>TRADE</span>
           </button>
 
           <button
             onClick={() => centerOnTradeOrLatest('latest')}
-            className="px-2 py-0.5 text-[10px] text-[#2962ff] hover:bg-[#2962ff]/10 border border-[#2962ff]/30 rounded font-bold transition-colors"
+            className="px-2 py-0.5 text-[10px] text-cyan-400 hover:bg-cyan-500/15 border border-cyan-500/40 rounded font-bold transition-colors"
             title="Go to latest candle"
           >
             LATEST
@@ -646,7 +646,7 @@ export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
 
           <button
             onClick={() => { setVScale(1); centerOnTradeOrLatest('center_entry'); }}
-            className="p-1 text-[#787b86] hover:text-white hover:bg-[#2a2e39] rounded transition-colors"
+            className="p-1 text-[#787b86] hover:text-white hover:bg-[#0C152B] rounded transition-colors"
             title="Reset Chart View (100%)"
           >
             <RotateCcw className="w-3.5 h-3.5" />
@@ -658,7 +658,7 @@ export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
       {/* Main TradingView SVG Chart Area */}
       <div
         ref={wrapRef}
-        className={`flex-1 bg-[#131722] relative overflow-hidden ${
+        className={`flex-1 bg-[#070B14] relative overflow-hidden ${
           dragging ? (dragMode === 'vscale' ? 'cursor-ns-resize' : 'cursor-grabbing') : 'cursor-crosshair'
         }`}
         onMouseDown={onMD}
@@ -669,7 +669,7 @@ export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
       >
         {loadingK ? (
           <div className="w-full h-full flex flex-col items-center justify-center gap-2">
-            <Activity className="w-6 h-6 animate-spin text-[#2962ff]" />
+            <Activity className="w-6 h-6 animate-spin text-cyan-400" />
             <span className="text-[11px] text-[#787b86] uppercase tracking-widest">Loading Binance Market Depth...</span>
           </div>
         ) : data.length === 0 ? (
@@ -1002,7 +1002,7 @@ export const ApexCandleChart: React.FC<ApexCandleChartProps> = ({
       </div>
 
       {/* Bottom Status / Navigation Bar */}
-      <div className="h-6 bg-[#1e222d] border-t border-[#2a2e39] px-3 flex items-center justify-between text-[9px] font-mono text-[#787b86] shrink-0">
+      <div className="h-6 bg-[#0A1224] border-t border-[#1C2E52] px-3 flex items-center justify-between text-[9px] font-mono text-[#787b86] shrink-0">
         <div className="flex items-center gap-3">
           <span className="flex items-center gap-1 text-white">
             <span className="w-1.5 h-1.5 rounded-full bg-[#089981] animate-pulse"/> LIVE FEED

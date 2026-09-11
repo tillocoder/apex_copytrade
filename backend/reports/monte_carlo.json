@@ -1,0 +1,18 @@
+{
+  "num_sims": 100000,
+  "seed": 42,
+  "method": "Bootstrap with replacement \u2014 trade sequence randomization",
+  "sampling": "Each sim draws n_trades samples with replacement from observed PnL pool",
+  "dd_p50": 1.88,
+  "dd_p75": 2.55,
+  "dd_p90": 3.36,
+  "dd_p95": 3.91,
+  "dd_p99": 5.05,
+  "dd_worst": 8.79,
+  "streak_p50": 4,
+  "streak_p75": 5,
+  "streak_p90": 7,
+  "streak_p95": 8,
+  "streak_p99": 10,
+  "streak_worst": 18
+}

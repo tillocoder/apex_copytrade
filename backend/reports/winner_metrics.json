@@ -1,0 +1,11 @@
+{
+  "trades_count": 27,
+  "win_rate": 48.15,
+  "profit_factor": 1.27,
+  "net_pnl": 149.2,
+  "expectancy_r": 0.16,
+  "avg_win_r": 1.54,
+  "avg_loss_r": 1.13,
+  "max_dd_pct": 1.92,
+  "max_loss_streak": 3
+}

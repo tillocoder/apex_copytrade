@@ -65,22 +65,22 @@ export const AuthLogin: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen w-screen bg-[#080A0D] text-[#F3F4F6] flex flex-col justify-between p-4 relative overflow-hidden font-sans select-none">
+    <div className="min-h-screen w-screen bg-[#070B14] text-[#F3F4F6] flex flex-col justify-between p-4 relative overflow-hidden font-sans select-none">
       {/* Background Ambience */}
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-blue-600/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
 
       {/* Top Header Bar */}
-      <div className="w-full bg-[#0D1117] border border-[#222C3A] rounded-lg p-2.5 flex items-center justify-between font-mono text-xs z-10 shadow-sm">
+      <div className="w-full bg-[#0A1224] border border-[#1C2E52] rounded-lg p-2.5 flex items-center justify-between font-mono text-xs z-10 shadow-sm">
         <div className="flex items-center space-x-6">
           <div className="flex items-center space-x-2">
             <span className="w-2 h-2 rounded-full bg-emerald-400 live-pulse-green" />
             <span className="font-bold text-white tracking-tight flex items-center gap-1.5 font-sans">
               <span>APEX QUANT</span>
-              <span className="text-[9.5px] px-1.5 py-0.2 rounded bg-blue-500/10 text-blue-400 border border-blue-500/30 font-mono">GATEWAY</span>
+              <span className="text-[9.5px] px-1.5 py-0.2 rounded bg-cyan-500/15 text-cyan-300 border border-cyan-500/35 font-mono">GATEWAY</span>
             </span>
           </div>
 
-          <div className="hidden sm:flex items-center space-x-4 border-l border-[#222C3A] pl-4">
+          <div className="hidden sm:flex items-center space-x-4 border-l border-[#1C2E52] pl-4">
             <div className="flex items-center space-x-1.5">
               <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
               <span className="text-[#6B7280]">BTC:</span>
@@ -103,9 +103,9 @@ export const AuthLogin: React.FC = () => {
 
       {/* Central Login Card */}
       <div className="w-full max-w-md mx-auto my-auto z-10 space-y-4">
-        <div className="p-6 sm:p-8 space-y-6 shadow-2xl border border-[#222C3A] bg-[#0D1117]/95 backdrop-blur-xl rounded-xl">
+        <div className="p-6 sm:p-8 space-y-6 shadow-2xl border border-[#1C2E52] bg-[#0A1224]/95 backdrop-blur-xl rounded-xl">
           <div className="text-center space-y-2">
-            <div className="w-12 h-12 rounded-xl bg-[#141A23] border border-blue-500/30 text-blue-400 mx-auto flex items-center justify-center shadow-lg shadow-blue-500/10">
+            <div className="w-12 h-12 rounded-xl bg-[#0C152B] border border-cyan-500/35 text-cyan-400 mx-auto flex items-center justify-center shadow-lg shadow-cyan-500/20">
               <ShieldCheck className="w-6 h-6" />
             </div>
             <h1 className="text-xl font-bold tracking-tight text-white font-sans">APEX QUANT TERMINAL</h1>
@@ -132,7 +132,7 @@ export const AuthLogin: React.FC = () => {
                     onChange={(e) => setUsername(e.target.value)}
                     placeholder="tillo"
                     autoFocus
-                    className="w-full bg-[#141A23] border border-[#222C3A] rounded-lg px-3 py-2.5 pl-9 text-white focus:border-blue-500 outline-none transition-apex text-xs font-mono"
+                    className="w-full bg-[#0C152B] border border-[#1C2E52] rounded-lg px-3 py-2.5 pl-9 text-white focus:border-cyan-400 outline-none transition-apex text-xs font-mono"
                   />
                 </div>
               </div>
@@ -147,7 +147,7 @@ export const AuthLogin: React.FC = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••"
-                    className="w-full bg-[#141A23] border border-[#222C3A] rounded-lg px-3 py-2.5 pl-9 text-white focus:border-blue-500 outline-none transition-apex text-xs font-mono"
+                    className="w-full bg-[#0C152B] border border-[#1C2E52] rounded-lg px-3 py-2.5 pl-9 text-white focus:border-cyan-400 outline-none transition-apex text-xs font-mono"
                   />
                 </div>
               </div>
@@ -158,7 +158,7 @@ export const AuthLogin: React.FC = () => {
                     type="checkbox"
                     checked={rememberMe}
                     onChange={(e) => setRememberMe(e.target.checked)}
-                    className="w-3.5 h-3.5 rounded bg-[#141A23] border-[#222C3A] text-blue-500 accent-blue-500 focus:ring-0 cursor-pointer"
+                    className="w-3.5 h-3.5 rounded bg-[#0C152B] border-[#1C2E52] text-blue-500 accent-blue-500 focus:ring-0 cursor-pointer"
                   />
                   <span>Tizimda 30 kun eslab qolinsin (Stay Logged In)</span>
                 </label>
@@ -167,7 +167,7 @@ export const AuthLogin: React.FC = () => {
               <button 
                 type="submit"
                 disabled={loading}
-                className="w-full bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-bold py-2.5 rounded-lg transition-apex flex items-center justify-center space-x-2 font-sans text-xs shadow-lg shadow-blue-500/20 cursor-pointer"
+                className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black font-black disabled:opacity-50 text-white font-bold py-2.5 rounded-lg transition-apex flex items-center justify-center space-x-2 font-sans text-xs shadow-lg shadow-blue-500/20 cursor-pointer"
               >
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <KeyRound className="w-4 h-4" />}
                 <span>TASDIQLASH & KIRISH</span>
@@ -175,7 +175,7 @@ export const AuthLogin: React.FC = () => {
             </form>
           ) : (
             <form onSubmit={handle2FASubmit} className="space-y-4 font-mono text-xs">
-              <div className="bg-[#141A23] p-3.5 rounded-lg border border-[#222C3A] text-center space-y-1">
+              <div className="bg-[#0C152B] p-3.5 rounded-lg border border-[#1C2E52] text-center space-y-1">
                 <div className="text-emerald-400 font-bold flex items-center justify-center gap-1.5 text-xs font-sans">
                   <UserCheck className="w-4 h-4 text-emerald-400" /> TILLO PAROLI TASDIQLANDI
                 </div>
@@ -191,7 +191,7 @@ export const AuthLogin: React.FC = () => {
                   onChange={(e) => setTwoFactorCode(e.target.value)}
                   placeholder="4079"
                   autoFocus
-                  className="w-full bg-[#141A23] border border-blue-500/50 rounded-lg px-3 py-2.5 text-center text-blue-400 font-bold tracking-widest text-lg outline-none focus:border-blue-500"
+                  className="w-full bg-[#0C152B] border border-blue-500/50 rounded-lg px-3 py-2.5 text-center text-cyan-400 font-bold tracking-widest text-lg outline-none focus:border-cyan-400"
                 />
               </div>
 
@@ -199,14 +199,14 @@ export const AuthLogin: React.FC = () => {
                 <button 
                   type="button"
                   onClick={() => setStep('credentials')}
-                  className="w-1/3 bg-[#141A23] hover:bg-[#1A222E] border border-[#222C3A] text-[#9CA3AF] font-bold py-2.5 rounded-lg transition-apex text-center font-sans text-xs cursor-pointer"
+                  className="w-1/3 bg-[#0C152B] hover:bg-[#0E1B38] border border-[#1C2E52] text-[#9CA3AF] font-bold py-2.5 rounded-lg transition-apex text-center font-sans text-xs cursor-pointer"
                 >
                   ORQAGA
                 </button>
                 <button 
                   type="submit"
                   disabled={loading}
-                  className="w-2/3 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-bold py-2.5 rounded-lg transition-apex flex items-center justify-center space-x-2 font-sans text-xs shadow-lg shadow-blue-500/20 cursor-pointer"
+                  className="w-2/3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black font-black disabled:opacity-50 text-white font-bold py-2.5 rounded-lg transition-apex flex items-center justify-center space-x-2 font-sans text-xs shadow-lg shadow-blue-500/20 cursor-pointer"
                 >
                   {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ShieldCheck className="w-4 h-4" />}
                   <span>TERMINALGA KIRISH</span>

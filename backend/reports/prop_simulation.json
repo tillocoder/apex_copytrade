@@ -1,0 +1,18 @@
+{
+  "num_sims": 100000,
+  "seed": 42,
+  "method": "Day-level bootstrap resampling (SYNTHETIC \u2014 not sequential history)",
+  "p1_target_pct": 8.0,
+  "p2_target_pct": 5.0,
+  "daily_dd_limit_usd": 500.0,
+  "total_dd_limit_usd": 1000.0,
+  "phase_1_pass_count": 96111,
+  "phase_1_pass_pct": 96.11,
+  "phase_2_pass_count": 94510,
+  "phase_2_pass_pct": 98.33,
+  "overall_pass_count": 94510,
+  "overall_pass_pct": 94.51,
+  "median_p1_days": 114,
+  "median_p2_days": 67,
+  "median_total_days": 181
+}

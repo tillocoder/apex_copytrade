@@ -65,13 +65,13 @@ export const MissionControlHome: React.FC = () => {
     : logs.filter(l => l.category.toUpperCase() === logFilter);
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden bg-[#080A0D] font-sans text-xs">
+    <div className="flex-1 flex flex-col overflow-hidden bg-[#070B14] font-sans text-xs">
       {/* Main Workspace Area (3 Columns: Market Watch, Chart, AI Radar) */}
       <div className="flex-1 flex overflow-hidden">
         
         {/* Left Column: Market Watch Panel */}
-        <div className="w-60 bg-[#0D1117] border-r border-[#222C3A] flex flex-col shrink-0 font-mono">
-          <div className="p-2.5 border-b border-[#222C3A] bg-[#141A23] flex justify-between items-center font-medium text-xs">
+        <div className="w-60 bg-[#0A1224] border-r border-[#1C2E52] flex flex-col shrink-0 font-mono">
+          <div className="p-2.5 border-b border-[#1C2E52] bg-[#0C152B] flex justify-between items-center font-medium text-xs">
             <span className="flex items-center gap-1.5 text-white font-bold font-sans">
               <Flame className="w-3.5 h-3.5 text-amber-400" /> MARKET WATCH
             </span>
@@ -79,15 +79,15 @@ export const MissionControlHome: React.FC = () => {
           </div>
 
           {/* Ticker List */}
-          <div className="flex-1 overflow-y-auto divide-y divide-[#1A222E]">
+          <div className="flex-1 overflow-y-auto divide-y divide-[#152442]">
             {tickers.map((t) => {
               const isSelected = t.symbol === selectedSymbol;
               return (
                 <div
                   key={t.symbol}
                   onClick={() => setSelectedSymbol(t.symbol)}
-                  className={`p-2.5 hover:bg-[#141A23] cursor-pointer transition-apex flex items-center justify-between ${
-                    isSelected ? 'bg-blue-500/10 border-l-2 border-blue-500' : ''
+                  className={`p-2.5 hover:bg-[#0C152B] cursor-pointer transition-apex flex items-center justify-between ${
+                    isSelected ? 'bg-cyan-500/15 border-l-2 border-cyan-400 text-cyan-200' : ''
                   }`}
                 >
                   <div>
@@ -109,7 +109,7 @@ export const MissionControlHome: React.FC = () => {
           </div>
 
           {/* Quick Stats at Bottom of Left Panel */}
-          <div className="p-2.5 bg-[#141A23] border-t border-[#222C3A] text-[10px] space-y-1">
+          <div className="p-2.5 bg-[#0C152B] border-t border-[#1C2E52] text-[10px] space-y-1">
             <div className="flex justify-between text-[#9CA3AF]">
               <span>Active Signals:</span>
               <strong className="text-purple-400 font-mono">{signals.length}</strong>
@@ -122,7 +122,7 @@ export const MissionControlHome: React.FC = () => {
         </div>
 
         {/* Center Column: High-Performance Live Trading Chart */}
-        <div className="flex-1 flex flex-col overflow-hidden bg-[#080A0D]">
+        <div className="flex-1 flex flex-col overflow-hidden bg-[#070B14]">
           <div className="flex-1 overflow-hidden relative">
             <ApexCandleChart 
               symbol={selectedSymbol} 
@@ -133,10 +133,10 @@ export const MissionControlHome: React.FC = () => {
         </div>
 
         {/* Right Column: AI Signal Stream & Log Radar */}
-        <div className="w-80 bg-[#0D1117] border-l border-[#222C3A] flex flex-col shrink-0">
+        <div className="w-80 bg-[#0A1224] border-l border-[#1C2E52] flex flex-col shrink-0">
           
           {/* Signal Radar Header */}
-          <div className="p-2.5 border-b border-[#222C3A] bg-[#141A23] flex justify-between items-center text-xs font-mono">
+          <div className="p-2.5 border-b border-[#1C2E52] bg-[#0C152B] flex justify-between items-center text-xs font-mono">
             <span className="flex items-center gap-1.5 font-bold text-white font-sans">
               <Sparkles className="w-3.5 h-3.5 text-purple-400" /> AI SIGNALS
             </span>
@@ -146,7 +146,7 @@ export const MissionControlHome: React.FC = () => {
           </div>
 
           {/* Signal Cards */}
-          <div className="p-2 space-y-2 overflow-y-auto max-h-[48%] border-b border-[#222C3A]">
+          <div className="p-2 space-y-2 overflow-y-auto max-h-[48%] border-b border-[#1C2E52]">
             {signals.length === 0 ? (
               <div className="p-6 text-center text-[#6B7280] text-[11px]">
                 No active signals right now. Skaner faol...
@@ -156,7 +156,7 @@ export const MissionControlHome: React.FC = () => {
                 <div 
                   key={sig.id}
                   onClick={() => setSelectedSymbol(sig.symbol)}
-                  className="p-2.5 bg-[#141A23] hover:bg-[#1A222E] border border-[#222C3A] rounded-lg cursor-pointer transition-apex space-y-1.5"
+                  className="p-2.5 bg-[#0C152B] hover:bg-[#0E1B38] border border-[#1C2E52] rounded-lg cursor-pointer transition-apex space-y-1.5"
                 >
                   <div className="flex justify-between items-center">
                     <div className="flex items-center space-x-1.5">
@@ -183,9 +183,9 @@ export const MissionControlHome: React.FC = () => {
           </div>
 
           {/* Execution Log Terminal */}
-          <div className="p-2.5 border-b border-[#222C3A] bg-[#141A23] flex justify-between items-center text-xs font-mono">
+          <div className="p-2.5 border-b border-[#1C2E52] bg-[#0C152B] flex justify-between items-center text-xs font-mono">
             <span className="flex items-center gap-1.5 font-bold text-white font-sans">
-              <Terminal className="w-3.5 h-3.5 text-blue-400" /> EXECUTION LOGS
+              <Terminal className="w-3.5 h-3.5 text-cyan-400" /> EXECUTION LOGS
             </span>
             <div className="flex gap-1 text-[9px]">
               {['ALL', 'SYSTEM', 'QUANT'].map(f => (
@@ -202,7 +202,7 @@ export const MissionControlHome: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex-1 p-2 overflow-y-auto font-mono text-[10px] space-y-1 bg-[#080A0D]">
+          <div className="flex-1 p-2 overflow-y-auto font-mono text-[10px] space-y-1 bg-[#070B14]">
             {filteredLogs.slice(-25).map((l, i) => (
               <div key={i} className="text-[#9CA3AF] leading-tight flex items-start space-x-1.5">
                 <span className="text-[#6B7280] shrink-0">{l.timestamp?.split(' ')[1] || '00:00'}</span>
