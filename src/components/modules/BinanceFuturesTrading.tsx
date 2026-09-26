@@ -24,7 +24,12 @@ import {
   Key, 
   ExternalLink,
   ChevronRight,
-  Info
+  Info,
+  Target,
+  Crosshair,
+  ArrowUpRight,
+  ArrowDownRight,
+  Compass
 } from 'lucide-react';
 
 interface SignalStep {
@@ -33,24 +38,29 @@ interface SignalStep {
 }
 
 interface SignalMatrix {
-  h1_trend?: SignalStep;
-  m15_structure?: SignalStep;
-  m5_momentum?: SignalStep;
-  m1_sweep?: SignalStep;
-  m1_bos?: SignalStep;
-  volume?: SignalStep;
-  spread?: SignalStep;
-  risk?: SignalStep;
+  bias?: SignalStep;
+  m1_trigger?: SignalStep;
+  confirmation?: SignalStep;
+  score_gate?: SignalStep;
+  anti_chase?: SignalStep;
+  risk_guard?: SignalStep;
+  [key: string]: SignalStep | undefined;
 }
 
 interface ActiveSignal {
   final_signal?: string;
+  score?: number;
+  reason?: string;
+  rejection_reason?: string;
+  direction?: string;
   entry_price?: number;
   sl?: number;
   tp?: number;
-  sl_distance?: number;
+  tp1?: number;
+  tp2?: number;
+  be_price?: number;
+  r_distance?: number;
   risk_reward?: number;
-  reason?: string;
   matrix?: SignalMatrix;
 }
 
@@ -67,13 +77,20 @@ interface ActivePosition {
   leverage: number;
   sl: number;
   tp: number;
+  tp1?: number;
+  tp2?: number;
+  beMoved?: boolean;
+  bePrice?: number;
+  tp1Hit?: boolean;
   unrealizedPnl: number;
   roi: number;
   openedAt: string;
+  currentSize?: number;
 }
 
 interface TradeHistoryItem {
   id: string;
+  client_order_id?: string;
   symbol: string;
   side: 'LONG' | 'SHORT';
   entry_price: number;
@@ -93,12 +110,15 @@ interface TradeHistoryItem {
 }
 
 interface DashboardState {
+  type: string;
+  timestamp: number;
   bot: {
     connected: boolean;
     running: boolean;
     mode: 'PAPER' | 'LIVE' | 'BACKTEST';
     liveEnabled: boolean;
     symbol: string;
+    binanceSymbol: string;
     timeframe: string;
     leverage: number;
     marginUsd: number;
@@ -106,6 +126,7 @@ interface DashboardState {
     maxOpenPositions: number;
     sessionTargetUsd: number;
     status: string;
+    compoundingTier?: string;
   };
   account: {
     balance: number;
@@ -115,6 +136,16 @@ interface DashboardState {
     sessionPnl: number;
     targetProgressPct: number;
     targetReached: boolean;
+    initialBalance?: number;
+  };
+  connection?: {
+    hasCredentials: boolean;
+    keyPreview: string;
+    restReconciled: boolean;
+    wsActive: boolean;
+    latencyMs: number;
+    serverTimeOffsetMs: number;
+    lastSync: string;
   };
   position: ActivePosition | null;
   market: {
@@ -150,6 +181,8 @@ interface DashboardState {
     emergencyStop: boolean;
     maxSessionLoss: number;
     maxDailyLoss: number;
+    compoundingTier?: string;
+    targetMargin?: number;
   };
   trades: TradeHistoryItem[];
 }
@@ -157,7 +190,7 @@ interface DashboardState {
 export const BinanceFuturesTrading: React.FC = () => {
   const [state, setState] = useState<DashboardState | null>(null);
   const [wsConnected, setWsConnected] = useState<boolean>(false);
-  const [activeTab, setActiveTab] = useState<'live' | 'backtest' | 'forensics'>('live');
+  const [activeTab, setActiveTab] = useState<'live' | 'backtest'>('live');
   
   // Modals & Action States
   const [showLiveModal, setShowLiveModal] = useState<boolean>(false);
@@ -175,7 +208,7 @@ export const BinanceFuturesTrading: React.FC = () => {
 
   const wsRef = useRef<WebSocket | null>(null);
 
-  // 1. Initial State Poll + WebSocket Connection
+  // 1. Initial State Poll + Realtime WebSocket Connection
   useEffect(() => {
     let isMounted = true;
 
@@ -235,8 +268,8 @@ export const BinanceFuturesTrading: React.FC = () => {
 
     connectWs();
 
-    // Fallback polling every 3 seconds
-    const interval = setInterval(fetchInitial, 3000);
+    // Fallback polling every 2.5 seconds
+    const interval = setInterval(fetchInitial, 2500);
 
     return () => {
       isMounted = false;
@@ -257,7 +290,7 @@ export const BinanceFuturesTrading: React.FC = () => {
       });
       const data = await res.json();
       if (res.ok) {
-        setStatusMessage(data.message || `Action ${action.toUpperCase()} completed successfully.`);
+        setStatusMessage(data.message || `Action ${action.toUpperCase()} executed successfully.`);
       } else {
         setStatusMessage(`Error: ${data.detail || 'Action failed'}`);
       }
@@ -326,11 +359,14 @@ export const BinanceFuturesTrading: React.FC = () => {
 
   const bot = state?.bot;
   const acc = state?.account;
+  const conn = state?.connection;
   const mkt = state?.market;
   const pos = state?.position;
   const sig = state?.signal;
   const risk = state?.risk;
   const trades = state?.trades || [];
+
+  const isEntryTriggered = (sig?.final_signal === 'LONG' || sig?.final_signal === 'SHORT') && (sig?.score || 0) >= 65;
 
   return (
     <div className="flex-1 flex flex-col h-full bg-[#070B14] text-[#F3F4F6] overflow-y-auto no-scrollbar font-sans select-none p-4 md:p-6 space-y-5">
@@ -339,7 +375,7 @@ export const BinanceFuturesTrading: React.FC = () => {
       <div className="bg-[#0A1224] border border-[#1C2E52] rounded-xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xl">
         <div className="flex items-center space-x-3.5">
           <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-cyan-500/20 to-blue-600/20 border border-cyan-500/40 text-cyan-400 flex items-center justify-center shadow-lg shadow-cyan-500/20 shrink-0">
-            <Flame className="w-6 h-6 animate-pulse" />
+            <Flame className="w-6 h-6 animate-pulse text-cyan-400" />
           </div>
           <div>
             <div className="flex items-center space-x-2">
@@ -347,41 +383,69 @@ export const BinanceFuturesTrading: React.FC = () => {
                 ETHUSDT.P
               </h1>
               <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-cyan-500/15 text-cyan-300 border border-cyan-500/35">
-                BINANCE USDⓈ-M
+                BINANCE USD&#9416;-M
               </span>
               <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-purple-500/15 text-purple-300 border border-purple-500/35">
                 M1 100X
               </span>
+              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/15 text-blue-300 border border-blue-500/35">
+                ONE-WAY
+              </span>
             </div>
             <p className="text-xs text-[#9CA3AF] font-sans">
-              High-Frequency M1 Institutional Liquidity Sweep & Micro BOS Scalping Engine
+              High-Expectancy M1 Scalping &amp; Compound Engine: Bias + M1 Trigger + 1 Confirmation
             </p>
           </div>
         </div>
 
         {/* Global Controls & Status */}
         <div className="flex items-center flex-wrap gap-2.5">
-          {/* Status Badge */}
+          {/* Binance API Credential Badge (Security Protected) */}
+          <div className="flex items-center space-x-1.5 px-3 py-1.5 bg-[#0C152B] border border-[#1C2E52] rounded-lg text-xs font-mono">
+            {conn?.hasCredentials ? (
+              <>
+                <Key className="w-3.5 h-3.5 text-emerald-400" />
+                <span className="text-[#9CA3AF]">API:</span>
+                <span className="text-emerald-400 font-bold" title="API Secret is securely stored on server (.env) and never transmitted">
+                  {conn.keyPreview || 'CONNECTED'}
+                </span>
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse ml-1" />
+              </>
+            ) : (
+              <>
+                <Lock className="w-3.5 h-3.5 text-amber-400" />
+                <span className="text-[#9CA3AF]">API:</span>
+                <span className="text-amber-400 font-bold">PAPER SIMULATION</span>
+              </>
+            )}
+          </div>
+
+          {/* Realtime WebSocket Stream Status */}
           <div className="flex items-center space-x-2 px-3 py-1.5 bg-[#0C152B] border border-[#1C2E52] rounded-lg text-xs font-mono">
             <span className={`w-2 h-2 rounded-full ${wsConnected ? 'bg-emerald-400 animate-pulse' : 'bg-rose-400'}`} />
             <span className="text-[#9CA3AF]">FEED:</span>
             <span className={wsConnected ? 'text-emerald-400 font-bold' : 'text-rose-400 font-bold'}>
-              {wsConnected ? 'LIVE STREAM' : 'RECONNECTING'}
+              {wsConnected ? 'LIVE WS' : 'RECONNECTING'}
             </span>
+            {conn?.latencyMs !== undefined && (
+              <span className="text-[10px] text-[#6B7280]">({conn.latencyMs}ms)</span>
+            )}
           </div>
 
-          {/* Mode Pill */}
+          {/* Mode Pill (Paper / Live) */}
           <button
             onClick={() => {
               if (bot?.mode === 'PAPER') {
                 setShowLiveModal(true);
               } else {
-                handleSwitchMode('PAPER');
+                if (confirm('Switch bot from LIVE trading to PAPER simulation?')) {
+                  handleSwitchMode('PAPER');
+                }
               }
             }}
             className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold border transition-apex flex items-center gap-1.5 cursor-pointer ${
               bot?.mode === 'LIVE'
-                ? 'bg-rose-500/15 border-rose-500/40 text-rose-400 hover:bg-rose-500/25'
+                ? 'bg-rose-500/15 border-rose-500/40 text-rose-400 hover:bg-rose-500/25 shadow-sm shadow-rose-900/20'
                 : 'bg-cyan-500/15 border-cyan-500/40 text-cyan-300 hover:bg-cyan-500/25'
             }`}
           >
@@ -419,63 +483,73 @@ export const BinanceFuturesTrading: React.FC = () => {
             onClick={() => setShowEmergencyModal(true)}
             className="px-3 py-1.5 rounded-lg text-xs font-sans font-bold bg-rose-600/25 hover:bg-rose-600/40 border border-rose-500 text-rose-400 hover:text-rose-300 transition-apex flex items-center gap-1.5 cursor-pointer shadow-lg shadow-rose-900/30"
           >
-            <ShieldAlert className="w-4 h-4 text-rose-400" />
+            <ShieldAlert className="w-3.5 h-3.5" />
             <span>EMERGENCY STOP</span>
           </button>
         </div>
       </div>
 
+      {/* Global Status Message Toast */}
       {statusMessage && (
-        <div className="p-3 bg-blue-500/15 border border-blue-500/30 text-cyan-300 rounded-lg text-xs font-mono flex items-center gap-2 animate-in fade-in">
-          <Info className="w-4 h-4 shrink-0 text-cyan-400" />
-          <span>{statusMessage}</span>
+        <div className="p-3 bg-cyan-500/10 border border-cyan-500/30 rounded-xl text-xs font-mono text-cyan-300 flex items-center justify-between animate-in fade-in">
+          <div className="flex items-center space-x-2">
+            <Info className="w-4 h-4 text-cyan-400" />
+            <span>{statusMessage}</span>
+          </div>
+          <button onClick={() => setStatusMessage(null)} className="text-[#6B7280] hover:text-white text-xs">&times;</button>
         </div>
       )}
 
-      {/* 2. TOP METRICS CARDS (ACCOUNT, $2 TARGET, POSITION, MARKET) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* 2. REALTIME METRICS ROW (4 KEY CARDS) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         
-        {/* Card 1: Account Capital & Margin */}
+        {/* Card 1: Binance Balance & Compounding Tier */}
         <div className="bg-[#0A1224] border border-[#1C2E52] rounded-xl p-4 space-y-2 relative overflow-hidden shadow-lg">
           <div className="flex items-center justify-between text-[11px] text-[#9CA3AF] font-sans font-semibold">
-            <span>FUTURES BALANCE</span>
-            <span className="font-mono text-cyan-400">100X LEVERAGE</span>
+            <span>BINANCE BALANCE</span>
+            <span className="px-1.5 py-0.2 rounded text-[9.5px] font-mono font-bold bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">
+              {bot?.compoundingTier || risk?.compoundingTier || 'Tier 1 ($2.50)'}
+            </span>
           </div>
           <div className="text-2xl font-black text-white font-mono tracking-tight">
-            ${acc ? acc.balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '100.00'}
+            ${acc?.balance ? acc.balance.toFixed(2) : '2.50'}
+            <span className="text-xs font-normal text-[#9CA3AF] ml-1">USDT</span>
           </div>
-          <div className="grid grid-cols-2 gap-2 pt-1 border-t border-[#1C2E52]/60 text-[11px] font-mono">
-            <div>
-              <span className="text-[#6B7280] block text-[10px]">Available:</span>
-              <span className="text-emerald-400 font-bold">${acc?.availableBalance?.toFixed(2) || '100.00'}</span>
-            </div>
-            <div>
-              <span className="text-[#6B7280] block text-[10px]">Used Margin:</span>
-              <span className="text-white font-bold">${acc?.usedMargin?.toFixed(2) || '0.00'}</span>
-            </div>
+          <div className="flex justify-between items-center text-[10.5px] font-mono border-t border-[#1C2E52]/60 pt-2 text-[#9CA3AF]">
+            <div>Avail: <span className="text-cyan-400 font-bold">${acc?.availableBalance ? acc.availableBalance.toFixed(2) : '2.50'}</span></div>
+            <div>Margin: <span className="text-purple-400 font-bold">${acc?.usedMargin ? acc.usedMargin.toFixed(2) : '0.00'}</span></div>
+          </div>
+          <div className="flex justify-between items-center text-[9.5px] font-sans text-emerald-400/90 pt-0.5">
+            <span className="flex items-center gap-1">
+              <ShieldCheck className="w-3 h-3 text-emerald-400" />
+              <span>Max DD Guard: $1.70</span>
+            </span>
+            <span className="text-[#6B7280] font-mono">24/7 Engine: ACTIVE</span>
           </div>
         </div>
 
         {/* Card 2: $2 Session Target Progress */}
         <div className="bg-[#0A1224] border border-[#1C2E52] rounded-xl p-4 space-y-2 relative overflow-hidden shadow-lg">
           <div className="flex items-center justify-between text-[11px] text-[#9CA3AF] font-sans font-semibold">
-            <span>SESSION PnL TARGET ($2.00)</span>
-            <span className={`px-1.5 py-0.2 rounded text-[9px] font-bold ${
-              risk?.targetReached ? 'bg-purple-500/20 text-purple-300 border border-purple-500/40' : 'bg-cyan-500/10 text-cyan-300'
+            <span>$2 SESSION TARGET</span>
+            <span className={`px-1.5 py-0.2 rounded text-[9.5px] font-mono font-bold ${
+              risk?.targetReached 
+                ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 animate-pulse'
+                : 'bg-[#162544] text-[#9CA3AF]'
             }`}>
-              {risk?.targetReached ? 'TARGET ATTAINED' : 'IN PROGRESS'}
+              {risk?.targetReached ? 'TARGET REACHED' : 'QUALITY-GATED'}
             </span>
           </div>
           <div className="flex items-baseline space-x-2">
             <span className={`text-2xl font-black font-mono tracking-tight ${
               (acc?.sessionPnl || 0) >= 0 ? 'text-emerald-400' : 'text-rose-400'
             }`}>
-              {(acc?.sessionPnl || 0) >= 0 ? '+' : ''}${acc?.sessionPnl?.toFixed(2) || '0.00'}
+              {(acc?.sessionPnl || 0) >= 0 ? '+' : ''}${acc?.sessionPnl ? acc.sessionPnl.toFixed(2) : '0.00'}
             </span>
-            <span className="text-xs text-[#9CA3AF] font-mono">/ $2.00 Target</span>
+            <span className="text-xs text-[#9CA3AF] font-mono font-bold">/ ${bot?.sessionTargetUsd?.toFixed(2) || '2.00'}</span>
           </div>
-          {/* Progress bar */}
-          <div className="w-full bg-[#0C152B] rounded-full h-2 border border-[#1C2E52] overflow-hidden">
+          {/* Progress Bar */}
+          <div className="w-full h-1.5 bg-[#142340] rounded-full overflow-hidden">
             <div 
               className={`h-full transition-all duration-300 ${
                 risk?.targetReached ? 'bg-gradient-to-r from-purple-500 to-emerald-400' : 'bg-gradient-to-r from-cyan-500 to-blue-500'
@@ -485,19 +559,30 @@ export const BinanceFuturesTrading: React.FC = () => {
           </div>
           <div className="flex justify-between items-center text-[10px] text-[#6B7280] font-mono">
             <span>Progress: {acc?.targetProgressPct?.toFixed(1) || 0}%</span>
-            <span>Trades: {risk?.tradesCount || 0}/{risk?.maxTrades || 25}</span>
+            <span>Trades: {risk?.tradesCount || 0}/{risk?.maxTrades || 25} | Streak: {risk?.consecutiveLosses || 0}L</span>
           </div>
         </div>
 
-        {/* Card 3: Active Position Status */}
+        {/* Card 3: Active Position Status & 2-Stage Exits */}
         <div className="bg-[#0A1224] border border-[#1C2E52] rounded-xl p-4 space-y-2 relative overflow-hidden shadow-lg">
           <div className="flex items-center justify-between text-[11px] text-[#9CA3AF] font-sans font-semibold">
             <span>ACTIVE POSITION</span>
-            <span className={`px-1.5 py-0.2 rounded text-[9.5px] font-bold ${
-              pos ? (pos.side === 'LONG' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40' : 'bg-rose-500/20 text-rose-400 border border-rose-500/40') : 'bg-gray-800 text-gray-400'
-            }`}>
-              {pos ? pos.side : 'FLAT'}
-            </span>
+            <div className="flex items-center space-x-1.5">
+              {pos && (
+                <span className={`px-1.5 py-0.2 rounded text-[9.5px] font-bold ${
+                  pos.beMoved
+                    ? 'bg-purple-500/20 text-purple-300 border border-purple-500/40 animate-pulse'
+                    : 'bg-blue-500/20 text-blue-300 border border-blue-500/40'
+                }`}>
+                  {pos.beMoved ? 'BE PROTECTED (+0.06%)' : 'TP1 PENDING'}
+                </span>
+              )}
+              <span className={`px-1.5 py-0.2 rounded text-[9.5px] font-bold ${
+                pos ? (pos.side === 'LONG' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40' : 'bg-rose-500/20 text-rose-400 border border-rose-500/40') : 'bg-gray-800 text-gray-400'
+              }`}>
+                {pos ? pos.side : 'FLAT'}
+              </span>
+            </div>
           </div>
           {pos ? (
             <div>
@@ -508,18 +593,21 @@ export const BinanceFuturesTrading: React.FC = () => {
                 <span className={`text-xs font-mono font-semibold ${pos.roi >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                   ({pos.roi >= 0 ? '+' : ''}{pos.roi.toFixed(1)}%)
                 </span>
+                <span className="text-[10px] text-[#6B7280] font-mono">Qty: {pos.qty} ETH</span>
               </div>
               <div className="grid grid-cols-2 gap-x-2 text-[10.5px] font-mono text-[#9CA3AF] pt-1">
                 <div>Entry: <span className="text-white">${pos.entryPrice.toFixed(2)}</span></div>
                 <div>Mark: <span className="text-cyan-400">${pos.markPrice.toFixed(2)}</span></div>
-                <div>SL: <span className="text-rose-400">${pos.sl.toFixed(2)}</span></div>
-                <div>TP: <span className="text-emerald-400">${pos.tp.toFixed(2)}</span></div>
+                <div>TP1 (1R 50%): <span className="text-emerald-400">${(pos.tp1 || pos.tp).toFixed(2)}</span></div>
+                <div>TP2 (2R 50%): <span className="text-emerald-300 font-bold">${(pos.tp2 || pos.tp).toFixed(2)}</span></div>
+                <div>SL (ATR): <span className="text-rose-400">${pos.sl.toFixed(2)}</span></div>
+                <div>Liq: <span className="text-amber-400">${pos.liquidationPrice ? pos.liquidationPrice.toFixed(2) : 'N/A'}</span></div>
               </div>
             </div>
           ) : (
             <div className="py-2 text-center text-[#6B7280] font-sans text-xs">
               <span className="block font-bold text-[#9CA3AF]">NO OPEN POSITION</span>
-              <span className="text-[10px]">Scanning M1 order flow for setup...</span>
+              <span className="text-[10px]">Scanning order flow for valid M1 setup...</span>
             </div>
           )}
         </div>
@@ -533,25 +621,102 @@ export const BinanceFuturesTrading: React.FC = () => {
             </span>
           </div>
           <div className="text-2xl font-black text-cyan-400 font-mono tracking-tight">
-            ${mkt ? mkt.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '2,684.00'}
+            ${mkt ? mkt.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '2,688.00'}
           </div>
           <div className="grid grid-cols-2 gap-2 pt-1 border-t border-[#1C2E52]/60 text-[10.5px] font-mono">
             <div>
               <span className="text-[#6B7280] block text-[10px]">Spread:</span>
               <span className={mkt?.spreadAcceptable ? 'text-emerald-400 font-bold' : 'text-rose-400 font-bold'}>
-                ${mkt?.spread?.toFixed(2) || '0.02'} ({mkt?.spreadPct?.toFixed(3) || '0.001'}%)
+                ${mkt?.spread?.toFixed(2) || '0.01'} ({mkt?.spreadPct?.toFixed(3) || '0.001'}%)
               </span>
             </div>
             <div>
-              <span className="text-[#6B7280] block text-[10px]">Session (Tashkent):</span>
-              <span className="text-white font-bold">{mkt?.sessionTashkent || 'Tashkent UTC+5'}</span>
+              <span className="text-[#6B7280] block text-[10px]">Funding Rate (8h):</span>
+              <span className="text-purple-300 font-bold">
+                {mkt?.fundingRate !== undefined ? `${(mkt.fundingRate * 100).toFixed(4)}%` : '0.0100%'}
+              </span>
             </div>
           </div>
         </div>
 
       </div>
 
-      {/* 3. TABS NAVIGATION */}
+      {/* 3. PROMINENT STRATEGY REASON / EXACT REJECTION REASON BANNER */}
+      {/* "Har bir rejected signal uchun aniq bitta sabab ko‘rsatilsin" */}
+      <div className={`p-4 rounded-xl border shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-3 ${
+        isEntryTriggered
+          ? sig?.final_signal === 'LONG'
+            ? 'bg-emerald-950/40 border-emerald-500/60 text-emerald-300'
+            : 'bg-rose-950/40 border-rose-500/60 text-rose-300'
+          : 'bg-[#0A1224] border-[#1C2E52] text-[#9CA3AF]'
+      }`}>
+        <div className="flex items-center space-x-3">
+          <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
+            isEntryTriggered
+              ? sig?.final_signal === 'LONG'
+                ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
+                : 'bg-rose-500/20 text-rose-400 border border-rose-500/40'
+              : 'bg-[#0C152B] text-cyan-400 border border-[#1C2E52]'
+          }`}>
+            {isEntryTriggered ? (
+              sig?.final_signal === 'LONG' ? (
+                <TrendingUp className="w-5 h-5 animate-bounce" />
+              ) : (
+                <TrendingDown className="w-5 h-5 animate-bounce" />
+              )
+            ) : (
+              <Crosshair className="w-5 h-5 animate-pulse text-cyan-400" />
+            )}
+          </div>
+          <div>
+            <div className="flex items-center space-x-2">
+              <span className="text-[10.5px] font-sans font-bold uppercase tracking-wider text-[#6B7280]">
+                {isEntryTriggered ? 'CONFLUENCE ENTRY TRIGGERED' : '24/7 STRATEGY RADAR & FORENSICS'}
+              </span>
+              <span className={`px-2 py-0.2 rounded text-[10px] font-mono font-black ${
+                isEntryTriggered
+                  ? sig?.final_signal === 'LONG'
+                    ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/50'
+                    : 'bg-rose-500/20 text-rose-400 border border-rose-500/50'
+                  : 'bg-[#142340] text-cyan-300 border border-cyan-500/30'
+              }`}>
+                {isEntryTriggered ? sig?.final_signal : (bot?.status || 'SCANNING 24/7')}
+              </span>
+            </div>
+            <div className="text-xs md:text-sm font-bold font-mono text-white pt-0.5">
+              {isEntryTriggered ? (
+                <span>
+                  Setup Confirmed: {sig?.reason || 'Confluence threshold met'} | Entry: ${sig?.entry_price?.toFixed(2)} | SL: ${sig?.sl?.toFixed(2)} | TP1: ${sig?.tp1?.toFixed(2)} | TP2: ${sig?.tp2?.toFixed(2)}
+                </span>
+              ) : (
+                <span className="text-amber-300 flex items-center gap-1.5">
+                  <span className="text-cyan-400">⚡ Status:</span>
+                  <span>{sig?.rejection_reason || sig?.reason || 'Actively scanning M1 order flow for Liquidity Sweep / BOS setup...'}</span>
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Confluence Score & Threshold Pill */}
+        <div className="flex items-center space-x-3 self-end md:self-center font-mono text-xs">
+          <div className="text-right">
+            <span className="text-[#6B7280] block text-[10px]">CONFLUENCE SCORE</span>
+            <span className={`text-base font-black ${
+              (sig?.score || 0) >= 65 ? 'text-emerald-400' : 'text-amber-400'
+            }`}>
+              {sig?.score || 0}/100
+            </span>
+          </div>
+          <div className="h-8 w-px bg-[#1C2E52]" />
+          <div className="text-left">
+            <span className="text-[#6B7280] block text-[10px]">MIN THRESHOLD</span>
+            <span className="text-cyan-400 font-bold text-xs">65 / 100</span>
+          </div>
+        </div>
+      </div>
+
+      {/* 4. TABS NAVIGATION */}
       <div className="flex items-center space-x-2 border-b border-[#1C2E52] pb-2">
         <button
           onClick={() => setActiveTab('live')}
@@ -562,7 +727,7 @@ export const BinanceFuturesTrading: React.FC = () => {
           }`}
         >
           <Activity className="w-4 h-4 text-cyan-400" />
-          <span>Realtime Terminal & Forensics</span>
+          <span>Realtime Terminal &amp; Strategy Forensics</span>
         </button>
 
         <button
@@ -578,172 +743,140 @@ export const BinanceFuturesTrading: React.FC = () => {
         </button>
       </div>
 
-      {/* 4. MAIN CONTENT AREA */}
+      {/* 5. MAIN CONTENT AREA */}
       {activeTab === 'live' ? (
         <div className="space-y-5">
           
-          {/* Dual Panel: Signal Forensics Matrix + Execution Specs */}
+          {/* Dual Panel: 3-Part Strategy Forensics Matrix + Execution Specs */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
             
-            {/* Left 2 Cols: Signal Debug Matrix */}
+            {/* Left 2 Cols: 3-Part Strategy Architecture */}
             <div className="lg:col-span-2 bg-[#0A1224] border border-[#1C2E52] rounded-xl p-5 space-y-4 shadow-xl">
               <div className="flex items-center justify-between border-b border-[#1C2E52] pb-3">
                 <div className="flex items-center space-x-2.5">
                   <div className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse" />
                   <h3 className="text-sm font-bold text-white font-mono tracking-wide">
-                    SIGNAL FORENSICS DEBUG MATRIX
+                    STRATEGY ARCHITECTURE (NON-OVERFILTERED ENGINE)
                   </h3>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <span className="text-[11px] text-[#9CA3AF] font-sans">FINAL SIGNAL:</span>
-                  <span className={`px-2.5 py-0.5 rounded text-xs font-mono font-black tracking-wider ${
-                    sig?.final_signal === 'LONG'
-                      ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/50 animate-pulse'
-                      : sig?.final_signal === 'SHORT'
-                        ? 'bg-rose-500/20 text-rose-400 border border-rose-500/50 animate-pulse'
-                        : 'bg-[#0C152B] text-[#9CA3AF] border border-[#1C2E52]'
-                  }`}>
-                    {sig?.final_signal || 'WAITING'}
+                  <span className="text-[11px] text-[#9CA3AF] font-sans">RULE:</span>
+                  <span className="px-2 py-0.5 rounded text-[10.5px] font-mono font-bold bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">
+                    Bias + 1 Trigger + 1 Confirm (Score &ge; 65)
                   </span>
                 </div>
               </div>
 
-              {/* 8 Step Verification Grid */}
+              {/* 6 Engine Blocks */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono">
-                {/* 1. H1 Trend */}
+                {/* 1. Market Bias */}
                 <div className="p-3 bg-[#0C152B] border border-[#1C2E52] rounded-lg flex items-center justify-between">
                   <div>
-                    <div className="text-[#9CA3AF] text-[10px] font-sans font-semibold">H1 HIGHER TIMEFRAME TREND</div>
-                    <div className="text-white text-[11px]">{sig?.matrix?.h1_trend?.desc || 'Evaluating EMA50/200 trend...'}</div>
+                    <div className="text-[#9CA3AF] text-[10px] font-sans font-semibold">1. MARKET BIAS (H1 / M15)</div>
+                    <div className="text-white text-[11px]">{sig?.matrix?.bias?.desc || 'Evaluating higher timeframe trend...'}</div>
                   </div>
                   <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                    sig?.matrix?.h1_trend?.pass ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'
+                    sig?.matrix?.bias?.pass ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'
                   }`}>
-                    {sig?.matrix?.h1_trend?.pass ? 'PASS' : 'FAIL'}
+                    {sig?.matrix?.bias?.pass ? 'PASS' : 'FAIL'}
                   </span>
                 </div>
 
-                {/* 2. M15 Structure */}
+                {/* 2. M1 Trigger */}
                 <div className="p-3 bg-[#0C152B] border border-[#1C2E52] rounded-lg flex items-center justify-between">
                   <div>
-                    <div className="text-[#9CA3AF] text-[10px] font-sans font-semibold">M15 MARKET STRUCTURE</div>
-                    <div className="text-white text-[11px]">{sig?.matrix?.m15_structure?.desc || 'Verifying swing structure...'}</div>
+                    <div className="text-[#9CA3AF] text-[10px] font-sans font-semibold">2. M1 TRIGGER (MIN 1 REQUIRED)</div>
+                    <div className="text-white text-[11px]">{sig?.matrix?.m1_trigger?.desc || 'Sweep Reclaim / BOS / Impulse Retest'}</div>
                   </div>
                   <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                    sig?.matrix?.m15_structure?.pass ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'
+                    sig?.matrix?.m1_trigger?.pass ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'
                   }`}>
-                    {sig?.matrix?.m15_structure?.pass ? 'PASS' : 'FAIL'}
+                    {sig?.matrix?.m1_trigger?.pass ? 'TRIGGERED' : 'WAITING'}
                   </span>
                 </div>
 
-                {/* 3. M5 Momentum */}
+                {/* 3. Confirmation */}
                 <div className="p-3 bg-[#0C152B] border border-[#1C2E52] rounded-lg flex items-center justify-between">
                   <div>
-                    <div className="text-[#9CA3AF] text-[10px] font-sans font-semibold">M5 MOMENTUM & PULLBACK</div>
-                    <div className="text-white text-[11px]">{sig?.matrix?.m5_momentum?.desc || 'Monitoring EMA20 pullback...'}</div>
+                    <div className="text-[#9CA3AF] text-[10px] font-sans font-semibold">3. CONFIRMATION (MIN 1 REQUIRED)</div>
+                    <div className="text-white text-[11px]">{sig?.matrix?.confirmation?.desc || 'Momentum / Volume / EMA / M5'}</div>
                   </div>
                   <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                    sig?.matrix?.m5_momentum?.pass ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'
+                    sig?.matrix?.confirmation?.pass ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'
                   }`}>
-                    {sig?.matrix?.m5_momentum?.pass ? 'PASS' : 'FAIL'}
+                    {sig?.matrix?.confirmation?.pass ? 'PASS' : 'PENDING'}
                   </span>
                 </div>
 
-                {/* 4. M1 Liquidity Sweep */}
+                {/* 4. Confluence Score Gate */}
                 <div className="p-3 bg-[#0C152B] border border-[#1C2E52] rounded-lg flex items-center justify-between">
                   <div>
-                    <div className="text-[#9CA3AF] text-[10px] font-sans font-semibold">M1 LIQUIDITY SWEEP</div>
-                    <div className="text-white text-[11px]">{sig?.matrix?.m1_sweep?.desc || 'Detecting swing sweep...'}</div>
+                    <div className="text-[#9CA3AF] text-[10px] font-sans font-semibold">4. CONFLUENCE SCORE GATE (&ge; 65)</div>
+                    <div className="text-white text-[11px]">{sig?.matrix?.score_gate?.desc || 'Evaluating confluence score...'}</div>
                   </div>
                   <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                    sig?.matrix?.m1_sweep?.pass ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'
+                    sig?.matrix?.score_gate?.pass ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'
                   }`}>
-                    {sig?.matrix?.m1_sweep?.pass ? 'PASS' : 'FAIL'}
+                    {sig?.matrix?.score_gate?.pass ? 'VALID' : 'LOW SCORE'}
                   </span>
                 </div>
 
-                {/* 5. M1 BOS */}
+                {/* 5. Anti-Chase Quality Filter */}
                 <div className="p-3 bg-[#0C152B] border border-[#1C2E52] rounded-lg flex items-center justify-between">
                   <div>
-                    <div className="text-[#9CA3AF] text-[10px] font-sans font-semibold">M1 BREAK OF STRUCTURE (BOS)</div>
-                    <div className="text-white text-[11px]">{sig?.matrix?.m1_bos?.desc || 'Awaiting micro break...'}</div>
+                    <div className="text-[#9CA3AF] text-[10px] font-sans font-semibold">5. ENTRY QUALITY (ANTI-CHASE)</div>
+                    <div className="text-white text-[11px]">{sig?.matrix?.anti_chase?.desc || 'Checking candle body size vs ATR'}</div>
                   </div>
                   <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                    sig?.matrix?.m1_bos?.pass ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'
+                    sig?.matrix?.anti_chase?.pass ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'
                   }`}>
-                    {sig?.matrix?.m1_bos?.pass ? 'PASS' : 'FAIL'}
+                    {sig?.matrix?.anti_chase?.pass ? 'OPTIMAL' : 'CHASE SKIP'}
                   </span>
                 </div>
 
-                {/* 6. Volume Confirmation */}
+                {/* 6. Risk & Spread Guards */}
                 <div className="p-3 bg-[#0C152B] border border-[#1C2E52] rounded-lg flex items-center justify-between">
                   <div>
-                    <div className="text-[#9CA3AF] text-[10px] font-sans font-semibold">VOLUME IMPULSE (20-SMA)</div>
-                    <div className="text-white text-[11px]">{sig?.matrix?.volume?.desc || 'Checking volume multiplier...'}</div>
+                    <div className="text-[#9CA3AF] text-[10px] font-sans font-semibold">6. RISK &amp; EXECUTION GUARDS</div>
+                    <div className="text-white text-[11px]">{sig?.matrix?.risk_guard?.desc || 'Spread, Cooldown & Loss limits'}</div>
                   </div>
                   <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                    sig?.matrix?.volume?.pass ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'
+                    sig?.matrix?.risk_guard?.pass ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'
                   }`}>
-                    {sig?.matrix?.volume?.pass ? 'PASS' : 'FAIL'}
-                  </span>
-                </div>
-
-                {/* 7. Spread Filter */}
-                <div className="p-3 bg-[#0C152B] border border-[#1C2E52] rounded-lg flex items-center justify-between">
-                  <div>
-                    <div className="text-[#9CA3AF] text-[10px] font-sans font-semibold">SPREAD FILTER (≤ 0.15 USDT)</div>
-                    <div className="text-white text-[11px]">{sig?.matrix?.spread?.desc || 'Spread evaluation...'}</div>
-                  </div>
-                  <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                    sig?.matrix?.spread?.pass ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'
-                  }`}>
-                    {sig?.matrix?.spread?.pass ? 'PASS' : 'FAIL'}
-                  </span>
-                </div>
-
-                {/* 8. Risk Management Filter */}
-                <div className="p-3 bg-[#0C152B] border border-[#1C2E52] rounded-lg flex items-center justify-between">
-                  <div>
-                    <div className="text-[#9CA3AF] text-[10px] font-sans font-semibold">RISK & SESSION GUARD</div>
-                    <div className="text-white text-[11px]">{sig?.matrix?.risk?.desc || 'Checking cooldown and limits...'}</div>
-                  </div>
-                  <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                    sig?.matrix?.risk?.pass ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'
-                  }`}>
-                    {sig?.matrix?.risk?.pass ? 'PASS' : 'FAIL'}
+                    {sig?.matrix?.risk_guard?.pass ? 'CLEAR' : 'HALTED'}
                   </span>
                 </div>
               </div>
 
               {/* Status explanation */}
-              <div className="p-3 bg-[#0C152B]/60 rounded-lg border border-[#1C2E52] text-xs font-sans text-[#9CA3AF] flex items-center justify-between">
+              <div className="p-3 bg-[#0C152B]/60 rounded-lg border border-[#1C2E52] text-xs font-sans text-[#9CA3AF] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                 <div>
                   <span className="font-semibold text-white">Current Engine State: </span>
                   <span>{sig?.reason || 'Monitoring order book and candle structure.'}</span>
                 </div>
                 {risk?.cooldownSecondsRemaining ? (
-                  <span className="text-amber-400 font-mono text-[11px] flex items-center gap-1">
+                  <span className="text-amber-400 font-mono text-[11px] flex items-center gap-1 shrink-0">
                     <Clock className="w-3.5 h-3.5" /> Cooldown: {risk.cooldownSecondsRemaining}s
                   </span>
                 ) : null}
               </div>
             </div>
 
-            {/* Right 1 Col: Execution Specs & Risk Rules */}
+            {/* Right 1 Col: Execution Specs & Professional 2-Stage Exits */}
             <div className="bg-[#0A1224] border border-[#1C2E52] rounded-xl p-5 space-y-4 shadow-xl">
               <h3 className="text-sm font-bold text-white font-mono tracking-wide border-b border-[#1C2E52] pb-3 flex items-center gap-2">
                 <Sliders className="w-4 h-4 text-cyan-400" />
-                <span>EXECUTION & RISK RULES</span>
+                <span>EXECUTION &amp; EXIT ARCHITECTURE</span>
               </h3>
 
               <div className="space-y-2.5 text-xs font-mono">
                 <div className="flex justify-between py-1 border-b border-[#1C2E52]/40">
-                  <span className="text-[#9CA3AF]">Target Asset:</span>
-                  <span className="font-bold text-white">ETHUSDT (Binance USDⓈ-M)</span>
+                  <span className="text-[#9CA3AF]">Symbol:</span>
+                  <span className="font-bold text-white">ETHUSDT (Binance USD&#9416;-M)</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-[#1C2E52]/40">
                   <span className="text-[#9CA3AF]">Fixed Margin:</span>
-                  <span className="font-bold text-cyan-400">$0.50 USDT</span>
+                  <span className="font-bold text-cyan-400">$0.50 USDT (Safe Growth)</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-[#1C2E52]/40">
                   <span className="text-[#9CA3AF]">Leverage:</span>
@@ -754,40 +887,40 @@ export const BinanceFuturesTrading: React.FC = () => {
                   <span className="font-bold text-white">~$50.00 USDT</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-[#1C2E52]/40">
-                  <span className="text-[#9CA3AF]">Session Profit Target:</span>
-                  <span className="font-bold text-emerald-400">$2.00 (Halt on Target)</span>
-                </div>
-                <div className="flex justify-between py-1 border-b border-[#1C2E52]/40">
-                  <span className="text-[#9CA3AF]">Max Open Positions:</span>
-                  <span className="font-bold text-white">1 Position</span>
-                </div>
-                <div className="flex justify-between py-1 border-b border-[#1C2E52]/40">
                   <span className="text-[#9CA3AF]">Adaptive SL:</span>
                   <span className="font-bold text-rose-400">Structure + 1.0x ATR</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-[#1C2E52]/40">
-                  <span className="text-[#9CA3AF]">Take-Profit:</span>
-                  <span className="font-bold text-emerald-400">2.0R (Risk-Based)</span>
+                  <span className="text-[#9CA3AF]">Stage 1 (TP1):</span>
+                  <span className="font-bold text-emerald-400">1.0R &rarr; Close 50% Size</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-[#1C2E52]/40">
-                  <span className="text-[#9CA3AF]">Emergency Watchdog:</span>
-                  <span className="font-bold text-emerald-400">Active (2.0s timeout)</span>
+                  <span className="text-[#9CA3AF]">Post-TP1 Action:</span>
+                  <span className="font-bold text-purple-300">Move SL to BE + 0.06%</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-[#1C2E52]/40">
+                  <span className="text-[#9CA3AF]">Stage 2 (TP2):</span>
+                  <span className="font-bold text-emerald-300">2.0R &rarr; Close Remaining 50%</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-[#1C2E52]/40">
+                  <span className="text-[#9CA3AF]">Anti-Revenge Rule:</span>
+                  <span className="font-bold text-emerald-400">No Margin/Leverage Bump</span>
                 </div>
               </div>
 
               <div className="p-3 bg-cyan-500/10 border border-cyan-500/25 rounded-lg text-[11px] text-[#9CA3AF] font-sans">
-                💡 <span className="font-semibold text-cyan-300">Target Rule:</span> $2 session target represents 400% ROI on the $0.50 base margin. When reached, bot halts further risk automatically.
+                &#128161; <span className="font-semibold text-cyan-300">Capital Protection:</span> Initial capital is $2.50. Step-based compounding ($2.50 &rarr; $5.00 &rarr; $10.00 &rarr; $20.00) ensures survivability and growth without Martingale risk.
               </div>
             </div>
 
           </div>
 
-          {/* 5. REALTIME ORDERS & TRADES TABLE */}
+          {/* 6. REALTIME ORDERS & TRADES TABLE */}
           <div className="bg-[#0A1224] border border-[#1C2E52] rounded-xl shadow-xl overflow-hidden">
             <div className="h-12 bg-[#0C152B] border-b border-[#1C2E52] px-5 flex items-center justify-between">
               <div className="flex items-center space-x-2 font-bold text-xs text-white font-mono uppercase tracking-wider">
                 <Layers className="w-4 h-4 text-cyan-400" />
-                <span>REALTIME EXECUTION & TRADES FORENSICS</span>
+                <span>REALTIME EXECUTION &amp; TRADES FORENSICS</span>
               </div>
               <span className="text-[11px] text-[#6B7280] font-mono">
                 {trades.length} Trades Recorded
@@ -841,22 +974,23 @@ export const BinanceFuturesTrading: React.FC = () => {
                             {t.qty} ETH
                           </td>
                           <td className="p-3 text-right text-[10px]">
-                            <span className="text-rose-400">${t.sl?.toFixed(2)}</span> / <span className="text-emerald-400">${t.tp?.toFixed(2)}</span>
+                            <span className="text-rose-400">${t.sl?.toFixed(2)}</span>
+                            <span className="text-[#6B7280] mx-1">/</span>
+                            <span className="text-emerald-400">${t.tp?.toFixed(2)}</span>
                           </td>
                           <td className="p-3 text-center">
-                            <span className={`px-2 py-0.5 rounded text-[9.5px] font-bold ${
-                              t.close_reason === 'TAKE_PROFIT_HIT' || isWin
-                                ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
-                                : 'bg-rose-500/15 text-rose-400 border border-rose-500/30'
-                            }`}>
+                            <span className="px-2 py-0.5 rounded text-[10px] font-sans font-bold bg-[#142340] text-white border border-[#1C2E52]">
                               {t.close_reason || t.status}
                             </span>
                           </td>
                           <td className="p-3 text-right text-[#6B7280]">
-                            ${t.fee?.toFixed(4) || '0.0000'}
+                            ${(t.fee || 0).toFixed(4)}
                           </td>
-                          <td className={`p-3 text-right font-bold text-xs ${isWin ? 'text-emerald-400' : 'text-rose-400'}`}>
-                            {isWin ? '+' : ''}${t.pnl?.toFixed(2)} ({isWin ? '+' : ''}{t.roi_pct?.toFixed(1)}%)
+                          <td className={`p-3 text-right font-bold ${isWin ? 'text-emerald-400' : 'text-rose-400'}`}>
+                            {isWin ? '+' : ''}${t.pnl?.toFixed(3)}
+                            <span className="text-[9.5px] block font-normal">
+                              ({isWin ? '+' : ''}{t.roi_pct?.toFixed(1)}%)
+                            </span>
                           </td>
                         </tr>
                       );
@@ -871,14 +1005,14 @@ export const BinanceFuturesTrading: React.FC = () => {
       ) : (
         /* BACKTEST TAB */
         <div className="bg-[#0A1224] border border-[#1C2E52] rounded-xl p-6 space-y-6 shadow-xl">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#1C2E52] pb-5">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-[#1C2E52] pb-5">
             <div>
-              <h2 className="text-lg font-bold text-white font-mono flex items-center gap-2">
+              <h2 className="text-base font-bold text-white font-mono flex items-center gap-2">
                 <BarChart3 className="w-5 h-5 text-purple-400" />
-                <span>BINANCE FUTURES HISTORICAL M1 BACKTEST LAB</span>
+                <span>BINANCE HISTORICAL M1 BACKTEST LAB</span>
               </h2>
-              <p className="text-xs text-[#9CA3AF] font-sans">
-                Rigorous In-Sample & Out-of-Sample Walk-Forward Simulation using Real Binance ETHUSDT M1 Klines.
+              <p className="text-xs text-[#9CA3AF]">
+                Simulate the Non-Overfiltered M1 Strategy (Bias + Trigger + 1 Confirm + 2-Stage Exits) on real Binance ETHUSDT perpetual data.
               </p>
             </div>
 
@@ -886,23 +1020,22 @@ export const BinanceFuturesTrading: React.FC = () => {
               <select
                 value={backtestCandles}
                 onChange={(e) => setBacktestCandles(Number(e.target.value))}
-                className="bg-[#0C152B] border border-[#1C2E52] text-white text-xs rounded-lg px-3 py-2 outline-none font-mono"
+                className="bg-[#0C152B] border border-[#1C2E52] text-white rounded-lg px-3 py-2 text-xs font-mono outline-none"
               >
-                <option value={1500}>1,500 M1 Candles (~25 Hours)</option>
-                <option value={3000}>3,000 M1 Candles (~2 Days)</option>
-                <option value={5000}>5,000 M1 Candles (~3.5 Days)</option>
-                <option value={10000}>10,000 M1 Candles (~7 Days)</option>
+                <option value={1000}>1,000 Candles (~16h)</option>
+                <option value={3000}>3,000 Candles (~2 Days)</option>
+                <option value={5000}>5,000 Candles (~3.5 Days)</option>
               </select>
 
               <button
                 onClick={handleRunBacktest}
                 disabled={backtestRunning}
-                className="px-5 py-2 bg-gradient-to-r from-purple-500 to-blue-600 hover:from-purple-400 hover:to-blue-500 text-white font-bold rounded-lg text-xs font-sans transition-apex flex items-center gap-2 cursor-pointer shadow-lg shadow-purple-900/30"
+                className="px-5 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold rounded-lg text-xs font-sans flex items-center space-x-2 transition-all cursor-pointer shadow-lg shadow-purple-900/30 disabled:opacity-50"
               >
                 {backtestRunning ? (
                   <>
                     <RotateCcw className="w-4 h-4 animate-spin" />
-                    <span>FETCHING & SIMULATING...</span>
+                    <span>FETCHING &amp; SIMULATING...</span>
                   </>
                 ) : (
                   <>
@@ -923,7 +1056,7 @@ export const BinanceFuturesTrading: React.FC = () => {
                   <span className="font-bold text-white">{backtestResult.verificationBadge}</span>
                   <span className="text-[#6B7280]">|</span>
                   <span className="text-[#9CA3AF]">
-                    Range: {backtestResult.dateRange?.start} → {backtestResult.dateRange?.end}
+                    Range: {backtestResult.dateRange?.start} &rarr; {backtestResult.dateRange?.end}
                   </span>
                 </div>
                 <span className="px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 font-bold">
@@ -1022,7 +1155,7 @@ export const BinanceFuturesTrading: React.FC = () => {
               </div>
 
               <div className="p-3 bg-[#0C152B] rounded-lg border border-[#1C2E52] text-xs font-sans text-[#9CA3AF]">
-                ⚠️ <span className="font-semibold text-white">Honest Forensics:</span> {backtestResult.disclaimer}
+                &#9888;&#65039; <span className="font-semibold text-white">Honest Forensics:</span> {backtestResult.disclaimer}
               </div>
             </div>
           ) : (
@@ -1032,7 +1165,7 @@ export const BinanceFuturesTrading: React.FC = () => {
                 NO BACKTEST EXECUTED YET
               </div>
               <p className="text-xs text-[#9CA3AF] max-w-md mx-auto">
-                Select candle range and click "Run Real Backtest" to test the M1 Institutional Strategy on historical Binance ETHUSDT perpetual data.
+                Select candle range and click "Run Real Backtest" to test the M1 Strategy on historical Binance ETHUSDT perpetual data.
               </p>
             </div>
           )}
@@ -1051,43 +1184,55 @@ export const BinanceFuturesTrading: React.FC = () => {
               You are about to switch the M1 Scalper from Paper simulation to <span className="text-rose-400 font-bold">REAL LIVE BINANCE FUTURES TRADING</span> with 100x leverage on ETHUSDT.
             </p>
 
-            <div className="space-y-3 text-xs font-mono">
-              <div>
-                <label className="text-[#9CA3AF] block mb-1">BINANCE API KEY</label>
-                <input
-                  type="text"
-                  value={apiKeyInput}
-                  onChange={(e) => setApiKeyInput(e.target.value)}
-                  placeholder="Enter Binance Futures API Key"
-                  className="w-full bg-[#0C152B] border border-[#1C2E52] rounded-lg p-2.5 text-white focus:border-rose-400 outline-none text-xs"
-                />
+            {conn?.hasCredentials ? (
+              <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-lg text-xs font-mono text-emerald-400 flex items-center space-x-2">
+                <CheckCircle2 className="w-4 h-4 shrink-0" />
+                <div>
+                  <span className="font-bold">Credentials Loaded from .env:</span> Key {conn.keyPreview}. Secret is safely locked and never sent to browser.
+                </div>
               </div>
-              <div>
-                <label className="text-[#9CA3AF] block mb-1">BINANCE API SECRET (Kept Secure)</label>
-                <input
-                  type="password"
-                  value={apiSecretInput}
-                  onChange={(e) => setApiSecretInput(e.target.value)}
-                  placeholder="Enter Binance Futures API Secret"
-                  className="w-full bg-[#0C152B] border border-[#1C2E52] rounded-lg p-2.5 text-white focus:border-rose-400 outline-none text-xs"
-                />
+            ) : (
+              <div className="space-y-3 text-xs font-mono">
+                <p className="text-[11px] text-cyan-400">
+                  Tip: You can set BINANCE_API_KEY and BINANCE_API_SECRET in .env on the server, or enter them below:
+                </p>
+                <div>
+                  <label className="text-[#9CA3AF] block mb-1">BINANCE API KEY</label>
+                  <input
+                    type="text"
+                    value={apiKeyInput}
+                    onChange={(e) => setApiKeyInput(e.target.value)}
+                    placeholder="Enter Binance Futures API Key"
+                    className="w-full bg-[#0C152B] border border-[#1C2E52] rounded-lg p-2.5 text-white focus:border-rose-400 outline-none text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="text-[#9CA3AF] block mb-1">BINANCE API SECRET (Kept Secure)</label>
+                  <input
+                    type="password"
+                    value={apiSecretInput}
+                    onChange={(e) => setApiSecretInput(e.target.value)}
+                    placeholder="Enter Binance Futures API Secret"
+                    className="w-full bg-[#0C152B] border border-[#1C2E52] rounded-lg p-2.5 text-white focus:border-rose-400 outline-none text-xs"
+                  />
+                </div>
               </div>
+            )}
 
-              <label className="flex items-start space-x-2 pt-2 cursor-pointer font-sans text-xs text-white">
-                <input
-                  type="checkbox"
-                  checked={confirmLiveCheck}
-                  onChange={(e) => setConfirmLiveCheck(e.target.checked)}
-                  className="mt-0.5"
-                />
-                <span>I confirm that I understand real trading involves capital risk. 100x leverage on $0.50 margin is configured.</span>
-              </label>
-            </div>
+            <label className="flex items-start space-x-2 pt-2 cursor-pointer font-sans text-xs text-white">
+              <input
+                type="checkbox"
+                checked={confirmLiveCheck}
+                onChange={(e) => setConfirmLiveCheck(e.target.checked)}
+                className="mt-0.5"
+              />
+              <span>I confirm that I understand real trading involves capital risk. 100x leverage on $0.50 margin is configured with strict safety and SL enforcement.</span>
+            </label>
 
             <div className="flex justify-end space-x-2 pt-3">
               <button
                 onClick={() => setShowLiveModal(false)}
-                className="px-4 py-2 bg-[#0C152B] hover:bg-[#0E1B38] text-[#9CA3AF] rounded-lg text-xs font-bold"
+                className="px-4 py-2 bg-[#0C152B] hover:bg-[#0E1B38] text-[#9CA3AF] rounded-lg text-xs font-bold cursor-pointer"
               >
                 CANCEL
               </button>
@@ -1096,7 +1241,7 @@ export const BinanceFuturesTrading: React.FC = () => {
                 disabled={actionLoading || !confirmLiveCheck}
                 className="px-5 py-2 bg-rose-600 hover:bg-rose-500 disabled:opacity-50 text-white font-bold rounded-lg text-xs font-sans transition-all cursor-pointer shadow-lg shadow-rose-900/40"
               >
-                {actionLoading ? 'CONNECTING...' : 'CONFIRM & ACTIVATE LIVE'}
+                {actionLoading ? 'CONNECTING...' : 'CONFIRM &amp; ACTIVATE LIVE'}
               </button>
             </div>
           </div>
@@ -1115,7 +1260,7 @@ export const BinanceFuturesTrading: React.FC = () => {
             <div className="flex justify-center space-x-3 pt-2">
               <button
                 onClick={() => setShowEmergencyModal(false)}
-                className="px-4 py-2 bg-[#0C152B] text-[#9CA3AF] rounded-lg text-xs font-bold"
+                className="px-4 py-2 bg-[#0C152B] text-[#9CA3AF] rounded-lg text-xs font-bold cursor-pointer"
               >
                 ABORT
               </button>
