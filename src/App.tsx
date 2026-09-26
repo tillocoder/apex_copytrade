@@ -1,3 +1,4 @@
+import { BinanceFuturesTrading } from './components/modules/BinanceFuturesTrading';
 import { TelegramLivePositionView } from './components/modules/TelegramLivePositionView';
 ﻿import React from 'react';
 import { TerminalProvider, useTerminal } from './context/TerminalContext';
@@ -81,6 +82,7 @@ const ModuleContainer: React.FC = () => {
       case 'trades': return <LiveTrades />;
       case 'command-center': return <PositionCommandCenter />;
       case 'signals': return <LiveSignals />;
+      case 'binance-futures': return <BinanceFuturesTrading />;
       case 'backtest': return <BacktestLab />;
       case 'prop-firm':
       case 'portfolio':

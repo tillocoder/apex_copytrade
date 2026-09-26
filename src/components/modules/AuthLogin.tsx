@@ -26,6 +26,7 @@ export const AuthLogin: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState<'credentials' | '2fa'>('credentials');
   const [twoFactorCode, setTwoFactorCode] = useState('');
+  const [showRegModal, setShowRegModal] = useState(false);
 
   const safeTickers = Array.isArray(tickers) ? tickers : [];
   const btcTicker = safeTickers.find(t => t.symbol === 'BTC/USDT');
@@ -130,7 +131,7 @@ export const AuthLogin: React.FC = () => {
                     required
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    placeholder="tillo"
+                    placeholder="Foydalanuvchi nomi yoki email"
                     autoFocus
                     className="w-full bg-[#0C152B] border border-[#1C2E52] rounded-lg px-3 py-2.5 pl-9 text-white focus:border-cyan-400 outline-none transition-apex text-xs font-mono"
                   />
@@ -146,7 +147,7 @@ export const AuthLogin: React.FC = () => {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••"
+                    placeholder="Parolni kiriting"
                     className="w-full bg-[#0C152B] border border-[#1C2E52] rounded-lg px-3 py-2.5 pl-9 text-white focus:border-cyan-400 outline-none transition-apex text-xs font-mono"
                   />
                 </div>
@@ -172,6 +173,16 @@ export const AuthLogin: React.FC = () => {
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <KeyRound className="w-4 h-4" />}
                 <span>TASDIQLASH & KIRISH</span>
               </button>
+              <div className="pt-2 text-center text-[11px] text-[#9CA3AF] font-sans">
+                <span>Akkauntingiz yo'qmi? </span>
+                <button
+                  type="button"
+                  onClick={() => setShowRegModal(true)}
+                  className="text-cyan-400 hover:text-cyan-300 font-semibold underline underline-offset-4 cursor-pointer transition-colors"
+                >
+                  Ro'yxatdan o'tish
+                </button>
+              </div>
             </form>
           ) : (
             <form onSubmit={handle2FASubmit} className="space-y-4 font-mono text-xs">
@@ -183,13 +194,13 @@ export const AuthLogin: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[#9CA3AF] mb-1.5 text-[10.5px] font-sans font-semibold">2FA XAVFSIZLIK PIN (4079)</label>
+                <label className="block text-[#9CA3AF] mb-1.5 text-[10.5px] font-sans font-semibold">2FA XAVFSIZLIK PIN KODI</label>
                 <input 
                   type="text"
                   maxLength={6}
                   value={twoFactorCode}
                   onChange={(e) => setTwoFactorCode(e.target.value)}
-                  placeholder="4079"
+                  placeholder="PIN kod"
                   autoFocus
                   className="w-full bg-[#0C152B] border border-blue-500/50 rounded-lg px-3 py-2.5 text-center text-cyan-400 font-bold tracking-widest text-lg outline-none focus:border-cyan-400"
                 />
@@ -221,6 +232,59 @@ export const AuthLogin: React.FC = () => {
       <div className="w-full text-center text-[#6B7280] font-mono text-[10px] z-10">
         APEX QUANT HFT PROPRIETARY ENGINE • STRICT SINGLE-OWNER ACCESS GATEWAY
       </div>
+      {showRegModal && (
+        <div 
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200"
+          onClick={() => setShowRegModal(false)}
+        >
+          <div 
+            className="w-full max-w-md bg-[#0A1224] border border-cyan-500/40 rounded-2xl shadow-2xl p-6 sm:p-7 text-center space-y-5 animate-in zoom-in-95 duration-150 relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button 
+              type="button" 
+              onClick={() => setShowRegModal(false)} 
+              className="absolute top-4 right-4 text-[#9CA3AF] hover:text-white text-base leading-none p-2 rounded-lg hover:bg-[#0E1B38] transition-colors cursor-pointer"
+            >
+              ✕
+            </button>
+
+            <div className="w-14 h-14 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 mx-auto flex items-center justify-center shadow-lg shadow-cyan-500/20">
+              <ShieldCheck className="w-7 h-7" />
+            </div>
+
+            <div className="space-y-2">
+              <h3 className="text-lg font-bold text-white font-sans tracking-wide">
+                PLATFORMA TEST REJIMIDA
+              </h3>
+              <p className="text-xs leading-relaxed text-[#9CA3AF] font-sans">
+                APEX QUANT institutsional savdo terminali ayni paytda yopiq test jarayonida. Ommaviy ro'yxatdan o'tish va yangi foydalanuvchilarni qabul qilish bir necha kunda to'liq ishga tushiriladi.
+              </p>
+            </div>
+
+            <div className="p-3.5 bg-[#0C152B] rounded-xl border border-[#1C2E52] flex items-center justify-between text-left">
+              <div className="flex items-center space-x-2.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse" />
+                <div>
+                  <div className="text-[11px] font-bold text-white font-sans">Tez Kunda Ishga Tushadi</div>
+                  <div className="text-[10px] text-[#6B7280] font-mono">Public Access v2.0 Release</div>
+                </div>
+              </div>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-semibold">
+                SOON
+              </span>
+            </div>
+
+            <button 
+              type="button" 
+              onClick={() => setShowRegModal(false)} 
+              className="w-full bg-[#162344] hover:bg-[#1C2E5A] border border-cyan-500/30 text-cyan-300 font-bold py-2.5 rounded-xl transition-all font-sans text-xs cursor-pointer shadow-md"
+            >
+              TUSHUNDIM
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

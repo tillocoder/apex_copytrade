@@ -16,6 +16,7 @@ export type ModuleView =
   | 'trades'
   | 'command-center'
   | 'signals'
+  | 'binance-futures'
   | 'backtest'
   | 'prop-firm'
   | 'intelligence'

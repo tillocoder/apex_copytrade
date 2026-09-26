@@ -11,6 +11,7 @@ export const APP_ROUTES: RouteMapping[] = [
   { moduleId: 'trades', path: '/livetrades', aliases: ['/', '/home', '/trades', '/live-trades', '/missioncontrol', '/mission-control'] },
   { moduleId: 'command-center', path: '/commandcenter', aliases: ['/command-center', '/command'] },
   { moduleId: 'signals', path: '/aisignals', aliases: ['/signals', '/ai-signals'] },
+  { moduleId: 'binance-futures', path: '/binance-futures', aliases: ['/eth-scalper', '/futures', '/binance'] },
   { moduleId: 'backtest', path: '/backtestlab', aliases: ['/backtest', '/backtest-lab', '/lab'] },
   { moduleId: 'analytics', path: '/analytics', aliases: ['/stats', '/performance', '/propfirmcenter', '/prop-firm', '/prop', '/portfolio', '/portfolio-risk'] },
   { moduleId: 'intelligence', path: '/intelligence', aliases: ['/marketintelligence', '/market-intelligence'] },

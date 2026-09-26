@@ -41,6 +41,7 @@ export const Sidebar: React.FC = () => {
         { id: 'trades', label: 'Live Trades', icon: TrendingUp, badge: safePositions.length > 0 ? `${safePositions.length}` : undefined },
         { id: 'command-center', label: 'Command Center', icon: SlidersHorizontal, badge: 'LIVE' },
         { id: 'signals', label: 'AI Signals', icon: Zap, badge: safeSignals.length > 0 ? `${safeSignals.length}` : undefined, isAi: true },
+        { id: 'binance-futures', label: 'ETH Scalper', icon: Zap, badge: '100X', isAi: true },
       ]
     },
     {
