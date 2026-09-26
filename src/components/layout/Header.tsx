@@ -12,7 +12,8 @@ import {
   SlidersHorizontal,
   ChevronRight,
   TrendingUp,
-  ShieldCheck
+  ShieldCheck,
+  Flame
 } from 'lucide-react';
 
 export const Header: React.FC = () => {
@@ -26,7 +27,8 @@ export const Header: React.FC = () => {
     logout,
     notifications,
     setNotificationsOpen,
-    openCommandCenter
+    openCommandCenter,
+    activeModule
   } = useTerminal();
 
   const safePositions = Array.isArray(positions) ? positions.filter(p => p && String(p.status || 'OPEN').toUpperCase() === 'OPEN') : [];
@@ -58,6 +60,20 @@ export const Header: React.FC = () => {
             <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-cyan-500/15 text-cyan-300 border border-cyan-500/35">QUANT</span>
           </div>
         </div>
+
+        {/* Binance ETH 100x Quick Jumper */}
+        <button
+          onClick={() => setActiveModule('binance-futures')}
+          className={`hidden sm:flex items-center space-x-1.5 px-2.5 py-0.5 rounded text-[11px] font-bold transition-apex border cursor-pointer ${
+            activeModule === 'binance-futures'
+              ? 'bg-amber-500/25 border-amber-500 text-amber-300 shadow-[0_0_10px_rgba(245,158,11,0.4)]'
+              : 'bg-amber-500/10 hover:bg-amber-500/20 border-amber-500/30 text-amber-400'
+          }`}
+          title="Binance Futures ETH 100x Scalping Bot"
+        >
+          <Flame className="w-3 h-3 text-amber-400" />
+          <span>ETH 100X</span>
+        </button>
 
         {/* Command Center Quick Jumper */}
         {safePositions.length > 0 && safePositions[0]?.id && (

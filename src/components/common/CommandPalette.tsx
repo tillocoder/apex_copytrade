@@ -15,7 +15,8 @@ import {
   Sliders, 
   Settings,
   X,
-  ShieldAlert
+  ShieldAlert,
+  Flame
 } from 'lucide-react';
 
 export const CommandPalette: React.FC = () => {
@@ -27,6 +28,7 @@ export const CommandPalette: React.FC = () => {
   const moduleActions: { id: ModuleView; label: string; icon: React.ElementType; desc: string; isAi?: boolean }[] = [
     { id: 'trades', label: 'Live Positions', icon: TrendingUp, desc: 'Active execution trades, TP/SL levels, and risk' },
     { id: 'signals', label: 'Institutional Signals', icon: Zap, desc: 'AI confidence score & confluence matrix', isAi: true },
+    { id: 'binance-futures', label: 'Binance ETH 100x Scalper', icon: Flame, desc: 'Automated M1 100x Scalping Bot ($0.50 margin, $2 session target)', isAi: true },
     { id: 'backtest', label: 'Backtest Lab', icon: FlaskConical, desc: 'Historical equity curves & Sharpe ratio' },
     { id: 'analytics', label: 'Strategy Performance & Metrics', icon: BarChart3, desc: 'Win rate, trade replays, Sharpe ratio & telemetry' },
     { id: 'intelligence', label: 'Market Intelligence', icon: BrainCircuit, desc: 'Orderbook heatmap, liquidations & macro data' },
