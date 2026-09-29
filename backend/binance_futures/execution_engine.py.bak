@@ -78,51 +78,31 @@ class ExecutionEngine:
             notional = sizing["notional"]
             leverage = sizing["leverage"]
 
-            # CRITICAL SAFETY: Reject if minNotional bump would silently exceed dollar risk cap
-            if sizing.get("notional_bump_rejected", False):
-                reject_msg = (
-                    f"REJECTED: MinNotional bump exceeds dollar risk cap. "
-                    f"BASE_MARGIN=${sizing.get('base_margin', 0):.4f} | "
-                    f"TARGET_MARGIN=${sizing.get('target_margin', 0):.4f} | "
-                    f"QTY={qty} | NOTIONAL=${notional:.4f} | "
-                    f"STOP_DIST=${r_dist:.4f} | MAX_DOLLAR_RISK=${sizing.get('max_dollar_risk', 0):.4f}"
-                )
-                log_system_event("WARN", f"[LIVE_PREFLIGHT] {reject_msg}")
-                return {"status": "REJECTED", "reason": reject_msg}
-
-            # Estimate Liquidation Price (Isolated 100x: 1/lev - MMR distance)
-            mmr = 0.005  # ETH maintenance margin rate ~0.5%
+            # Estimate Liquidation Price (Isolated 100x: ~0.85% distance)
+            mmr = 0.005 # ETH maintenance margin rate ~0.5%
             if signal == "LONG":
                 liq_price = round(current_price * (1.0 - (1.0 / leverage) + mmr), 2)
             else:
                 liq_price = round(current_price * (1.0 + (1.0 / leverage) - mmr), 2)
 
-            # Pre-flight Check: SL must be strictly inside liquidation buffer
+            # Pre-flight Check: Liquidation Safety
             if signal == "LONG" and sl <= liq_price:
-                return {"status": "REJECTED", "reason": f"SL (${sl:.2f}) is at or beyond liq price (${liq_price:.2f})"}
+                return {"status": "REJECTED", "reason": f"SL (${sl:.2f}) is beyond liquidation price (${liq_price:.2f})"}
             elif signal == "SHORT" and sl >= liq_price:
-                return {"status": "REJECTED", "reason": f"SL (${sl:.2f}) is at or beyond liq price (${liq_price:.2f})"}
+                return {"status": "REJECTED", "reason": f"SL (${sl:.2f}) is beyond liquidation price (${liq_price:.2f})"}
 
-            # Estimated fees: entry=taker 0.05%, exits=resting maker 0.02%
+            # Estimated fees (Entry taker 0.05% or maker 0.02%, exits resting maker 0.02%)
             est_entry_fee = round(notional * 0.0005, 4)
             est_exit_fee = round(notional * 0.0002, 4)
             expected_fee = round(est_entry_fee + est_exit_fee, 4)
-            expected_dollar_risk = round(r_dist * qty, 4)
 
             risk_state = self.risk.get_risk_summary()
             current_dd = risk_state.get("drawdownPct", 0.0)
 
-            # Full telemetry log - all 7 required pre-trade fields + sizing audit
+            # Structured Log
             state_log = (
                 f"[ORDER_STAGING] REGIME={regime} | SETUP={reason} | SCORE={score}/100 | "
-                f"BASE_MARGIN=${sizing.get('base_margin', margin):.4f} | "
-                f"TARGET_MARGIN=${sizing.get('target_margin', margin):.4f} | "
-                f"ACTUAL_MARGIN=${margin:.4f} | "
-                f"QTY={qty} | NOTIONAL=${notional:.4f} | "
-                f"STOP_DISTANCE=${r_dist:.4f} | EXPECTED_DOLLAR_RISK=${expected_dollar_risk:.4f} | "
-                f"MAX_DOLLAR_RISK=${sizing.get('max_dollar_risk', 0):.4f} | "
-                f"LIQ_PRICE=${liq_price:.2f} | "
-                f"ENTRY_PRICE={current_price} | SL={sl} | TP1={tp1} | TP2={tp2} | "
+                f"ENTRY_TYPE=MARKET | ENTRY_PRICE={current_price} | SL={sl} | TP1={tp1} | TP2={tp2} | "
                 f"QTY={qty} | LEV={leverage}x | MARGIN=${margin:.4f} | LIQ=${liq_price:.2f} | "
                 f"EXP_FEE=${expected_fee:.4f} | CURRENT_DD={current_dd}% | RISK_TIER={risk_state.get('compoundingTier')}"
             )
@@ -235,7 +215,7 @@ class ExecutionEngine:
             qty_tp1 = round(math.floor((qty * DEFAULT_CONFIG.tp1_close_pct) / step) * step, 3)
             qty_tp2 = round(qty - qty_tp1, 3)
 
-            # Post-Only Maker Limit TP1 (GTX: cancelled if would cross book, 0.02% maker fee guaranteed)
+            # Maker Limit TP1 (rests passively on book, 0.02% fee)
             tp1_res = await self.connector.place_order_async(
                 symbol=DEFAULT_CONFIG.symbol,
                 side=exit_side,
@@ -244,10 +224,10 @@ class ExecutionEngine:
                 price=tp1,
                 client_order_id=tp1_cid,
                 reduce_only=True,
-                time_in_force="GTX"
+                time_in_force="GTC"
             )
 
-            # Post-Only Maker Limit TP2 (GTX: cancelled if would cross book, 0.02% maker fee guaranteed)
+            # Maker Limit TP2 (rests passively on book, 0.02% fee)
             tp2_res = await self.connector.place_order_async(
                 symbol=DEFAULT_CONFIG.symbol,
                 side=exit_side,
@@ -256,7 +236,7 @@ class ExecutionEngine:
                 price=tp2,
                 client_order_id=tp2_cid,
                 reduce_only=True,
-                time_in_force="GTX"  # Post-Only: guaranteed maker; cancelled if would cross book
+                time_in_force="GTC"
             )
 
             # Store live tracking state

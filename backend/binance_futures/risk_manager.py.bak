@@ -1,0 +1,377 @@
+import time
+import math
+from typing import Dict, Any, Tuple, Optional
+
+from .config import DEFAULT_CONFIG
+from .market_data import MarketDataManager
+from .database import get_session_stats
+
+class RiskManager:
+    """
+    APEX QUANT v3.0 Production Risk and Capital Preservation Engine:
+    - Step-Based Compounding ($2.50 -> $5.00 -> $10.00 -> $20.00+)
+    - Dynamic Peak-to-Valley Percentage Drawdown Protection:
+        * 0-5% DD: 100% Risk Budget (mult = 1.00)
+        * 5-8% DD: 75% Risk Budget (mult = 0.75)
+        * 8-12% DD: 50% Risk Budget (mult = 0.50)
+        * 12-15% DD: 25% Risk Budget (mult = 0.25)
+        * >15% DD: Hard Circuit Breaker Pause (mult = 0.00)
+    - Consecutive Loss Control (No Martingale, strictly de-risk):
+        * 0-1 losses: normal (1.00)
+        * 2 losses: mild reduction (0.75)
+        * 3 losses: strong reduction (0.50)
+        * 4 losses: minimal risk (0.25)
+        * 5+ losses: temporary pause (0.00)
+    - Liquidation Invalidation Guard:
+        * Ensures SL distance is strictly <= 80% of liquidation distance
+    - Session Target Gate ($2.00 target reached = clean halt)
+    """
+    def __init__(self, market_data: MarketDataManager):
+        self.md = market_data
+        self.session_key = time.strftime('%Y-%m-%d_UTC', time.gmtime())
+        self.current_balance = DEFAULT_CONFIG.initial_balance_usd
+        self.peak_balance = DEFAULT_CONFIG.initial_balance_usd
+        self.session_pnl = 0.0
+        self.daily_pnl = 0.0
+        self.trades_count = 0
+        self.consecutive_losses = 0
+        self.last_trade_time = 0.0
+        self.last_trade_pnl = 0.0
+        self.cooldown_until = 0.0
+        self.target_reached = False
+        self.emergency_stop_triggered = False
+
+        self._load_session_state()
+
+    def _load_session_state(self):
+        stats = get_session_stats(self.session_key)
+        self.session_pnl = float(stats.get('session_pnl', 0.0))
+        self.trades_count = int(stats.get('trades_count', 0))
+        if self.session_pnl >= DEFAULT_CONFIG.session_profit_target_usd:
+            self.target_reached = True
+
+    def sync_live_balance(self, live_balance: float):
+        """Updates internal balance and peak balance from Binance live account."""
+        if live_balance > 0:
+            self.current_balance = live_balance
+            if live_balance > self.peak_balance:
+                self.peak_balance = live_balance
+
+    def reset_session(self):
+        self.session_key = time.strftime('%Y-%m-%d_UTC', time.gmtime())
+        self.session_pnl = 0.0
+        self.trades_count = 0
+        self.consecutive_losses = 0
+        self.cooldown_until = 0.0
+        self.target_reached = False
+        self.emergency_stop_triggered = False
+
+    def trigger_emergency_stop(self):
+        self.emergency_stop_triggered = True
+
+    def get_drawdown_info(self) -> Dict[str, Any]:
+        """Tracks peak-to-valley drawdown percentage and de-risking multiplier."""
+        if self.current_balance > self.peak_balance:
+            self.peak_balance = self.current_balance
+
+        peak = max(0.10, self.peak_balance)
+        dd_usd = max(0.0, peak - self.current_balance)
+        dd_pct = (dd_usd / peak)
+
+        # Dynamic DD de-risking tiers
+        if dd_pct < 0.05:
+            multiplier = 1.00
+            tier = 'NORMAL (0-5% DD | 100% Risk Budget)'
+        elif dd_pct < 0.08:
+            multiplier = 0.75
+            tier = 'MILD DE-RISK (5-8% DD | 75% Risk Budget)'
+        elif dd_pct < 0.12:
+            multiplier = 0.50
+            tier = 'MODERATE DE-RISK (8-12% DD | 50% Risk Budget)'
+        elif dd_pct < 0.15:
+            multiplier = 0.25
+            tier = 'DEFENSIVE (12-15% DD | 25% Risk Budget)'
+        else:
+            multiplier = 0.00
+            tier = 'CIRCUIT BREAKER (>15% DD | PAUSE TRADING)'
+
+        return {
+            'peak_balance': round(peak, 2),
+            'current_balance': round(self.current_balance, 2),
+            'dd_usd': round(dd_usd, 2),
+            'dd_pct': round(dd_pct * 100.0, 2),
+            'multiplier': multiplier,
+            'tier': tier
+        }
+
+    def get_consecutive_loss_info(self) -> Dict[str, Any]:
+        """Calculates consecutive loss de-risking multiplier."""
+        losses = self.consecutive_losses
+        if losses <= 1:
+            mult = 1.00
+            desc = f'Normal ({losses} consecutive loss)'
+        elif losses == 2:
+            mult = 0.75
+            desc = 'Mild Reduction (2 consecutive losses | 75% risk)'
+        elif losses == 3:
+            mult = 0.50
+            desc = 'Strong Reduction (3 consecutive losses | 50% risk)'
+        elif losses == 4:
+            mult = 0.25
+            desc = 'Minimal Risk (4 consecutive losses | 25% risk)'
+        else:
+            mult = 0.00
+            desc = f'Extended Circuit Breaker ({losses} consecutive losses | PAUSE)'
+
+        return {
+            'consecutive_losses': losses,
+            'multiplier': mult,
+            'description': desc
+        }
+
+    def get_compounding_tier(self) -> Dict[str, Any]:
+        """
+        Step-based capital compounding scale:
+        Tier 0: < $2.50 -> $0.40 - $0.50 margin (survival mode)
+        Tier 1: $2.50 - $4.99 -> $0.50 margin
+        Tier 2: $5.00 - $9.99 -> $0.80 margin
+        Tier 3: $10.00 - $19.99 -> $1.50 margin
+        Tier 4: $20.00+ -> min(8% balance, $5.00)
+        """
+        bal = self.current_balance
+
+        if bal < 2.50:
+            tier_name = 'Survival Tier (Sub-$2.50)'
+            target_margin = 0.45
+        elif bal < 5.00:
+            tier_name = 'Tier 1 ($2.50 - $5.00)'
+            target_margin = 0.50
+        elif bal < 10.00:
+            tier_name = 'Tier 2 ($5.00 - $10.00)'
+            target_margin = 0.80
+        elif bal < 20.00:
+            tier_name = 'Tier 3 ($10.00 - $20.00)'
+            target_margin = 1.50
+        else:
+            tier_name = 'Tier 4 Scaling ($20+)'
+            target_margin = min(bal * 0.08, 5.00)
+
+        # Apply DD and Loss multipliers to target margin
+        dd_info = self.get_drawdown_info()
+        loss_info = self.get_consecutive_loss_info()
+        combined_mult = dd_info['multiplier'] * loss_info['multiplier']
+
+        # Anti-Revenge Loss Protection:
+        if self.last_trade_pnl < 0:
+            target_margin = min(target_margin, DEFAULT_CONFIG.default_margin_usd)
+
+        target_margin = max(0.20, target_margin * max(0.25, combined_mult))
+
+        return {
+            'tier': tier_name,
+            'balance': round(bal, 2),
+            'targetMargin': round(target_margin, 2),
+            'leverage': DEFAULT_CONFIG.default_leverage,
+            'dd_tier': dd_info['tier'],
+            'loss_desc': loss_info['description'],
+            'combined_mult': round(combined_mult, 2)
+        }
+
+    def calculate_order_sizing(self, price: float, filters: Dict[str, Any], sl_distance: float = 0.0) -> Dict[str, Any]:
+        """
+        Calculates position size with:
+        1. Compounding tier margin
+        2. Dynamic drawdown and consecutive loss de-risking
+        3. Maximum dollar risk clipping
+        4. Binance stepSize & minNotional compliance
+        5. Liquidation distance protection
+        """
+        step_size = float(filters.get('stepSize', DEFAULT_CONFIG.step_size))
+        min_qty = float(filters.get('minQty', DEFAULT_CONFIG.min_qty))
+        min_notional = float(filters.get('minNotional', DEFAULT_CONFIG.min_notional))
+        leverage = DEFAULT_CONFIG.default_leverage
+
+        tier_info = self.get_compounding_tier()
+        target_margin = tier_info['targetMargin']
+        target_notional = target_margin * leverage
+
+        # Raw quantity
+        raw_qty = target_notional / max(1.0, price)
+        decimals = max(0, int(round(-math.log10(step_size)))) if step_size > 0 else 3
+        qty = round(math.floor(raw_qty / step_size) * step_size, decimals)
+
+        # Dynamic Dollar Risk Guard with DD & Loss Multipliers
+        dd_info = self.get_drawdown_info()
+        loss_info = self.get_consecutive_loss_info()
+        risk_mult = dd_info['multiplier'] * loss_info['multiplier']
+
+        base_dollar_risk = min(self.current_balance * DEFAULT_CONFIG.max_risk_pct_balance, 0.40)
+        max_allowed_dollar_risk = max(0.10, base_dollar_risk * max(0.25, risk_mult))
+
+        if sl_distance > 0:
+            dollar_risk = sl_distance * qty
+            if dollar_risk > max_allowed_dollar_risk:
+                capped_qty = max_allowed_dollar_risk / sl_distance
+                qty = round(math.floor(capped_qty / step_size) * step_size, decimals)
+
+        # Ensure minQty
+        if qty < min_qty:
+            qty = min_qty
+
+        # Ensure minNotional
+        actual_notional = qty * price
+        if actual_notional < min_notional:
+            qty = round(math.ceil(min_notional / price / step_size) * step_size, decimals)
+            actual_notional = qty * price
+
+        actual_margin = actual_notional / leverage
+
+        # Liquidation Guard: ensure SL distance is safe
+        # Approximate isolated margin liquidation buffer is ~0.85% at 100x
+        est_liq_pct = 0.0085
+        sl_pct = (sl_distance / price) if price > 0 else 0.005
+        is_sl_safe_from_liq = sl_pct <= (est_liq_pct * 0.85)
+
+        return {
+            'quantity': qty,
+            'notional': round(actual_notional, 2),
+            'margin': round(actual_margin, 4),
+            'leverage': leverage,
+            'tier': tier_info['tier'],
+            'risk_mult': round(risk_mult, 2),
+            'max_dollar_risk': round(max_allowed_dollar_risk, 2),
+            'is_sl_safe_from_liq': is_sl_safe_from_liq
+        }
+
+    def check_preflight_risk(self, has_open_position: bool, is_live_mode: bool) -> Dict[str, Any]:
+        """
+        Evaluates pre-flight risk filters:
+        - Emergency Stop
+        - Drawdown Circuit Breaker (>15% peak-to-valley DD)
+        - Consecutive Losses Circuit Breaker (5x pause)
+        - Session Profit Target ($2.00)
+        - Max Open Position (1)
+        - Session Loss Limit (-$1.50)
+        - Daily Loss Limit (-$2.50)
+        - Cooldown Timer
+        - Stale Data
+        - Spread Check
+        """
+        now = time.time()
+
+        if self.emergency_stop_triggered:
+            return {'can_trade': False, 'reason': 'EMERGENCY STOP ACTIVE: Manual reset required'}
+
+        # 1. Peak-to-Valley Drawdown Circuit Breaker (>15%)
+        dd_info = self.get_drawdown_info()
+        if dd_info['multiplier'] <= 0.0:
+            return {
+                'can_trade': False,
+                'reason': f"Drawdown Circuit Breaker: Current DD ({dd_info['dd_pct']}%) exceeds 15% maximum threshold. Trading paused."
+            }
+
+        # 2. Consecutive Losses Circuit Breaker (>= 5)
+        loss_info = self.get_consecutive_loss_info()
+        if loss_info['multiplier'] <= 0.0:
+            rem = int(self.cooldown_until - now) if self.cooldown_until > now else 0
+            return {
+                'can_trade': False,
+                'reason': f"Consecutive Loss Circuit Breaker: 5 consecutive losses. Cooldown active ({rem}s)."
+            }
+
+        # 3. Session Profit Target ($2.00)
+        if self.target_reached or self.session_pnl >= DEFAULT_CONFIG.session_profit_target_usd:
+            self.target_reached = True
+            return {
+                'can_trade': False,
+                'reason': f"Session Target Reached: Net profit +${self.session_pnl:.2f} >= ${DEFAULT_CONFIG.session_profit_target_usd:.2f}. Halting entries."
+            }
+
+        # 4. Max Open Position
+        if has_open_position:
+            return {'can_trade': False, 'reason': 'Position Active: Max 1 open position allowed'}
+
+        # 5. Session Loss Limit
+        if self.session_pnl <= -abs(DEFAULT_CONFIG.max_session_loss_usd):
+            return {'can_trade': False, 'reason': f"Session Loss Limit Hit: PnL ${self.session_pnl:.2f} <= -${DEFAULT_CONFIG.max_session_loss_usd:.2f}"}
+
+        # 6. Daily Loss Limit
+        if self.daily_pnl <= -abs(DEFAULT_CONFIG.max_daily_loss_usd):
+            return {'can_trade': False, 'reason': f"Daily Loss Limit Hit: PnL ${self.daily_pnl:.2f} <= -${DEFAULT_CONFIG.max_daily_loss_usd:.2f}"}
+
+        # 7. Cooldown Timer
+        if now < self.cooldown_until:
+            rem = int(self.cooldown_until - now)
+            return {'can_trade': False, 'reason': f"Cooldown Active: {rem}s remaining before next allowed trade"}
+
+        # 8. Max Trades Limit
+        if self.trades_count >= DEFAULT_CONFIG.max_trades_per_session:
+            return {'can_trade': False, 'reason': f"Max Trades Limit: {self.trades_count}/{DEFAULT_CONFIG.max_trades_per_session} trades completed"}
+
+        # 9. Stale Data Filter
+        if self.md.is_data_stale(DEFAULT_CONFIG.stale_data_timeout_sec):
+            return {'can_trade': False, 'reason': 'Stale Data: WebSocket feed lag > 5 seconds'}
+
+        # 10. Spread Filter
+        spread_info = self.md.get_spread()
+        if not spread_info.get('acceptable', True):
+            return {'can_trade': False, 'reason': f"Spread Too High: {spread_info.get('spread_usd', 0):.2f} USDT > ${DEFAULT_CONFIG.max_allowed_spread_usd}"}
+
+        return {
+            'can_trade': True,
+            'reason': f"Risk Clear | Session PnL: ${self.session_pnl:+.2f} / $2.00 target | DD: {dd_info['dd_pct']}%"
+        }
+
+    def record_trade_completion(self, pnl: float):
+        now = time.time()
+        self.session_pnl += pnl
+        self.daily_pnl += pnl
+        self.current_balance += pnl
+        if self.current_balance > self.peak_balance:
+            self.peak_balance = self.current_balance
+        self.trades_count += 1
+        self.last_trade_time = now
+        self.last_trade_pnl = pnl
+
+        is_win = pnl > 0
+        if is_win:
+            self.consecutive_losses = 0
+            self.cooldown_until = now + DEFAULT_CONFIG.cooldown_normal_sec
+        else:
+            self.consecutive_losses += 1
+            if self.consecutive_losses >= 5:
+                self.cooldown_until = now + 1800  # 30 min pause after 5 losses
+            elif self.consecutive_losses >= 3:
+                self.cooldown_until = now + 900   # 15 min extended cooling
+            else:
+                self.cooldown_until = now + DEFAULT_CONFIG.cooldown_loss_sec
+
+        if self.session_pnl >= DEFAULT_CONFIG.session_profit_target_usd:
+            self.target_reached = True
+
+    def get_risk_summary(self) -> Dict[str, Any]:
+        target_progress = min(100.0, max(0.0, (self.session_pnl / DEFAULT_CONFIG.session_profit_target_usd) * 100.0))
+        tier_info = self.get_compounding_tier()
+        dd_info = self.get_drawdown_info()
+        loss_info = self.get_consecutive_loss_info()
+        return {
+            'sessionProfitTarget': DEFAULT_CONFIG.session_profit_target_usd,
+            'sessionPnl': round(self.session_pnl, 2),
+            'targetProgressPct': round(target_progress, 1),
+            'targetReached': self.target_reached,
+            'tradesCount': self.trades_count,
+            'maxTrades': DEFAULT_CONFIG.max_trades_per_session,
+            'consecutiveLosses': self.consecutive_losses,
+            'cooldownSecondsRemaining': max(0, int(self.cooldown_until - time.time())),
+            'emergencyStop': self.emergency_stop_triggered,
+            'maxSessionLoss': DEFAULT_CONFIG.max_session_loss_usd,
+            'maxDailyLoss': DEFAULT_CONFIG.max_daily_loss_usd,
+            'compoundingTier': tier_info['tier'],
+            'targetMargin': tier_info['targetMargin'],
+            'peakBalance': dd_info['peak_balance'],
+            'currentBalance': dd_info['current_balance'],
+            'drawdownPct': dd_info['dd_pct'],
+            'drawdownTier': dd_info['tier'],
+            'lossControlDesc': loss_info['description'],
+            'combinedRiskMultiplier': tier_info['combined_mult']
+        }

@@ -1,0 +1,20 @@
+{
+  "simulations_count": 10000,
+  "starting_balance": 2.7109,
+  "ruin_probability": "8617 observed in 10,000 simulations",
+  "balance_below_0_50_pct": 90.76,
+  "balance_below_1_00_pct": 95.0,
+  "probability_of_profit_pct": 0.3,
+  "probability_of_10pct_dd": 100.0,
+  "probability_of_15pct_dd": 100.0,
+  "probability_of_20pct_dd": 99.99,
+  "percentile_5th": -4.1433,
+  "percentile_25th": -2.6644,
+  "percentile_50th_median": -1.6106,
+  "percentile_75th": -0.5595,
+  "percentile_95th": 1.0012,
+  "median_max_dd_pct": 163.0,
+  "p95_max_dd_pct": 252.84,
+  "median_longest_loss_streak": 8,
+  "p95_longest_loss_streak": 12
+}

@@ -286,7 +286,8 @@ class BinanceFuturesConnector:
 
     def place_order(self, symbol: str, side: str, order_type: str, qty: float,
                     price: Optional[float] = None, stop_price: Optional[float] = None,
-                    client_order_id: Optional[str] = None, reduce_only: bool = False) -> Dict[str, Any]:
+                    client_order_id: Optional[str] = None, reduce_only: bool = False,
+                    time_in_force: Optional[str] = None) -> Dict[str, Any]:
         """Places a production Futures order with strict validation."""
         if not self.has_credentials():
             return {"error": True, "msg": "API keys not set"}
@@ -299,7 +300,7 @@ class BinanceFuturesConnector:
         }
         if price is not None:
             params["price"] = price
-            params["timeInForce"] = "GTC"
+            params["timeInForce"] = time_in_force or "GTC"
         if stop_price is not None:
             params["stopPrice"] = stop_price
         if client_order_id:

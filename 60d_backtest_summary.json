@@ -1,0 +1,293 @@
+{
+  "strategy": "APEX QUANT v3.0 (Frozen Production)",
+  "code_version_hash": "c8f2b3e4_prod_v3_frozen",
+  "dataset": {
+    "symbol": "ETHUSDT (Binance USD(S)-M Futures Perpetual)",
+    "timeframe": "1m",
+    "period_start_utc": "2026-07-29 06:26:00 UTC",
+    "period_end_utc": "2026-09-27 06:25:00 UTC",
+    "candle_count": 86400,
+    "missing_candles": 0,
+    "duplicates": 0,
+    "timestamp_gaps": 0
+  },
+  "execution_assumptions": {
+    "leverage": 100,
+    "margin_mode": "Isolated",
+    "entry_order": "Market / Taker (0.05% fee) + 1-tick slippage (0.01 USDT)",
+    "tp1_order": "GTX / Post-Only Maker (0.02% fee) @ 1.25R (50% position)",
+    "tp2_order": "GTX / Post-Only Maker (0.02% fee) @ 2.50R (50% position)",
+    "sl_order": "STOP_MARKET / Taker (0.05% fee) + 1-tick slippage",
+    "be_mode": "NO_BE (Structural SL preserved on remaining 50% after TP1)",
+    "intrabar_ambiguity_rule": "CONSERVATIVE (SL executed first if both touched in same M1 bar)"
+  },
+  "account_simulation": {
+    "primary_account": {
+      "initial_balance": 2.7109,
+      "ending_balance": 2.4469,
+      "net_pnl": -0.264,
+      "roi_pct": -9.74,
+      "peak_balance": 2.9581,
+      "max_dd_usd": 0.5112,
+      "max_dd_pct": 17.28
+    },
+    "multi_accounts": {
+      "2.5": {
+        "initial": 2.5,
+        "ending": 2.3168,
+        "net_pnl": -0.1832,
+        "roi_pct": -7.33,
+        "trades": 12,
+        "rejected_signals": 0,
+        "max_dd_pct": 15.38
+      },
+      "5.0": {
+        "initial": 5.0,
+        "ending": 4.7237,
+        "net_pnl": -0.2763,
+        "roi_pct": -5.53,
+        "trades": 14,
+        "rejected_signals": 0,
+        "max_dd_pct": 13.88
+      },
+      "10.0": {
+        "initial": 10.0,
+        "ending": 9.7309,
+        "net_pnl": -0.2691,
+        "roi_pct": -2.69,
+        "trades": 14,
+        "rejected_signals": 0,
+        "max_dd_pct": 11.3
+      },
+      "25.0": {
+        "initial": 25.0,
+        "ending": 24.672,
+        "net_pnl": -0.328,
+        "roi_pct": -1.31,
+        "trades": 14,
+        "rejected_signals": 0,
+        "max_dd_pct": 6.06
+      },
+      "50.0": {
+        "initial": 50.0,
+        "ending": 49.6034,
+        "net_pnl": -0.3966,
+        "roi_pct": -0.79,
+        "trades": 14,
+        "rejected_signals": 0,
+        "max_dd_pct": 3.24
+      },
+      "100.0": {
+        "initial": 100.0,
+        "ending": 99.6034,
+        "net_pnl": -0.3966,
+        "roi_pct": -0.4,
+        "trades": 14,
+        "rejected_signals": 0,
+        "max_dd_pct": 1.64
+      }
+    }
+  },
+  "performance_metrics": {
+    "total_trades": 13,
+    "trades_per_day": 0.22,
+    "rejected_signals_count": 0,
+    "long_count": 2,
+    "short_count": 11,
+    "win_rate_pct": 30.77,
+    "tp1_rate_pct": 46.15,
+    "tp2_rate_pct": 30.77,
+    "sl_rate_pct": 61.54,
+    "average_win": 0.1075,
+    "average_loss": 0.0771,
+    "payoff_ratio": 1.39,
+    "average_r": -0.31,
+    "median_r": -1.4,
+    "expectancy_usd": -0.0203,
+    "gross_profit": 0.5185,
+    "gross_loss": 0.4846,
+    "gross_profit_factor": 1.07,
+    "total_fees": 0.2979,
+    "total_slippage": 0.003,
+    "fee_breakdown": {
+      "entry_fees": 0.1692,
+      "tp1_fees": 0.0161,
+      "tp2_fees": 0.0109,
+      "sl_fees": 0.1017
+    },
+    "fee_ratios": {
+      "fee_over_gross_profit_pct": 57.45,
+      "fee_over_gross_loss_pct": 61.47,
+      "avg_fee_per_trade": 0.0229
+    },
+    "net_pnl": -0.264,
+    "net_profit_factor": 0.62,
+    "max_drawdown_pct": 17.28,
+    "max_drawdown_usd": 0.5112,
+    "longest_losing_streak": 4,
+    "longest_winning_streak": 2,
+    "best_trade": 0.125,
+    "worst_trade": -0.1219,
+    "average_holding_time_min": 89.2
+  },
+  "sessions": {
+    "LONDON": {
+      "trades": 11,
+      "wr": 36.4,
+      "pf": 1.61,
+      "gross_pnl": 0.1962,
+      "fees": 0.2532,
+      "net_pnl": -0.0571,
+      "avg_r": -0.1
+    },
+    "LONDON_NY_OVERLAP": {
+      "trades": 2,
+      "wr": 0.0,
+      "pf": 0.0,
+      "gross_pnl": -0.1623,
+      "fees": 0.0446,
+      "net_pnl": -0.2069,
+      "avg_r": -1.48
+    },
+    "ASIA": {
+      "trades": 0,
+      "wr": 0.0,
+      "pf": 0.0,
+      "gross_pnl": 0,
+      "fees": 0,
+      "net_pnl": 0,
+      "avg_r": 0.0
+    },
+    "LATE_NY": {
+      "trades": 0,
+      "wr": 0.0,
+      "pf": 0.0,
+      "gross_pnl": 0,
+      "fees": 0,
+      "net_pnl": 0,
+      "avg_r": 0.0
+    },
+    "OUT_OF_SESSION": {
+      "trades": 0,
+      "wr": 0.0,
+      "pf": 0.0,
+      "gross_pnl": 0,
+      "fees": 0,
+      "net_pnl": 0,
+      "avg_r": 0.0
+    }
+  },
+  "regimes": {
+    "STRONG_BULL": {
+      "trades": 0,
+      "wr": 0.0,
+      "pf": 0.0,
+      "avg_r": 0.0,
+      "net_pnl": 0
+    },
+    "WEAK_BULL": {
+      "trades": 2,
+      "wr": 50.0,
+      "pf": 2.78,
+      "avg_r": 0.1,
+      "net_pnl": 0.0499
+    },
+    "STRONG_BEAR": {
+      "trades": 4,
+      "wr": 25.0,
+      "pf": 0.74,
+      "avg_r": -0.37,
+      "net_pnl": -0.1251
+    },
+    "WEAK_BEAR": {
+      "trades": 7,
+      "wr": 28.6,
+      "pf": 0.92,
+      "avg_r": -0.4,
+      "net_pnl": -0.1888
+    },
+    "RANGE_CHOP": {
+      "trades": 0,
+      "wr": 0.0,
+      "pf": 0.0,
+      "avg_r": 0.0,
+      "net_pnl": 0
+    },
+    "HIGH_VOLATILITY": {
+      "trades": 0,
+      "wr": 0.0,
+      "pf": 0.0,
+      "avg_r": 0.0,
+      "net_pnl": 0
+    },
+    "BREAKOUT_TRANSITION": {
+      "trades": 0,
+      "wr": 0.0,
+      "pf": 0.0,
+      "avg_r": 0.0,
+      "net_pnl": 0
+    }
+  },
+  "stability_diagnostics": {
+    "first_40_days": {
+      "trades": 13,
+      "WR": 30.8,
+      "PF": 1.07,
+      "net PnL": -0.264,
+      "average R": -0.31,
+      "max DD": 17.28
+    },
+    "last_20_days": {
+      "trades": 0,
+      "WR": 0.0,
+      "PF": 0.0,
+      "net PnL": 0.0,
+      "average R": 0.0,
+      "max DD": 0.0
+    }
+  },
+  "legacy_comparison": {
+    "legacy_strategy": {
+      "trades": 17,
+      "win_rate_pct": 47.1,
+      "gross_profit_factor": 2.39,
+      "average_r": 0.17,
+      "total_fees": 0.69,
+      "net_pnl": 0.5095,
+      "max_drawdown_pct": 17.14,
+      "ending_equity": 3.2204
+    },
+    "apex_quant_v3": {
+      "trades": 13,
+      "win_rate_pct": 30.8,
+      "gross_profit_factor": 1.07,
+      "average_r": -0.31,
+      "total_fees": 0.3,
+      "net_pnl": -0.264,
+      "max_drawdown_pct": 17.28,
+      "ending_equity": 2.4469
+    }
+  },
+  "monte_carlo": {
+    "simulations_count": 5000,
+    "starting_balance": 2.7109,
+    "ruin_probability": "0 observed in 5,000 simulations",
+    "balance_below_0_50_pct": 0.0,
+    "balance_below_1_00_pct": 0.0,
+    "balance_above_2_71_pct": 20.84,
+    "reach_5_pct": 0.0,
+    "reach_10_pct": 0.0,
+    "reach_25_pct": 0.0,
+    "reach_50_pct": 0.0,
+    "reach_100_pct": 0.0,
+    "median_ending_equity": 2.4323,
+    "percentile_5th": 1.9175,
+    "percentile_25th": 2.2155,
+    "percentile_50th": 2.4323,
+    "percentile_75th": 2.6623,
+    "percentile_95th": 3.0054,
+    "median_max_dd_pct": 15.92,
+    "p95_max_dd_pct": 30.96,
+    "median_longest_loss_streak": 5
+  }
+}

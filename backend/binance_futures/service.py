@@ -40,7 +40,7 @@ class BinanceFuturesService:
         await self.connector.fetch_exchange_info_async()
 
         # Load initial M1 klines
-        raw_klines = await run_in_thread(self.backtest.fetch_historical_klines, 300)
+        raw_klines = await run_in_thread(self.backtest.fetch_historical_klines, 500)
         formatted = [[k["time"], k["open"], k["high"], k["low"], k["close"], k["volume"]] for k in raw_klines]
         self.md.load_initial_klines(formatted, "1m")
 

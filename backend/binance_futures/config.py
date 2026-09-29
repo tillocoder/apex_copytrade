@@ -51,30 +51,34 @@ class BinanceFuturesConfig:
     # Session Profit & Loss Targets
     session_profit_target_usd: float = 2.00   # SESSION_PROFIT_TARGET = $2.00 (not per-trade TP)
     max_session_loss_usd: float = 1.70        # -$1.50 max session loss limit
-    max_daily_loss_usd: float = 1.70          # -$2.50 max daily loss limit
+    max_daily_loss_usd: float = 1.70
+    max_daily_loss_pct: float = 0.15
+    max_session_loss_pct: float = 0.15          # -$2.50 max daily loss limit
     max_consecutive_losses: int = 3           # 3 losses trigger extended cooldown
     cooldown_normal_sec: int = 60             # 60s cooldown after trade
     cooldown_loss_sec: int = 180              # 180s cooldown after loss
     max_trades_per_session: int = 30          # Maximum trades per active session
     
     # Professional 2-Stage SL / TP Model
-    tp1_r: float = 1.0                        # TP1: 1R
-    tp1_close_pct: float = 0.50               # Close 50% position at TP1
-    tp2_r: float = 2.0                        # TP2: 2R (Close remaining 50%)
-    be_fee_buffer_pct: float = 0.0006         # 0.06% buffer over entry for Breakeven (covers 0.10% roundtrip fees)
-    min_sl_pct: float = 0.0025                # Min SL 0.25% (protects from M1 noise shakeouts)
-    max_sl_pct: float = 0.0085                # Max SL 0.85% (caps risk)
+    exit_model: str = "B"                     # Model B: TP1 50% + Breakeven buffer, TP2 50%
+    tp1_r: float = 1.25                       # TP1: 1.25R
+    tp1_close_pct: float = 0.50              # Close 50% position at TP1
+    tp2_r: float = 2.50                       # TP2: 2.50R (Close remaining 50%)
+    be_fee_buffer_pct: float = 0.0005        # 0.05% buffer over entry for Breakeven
+    min_sl_pct: float = 0.0020               # Min SL 0.20%
+    max_sl_pct: float = 0.0085               # Max SL 0.85%
+    be_mode: str = "BE_BUFFER"               # Break-even mode
     
     # Strategy Scoring & Entry Quality
-    min_score_threshold: int = 65             # Confluence score >= 65/100 required
-    anti_chase_max_body_atr: float = 2.2      # Skip entry if signal candle body > 2.2x ATR
+    min_score_threshold: int = 65            # Modular Confluence score >= 65/100 required
+    anti_chase_max_body_atr: float = 2.5     # Skip entry if signal candle body > 2.5x ATR
     
     # Safety Filters
-    max_allowed_spread_usd: float = 0.15      # Spread <= $0.15 USDT
-    stale_data_timeout_sec: float = 5.0       # Ticks older than 5s rejected
-    emergency_sl_timeout_sec: float = 2.0     # If SL not placed in 2s, emergency market close!
-    min_atr_m1: float = 0.25                   # Anti-chop minimum ATR
-    max_atr_multiplier: float = 3.5           # Abnormal volatility spike filter
+    max_allowed_spread_usd: float = 0.15     # Spread <= $0.15 USDT
+    stale_data_timeout_sec: float = 5.0      # Ticks older than 5s rejected
+    emergency_sl_timeout_sec: float = 2.0    # If SL not placed in 2s, emergency market close!
+    min_atr_m1: float = 0.25                 # Anti-chop minimum ATR (0.25 USDT)
+    max_atr_multiplier: float = 3.5          # Abnormal volatility spike filter
     
     # Binance Endpoints
     rest_base_url: str = "https://fapi.binance.com"
@@ -93,9 +97,9 @@ class BinanceFuturesConfig:
     
     # Active Trading Sessions (Tashkent Time UTC+5)
     enabled_sessions: Dict[str, bool] = field(default_factory=lambda: {
-        "ASIA": True,
+        "ASIA": False,
         "LONDON": True,
-        "NEW_YORK": True,
+        "NEW_YORK": False,
         "LONDON_NY_OVERLAP": True
     })
 
