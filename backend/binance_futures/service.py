@@ -362,80 +362,24 @@ async def get_trades_history(limit: int = 50):
 @router.get("/paper-trades")
 async def get_paper_trades_endpoint(limit: int = 50):
     """
-    Returns paper trading positions and history:
+    Returns 24-hour paper trading positions and history ONLY:
     - Active live paper position (if any)
-    - Closed paper trades from SQLite bf_trades
-    - Historical v3.3 verified audit benchmark trades from v33_trade_log.csv
+    - Closed paper trades genuinely opened/closed during the session from SQLite bf_trades
     """
-    import os, csv
-
     # 1. Active paper position
     active_pos = service_instance.paper.current_position
 
-    # 2. Closed paper trades from database
+    # 2. Closed paper trades from database (mode == 'PAPER')
     db_trades = get_trades(limit=limit)
     paper_db_trades = [t for t in db_trades if t.get("mode") == "PAPER"]
-
-    # 3. Benchmark trades from v33_trade_log.csv
-    benchmark_trades = []
-    base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    csv_paths = [
-        os.path.join(base_dir, "v33_trade_log.csv"),
-        os.path.join(os.path.dirname(base_dir), "v33_trade_log.csv"),
-        os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "v33_trade_log.csv")
-    ]
-    csv_file = None
-    for cp in csv_paths:
-        if os.path.exists(cp):
-            csv_file = cp
-            break
-
-    if csv_file and os.path.exists(csv_file):
-        try:
-            with open(csv_file, "r", encoding="utf-8") as f:
-                reader = csv.DictReader(f)
-                rows = list(reader)
-                for idx, r in enumerate(reversed(rows[-25:])):
-                    benchmark_trades.append({
-                        "id": f"v33_audit_{len(rows)-idx}",
-                        "client_order_id": f"v33_bench_{len(rows)-idx}",
-                        "mode": "PAPER_BENCHMARK",
-                        "symbol": "ETHUSDT",
-                        "displaySymbol": "ETHUSDT.P",
-                        "side": r.get("side", "LONG"),
-                        "entry_price": float(r.get("entry", 0.0)),
-                        "exit_price": float(r.get("exit_price", 0.0)),
-                        "qty": float(r.get("qty", 0.5)),
-                        "margin": float(r.get("margin", 10.0)),
-                        "leverage": 100,
-                        "sl": float(r.get("SL", 0.0)),
-                        "tp": float(r.get("TP", 0.0)),
-                        "tp1": float(r.get("TP", 0.0)),
-                        "tp2": float(r.get("TP", 0.0)),
-                        "pnl": float(r.get("net_pnl", 0.0)),
-                        "roi_pct": round((float(r.get("net_pnl", 0.0)) / max(0.1, float(r.get("margin", 10.0)))) * 100.0, 2),
-                        "fee": float(r.get("total_fees", 0.0)),
-                        "status": "CLOSED",
-                        "close_reason": r.get("exit_reason", "TAKE_PROFIT_FULL"),
-                        "opened_at": r.get("timestamp", "").replace(" UTC", ""),
-                        "closed_at": r.get("exit_time", "").replace(" UTC", ""),
-                        "holding_time_min": int(r.get("holding_time_min", 0)),
-                        "is_audit_benchmark": True,
-                        "source": "90D_PRODUCTION_AUDIT"
-                    })
-        except Exception as e:
-            print(f"[BENCHMARK_TRADES_LOAD_ERR] {e}")
-
-    all_paper_records = paper_db_trades + benchmark_trades
 
     return {
         "status": "SUCCESS",
         "mode": "PAPER_SIMULATION",
         "activePosition": active_pos,
-        "totalTrades": len(all_paper_records),
+        "totalTrades": len(paper_db_trades),
         "livePaperTradesCount": len(paper_db_trades),
-        "benchmarkTradesCount": len(benchmark_trades),
-        "trades": all_paper_records[:limit]
+        "trades": paper_db_trades[:limit]
     }
 
 @router.get("/session")

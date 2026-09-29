@@ -101,7 +101,7 @@ export const PaperPositionsDrawer: React.FC<PaperPositionsDrawerProps> = ({
                 </span>
               </div>
               <p className="text-xs text-[#9CA3AF] font-sans mt-0.5">
-                Binance Futures ETHUSDT M1 bar-by-bar simulyatsiya qilingan pozitsiyalar va audit arxivi
+                Binance Futures ETHUSDT M1 24-soatlik jonli paper test sessiyasida ochilgan pozitsiyalar
               </p>
             </div>
           </div>
@@ -271,11 +271,6 @@ export const PaperPositionsDrawer: React.FC<PaperPositionsDrawerProps> = ({
                           <span className="font-bold text-white">
                             {t.displaySymbol || t.symbol || 'ETHUSDT.P'}
                           </span>
-                          {t.is_audit_benchmark && (
-                            <span className="px-1.5 py-0.2 rounded text-[8.5px] bg-purple-500/20 text-purple-300 border border-purple-500/30">
-                              AUDIT
-                            </span>
-                          )}
                           <span className="text-[10px] text-[#6B7280]">
                             {t.opened_at || t.openedAt || '2026-09-29'}
                           </span>
@@ -320,14 +315,20 @@ export const PaperPositionsDrawer: React.FC<PaperPositionsDrawerProps> = ({
               })}
             </div>
           ) : (
-            <div className="p-12 text-center text-[#6B7280] space-y-2">
-              <Layers className="w-10 h-10 text-[#374151] mx-auto" />
-              <div className="text-sm font-bold text-white font-mono uppercase">
-                POZITSIYALAR TOPILMADI
+            <div className="p-10 text-center text-[#6B7280] space-y-3 bg-[#0A1224] border border-[#162544] rounded-xl my-4">
+              <div className="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 mx-auto flex items-center justify-center">
+                <Activity className="w-6 h-6 animate-pulse" />
               </div>
-              <p className="text-xs text-[#9CA3AF] max-w-sm mx-auto">
-                Tanlangan filtr bo'yicha paper test savdolari mavjud emas.
+              <div className="text-sm font-bold text-white font-mono uppercase tracking-wider">
+                24-SOATLIK PAPER TEST SESSIYASIDA HALI YANGI SAVDO OCHILMADI
+              </div>
+              <p className="text-xs text-[#9CA3AF] max-w-md mx-auto leading-relaxed">
+                Bozor M1 filtrlari (Score &ge; 78, ADX &ge; 22, London sessiyasi) bo'yicha uzluksiz real-time skanerlanmoqda. Shartlar bajarilganda yangi ochilgan yoki yopilgan barcha pozitsiyalar shu yerda avtomatik paydo bo'ladi.
               </p>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[11px] font-mono">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                <span>Realtime Daemon Faol (Soak Test 24H)</span>
+              </div>
             </div>
           )}
         </div>
@@ -337,7 +338,7 @@ export const PaperPositionsDrawer: React.FC<PaperPositionsDrawerProps> = ({
           <div className="flex items-center space-x-2">
             <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
             <span>
-              <strong>Xavfsizlik Kafolati:</strong> Ushbu ro'yxat faqat 24-soatlik Paper Test va 90-kunlik audit ma'lumotlarini o'z ichiga oladi. Real hisob balansiga hech qanday ta'sir o'tkazmaydi.
+              <strong>Xavfsizlik Kafolati:</strong> Ushbu ro'yxat faqat joriy 24-soatlik Paper Test sessiyasi davomida ochilgan real-time pozitsiyalarni o'z ichiga oladi. Real hisob balansiga hech qanday ta'sir o'tkazmaydi.
             </span>
           </div>
           <button

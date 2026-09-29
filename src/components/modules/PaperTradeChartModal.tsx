@@ -204,11 +204,6 @@ export const PaperTradeChartModal: React.FC<PaperTradeChartModalProps> = ({ trad
                 <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-cyan-500/15 text-cyan-300 border border-cyan-500/35">
                   24H PAPER TEST
                 </span>
-                {trade.is_audit_benchmark && (
-                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-purple-500/20 text-purple-300 border border-purple-500/40">
-                    90D AUDIT BENCHMARK
-                  </span>
-                )}
                 <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold ${
                   isClosed ? 'bg-gray-800 text-gray-300' : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 animate-pulse'
                 }`}>
