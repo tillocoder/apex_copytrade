@@ -42,6 +42,19 @@ app = FastAPI(
     description="Enterprise-grade AI Quantitative Trading Engine with SMC Strategy, Real Execution, and Full CRUD"
 )
 
+# Unlock OS file descriptor limits (up to 4096 on Termux)
+try:
+    import resource
+    soft, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
+    resource.setrlimit(resource.RLIMIT_NOFILE, (hard, hard))
+    print(f"[TURBO_ENGINE] File descriptors unlocked: {soft} -> {hard}")
+except Exception:
+    pass
+
+from starlette.middleware.gzip import GZipMiddleware
+
+app.add_middleware(GZipMiddleware, minimum_size=1000)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -1856,4 +1869,18 @@ async def serve_spa(full_path: str):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")
+    # High-Performance Termux Android Tuning:
+    # - backlog=2048: prevents TCP SYN drops during concurrent user bursts
+    # - limit_concurrency=4000: allows up to 4,000 concurrent sockets
+    # - timeout_keep_alive=30: efficient TCP connection reuse
+    # - access_log=False: disables slow flash storage disk writes for every request!
+    uvicorn.run(
+        app,
+        host="0.0.0.0",
+        port=8000,
+        backlog=2048,
+        limit_concurrency=4000,
+        timeout_keep_alive=30,
+        access_log=False,
+        log_level="warning"
+    )

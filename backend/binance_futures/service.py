@@ -83,7 +83,7 @@ router = APIRouter(prefix="/api/v1/futures", tags=["Binance Futures M1 Productio
 
 @router.get("/state")
 async def get_futures_state():
-    return service_instance.gateway.build_dashboard_state()
+    return service_instance.gateway.get_cached_dashboard_state()
 
 @router.get("/connection")
 async def get_connection_status():
@@ -334,19 +334,30 @@ async def get_latest_backtest():
         "disclaimer": "Validated across 129,600 M1 bars. Maker 0.02% post-only entry, 1-tick adverse fill test, taker 0.05% SL, maker 0.02% TP."
     }
 
+_cached_soak_telemetry = None
+_cached_soak_ts = 0.0
+
 @router.get("/soak-test")
 async def get_soak_test_status():
-    """Returns the current 24-hour paper trading soak test telemetry and statistics."""
+    """Returns the current 24-hour paper trading soak test telemetry and statistics (cached 500ms)."""
+    global _cached_soak_telemetry, _cached_soak_ts
+    now = time.monotonic()
+    if _cached_soak_telemetry is not None and (now - _cached_soak_ts) < 0.50:
+        return _cached_soak_telemetry
+
     import os
     data_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data")
     telemetry_file = os.path.join(data_dir, "soak_test_24h_telemetry.json")
     if os.path.exists(telemetry_file):
         try:
             with open(telemetry_file, "r", encoding="utf-8") as f:
-                return json.load(f)
+                res = json.load(f)
+                _cached_soak_telemetry = res
+                _cached_soak_ts = now
+                return res
         except Exception as e:
             return {"status": "ERROR", "message": str(e)}
-    return {
+    default_res = {
         "status": "ACTIVE_RUNNING",
         "mode": "PAPER_SIMULATION",
         "targetDurationHours": 24.0,
@@ -354,6 +365,9 @@ async def get_soak_test_status():
         "liveFeed": "BINANCE_FUTURES_M1",
         "message": "24-hour soak test monitoring active and gathering M1 telemetry..."
     }
+    _cached_soak_telemetry = default_res
+    _cached_soak_ts = now
+    return default_res
 
 @router.get("/trades")
 async def get_trades_history(limit: int = 50):

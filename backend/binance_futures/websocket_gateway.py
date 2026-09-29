@@ -38,6 +38,8 @@ class BinanceFuturesWebSocketGateway:
         self.last_reconcile_ts = 0.0
         self.latest_signal_cache: Dict[str, Any] = {}
         self.live_position_cache: Optional[Dict[str, Any]] = None
+        self.cached_dashboard_state: Optional[Dict[str, Any]] = None
+        self.cached_state_ts: float = 0.0
 
     def register_client(self, websocket):
         self.client_connections.add(websocket)
@@ -48,15 +50,32 @@ class BinanceFuturesWebSocketGateway:
     async def broadcast_to_clients(self, payload: Dict[str, Any]):
         if not self.client_connections:
             return
+        # Pre-serialize once for all connected clients
         msg = json.dumps(payload)
-        dead = []
-        for ws in self.client_connections:
+        clients = list(self.client_connections)
+
+        async def _safe_send(ws):
             try:
                 await ws.send_text(msg)
+                return None
             except Exception:
-                dead.append(ws)
+                return ws
+
+        # Parallel non-blocking socket dispatch across all connected clients
+        dead = await asyncio.gather(*[_safe_send(ws) for ws in clients], return_exceptions=True)
         for d in dead:
-            self.client_connections.discard(d)
+            if d is not None and not isinstance(d, Exception):
+                self.client_connections.discard(d)
+
+    def get_cached_dashboard_state(self) -> Dict[str, Any]:
+        """Returns ultra-fast in-memory cached state (200ms TTL) preventing SQLite disk lock thrashing."""
+        now = time.monotonic()
+        if self.cached_dashboard_state is not None and (now - self.cached_state_ts) < 0.20:
+            return self.cached_dashboard_state
+        state = self.build_dashboard_state()
+        self.cached_dashboard_state = state
+        self.cached_state_ts = now
+        return state
 
     async def start_market_stream(self):
         """
@@ -135,6 +154,8 @@ class BinanceFuturesWebSocketGateway:
                         if now - self.last_broadcast_ts >= 0.25:
                             self.last_broadcast_ts = now
                             state_payload = self.build_dashboard_state()
+                            self.cached_dashboard_state = state_payload
+                            self.cached_state_ts = time.monotonic()
                             await self.broadcast_to_clients(state_payload)
 
             except Exception as e:
