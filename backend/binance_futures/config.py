@@ -59,19 +59,36 @@ class BinanceFuturesConfig:
     cooldown_loss_sec: int = 180              # 180s cooldown after loss
     max_trades_per_session: int = 30          # Maximum trades per active session
     
-    # Professional 2-Stage SL / TP Model
-    exit_model: str = "B"                     # Model B: TP1 50% + Breakeven buffer, TP2 50%
-    tp1_r: float = 1.25                       # TP1: 1.25R
-    tp1_close_pct: float = 0.50              # Close 50% position at TP1
-    tp2_r: float = 2.50                       # TP2: 2.50R (Close remaining 50%)
+    # Professional SL / TP Model
+    exit_model: str = "G"                     # Model G: Dynamic Volatility Target (v3.3 Production)
+    tp1_r: float = 2.50                       # Dynamic TP baseline R (2.5x ATR dynamic multiplier)
+    tp1_close_pct: float = 1.00              # Single full expansion target
+    tp2_r: float = 2.50                       # Secondary target
     be_fee_buffer_pct: float = 0.0005        # 0.05% buffer over entry for Breakeven
     min_sl_pct: float = 0.0020               # Min SL 0.20%
     max_sl_pct: float = 0.0085               # Max SL 0.85%
-    be_mode: str = "BE_BUFFER"               # Break-even mode
+    be_mode: str = "NO_BE"                   # v3.3: Eliminate premature breakeven noise
+    tp_vol_multiplier: float = 2.5           # 2.5x dynamic ATR multiplier
     
-    # Strategy Scoring & Entry Quality
-    min_score_threshold: int = 65            # Modular Confluence score >= 65/100 required
+    # Strategy Scoring & Entry Quality (v3.3 Production Model)
+    min_score_threshold: int = 78            # Quality Score >= 78/100 required
     anti_chase_max_body_atr: float = 2.5     # Skip entry if signal candle body > 2.5x ATR
+    location_filter_enabled: bool = True     # Penalize range midpoint chop
+    fee_risk_gate_ratio: float = 0.25        # Reject if fee burden > 25% of R
+    min_r_dist: float = 4.0                  # Minimum $4.00 stop distance to filter M1 micro-noise
+    
+    # M15 Macro Regime & Volatility Compression Gates
+    m15_adx_filter_enabled: bool = True
+    m15_adx_threshold: float = 22.0          # Block breakouts when M15 ADX < 22
+    m15_vol_compression_gate: bool = True
+    m15_vol_compression_ratio: float = 0.85  # Reject when M15 ATR < 85% of EMA50
+    
+    # Fee Elimination & Execution Model
+    execution_mode: str = "MAKER_ENTRY_HYBRID"
+    post_only_entry: bool = True
+    entry_fee_rate: float = 0.0002           # 0.02% Maker Post-Only
+    tp_fee_rate: float = 0.0002              # 0.02% Maker Limit TP
+    sl_fee_rate: float = 0.0005              # 0.05% Taker Stop Market
     
     # Safety Filters
     max_allowed_spread_usd: float = 0.15     # Spread <= $0.15 USDT
@@ -84,10 +101,11 @@ class BinanceFuturesConfig:
     rest_base_url: str = "https://fapi.binance.com"
     ws_base_url: str = "wss://fstream.binance.com/stream"
     
-    # Operational Modes: "BACKTEST", "PAPER", "LIVE"
-    mode: str = "LIVE" if (os.getenv("BINANCE_API_KEY") and os.getenv("BINANCE_FUTURES_MODE", "LIVE").upper() == "LIVE") else "PAPER"
+    # Operational Modes: Strictly PAPER / NO-ENTRY until validation gates pass
+    mode: str = "PAPER"
     is_running: bool = True
-    live_enabled: bool = bool(os.getenv("BINANCE_API_KEY") and os.getenv("BINANCE_FUTURES_MODE", "LIVE").upper() == "LIVE")
+    live_enabled: bool = False               # MUST REMAIN FALSE: Paper mode until final approval
+    shadow_mode: bool = True                 # Realtime shadow calculation active
     
     # Exchange Filters (Updated dynamically from /fapi/v1/exchangeInfo)
     tick_size: float = 0.01
@@ -95,12 +113,14 @@ class BinanceFuturesConfig:
     min_qty: float = 0.001
     min_notional: float = 20.0                # Binance minNotional for ETHUSDT is $20
     
-    # Active Trading Sessions (Tashkent Time UTC+5)
+    # Active Trading Sessions (London & Overlap Volatility Expansion Focus)
+    session_mode: str = "LONDON_EXPANSION_ONLY"
     enabled_sessions: Dict[str, bool] = field(default_factory=lambda: {
         "ASIA": False,
         "LONDON": True,
-        "NEW_YORK": False,
-        "LONDON_NY_OVERLAP": True
+        "LONDON_NY_OVERLAP": True,
+        "NEW_YORK": False                    # Late NY consolidation noise blocked in v3.3
     })
 
 DEFAULT_CONFIG = BinanceFuturesConfig()
+

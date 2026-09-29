@@ -1,0 +1,618 @@
+{
+  "candidate_a_normalized": {
+    "initial_balance": 1000.0,
+    "ending_balance": 1060.6977,
+    "net_pnl": 60.6977,
+    "total_trades": 197,
+    "trades_per_day": 2.19,
+    "win_rate_pct": 38.1,
+    "gross_pf": 1.37,
+    "net_pf": 1.05,
+    "gross_profit": 1352.5,
+    "gross_loss": 989.25,
+    "total_fees": 302.55,
+    "fee_over_gp_pct": 22.4,
+    "average_r": 0.05,
+    "expectancy": 0.3081,
+    "max_drawdown_pct": 14.92,
+    "max_win_streak": 8,
+    "max_loss_streak": 10,
+    "rejections": {
+      "SESSION_BLOCKED": 51938,
+      "FEE_BURDEN": 491,
+      "LOW_SCORE": 29297,
+      "LOW_VOLATILITY": 1888,
+      "OVEREXTENDED_CHASE": 375,
+      "LOCATION_PENALTY": 7482,
+      "CORRELATED_DUPLICATE": 1,
+      "DAILY_CAP_REACHED": 7,
+      "CIRCUIT_BREAKER_ACTIVE": 155,
+      "TOTAL_CANDIDATES": 29986
+    }
+  },
+  "candidate_a_micro": {
+    "initial_balance": 2.7109,
+    "ending_balance": 5.7569,
+    "net_pnl": 3.046,
+    "total_trades": 136,
+    "trades_per_day": 1.51,
+    "win_rate_pct": 40.4,
+    "gross_pf": 1.37,
+    "net_pf": 1.09,
+    "gross_profit": 40.14,
+    "gross_loss": 29.26,
+    "total_fees": 7.83,
+    "fee_over_gp_pct": 19.5,
+    "average_r": 0.13,
+    "expectancy": 0.0224,
+    "max_drawdown_pct": 68.13,
+    "max_win_streak": 8,
+    "max_loss_streak": 11,
+    "rejections": {
+      "SESSION_BLOCKED": 53975,
+      "FEE_BURDEN": 378,
+      "LOW_SCORE": 22054,
+      "LOW_VOLATILITY": 1882,
+      "OVEREXTENDED_CHASE": 329,
+      "LOCATION_PENALTY": 5610,
+      "CORRELATED_DUPLICATE": 1,
+      "DAILY_CAP_REACHED": 7,
+      "CIRCUIT_BREAKER_ACTIVE": 17253,
+      "TOTAL_CANDIDATES": 22569
+    }
+  },
+  "candidate_b_normalized": {
+    "initial_balance": 1000.0,
+    "ending_balance": 326.5336,
+    "net_pnl": -673.4664,
+    "total_trades": 569,
+    "trades_per_day": 6.32,
+    "win_rate_pct": 34.1,
+    "gross_pf": 0.92,
+    "net_pf": 0.59,
+    "gross_profit": 1149.7,
+    "gross_loss": 1244.46,
+    "total_fees": 652.6,
+    "fee_over_gp_pct": 56.8,
+    "average_r": -0.26,
+    "expectancy": -1.1836,
+    "max_drawdown_pct": 67.8,
+    "max_win_streak": 4,
+    "max_loss_streak": 15,
+    "rejections": {
+      "SESSION_BLOCKED": 0,
+      "FEE_BURDEN": 4959,
+      "LOW_SCORE": 35068,
+      "LOW_VOLATILITY": 2654,
+      "OVEREXTENDED_CHASE": 599,
+      "LOCATION_PENALTY": 9899,
+      "CORRELATED_DUPLICATE": 2,
+      "DAILY_CAP_REACHED": 18524,
+      "CIRCUIT_BREAKER_ACTIVE": 2245,
+      "TOTAL_CANDIDATES": 40598
+    }
+  },
+  "candidate_b_micro": {
+    "initial_balance": 2.7109,
+    "ending_balance": -2.0665,
+    "net_pnl": -4.7774,
+    "total_trades": 201,
+    "trades_per_day": 2.23,
+    "win_rate_pct": 34.8,
+    "gross_pf": 0.89,
+    "net_pf": 0.59,
+    "gross_profit": 8.09,
+    "gross_loss": 9.08,
+    "total_fees": 4.23,
+    "fee_over_gp_pct": 52.3,
+    "average_r": -0.24,
+    "expectancy": -0.0238,
+    "max_drawdown_pct": 169.42,
+    "max_win_streak": 4,
+    "max_loss_streak": 8,
+    "rejections": {
+      "SESSION_BLOCKED": 0,
+      "FEE_BURDEN": 2044,
+      "LOW_SCORE": 22498,
+      "LOW_VOLATILITY": 1643,
+      "OVEREXTENDED_CHASE": 414,
+      "LOCATION_PENALTY": 5882,
+      "CORRELATED_DUPLICATE": 1,
+      "DAILY_CAP_REACHED": 2044,
+      "CIRCUIT_BREAKER_ACTIVE": 73407,
+      "TOTAL_CANDIDATES": 24744
+    }
+  },
+  "score_sweep": {
+    "score_60": {
+      "score": 60,
+      "trades": 605,
+      "trades_per_day": 6.72,
+      "win_rate": 33.7,
+      "gross_pf": 0.83,
+      "net_pf": 0.52,
+      "expectancy": -1.2747,
+      "avg_r": -0.32,
+      "max_dd": 77.12,
+      "net_pnl": -771.1722,
+      "fees": 617.54,
+      "fee_over_gp": 61.1
+    },
+    "score_65": {
+      "score": 65,
+      "trades": 593,
+      "trades_per_day": 6.59,
+      "win_rate": 33.7,
+      "gross_pf": 0.84,
+      "net_pf": 0.54,
+      "expectancy": -1.2718,
+      "avg_r": -0.31,
+      "max_dd": 75.42,
+      "net_pnl": -754.1687,
+      "fees": 617.9,
+      "fee_over_gp": 58.9
+    },
+    "score_70": {
+      "score": 70,
+      "trades": 569,
+      "trades_per_day": 6.32,
+      "win_rate": 34.1,
+      "gross_pf": 0.92,
+      "net_pf": 0.59,
+      "expectancy": -1.1836,
+      "avg_r": -0.26,
+      "max_dd": 67.8,
+      "net_pnl": -673.4664,
+      "fees": 652.6,
+      "fee_over_gp": 56.8
+    },
+    "score_75": {
+      "score": 75,
+      "trades": 510,
+      "trades_per_day": 5.67,
+      "win_rate": 36.5,
+      "gross_pf": 0.98,
+      "net_pf": 0.62,
+      "expectancy": -1.1719,
+      "avg_r": -0.23,
+      "max_dd": 61.17,
+      "net_pnl": -597.6649,
+      "fees": 639.01,
+      "fee_over_gp": 55.2
+    },
+    "score_80": {
+      "score": 80,
+      "trades": 340,
+      "trades_per_day": 3.78,
+      "win_rate": 34.4,
+      "gross_pf": 0.88,
+      "net_pf": 0.58,
+      "expectancy": -1.4185,
+      "avg_r": -0.25,
+      "max_dd": 48.23,
+      "net_pnl": -482.3034,
+      "fees": 416.71,
+      "fee_over_gp": 53.0
+    },
+    "score_85": {
+      "score": 85,
+      "trades": 93,
+      "trades_per_day": 1.03,
+      "win_rate": 28.0,
+      "gross_pf": 0.65,
+      "net_pf": 0.43,
+      "expectancy": -2.5178,
+      "avg_r": -0.38,
+      "max_dd": 23.42,
+      "net_pnl": -234.152,
+      "fees": 135.49,
+      "fee_over_gp": 64.7
+    }
+  },
+  "location_filter": {
+    "without_location_filter": {
+      "params": {
+        "score_threshold": 70,
+        "location_filter": false,
+        "initial_balance": 1000.0
+      },
+      "total_trades": 350,
+      "trades_per_day": 3.89,
+      "win_rate_pct": 34.3,
+      "gross_pf": 0.87,
+      "net_pf": 0.57,
+      "net_pnl": -504.3325,
+      "gross_profit": 787.74,
+      "gross_loss": 909.5,
+      "total_fees": 423.67,
+      "fee_over_gp_pct": 53.8,
+      "average_r": -0.26,
+      "expectancy": -1.4409,
+      "max_drawdown_pct": 50.43,
+      "max_loss_streak": 10,
+      "rejections": {
+        "SESSION_BLOCKED": 0,
+        "FEE_BURDEN": 1867,
+        "LOW_SCORE": 63852,
+        "LOW_VOLATILITY": 3296,
+        "OVEREXTENDED_CHASE": 835,
+        "LOCATION_PENALTY": 0,
+        "CORRELATED_DUPLICATE": 1,
+        "DAILY_CAP_REACHED": 1546,
+        "CIRCUIT_BREAKER_ACTIVE": 0,
+        "TOTAL_CANDIDATES": 66070
+      }
+    },
+    "with_location_filter": {
+      "params": {
+        "score_threshold": 70,
+        "location_filter": true,
+        "initial_balance": 1000.0
+      },
+      "total_trades": 569,
+      "trades_per_day": 6.32,
+      "win_rate_pct": 34.1,
+      "gross_pf": 0.92,
+      "net_pf": 0.59,
+      "net_pnl": -673.4664,
+      "gross_profit": 1149.7,
+      "gross_loss": 1244.46,
+      "total_fees": 652.6,
+      "fee_over_gp_pct": 56.8,
+      "average_r": -0.26,
+      "expectancy": -1.1836,
+      "max_drawdown_pct": 67.8,
+      "max_loss_streak": 15,
+      "rejections": {
+        "SESSION_BLOCKED": 0,
+        "FEE_BURDEN": 4959,
+        "LOW_SCORE": 35068,
+        "LOW_VOLATILITY": 2654,
+        "OVEREXTENDED_CHASE": 599,
+        "LOCATION_PENALTY": 9899,
+        "CORRELATED_DUPLICATE": 2,
+        "DAILY_CAP_REACHED": 18524,
+        "CIRCUIT_BREAKER_ACTIVE": 2245,
+        "TOTAL_CANDIDATES": 40598
+      }
+    }
+  },
+  "chase_sweep": {
+    "chase_2.2x": {
+      "trades": 569,
+      "win_rate": 33.9,
+      "net_pf": 0.58,
+      "expectancy": -1.2046,
+      "net_pnl": -685.3907
+    },
+    "chase_2.5x": {
+      "trades": 569,
+      "win_rate": 34.1,
+      "net_pf": 0.59,
+      "expectancy": -1.1836,
+      "net_pnl": -673.4664
+    },
+    "chase_2.8x": {
+      "trades": 571,
+      "win_rate": 35.0,
+      "net_pf": 0.6,
+      "expectancy": -1.1543,
+      "net_pnl": -659.1214
+    },
+    "chase_3.0x": {
+      "trades": 569,
+      "win_rate": 35.1,
+      "net_pf": 0.6,
+      "expectancy": -1.145,
+      "net_pnl": -651.5214
+    }
+  },
+  "volatility_sweep": {
+    "min_atr_0.2": {
+      "trades": 569,
+      "win_rate": 34.1,
+      "net_pf": 0.59,
+      "expectancy": -1.1836,
+      "net_pnl": -673.4664
+    },
+    "min_atr_0.25": {
+      "trades": 569,
+      "win_rate": 34.1,
+      "net_pf": 0.59,
+      "expectancy": -1.1836,
+      "net_pnl": -673.4664
+    },
+    "min_atr_0.3": {
+      "trades": 569,
+      "win_rate": 34.1,
+      "net_pf": 0.59,
+      "expectancy": -1.1836,
+      "net_pnl": -673.4664
+    }
+  },
+  "session_modes": {
+    "ALL": {
+      "trades": 589,
+      "win_rate": 34.5,
+      "net_pf": 0.54,
+      "expectancy": -1.2511,
+      "net_pnl": -736.8873,
+      "fees": 639.64
+    },
+    "NO_ASIA": {
+      "trades": 546,
+      "win_rate": 37.0,
+      "net_pf": 0.63,
+      "expectancy": -1.1056,
+      "net_pnl": -603.6659,
+      "fees": 665.57
+    },
+    "RESTRICTED_ASIA": {
+      "trades": 546,
+      "win_rate": 37.5,
+      "net_pf": 0.64,
+      "expectancy": -1.0833,
+      "net_pnl": -591.4993,
+      "fees": 675.83
+    },
+    "MAJOR_ONLY": {
+      "trades": 513,
+      "win_rate": 36.5,
+      "net_pf": 0.62,
+      "expectancy": -1.1575,
+      "net_pnl": -593.772,
+      "fees": 644.74
+    },
+    "WEIGHTED": {
+      "trades": 569,
+      "win_rate": 34.1,
+      "net_pf": 0.59,
+      "expectancy": -1.1836,
+      "net_pnl": -673.4664,
+      "fees": 652.6
+    }
+  },
+  "exit_models": {
+    "Model_A": {
+      "trades": 463,
+      "win_rate": 31.1,
+      "gross_pf": 1.02,
+      "net_pf": 0.72,
+      "expectancy": -1.129,
+      "avg_r": -0.21,
+      "net_pnl": -522.7332,
+      "fees": 598.31,
+      "max_dd": 53.02
+    },
+    "Model_B": {
+      "trades": 569,
+      "win_rate": 34.1,
+      "gross_pf": 0.92,
+      "net_pf": 0.59,
+      "expectancy": -1.1836,
+      "avg_r": -0.26,
+      "net_pnl": -673.4664,
+      "fees": 652.6,
+      "max_dd": 67.8
+    },
+    "Model_C": {
+      "trades": 566,
+      "win_rate": 24.9,
+      "gross_pf": 0.78,
+      "net_pf": 0.5,
+      "expectancy": -1.3326,
+      "avg_r": -0.33,
+      "net_pnl": -754.2259,
+      "fees": 599.39,
+      "max_dd": 75.79
+    },
+    "Model_D": {
+      "trades": 490,
+      "win_rate": 35.5,
+      "gross_pf": 1.13,
+      "net_pf": 0.82,
+      "expectancy": -0.9353,
+      "avg_r": -0.16,
+      "net_pnl": -458.273,
+      "fees": 719.69,
+      "max_dd": 52.23
+    },
+    "Model_E": {
+      "trades": 555,
+      "win_rate": 41.4,
+      "gross_pf": 1.1,
+      "net_pf": 0.77,
+      "expectancy": -0.9986,
+      "avg_r": -0.19,
+      "net_pnl": -554.2431,
+      "fees": 740.42,
+      "max_dd": 61.28
+    },
+    "Model_F": {
+      "trades": 459,
+      "win_rate": 29.8,
+      "gross_pf": 1.07,
+      "net_pf": 0.8,
+      "expectancy": -1.0684,
+      "avg_r": -0.19,
+      "net_pnl": -490.3922,
+      "fees": 626.88,
+      "max_dd": 50.86
+    },
+    "Model_G": {
+      "trades": 482,
+      "win_rate": 35.7,
+      "gross_pf": 1.14,
+      "net_pf": 0.84,
+      "expectancy": -0.8681,
+      "avg_r": -0.14,
+      "net_pnl": -418.4186,
+      "fees": 714.03,
+      "max_dd": 48.6
+    },
+    "Model_H": {
+      "trades": 463,
+      "win_rate": 31.1,
+      "gross_pf": 1.02,
+      "net_pf": 0.72,
+      "expectancy": -1.129,
+      "avg_r": -0.21,
+      "net_pnl": -522.7332,
+      "fees": 598.31,
+      "max_dd": 53.02
+    }
+  },
+  "breakeven_sweep": {
+    "BE_0.75R_buf_0.05%": {
+      "trades": 592,
+      "win_rate": 24.5,
+      "net_pf": 0.46,
+      "net_pnl": -738.3014
+    },
+    "BE_1.0R_buf_0.05%": {
+      "trades": 569,
+      "win_rate": 34.1,
+      "net_pf": 0.59,
+      "net_pnl": -673.4664
+    },
+    "BE_1.25R_buf_0.05%": {
+      "trades": 548,
+      "win_rate": 42.3,
+      "net_pf": 0.67,
+      "net_pnl": -636.0343
+    },
+    "BE_1.5R_buf_0.05%": {
+      "trades": 548,
+      "win_rate": 43.2,
+      "net_pf": 0.69,
+      "net_pnl": -613.4264
+    }
+  },
+  "fee_gate_sweep": {
+    "fee_gate_15%": {
+      "trades": 351,
+      "win_rate": 34.8,
+      "net_pf": 0.65,
+      "net_pnl": -427.4736,
+      "fees": 346.72,
+      "fee_over_gp": 38.4
+    },
+    "fee_gate_20%": {
+      "trades": 488,
+      "win_rate": 35.9,
+      "net_pf": 0.66,
+      "net_pnl": -556.3697,
+      "fees": 552.77,
+      "fee_over_gp": 44.7
+    },
+    "fee_gate_25%": {
+      "trades": 569,
+      "win_rate": 34.1,
+      "net_pf": 0.59,
+      "net_pnl": -673.4664,
+      "fees": 652.6,
+      "fee_over_gp": 56.8
+    },
+    "fee_gate_30%": {
+      "trades": 602,
+      "win_rate": 35.4,
+      "net_pf": 0.57,
+      "net_pnl": -722.887,
+      "fees": 721.74,
+      "fee_over_gp": 61.7
+    },
+    "fee_gate_35%": {
+      "trades": 633,
+      "win_rate": 37.6,
+      "net_pf": 0.58,
+      "net_pnl": -728.7275,
+      "fees": 832.57,
+      "fee_over_gp": 64.5
+    }
+  },
+  "risk_levels": {
+    "risk_0.25%": {
+      "trades": 573,
+      "net_pnl": -301.0213,
+      "max_dd": 30.45
+    },
+    "risk_0.50%": {
+      "trades": 573,
+      "net_pnl": -513.586,
+      "max_dd": 51.82
+    },
+    "risk_0.75%": {
+      "trades": 569,
+      "net_pnl": -673.4664,
+      "max_dd": 67.8
+    },
+    "risk_1.00%": {
+      "trades": 546,
+      "net_pnl": -763.2371,
+      "max_dd": 76.75
+    }
+  },
+  "walk_forward": {
+    "candidate_a": {
+      "train": {
+        "trades": 102,
+        "net_pf": 1.29,
+        "pnl": 161.6581,
+        "wr": 44.1
+      },
+      "val": {
+        "trades": 42,
+        "net_pf": 0.84,
+        "pnl": -37.8706,
+        "wr": 33.3
+      },
+      "oos": {
+        "trades": 53,
+        "net_pf": 0.84,
+        "pnl": -51.4409,
+        "wr": 30.2
+      }
+    },
+    "candidate_b": {
+      "train": {
+        "trades": 324,
+        "net_pf": 0.61,
+        "pnl": -424.25,
+        "wr": 34.3
+      },
+      "val": {
+        "trades": 125,
+        "net_pf": 0.55,
+        "pnl": -233.5599,
+        "wr": 34.4
+      },
+      "oos": {
+        "trades": 125,
+        "net_pf": 0.5,
+        "pnl": -272.0556,
+        "wr": 33.6
+      }
+    }
+  },
+  "monte_carlo_10k": {
+    "total_simulations": 10000,
+    "prob_positive_pnl_pct": 61.82,
+    "prob_dd_over_10pct": 86.54,
+    "prob_dd_over_15pct": 56.74,
+    "prob_dd_over_20pct": 32.11,
+    "prob_ruin_pct": 0.0,
+    "median_ending_balance": 1057.96,
+    "p05_ending_balance": 756.23,
+    "p95_ending_balance": 1363.72,
+    "p95_max_dd_pct": 33.21,
+    "worst_case_max_dd_pct": 70.11,
+    "median_max_loss_streak": 9,
+    "p95_max_loss_streak": 15
+  },
+  "failure_modes": {
+    "NORMAL_STOP_LOSS": 75,
+    "PREMATURE_BE_SHAKEOUT": 29,
+    "FALSE_BREAKOUT": 15,
+    "CHOP_WHIPSAW": 3
+  }
+}

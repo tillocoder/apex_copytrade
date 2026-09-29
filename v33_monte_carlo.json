@@ -1,0 +1,15 @@
+{
+  "total_simulations": 10000,
+  "prob_positive_pnl_pct": 86.44,
+  "prob_dd_over_10pct": 30.17,
+  "prob_dd_over_12pct": 17.67,
+  "prob_dd_over_15pct": 7.32,
+  "prob_ruin_pct": 0.0,
+  "median_ending_balance": 1137.1,
+  "p05_ending_balance": 933.84,
+  "p95_ending_balance": 1349.39,
+  "p95_max_dd_pct": 16.36,
+  "worst_case_max_dd_pct": 38.41,
+  "median_max_loss_streak": 7,
+  "p95_max_loss_streak": 13
+}

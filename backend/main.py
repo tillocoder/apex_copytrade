@@ -50,6 +50,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from backend.binance_futures import binance_futures_router, service_instance
+app.include_router(binance_futures_router)
+
 executor = ThreadPoolExecutor(max_workers=8)
 
 async def run_async(func, *args):
@@ -182,6 +185,7 @@ async def startup_event():
     asyncio.create_task(periodic_signals_task())
     asyncio.create_task(monitor_positions_task())
     asyncio.create_task(poll_telegram_task())
+    asyncio.create_task(service_instance.initialize())
 
 # =====================================================================
 

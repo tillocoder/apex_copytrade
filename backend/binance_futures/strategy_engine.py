@@ -288,6 +288,20 @@ class ETHM1ScalpingStrategy:
             else:
                 matrix["m15_macro"] = {"pass": True, "desc": "M15 Neutral (0 pts)"}
 
+        # Location Quality Filter (Penalize Range Midpoint Chop)
+        if getattr(DEFAULT_CONFIG, "location_filter_enabled", True) and len(m1_candles) >= 21:
+            loc_high = max(c["high"] for c in m1_candles[-20:-1])
+            loc_low = min(c["low"] for c in m1_candles[-20:-1])
+            range_span = max(0.50, loc_high - loc_low)
+            midpoint = (loc_high + loc_low) / 2.0
+            dist_from_mid = abs(current_price - midpoint) / range_span
+            if dist_from_mid < 0.15:
+                total_score -= 10
+                matrix["location"] = {"pass": False, "desc": "Trapped in Range Midpoint (-10 pts)"}
+            else:
+                total_score += 10
+                matrix["location"] = {"pass": True, "desc": "Structural Range Boundary (+10 pts)"}
+
         # Volume / Momentum Bonus (+10)
         recent_vols = [c["volume"] for c in m1_candles[-6:-1]]
         vol_bonus = (curr_c["volume"] > sum(recent_vols) / max(1, len(recent_vols)))
@@ -298,15 +312,17 @@ class ETHM1ScalpingStrategy:
             matrix["volume"] = {"pass": False, "desc": "Average Volume"}
 
         total_score = max(0, min(100, total_score))
+        setup_class = "CLASS_A" if total_score >= 75 else ("CLASS_B" if total_score >= 65 else "CLASS_C")
+        matrix["setup_class"] = {"class": setup_class, "desc": f"Setup Classification: {setup_class}"}
         matrix["score_gate"] = {
             "pass": total_score >= DEFAULT_CONFIG.min_score_threshold,
-            "desc": f"Score {total_score}/100 (Threshold {DEFAULT_CONFIG.min_score_threshold})"
+            "desc": f"Score {total_score}/100 ({setup_class} vs Threshold {DEFAULT_CONFIG.min_score_threshold})"
         }
 
         # Score Threshold Check
         if total_score < DEFAULT_CONFIG.min_score_threshold:
             return self._build_result(
-                "NONE", total_score, f"Score below threshold ({total_score}/100)",
+                "NONE", total_score, f"Score below threshold ({total_score}/100 - {setup_class})",
                 f"Confluence Score {total_score}/100 is below {DEFAULT_CONFIG.min_score_threshold} threshold",
                 matrix
             )
@@ -314,6 +330,7 @@ class ETHM1ScalpingStrategy:
         # ----------------------------------------------------------------------
         # STOP LOSS & TARGET GEOMETRY
         # ----------------------------------------------------------------------
+        tp_mult = getattr(DEFAULT_CONFIG, "tp_vol_multiplier", 2.5)
         if signal_candidate == "LONG":
             raw_sl = recent_m1_low - 0.20 * atr_m1
             min_sl = current_price * (1.0 - DEFAULT_CONFIG.min_sl_pct)
@@ -321,9 +338,10 @@ class ETHM1ScalpingStrategy:
             sl_price = max(max_sl, min(raw_sl, min_sl))
             r_dist = max(0.40, current_price - sl_price)
 
-            tp1_price = round(current_price + (DEFAULT_CONFIG.tp1_r * r_dist), 2)
-            tp2_price = round(current_price + (DEFAULT_CONFIG.tp2_r * r_dist), 2)
-            be_price = round(current_price * (1.0 + DEFAULT_CONFIG.be_fee_buffer_pct), 2)
+            vol_mult = max(1.5, min(3.0, (atr_m1 / 1.0) * (tp_mult / 2.2)))
+            tp1_price = round(current_price + (vol_mult * r_dist), 2)
+            tp2_price = tp1_price
+            be_price = round(current_price * (1.0 + DEFAULT_CONFIG.be_fee_buffer_pct), 2) if getattr(DEFAULT_CONFIG, "be_mode", "NO_BE") != "NO_BE" else 0.0
         else:
             raw_sl = recent_m1_high + 0.20 * atr_m1
             min_sl = current_price * (1.0 + DEFAULT_CONFIG.min_sl_pct)
@@ -331,32 +349,44 @@ class ETHM1ScalpingStrategy:
             sl_price = min(max_sl, max(raw_sl, min_sl))
             r_dist = max(0.40, sl_price - current_price)
 
-            tp1_price = round(current_price - (DEFAULT_CONFIG.tp1_r * r_dist), 2)
-            tp2_price = round(current_price - (DEFAULT_CONFIG.tp2_r * r_dist), 2)
-            be_price = round(current_price * (1.0 - DEFAULT_CONFIG.be_fee_buffer_pct), 2)
+            vol_mult = max(1.5, min(3.0, (atr_m1 / 1.0) * (tp_mult / 2.2)))
+            tp1_price = round(current_price - (vol_mult * r_dist), 2)
+            tp2_price = tp1_price
+            be_price = round(current_price * (1.0 - DEFAULT_CONFIG.be_fee_buffer_pct), 2) if getattr(DEFAULT_CONFIG, "be_mode", "NO_BE") != "NO_BE" else 0.0
 
         sl_price = round(sl_price, 2)
 
         # ----------------------------------------------------------------------
-        # MANDATORY FEE-AWARE TRADE FILTER
+        # STRUCTURAL NOISE FLOOR PROTECTION (v3.3)
         # ----------------------------------------------------------------------
-        # Taker Entry 0.05% + Maker TP 0.02% + 1-tick slippage (0.01 USDT)
-        friction_pct = 0.0005 + 0.0002 + (0.01 / current_price)
-        est_roundtrip_cost = current_price * friction_pct
-        if est_roundtrip_cost > 0.30 * r_dist:
+        min_r = getattr(DEFAULT_CONFIG, "min_r_dist", 4.0)
+        if r_dist < min_r:
             return self._build_result(
-                "NONE", total_score, "Fee burden excessive",
-                f"Fee Burden: Estimated roundtrip cost (${est_roundtrip_cost:.2f}) > 30% of target (${r_dist:.2f})",
+                "NONE", total_score, "Noise floor protection",
+                f"Noise Floor Protection: Stop distance (${r_dist:.2f}) < ${min_r:.2f} structural threshold",
                 matrix
             )
 
-        reason_summary = f"{signal_candidate} {module_desc} (Score: {total_score}/100 | M15 {m15_context})"
+        # ----------------------------------------------------------------------
+        # MANDATORY FEE-AWARE TRADE FILTER
+        # ----------------------------------------------------------------------
+        friction_pct = 0.0005 + 0.0002 + (0.01 / current_price)
+        est_roundtrip_cost = current_price * friction_pct
+        gate_ratio = getattr(DEFAULT_CONFIG, "fee_risk_gate_ratio", 0.25)
+        if est_roundtrip_cost > gate_ratio * r_dist:
+            return self._build_result(
+                "NONE", total_score, "Fee burden excessive",
+                f"Fee Burden: Estimated roundtrip cost (${est_roundtrip_cost:.2f}) > {gate_ratio*100:.0f}% of risk R (${r_dist:.2f})",
+                matrix
+            )
+
+        reason_summary = f"{signal_candidate} {module_desc} ({setup_class} Score: {total_score}/100 | M15 {m15_context})"
 
         return self._build_result(
             signal_candidate,
             total_score,
             reason_summary,
-            f"Setup Qualified (Confluence {total_score}/100 >= {DEFAULT_CONFIG.min_score_threshold})",
+            f"Setup Qualified ({setup_class} Confluence {total_score}/100 >= {DEFAULT_CONFIG.min_score_threshold})",
             matrix,
             current_price,
             sl_price,

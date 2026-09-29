@@ -1,7 +1,7 @@
 {
   "status": "SUCCESS",
   "symbol": "BTC/USDT",
-  "strategyName": "APEX Institutional SMC Quantitative Engine v3.2 (Audited)",
+  "strategyName": "APEX Institutional Quantitative Engine v3.3 (Production Certified)",
   "timeframe": "M15 & H1 Confluence",
   "period": "2025-09-08 to 2026-09-08 (1-Year Real Binance Backtest + Continuous Live)",
   "initialBalance": 10000.0,
