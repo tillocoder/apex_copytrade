@@ -31,6 +31,8 @@ import {
   ArrowDownRight,
   Compass
 } from 'lucide-react';
+import { PaperPositionsDrawer } from './PaperPositionsDrawer';
+import { PaperTradeChartModal } from './PaperTradeChartModal';
 
 interface SignalStep {
   pass: boolean;
@@ -208,6 +210,8 @@ export const BinanceFuturesTrading: React.FC = () => {
 
   // 24-Hour Paper Test Telemetry state
   const [soakTest, setSoakTest] = useState<any | null>(null);
+  const [showPaperPositionsModal, setShowPaperPositionsModal] = useState<boolean>(false);
+  const [chartModalTrade, setChartModalTrade] = useState<any | null>(null);
 
   const wsRef = useRef<WebSocket | null>(null);
 
@@ -486,6 +490,16 @@ export const BinanceFuturesTrading: React.FC = () => {
             <span>MODE: {bot?.mode || 'PAPER'}</span>
           </button>
 
+          {/* Paper Test Positions Button */}
+          <button
+            onClick={() => setShowPaperPositionsModal(true)}
+            className="px-3 py-1.5 rounded-lg text-xs font-mono font-bold bg-[#0C152B] border border-cyan-500/50 text-cyan-300 hover:bg-cyan-500/20 transition-apex flex items-center gap-1.5 cursor-pointer shadow-sm shadow-cyan-900/30"
+            title="24-Soatlik Paper Test Pozitsiyalari va Chartlarini Ko'rish"
+          >
+            <BarChart3 className="w-3.5 h-3.5 text-cyan-400" />
+            <span>PAPER POZITSIYALAR</span>
+          </button>
+
           {/* Run/Pause Button */}
           <button
             onClick={() => handleControlAction(bot?.running ? 'pause' : 'run')}
@@ -604,6 +618,21 @@ export const BinanceFuturesTrading: React.FC = () => {
           </div>
 
         </div>
+
+        {/* Action Button Row */}
+        <div className="w-full pt-3 mt-3 border-t border-[#162544] flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="flex items-center space-x-2 text-xs font-mono text-[#9CA3AF]">
+            <Target className="w-4 h-4 text-cyan-400 shrink-0" />
+            <span>Har bir paper test pozitsiyasining <strong>Entry, SL, TP</strong> va <strong>Candlestick Chart</strong>ini alohida ko'rish:</span>
+          </div>
+          <button
+            onClick={() => setShowPaperPositionsModal(true)}
+            className="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 hover:from-cyan-500 hover:to-blue-500 text-white font-mono font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-cyan-900/40 transition-all cursor-pointer"
+          >
+            <BarChart3 className="w-4 h-4 text-cyan-200" />
+            <span>📊 PAPER TEST POZITSIYALARI VA CHARTLARNI KO'RISH</span>
+          </button>
+        </div>
       </div>
 
       {/* 2. REALTIME METRICS ROW (4 KEY CARDS) */}
@@ -709,11 +738,41 @@ export const BinanceFuturesTrading: React.FC = () => {
                 <div>SL (ATR): <span className="text-rose-400">${pos.sl.toFixed(2)}</span></div>
                 <div>Liq: <span className="text-amber-400">${pos.liquidationPrice ? pos.liquidationPrice.toFixed(2) : 'N/A'}</span></div>
               </div>
+
+              {/* Chart Button */}
+              <button
+                onClick={() => setChartModalTrade({
+                  id: pos.id || 'active_paper',
+                  symbol: pos.symbol || 'ETHUSDT',
+                  displaySymbol: pos.displaySymbol || 'ETHUSDT.P',
+                  side: pos.side || 'LONG',
+                  entryPrice: pos.entryPrice,
+                  markPrice: pos.markPrice,
+                  sl: pos.sl,
+                  tp: pos.tp2 || pos.tp1 || pos.tp,
+                  unrealizedPnl: pos.unrealizedPnl,
+                  roi: pos.roi,
+                  margin: pos.margin,
+                  status: 'OPEN',
+                  openedAt: pos.openedAt
+                })}
+                className="w-full mt-2 py-1 bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/40 text-cyan-300 rounded text-[10.5px] font-mono flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+              >
+                <BarChart3 className="w-3 h-3" />
+                <span>CHARTNI OCHISH (ENTRY / SL / TP)</span>
+              </button>
             </div>
           ) : (
             <div className="py-2 text-center text-[#6B7280] font-sans text-xs">
               <span className="block font-bold text-[#9CA3AF]">NO OPEN POSITION</span>
               <span className="text-[10px]">Scanning order flow for valid M1 setup...</span>
+              <button
+                onClick={() => setShowPaperPositionsModal(true)}
+                className="mt-2 text-cyan-400 hover:text-cyan-300 font-mono text-[10.5px] flex items-center justify-center gap-1 cursor-pointer mx-auto transition-all"
+              >
+                <Layers className="w-3 h-3" />
+                <span>Paper Pozitsiyalar Tarixi &rarr;</span>
+              </button>
             </div>
           )}
         </div>
@@ -1440,6 +1499,23 @@ export const BinanceFuturesTrading: React.FC = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* ── MODAL: 24-HOUR PAPER TEST POSITIONS DRAWER ────────────────── */}
+      {showPaperPositionsModal && (
+        <PaperPositionsDrawer
+          isOpen={showPaperPositionsModal}
+          onClose={() => setShowPaperPositionsModal(false)}
+          activeLivePosition={pos}
+        />
+      )}
+
+      {/* ── MODAL: INTERACTIVE TRADE CHART (ENTRY / SL / TP) ──────────── */}
+      {chartModalTrade && (
+        <PaperTradeChartModal
+          trade={chartModalTrade}
+          onClose={() => setChartModalTrade(null)}
+        />
       )}
 
     </div>
