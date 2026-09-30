@@ -49,9 +49,9 @@ def log_event(message: str):
 
 def main():
     start_time = datetime.now(timezone.utc)
-    log_event(f"🚀 APEX QUANT v3.3: 24-HOUR PAPER TRADING TEST INITIATED")
+    log_event(f"🚀 APEX QUANT v3.3: 24-HOUR PAPER TRADING TEST INITIATED (FRESH 24H CYCLE)")
     log_event(f"Target duration: {TARGET_DURATION_HOURS} hours (1,440 M1 bars) | Target Finish: {get_tashkent_time_str(start_time + timedelta(hours=TARGET_DURATION_HOURS))}")
-    log_event(f"Config: London Expansion (08:00-16:30 UTC), Score >= 78, ADX >= 22, Maker 0.02% Post-Only")
+    log_event(f"Config: 24H All Sessions (Asia/London/NY), Score >= 72, ADX >= 22, Maker 0.02% Post-Only")
 
     bars_scanned = 0
     signals_approved = 0
@@ -162,7 +162,7 @@ def main():
             },
             "strategy": {
                 "activeSetupClass": "MODULE_E_M5_M1_HYBRID",
-                "scoreThreshold": 78,
+                "scoreThreshold": 72,
                 "adxFilterThreshold": 22.0,
                 "executionModel": "MAKER_ENTRY_HYBRID (0.02% Post-Only)",
                 "currentScore": score,
