@@ -65,11 +65,11 @@ class ExecutionEngine:
 
             # Validate SL / TP geometry
             if signal == "LONG":
-                if not (sl < current_price < tp1 < tp2):
-                    return {"status": "REJECTED", "reason": f"Invalid LONG geometry: SL({sl}) < Entry({current_price}) < TP1({tp1}) < TP2({tp2}) failed"}
+                if not (sl < current_price < tp1 <= tp2):
+                    return {"status": "REJECTED", "reason": f"Invalid LONG geometry: SL({sl}) < Entry({current_price}) < TP1({tp1}) <= TP2({tp2}) failed"}
             else: # SHORT
-                if not (sl > current_price > tp1 > tp2):
-                    return {"status": "REJECTED", "reason": f"Invalid SHORT geometry: SL({sl}) > Entry({current_price}) > TP1({tp1}) > TP2({tp2}) failed"}
+                if not (sl > current_price > tp1 >= tp2):
+                    return {"status": "REJECTED", "reason": f"Invalid SHORT geometry: SL({sl}) > Entry({current_price}) > TP1({tp1}) >= TP2({tp2}) failed"}
 
             # Calculate order size with dynamic dollar risk clipping & compounding tier
             sizing = self.risk.calculate_order_sizing(current_price, self.connector.exchange_filters, sl_distance=r_dist)

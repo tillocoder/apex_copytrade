@@ -114,14 +114,21 @@ class PaperTradingEngine:
         be_price = pos["bePrice"]
         tp1_hit = pos["tp1Hit"]
 
-        # 1. Check TP1 (1R) if not already hit
+        # 1. Check TP1 (1R / Target) if not already hit
         if not tp1_hit:
             hit_tp1 = (side == "LONG" and mark >= tp1) or (side == "SHORT" and mark <= tp1)
             if hit_tp1:
+                close_pct = getattr(DEFAULT_CONFIG, "tp1_close_pct", 0.5)
+                if close_pct >= 1.0 or pos["tp1"] == pos["tp2"]:
+                    # Full 100% position close at TP target
+                    return self.close_position(tp1, "TAKE_PROFIT_HIT")
+
                 # Partial Close: 50%
                 step = DEFAULT_CONFIG.step_size
-                close_qty = round(pos["initialQty"] * DEFAULT_CONFIG.tp1_close_pct, 3)
+                close_qty = round(pos["initialQty"] * close_pct, 3)
                 rem_qty = round(pos["qty"] - close_qty, 3)
+                if rem_qty <= 0:
+                    return self.close_position(tp1, "TAKE_PROFIT_HIT")
                 
                 # Realize 50% PnL
                 if side == "LONG":

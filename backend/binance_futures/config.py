@@ -71,7 +71,7 @@ class BinanceFuturesConfig:
     tp_vol_multiplier: float = 2.5           # 2.5x dynamic ATR multiplier
     
     # Strategy Scoring & Entry Quality (v3.3 Production Model)
-    min_score_threshold: int = 78            # Quality Score >= 78/100 required
+    min_score_threshold: int = 72            # Quality Score >= 72/100 required (calibrated for 24h institutional confluence)
     anti_chase_max_body_atr: float = 2.5     # Skip entry if signal candle body > 2.5x ATR
     location_filter_enabled: bool = True     # Penalize range midpoint chop
     fee_risk_gate_ratio: float = 0.25        # Reject if fee burden > 25% of R
@@ -92,7 +92,7 @@ class BinanceFuturesConfig:
     
     # Safety Filters
     max_allowed_spread_usd: float = 0.15     # Spread <= $0.15 USDT
-    stale_data_timeout_sec: float = 5.0      # Ticks older than 5s rejected
+    stale_data_timeout_sec: float = 12.0     # Ticks older than 12s rejected (prevents network jitter drops)
     emergency_sl_timeout_sec: float = 2.0    # If SL not placed in 2s, emergency market close!
     min_atr_m1: float = 0.25                 # Anti-chop minimum ATR (0.25 USDT)
     max_atr_multiplier: float = 3.5          # Abnormal volatility spike filter
@@ -113,13 +113,13 @@ class BinanceFuturesConfig:
     min_qty: float = 0.001
     min_notional: float = 20.0                # Binance minNotional for ETHUSDT is $20
     
-    # Active Trading Sessions (London & Overlap Volatility Expansion Focus)
-    session_mode: str = "LONDON_EXPANSION_ONLY"
+    # Active Trading Sessions (24-Hour Continuous Testing Across All Major Liquidity Windows)
+    session_mode: str = "ALL_SESSIONS_24H"
     enabled_sessions: Dict[str, bool] = field(default_factory=lambda: {
-        "ASIA": False,
+        "ASIA": True,
         "LONDON": True,
         "LONDON_NY_OVERLAP": True,
-        "NEW_YORK": False                    # Late NY consolidation noise blocked in v3.3
+        "NEW_YORK": True
     })
 
 DEFAULT_CONFIG = BinanceFuturesConfig()

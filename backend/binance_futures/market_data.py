@@ -101,6 +101,7 @@ class MarketDataManager:
                 if len(self.klines_m1) > 600:
                     self.klines_m1.pop(0)
 
+        self.last_update_ts = time.time()
         if is_closed:
             self._synthesize_higher_timeframes()
 
@@ -215,13 +216,13 @@ class MarketDataManager:
         now_utc = datetime.now(timezone.utc)
         hour = now_utc.hour + now_utc.minute / 60.0
 
-        # Session intervals (UTC)
-        is_asia = (0.0 <= hour < 8.0)
-        is_london = (8.0 <= hour < 16.5)
-        is_ny = (13.5 <= hour < 20.0)
+        # Session intervals (UTC) - 24/7 Seamless Coverage
         is_overlap = (13.5 <= hour < 16.5)
+        is_ny = (16.5 <= hour < 20.0)
+        is_london = (8.0 <= hour < 13.5)
+        is_asia = (hour >= 20.0 or hour < 8.0)
 
-        session_name = "OUT_OF_SESSION"
+        session_name = "ASIA"
         if is_overlap:
             session_name = "LONDON_NY_OVERLAP"
         elif is_ny:
