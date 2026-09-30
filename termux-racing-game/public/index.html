@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Apex Speed 3D - Real-Time 3D Multiplayer Racing</title>
+  <meta name="description" content="Ultra-lightweight real-time 3D multiplayer racing game running on Termux server with WebGL & WebSockets.">
+  <link rel="stylesheet" href="css/style.css?v=3.5">
+</head>
+<body>
+
+  <!-- Visual FX Overlays (Speed Blur, Impact Crash, Oil Splatter) -->
+  <div id="speed-blur-fx" class="fx-overlay"></div>
+  <div id="impact-blur-fx" class="fx-overlay"></div>
+  <div id="oil-blur-fx" class="fx-overlay"></div>
+
+  <!-- WebGL 3D Canvas Container (Full Screen 3D Viewport) -->
+  <div id="canvas-container"></div>
+
+  <!-- ============================================================
+       LOBBY SCREEN (GAME-STYLE TRANSPARENT HUD OVERLAY)
+       ============================================================ -->
+  <div id="lobby-screen">
+    
+    <!-- 1. Top HUD Bar -->
+    <header class="lobby-top-bar">
+      <div class="brand-cluster">
+        <span class="brand-bolt">⚡</span>
+        <div>
+          <div class="brand-title">APEX SPEED 3D</div>
+          <div class="brand-sub">ARCADE SHOWROOM</div>
+        </div>
+      </div>
+
+      <div class="player-profile-pill">
+        <span class="profile-icon">👤</span>
+        <input type="text" id="player-name-input" maxlength="16" placeholder="Racer Ismi" title="Taxallusni o'zgartirish">
+        <span class="edit-hint">✏️</span>
+      </div>
+
+      <div class="top-actions-cluster">
+        <button id="btn-music-toggle" class="hud-pill-btn" title="Musiqa Yoqish/O'chirish">
+          🎵 <span class="btn-text">Musiqa: ON</span>
+        </button>
+        <button id="btn-open-multiplayer" class="hud-pill-btn highlight" title="Online O'yinchilar">
+          👥 <span id="online-count-badge">1 Online</span>
+        </button>
+        <div class="latency-pill">
+          <span class="ping-dot"></span>
+          <span id="lobby-ping">-- ms</span>
+        </div>
+        <div id="termux-status-badge" class="termux-badge">
+          <span class="live-dot"></span> Termux: Online
+        </div>
+      </div>
+    </header>
+
+    <!-- 2. Center 3D Car Showroom Overlay Controls -->
+    <div class="showroom-overlay">
+      <!-- Left / Right Carousel Switchers -->
+      <button id="btn-prev-car" class="car-nav-btn prev" aria-label="Oldingi mashina">❮</button>
+      <button id="btn-next-car" class="car-nav-btn next" aria-label="Keyingi mashina">❯</button>
+
+      <!-- Center Floating Header (Car Name & Archetype) -->
+      <div class="showroom-header">
+        <div id="showroom-car-badge" class="car-class-badge">HYPERCAR</div>
+        <h2 id="showroom-car-name" class="car-model-name">Apex GT</h2>
+        <div class="rotate-hint">👆 360° ko'rish uchun mashinani suring</div>
+      </div>
+
+      <!-- Quick Car Selector Pills (clickable tabs) -->
+      <div class="car-pills-row">
+        <button class="car-pill active" data-car="hypercar">🏎️ Apex GT</button>
+        <button class="car-pill" data-car="muscle">🚘 V8 Beast</button>
+        <button class="car-pill" data-car="truck">🛻 Cyber Armor</button>
+        <button class="car-pill" data-car="formula">⚡ Aero GP</button>
+      </div>
+    </div>
+
+    <!-- 3. Bottom HUD Elements: Left Specs Card & Right Maps Selector -->
+    <div class="lobby-bottom-hud">
+      
+      <!-- Bottom-Left: Dynamic Car Specs Card -->
+      <div class="car-specs-panel">
+        <div class="specs-header">
+          <span class="specs-title">MASHINA XUSUSIYATLARI</span>
+          <span id="specs-car-class" class="specs-tag">HYPERCAR</span>
+        </div>
+        <div class="specs-list">
+          <div class="spec-item">
+            <div class="spec-label"><span>🚀 TEZLIK</span><span id="spec-val-speed" class="spec-val">340 KM/H</span></div>
+            <div class="spec-meter"><div id="spec-bar-speed" class="spec-fill" style="width: 85%"></div></div>
+          </div>
+          <div class="spec-item">
+            <div class="spec-label"><span>⚡ TEZLANISH</span><span id="spec-val-accel" class="spec-val">0-100: 2.8s</span></div>
+            <div class="spec-meter"><div id="spec-bar-accel" class="spec-fill" style="width: 75%"></div></div>
+          </div>
+          <div class="spec-item">
+            <div class="spec-label"><span>🎯 BOSHQARUV</span><span id="spec-val-handling" class="spec-val">High Grip</span></div>
+            <div class="spec-meter"><div id="spec-bar-handling" class="spec-fill" style="width: 80%"></div></div>
+          </div>
+          <div class="spec-item">
+            <div class="spec-label"><span>🛡️ CHIDAMLILIK</span><span id="spec-val-durability" class="spec-val">Standart</span></div>
+            <div class="spec-meter"><div id="spec-bar-durability" class="spec-fill" style="width: 70%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Center Action Buttons -->
+      <div class="lobby-action-cluster">
+        <button id="btn-solo-practice" class="arcade-action-btn primary pulse">
+          <span class="btn-icon">⏱️</span>
+          <div class="btn-copy">
+            <span class="main-label">SOLO POYGA</span>
+            <span class="sub-label">Tanlangan Trassada Mashq</span>
+          </div>
+        </button>
+
+        <button id="btn-challenge-flow" class="arcade-action-btn secondary">
+          <span class="btn-icon">⚔️</span>
+          <div class="btn-copy">
+            <span class="main-label">DUEL QILISH</span>
+            <span class="sub-label">Online O'yinchini Chaqirish</span>
+          </div>
+        </button>
+
+        <button id="btn-controls-help" class="controls-trigger-btn" title="Boshqaruv tugmalari">
+          🎮
+        </button>
+      </div>
+
+      <!-- Bottom-Right: Visual Circuit Track Maps ("yollar ham maps da korinib tursin") -->
+      <div class="track-selection-panel">
+        <div class="track-panel-header">
+          <span>🏁 POYGA TRASSASI</span>
+          <span id="selected-track-name" class="track-tag">NEON METROPOLIS</span>
+        </div>
+
+        <div class="track-visual-cards">
+          
+          <!-- Track 1: Neon Metropolis (Circuit SVG with glowing cyan path) -->
+          <div class="track-map-card selected" data-track="neon_city" title="Neon Metropolis">
+            <div class="map-svg-wrap">
+              <svg viewBox="0 0 180 120" class="circuit-svg">
+                <path d="M 82.1 63.1 L 82.5 61.5 L 82.7 59.4 L 82.6 56.8 L 82.3 54.0 L 82.1 51.0 L 81.8 47.9 L 81.6 44.7 L 81.5 41.7 L 81.7 39.0 L 82.1 36.5 L 82.7 34.5 L 83.4 32.6 L 84.2 30.7 L 85.1 28.8 L 86.1 27.0 L 87.1 25.3 L 88.3 23.7 L 89.5 22.2 L 90.8 20.9 L 92.1 19.8 L 93.5 19.0 L 95.1 18.2 L 96.7 17.5 L 98.5 16.9 L 100.3 16.5 L 102.1 16.2 L 103.8 16.0 L 105.6 16.0 L 107.2 16.2 L 108.8 16.5 L 110.4 17.1 L 112.0 18.0 L 113.6 19.0 L 115.2 20.3 L 116.7 21.7 L 118.1 23.2 L 119.4 24.8 L 120.5 26.4 L 121.4 28.1 L 122.1 29.8 L 122.5 31.8 L 122.4 34.0 L 122.1 36.3 L 121.5 38.6 L 120.8 41.1 L 120.0 43.6 L 119.4 46.1 L 118.9 48.5 L 118.6 50.9 L 118.8 53.1 L 119.3 55.2 L 120.3 57.3 L 121.5 59.4 L 122.8 61.4 L 124.3 63.4 L 125.7 65.4 L 126.9 67.4 L 127.9 69.3 L 128.6 71.2 L 128.7 73.1 L 128.5 74.9 L 128.1 76.6 L 127.4 78.4 L 126.5 80.1 L 125.4 81.8 L 124.2 83.5 L 122.9 85.1 L 121.5 86.7 L 120.2 88.3 L 118.8 89.7 L 117.2 91.4 L 115.5 93.0 L 113.7 94.6 L 111.8 96.2 L 109.8 97.7 L 107.7 99.1 L 105.5 100.4 L 103.3 101.5 L 101.1 102.4 L 98.8 103.1 L 96.1 103.6 L 93.1 103.9 L 90.0 104.0 L 86.8 103.9 L 83.6 103.6 L 80.4 103.2 L 77.2 102.5 L 74.2 101.8 L 71.4 100.8 L 68.8 99.7 L 66.7 98.6 L 64.6 97.3 L 62.5 95.9 L 60.6 94.3 L 58.7 92.6 L 57.0 90.8 L 55.4 89.0 L 54.1 87.1 L 53.0 85.1 L 52.2 83.1 L 51.6 81.0 L 51.3 78.6 L 51.3 76.1 L 51.4 73.5 L 51.7 70.8 L 52.2 68.2 L 52.8 65.8 L 53.6 63.5 L 54.5 61.5 L 55.5 59.8 L 56.5 58.6 L 57.6 57.5 L 58.9 56.4 L 60.3 55.5 L 61.8 54.6 L 63.3 53.9 L 64.8 53.4 L 66.3 53.1 L 67.6 53.0 L 68.8 53.1 L 70.0 53.7 L 71.2 54.9 L 72.3 56.4 L 73.4 58.2 L 74.4 60.1 L 75.4 62.0 L 76.3 63.7 L 77.2 65.1 L 78.0 66.1 L 78.8 66.4 L 79.2 66.4 L 79.6 66.3 L 80.0 66.1 L 80.3 65.9 L 80.7 65.5 L 81.0 65.1 L 81.3 64.7 L 81.6 64.2 L 81.9 63.7 Z" class="circuit-path-glow neon" />
+                <path d="M 82.1 63.1 L 82.5 61.5 L 82.7 59.4 L 82.6 56.8 L 82.3 54.0 L 82.1 51.0 L 81.8 47.9 L 81.6 44.7 L 81.5 41.7 L 81.7 39.0 L 82.1 36.5 L 82.7 34.5 L 83.4 32.6 L 84.2 30.7 L 85.1 28.8 L 86.1 27.0 L 87.1 25.3 L 88.3 23.7 L 89.5 22.2 L 90.8 20.9 L 92.1 19.8 L 93.5 19.0 L 95.1 18.2 L 96.7 17.5 L 98.5 16.9 L 100.3 16.5 L 102.1 16.2 L 103.8 16.0 L 105.6 16.0 L 107.2 16.2 L 108.8 16.5 L 110.4 17.1 L 112.0 18.0 L 113.6 19.0 L 115.2 20.3 L 116.7 21.7 L 118.1 23.2 L 119.4 24.8 L 120.5 26.4 L 121.4 28.1 L 122.1 29.8 L 122.5 31.8 L 122.4 34.0 L 122.1 36.3 L 121.5 38.6 L 120.8 41.1 L 120.0 43.6 L 119.4 46.1 L 118.9 48.5 L 118.6 50.9 L 118.8 53.1 L 119.3 55.2 L 120.3 57.3 L 121.5 59.4 L 122.8 61.4 L 124.3 63.4 L 125.7 65.4 L 126.9 67.4 L 127.9 69.3 L 128.6 71.2 L 128.7 73.1 L 128.5 74.9 L 128.1 76.6 L 127.4 78.4 L 126.5 80.1 L 125.4 81.8 L 124.2 83.5 L 122.9 85.1 L 121.5 86.7 L 120.2 88.3 L 118.8 89.7 L 117.2 91.4 L 115.5 93.0 L 113.7 94.6 L 111.8 96.2 L 109.8 97.7 L 107.7 99.1 L 105.5 100.4 L 103.3 101.5 L 101.1 102.4 L 98.8 103.1 L 96.1 103.6 L 93.1 103.9 L 90.0 104.0 L 86.8 103.9 L 83.6 103.6 L 80.4 103.2 L 77.2 102.5 L 74.2 101.8 L 71.4 100.8 L 68.8 99.7 L 66.7 98.6 L 64.6 97.3 L 62.5 95.9 L 60.6 94.3 L 58.7 92.6 L 57.0 90.8 L 55.4 89.0 L 54.1 87.1 L 53.0 85.1 L 52.2 83.1 L 51.6 81.0 L 51.3 78.6 L 51.3 76.1 L 51.4 73.5 L 51.7 70.8 L 52.2 68.2 L 52.8 65.8 L 53.6 63.5 L 54.5 61.5 L 55.5 59.8 L 56.5 58.6 L 57.6 57.5 L 58.9 56.4 L 60.3 55.5 L 61.8 54.6 L 63.3 53.9 L 64.8 53.4 L 66.3 53.1 L 67.6 53.0 L 68.8 53.1 L 70.0 53.7 L 71.2 54.9 L 72.3 56.4 L 73.4 58.2 L 74.4 60.1 L 75.4 62.0 L 76.3 63.7 L 77.2 65.1 L 78.0 66.1 L 78.8 66.4 L 79.2 66.4 L 79.6 66.3 L 80.0 66.1 L 80.3 65.9 L 80.7 65.5 L 81.0 65.1 L 81.3 64.7 L 81.6 64.2 L 81.9 63.7 Z" class="circuit-path neon" />
+                <circle cx="82.1" cy="63.1" r="3.5" class="start-pin neon" />
+              </svg>
+            </div>
+            <div class="map-card-info">
+              <span class="map-name">🌃 Neon Metropolis</span>
+              <span class="map-meta">2.8 KM • 14 Burilish</span>
+            </div>
+          </div>
+
+          <!-- Track 2: Desert Canyon (Circuit SVG with glowing amber path) -->
+          <div class="track-map-card" data-track="desert_canyon" title="Desert Canyon">
+            <div class="map-svg-wrap">
+              <svg viewBox="0 0 180 120" class="circuit-svg">
+                <path d="M 84.4 60.7 L 84.9 59.8 L 85.1 57.9 L 84.9 55.4 L 84.6 52.3 L 84.2 48.8 L 83.9 45.1 L 83.6 41.5 L 83.5 37.9 L 83.8 34.8 L 84.4 32.2 L 85.3 30.1 L 86.3 28.1 L 87.6 26.1 L 88.9 24.1 L 90.4 22.3 L 92.0 20.6 L 93.6 19.1 L 95.3 17.9 L 97.0 16.9 L 98.7 16.3 L 100.4 16.0 L 102.3 16.0 L 104.3 16.2 L 106.3 16.7 L 108.4 17.3 L 110.5 18.2 L 112.5 19.1 L 114.4 20.2 L 116.1 21.4 L 117.7 22.6 L 119.3 24.2 L 120.7 26.0 L 122.0 28.0 L 123.2 30.2 L 124.3 32.5 L 125.3 34.9 L 126.3 37.4 L 127.2 39.9 L 128.0 42.4 L 128.8 44.8 L 129.6 47.4 L 130.5 50.1 L 131.3 52.8 L 132.0 55.6 L 132.7 58.4 L 133.2 61.2 L 133.6 63.9 L 133.8 66.6 L 133.8 69.3 L 133.6 71.8 L 133.1 74.0 L 132.5 76.3 L 131.7 78.6 L 130.8 80.8 L 129.7 83.0 L 128.5 85.0 L 127.1 87.1 L 125.7 89.0 L 124.1 90.7 L 122.5 92.4 L 120.5 94.0 L 118.3 95.6 L 115.9 97.0 L 113.4 98.3 L 110.8 99.6 L 108.0 100.6 L 105.3 101.6 L 102.5 102.4 L 99.8 103.0 L 97.1 103.5 L 94.5 103.8 L 91.7 104.0 L 89.0 104.0 L 86.2 103.9 L 83.4 103.7 L 80.6 103.3 L 77.8 102.7 L 75.2 102.1 L 72.6 101.3 L 70.2 100.3 L 67.8 99.2 L 65.3 97.9 L 62.9 96.4 L 60.6 94.8 L 58.3 93.1 L 56.1 91.2 L 54.2 89.2 L 52.4 87.2 L 50.8 85.1 L 49.6 82.9 L 48.5 80.5 L 47.7 77.9 L 47.0 75.1 L 46.5 72.1 L 46.3 69.2 L 46.2 66.2 L 46.3 63.3 L 46.6 60.6 L 47.2 58.1 L 48.0 55.9 L 48.9 54.1 L 50.1 52.3 L 51.6 50.6 L 53.2 48.9 L 54.9 47.3 L 56.7 45.9 L 58.6 44.8 L 60.4 43.9 L 62.2 43.4 L 63.8 43.2 L 65.5 43.6 L 67.2 44.5 L 68.9 45.8 L 70.6 47.5 L 72.3 49.3 L 74.0 51.3 L 75.6 53.1 L 77.1 54.9 L 78.4 56.4 L 79.7 57.5 L 80.3 58.0 L 80.8 58.5 L 81.4 59.0 L 81.9 59.5 L 82.4 59.9 L 82.9 60.3 L 83.3 60.5 L 83.7 60.7 L 84.1 60.8 Z" class="circuit-path-glow desert" />
+                <path d="M 84.4 60.7 L 84.9 59.8 L 85.1 57.9 L 84.9 55.4 L 84.6 52.3 L 84.2 48.8 L 83.9 45.1 L 83.6 41.5 L 83.5 37.9 L 83.8 34.8 L 84.4 32.2 L 85.3 30.1 L 86.3 28.1 L 87.6 26.1 L 88.9 24.1 L 90.4 22.3 L 92.0 20.6 L 93.6 19.1 L 95.3 17.9 L 97.0 16.9 L 98.7 16.3 L 100.4 16.0 L 102.3 16.0 L 104.3 16.2 L 106.3 16.7 L 108.4 17.3 L 110.5 18.2 L 112.5 19.1 L 114.4 20.2 L 116.1 21.4 L 117.7 22.6 L 119.3 24.2 L 120.7 26.0 L 122.0 28.0 L 123.2 30.2 L 124.3 32.5 L 125.3 34.9 L 126.3 37.4 L 127.2 39.9 L 128.0 42.4 L 128.8 44.8 L 129.6 47.4 L 130.5 50.1 L 131.3 52.8 L 132.0 55.6 L 132.7 58.4 L 133.2 61.2 L 133.6 63.9 L 133.8 66.6 L 133.8 69.3 L 133.6 71.8 L 133.1 74.0 L 132.5 76.3 L 131.7 78.6 L 130.8 80.8 L 129.7 83.0 L 128.5 85.0 L 127.1 87.1 L 125.7 89.0 L 124.1 90.7 L 122.5 92.4 L 120.5 94.0 L 118.3 95.6 L 115.9 97.0 L 113.4 98.3 L 110.8 99.6 L 108.0 100.6 L 105.3 101.6 L 102.5 102.4 L 99.8 103.0 L 97.1 103.5 L 94.5 103.8 L 91.7 104.0 L 89.0 104.0 L 86.2 103.9 L 83.4 103.7 L 80.6 103.3 L 77.8 102.7 L 75.2 102.1 L 72.6 101.3 L 70.2 100.3 L 67.8 99.2 L 65.3 97.9 L 62.9 96.4 L 60.6 94.8 L 58.3 93.1 L 56.1 91.2 L 54.2 89.2 L 52.4 87.2 L 50.8 85.1 L 49.6 82.9 L 48.5 80.5 L 47.7 77.9 L 47.0 75.1 L 46.5 72.1 L 46.3 69.2 L 46.2 66.2 L 46.3 63.3 L 46.6 60.6 L 47.2 58.1 L 48.0 55.9 L 48.9 54.1 L 50.1 52.3 L 51.6 50.6 L 53.2 48.9 L 54.9 47.3 L 56.7 45.9 L 58.6 44.8 L 60.4 43.9 L 62.2 43.4 L 63.8 43.2 L 65.5 43.6 L 67.2 44.5 L 68.9 45.8 L 70.6 47.5 L 72.3 49.3 L 74.0 51.3 L 75.6 53.1 L 77.1 54.9 L 78.4 56.4 L 79.7 57.5 L 80.3 58.0 L 80.8 58.5 L 81.4 59.0 L 81.9 59.5 L 82.4 59.9 L 82.9 60.3 L 83.3 60.5 L 83.7 60.7 L 84.1 60.8 Z" class="circuit-path desert" />
+                <circle cx="84.4" cy="60.7" r="3.5" class="start-pin desert" />
+              </svg>
+            </div>
+            <div class="map-card-info">
+              <span class="map-name">🏜️ Desert Canyon</span>
+              <span class="map-meta">3.2 KM • 13 Burilish</span>
+            </div>
+          </div>
+
+          <!-- Track 3: Arctic Glacier (Circuit SVG with glowing ice blue path) -->
+          <div class="track-map-card" data-track="arctic_glacier" title="Arctic Glacier">
+            <div class="map-svg-wrap">
+              <svg viewBox="0 0 180 120" class="circuit-svg">
+                <path d="M 83.1 61.1 L 83.6 60.3 L 83.7 58.6 L 83.6 56.3 L 83.4 53.4 L 83.0 50.1 L 82.7 46.6 L 82.5 43.1 L 82.4 39.8 L 82.6 36.8 L 83.1 34.4 L 83.8 32.6 L 84.5 30.9 L 85.4 29.3 L 86.4 27.7 L 87.5 26.2 L 88.6 24.7 L 89.8 23.4 L 91.1 22.2 L 92.4 21.1 L 93.8 20.1 L 95.2 19.3 L 96.7 18.5 L 98.4 17.8 L 100.1 17.2 L 101.8 16.6 L 103.6 16.3 L 105.3 16.0 L 106.9 16.0 L 108.4 16.2 L 109.8 16.6 L 111.3 17.3 L 112.8 18.5 L 114.2 19.9 L 115.7 21.6 L 117.0 23.4 L 118.2 25.3 L 119.1 27.2 L 119.9 29.1 L 120.4 30.9 L 120.5 32.6 L 120.1 34.1 L 119.3 35.5 L 118.0 37.0 L 116.5 38.4 L 114.9 39.8 L 113.3 41.2 L 111.9 42.6 L 110.7 44.0 L 110.0 45.4 L 109.8 46.8 L 110.3 48.4 L 111.5 50.0 L 113.2 51.5 L 115.3 53.0 L 117.6 54.5 L 120.0 56.0 L 122.3 57.6 L 124.5 59.2 L 126.3 61.0 L 127.6 62.8 L 128.6 64.8 L 129.5 66.8 L 130.2 69.0 L 130.9 71.2 L 131.4 73.4 L 131.8 75.7 L 131.9 78.0 L 131.9 80.1 L 131.7 82.2 L 130.3 86.3 L 129.1 88.5 L 127.7 90.6 L 125.9 92.8 L 124.0 94.8 L 122.0 96.8 L 119.8 98.5 L 117.6 100.0 L 115.5 101.2 L 113.4 102.0 L 111.4 102.4 L 109.4 102.4 L 107.3 102.1 L 105.2 101.5 L 103.0 100.9 L 100.8 100.2 L 98.6 99.5 L 96.4 98.9 L 94.2 98.5 L 92.0 98.4 L 89.9 98.7 L 87.7 99.2 L 85.5 100.0 L 83.3 100.9 L 81.1 101.8 L 79.0 102.6 L 76.8 103.3 L 74.7 103.8 L 72.7 104.0 L 70.7 103.8 L 68.5 103.1 L 66.2 102.1 L 64.0 100.9 L 61.7 99.4 L 59.5 97.6 L 57.4 95.8 L 55.5 93.8 L 53.8 91.8 L 52.3 89.8 L 51.1 87.8 L 50.2 85.9 L 49.5 83.8 L 48.9 81.6 L 48.4 79.4 L 48.2 77.1 L 48.1 74.8 L 48.1 72.5 L 48.3 70.3 L 48.7 68.3 L 49.3 66.4 L 50.1 64.6 L 51.1 62.8 L 52.3 61.0 L 53.7 59.3 L 55.3 57.6 L 56.9 56.1 L 58.6 54.8 L 60.3 53.6 L 61.9 52.8 L 63.5 52.2 L 64.9 51.9 L 66.4 51.9 L 67.9 52.0 L 69.5 52.3 L 71.0 52.8 L 72.6 53.3 L 74.0 53.9 L 75.4 54.5 L 76.7 55.1 L 77.8 55.7 L 78.5 56.2 L 79.2 56.9 L 79.8 57.6 L 80.4 58.3 L 80.9 59.1 L 81.4 59.8 L 81.9 60.4 L 82.4 60.8 L 82.8 61.1 Z" class="circuit-path-glow arctic" />
+                <path d="M 83.1 61.1 L 83.6 60.3 L 83.7 58.6 L 83.6 56.3 L 83.4 53.4 L 83.0 50.1 L 82.7 46.6 L 82.5 43.1 L 82.4 39.8 L 82.6 36.8 L 83.1 34.4 L 83.8 32.6 L 84.5 30.9 L 85.4 29.3 L 86.4 27.7 L 87.5 26.2 L 88.6 24.7 L 89.8 23.4 L 91.1 22.2 L 92.4 21.1 L 93.8 20.1 L 95.2 19.3 L 96.7 18.5 L 98.4 17.8 L 100.1 17.2 L 101.8 16.6 L 103.6 16.3 L 105.3 16.0 L 106.9 16.0 L 108.4 16.2 L 109.8 16.6 L 111.3 17.3 L 112.8 18.5 L 114.2 19.9 L 115.7 21.6 L 117.0 23.4 L 118.2 25.3 L 119.1 27.2 L 119.9 29.1 L 120.4 30.9 L 120.5 32.6 L 120.1 34.1 L 119.3 35.5 L 118.0 37.0 L 116.5 38.4 L 114.9 39.8 L 113.3 41.2 L 111.9 42.6 L 110.7 44.0 L 110.0 45.4 L 109.8 46.8 L 110.3 48.4 L 111.5 50.0 L 113.2 51.5 L 115.3 53.0 L 117.6 54.5 L 120.0 56.0 L 122.3 57.6 L 124.5 59.2 L 126.3 61.0 L 127.6 62.8 L 128.6 64.8 L 129.5 66.8 L 130.2 69.0 L 130.9 71.2 L 131.4 73.4 L 131.8 75.7 L 131.9 78.0 L 131.9 80.1 L 131.7 82.2 L 130.3 86.3 L 129.1 88.5 L 127.7 90.6 L 125.9 92.8 L 124.0 94.8 L 122.0 96.8 L 119.8 98.5 L 117.6 100.0 L 115.5 101.2 L 113.4 102.0 L 111.4 102.4 L 109.4 102.4 L 107.3 102.1 L 105.2 101.5 L 103.0 100.9 L 100.8 100.2 L 98.6 99.5 L 96.4 98.9 L 94.2 98.5 L 92.0 98.4 L 89.9 98.7 L 87.7 99.2 L 85.5 100.0 L 83.3 100.9 L 81.1 101.8 L 79.0 102.6 L 76.8 103.3 L 74.7 103.8 L 72.7 104.0 L 70.7 103.8 L 68.5 103.1 L 66.2 102.1 L 64.0 100.9 L 61.7 99.4 L 59.5 97.6 L 57.4 95.8 L 55.5 93.8 L 53.8 91.8 L 52.3 89.8 L 51.1 87.8 L 50.2 85.9 L 49.5 83.8 L 48.9 81.6 L 48.4 79.4 L 48.2 77.1 L 48.1 74.8 L 48.1 72.5 L 48.3 70.3 L 48.7 68.3 L 49.3 66.4 L 50.1 64.6 L 51.1 62.8 L 52.3 61.0 L 53.7 59.3 L 55.3 57.6 L 56.9 56.1 L 58.6 54.8 L 60.3 53.6 L 61.9 52.8 L 63.5 52.2 L 64.9 51.9 L 66.4 51.9 L 67.9 52.0 L 69.5 52.3 L 71.0 52.8 L 72.6 53.3 L 74.0 53.9 L 75.4 54.5 L 76.7 55.1 L 77.8 55.7 L 78.5 56.2 L 79.2 56.9 L 79.8 57.6 L 80.4 58.3 L 80.9 59.1 L 81.4 59.8 L 81.9 60.4 L 82.4 60.8 L 82.8 61.1 Z" class="circuit-path arctic" />
+                <circle cx="83.1" cy="61.1" r="3.5" class="start-pin arctic" />
+              </svg>
+            </div>
+            <div class="map-card-info">
+              <span class="map-name">❄️ Arctic Glacier</span>
+              <span class="map-meta">3.0 KM • 15 Burilish</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 4. Slide-Out Multiplayer Players Drawer -->
+    <div id="multiplayer-drawer" class="drawer-overlay hidden">
+      <div class="drawer-content">
+        <div class="drawer-header">
+          <div class="drawer-title">
+            <span>👥 ONLINE O'YINCHILAR</span>
+            <span id="drawer-player-count" class="online-pill">1 Online</span>
+          </div>
+          <button id="btn-close-drawer" class="btn-close-icon" aria-label="Yopish">✕</button>
+        </div>
+        <p class="drawer-sub">Istalgan raqibni poygaga chaqiring yoki taklif kuting:</p>
+        <div id="lobby-players-list" class="players-list">
+          <div class="no-players">O'yinchilar yuklanmoqda...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. Controls Helper Modal -->
+    <div id="controls-modal" class="modal-overlay hidden">
+      <div class="modal-box controls-modal-box">
+        <div class="modal-icon">🎮</div>
+        <h2>BOSHQARUV TIZIMI</h2>
+        <div class="controls-grid">
+          <div class="control-row"><span class="key-pill">W / ▲</span><span>Gaz berish & Oldinga</span></div>
+          <div class="control-row"><span class="key-pill">S / ▼</span><span>Tormoz & Orqaga</span></div>
+          <div class="control-row"><span class="key-pill">A D / ◀ ▶</span><span>Chapga / O'ngga burilish</span></div>
+          <div class="control-row"><span class="key-pill">SPACE</span><span>Drift (Sirpanib burilish)</span></div>
+          <div class="control-row"><span class="key-pill highlight">SHIFT / E / 🚀</span><span>Nitro Boost (+160 km/h)</span></div>
+          <div class="control-row"><span class="key-pill">R</span><span>Trassaga qayta tiklash</span></div>
+        </div>
+        <button id="btn-close-controls" class="btn-accept" style="margin-top:16px;">TUSHUNDIM</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ============================================================
+       CHALLENGE MODALS
+       ============================================================ -->
+  <!-- Outgoing Challenge Modal -->
+  <div id="outgoing-challenge-modal" class="modal-overlay hidden">
+    <div class="modal-box">
+      <div class="modal-icon">⏳</div>
+      <h2>Taklif yuborildi!</h2>
+      <p><b id="outgoing-target-name" style="color:var(--cyan)">Raqib</b> javob berishi kutilmoqda...</p>
+      <div id="outgoing-track-info" class="challenge-track-pill">📍 Trassa: Neon Metropolis</div>
+      <div class="countdown-bar-wrap">
+        <div id="outgoing-countdown-bar" class="countdown-bar"></div>
+      </div>
+      <div class="modal-actions">
+        <button id="btn-cancel-outgoing" class="btn-cancel" style="width:100%">Bekor qilish</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Incoming Challenge Modal -->
+  <div id="incoming-challenge-modal" class="modal-overlay hidden">
+    <div class="modal-box">
+      <div class="modal-icon">⚔️</div>
+      <h2>Poygaga chaqiruv!</h2>
+      <p><b id="incoming-sender-name" style="color:var(--cyan)">Raqib</b> sizni 2 davrali duelga chaqiryapti!</p>
+      <div id="incoming-track-info" class="challenge-track-pill">📍 Trassa: Neon Metropolis</div>
+      <div class="countdown-bar-wrap">
+        <div id="incoming-countdown-bar" class="countdown-bar"></div>
+      </div>
+      <div class="modal-actions">
+        <button id="btn-accept-challenge" class="btn-accept">QABUL QILISH</button>
+        <button id="btn-decline-challenge" class="btn-decline">RAD ETISH</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       IN-GAME HUD (OVERLAY)
+       ============================================================ -->
+  <div id="hud-overlay" class="hidden">
+    
+    <!-- Top Telemetry & Race Info -->
+    <div class="hud-top">
+      <div class="telemetry-pills">
+        <div id="hud-ping" class="hud-pill">Ping: -- ms</div>
+        <div id="hud-fps" class="hud-pill fps">FPS: 60</div>
+        <button id="hud-music-btn" class="hud-pill audio-btn" title="Musiqa ON/OFF">🎵 Musiqa</button>
+      </div>
+
+      <div class="race-center-info">
+        <div id="hud-position-badge" class="position-badge">1ST</div>
+        <div id="hud-lap-badge" class="lap-badge">LAP 1 / 2</div>
+      </div>
+
+      <div class="minimap-wrapper">
+        <canvas id="minimap-canvas" width="140" height="140"></canvas>
+      </div>
+    </div>
+
+    <!-- Center 3-2-1-GO Countdown -->
+    <div id="countdown-screen">3</div>
+
+    <!-- Center Interaction Alerts (Nitro / Obstacle / Oil) -->
+    <div id="hud-alert-banner" class="hud-alert-banner hidden"></div>
+
+    <!-- Bottom Telemetry: Speedometer, Nitro Gauge & Controls Hint -->
+    <div class="hud-bottom">
+      <div style="font-size: 11px; color: var(--text-muted); pointer-events: none;">
+        [R] Trassaga qayta qo'yish
+      </div>
+
+      <div class="hud-bottom-gauges">
+        <!-- Nitro Boost Gauge -->
+        <div id="hud-nitro-wrap" class="nitro-gauge-wrap" title="Nitro Ishlatish (SHIFT / E / 🚀)">
+          <div class="nitro-gauge-header">
+            <span id="hud-nitro-label">⚡ NITRO (1/3) [SHIFT]</span>
+          </div>
+          <div class="nitro-gauge-track">
+            <div id="hud-nitro-fill" class="nitro-gauge-fill"></div>
+          </div>
+        </div>
+
+        <!-- Speedometer -->
+        <div class="speedo-wrap">
+          <div class="speedo-digits">
+            <span id="hud-speed-val" class="speedo-val">0</span>
+            <span class="speedo-unit">KM/H</span>
+          </div>
+          <div id="hud-gear-val" class="gear-pill">GEAR: N</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile On-Screen Touch Controls -->
+    <div id="touch-controls">
+      <!-- Left steering cluster -->
+      <div class="touch-cluster">
+        <button id="touch-left" class="touch-btn" aria-label="Burilish chapga">◀</button>
+        <button id="touch-right" class="touch-btn" aria-label="Burilish o'ngga">▶</button>
+      </div>
+      <!-- Center reset button -->
+      <button id="touch-reset" class="touch-btn" style="width:48px;height:48px;font-size:16px;" aria-label="Qayta tiklash">🔄</button>
+      <!-- Right pedals cluster -->
+      <div class="touch-cluster">
+        <button id="touch-nitro" class="touch-btn nitro-btn ready" aria-label="Nitro Boost">🚀</button>
+        <button id="touch-drift" class="touch-btn drift" aria-label="Drift">⚡</button>
+        <button id="touch-brake" class="touch-btn brake" aria-label="Tormoz">▼</button>
+        <button id="touch-gas" class="touch-btn gas" aria-label="Gaz">▲</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ============================================================
+       RESULTS / FINISH MODAL
+       ============================================================ -->
+  <div id="results-modal" class="modal-overlay hidden">
+    <div class="modal-box">
+      <div class="trophy-glow">🏆</div>
+      <h2 id="results-title">VICTORY!</h2>
+      <p id="results-winner-name" style="font-weight: 700; color: #fff;"></p>
+
+      <div class="results-stats-table">
+        <div class="stat-row">
+          <span class="stat-label">Umumiy Vaqt:</span>
+          <span id="results-total-time" class="stat-value">01:14.240</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Eng Yaxshi Davra:</span>
+          <span id="results-best-lap" class="stat-value">00:36.120</span>
+        </div>
+      </div>
+
+      <div id="rematch-status-pill" class="rematch-status-pill">
+        Rematch uchun ikkala o'yinchi ham bosishi kerak
+      </div>
+
+      <div class="modal-actions">
+        <button id="btn-rematch" class="btn-accept">🔄 Rematch (0/2)</button>
+        <button id="btn-exit-lobby" class="btn-decline">🚪 Lobbiyga Chiqish</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript Libraries & Modules with Cache Busting -->
+  <script src="js/lib/three.min.js"></script>
+  <script>
+    if (typeof THREE === 'undefined') {
+      document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>');
+    }
+  </script>
+
+  <!-- Game Scripts -->
+  <script src="js/audio.js?v=3.5"></script>
+  <script src="js/input.js?v=3.5"></script>
+  <script src="js/car.js?v=3.5"></script>
+  <script src="js/track.js?v=3.5"></script>
+  <script src="js/network.js?v=3.5"></script>
+  <script src="js/game.js?v=3.5"></script>
+
+</body>
+</html>
