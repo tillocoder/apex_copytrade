@@ -92,14 +92,14 @@ class BinanceFuturesConfig:
     
     # Safety Filters
     max_allowed_spread_usd: float = 0.15     # Spread <= $0.15 USDT
-    stale_data_timeout_sec: float = 12.0     # Ticks older than 12s rejected (prevents network jitter drops)
+    stale_data_timeout_sec: float = 15.0     # Ticks older than 15s rejected (prevents network jitter drops)
     emergency_sl_timeout_sec: float = 2.0    # If SL not placed in 2s, emergency market close!
     min_atr_m1: float = 0.25                 # Anti-chop minimum ATR (0.25 USDT)
     max_atr_multiplier: float = 3.5          # Abnormal volatility spike filter
     
-    # Binance Endpoints
+    # Binance Endpoints (Updated to Official 2026 /market Architecture)
     rest_base_url: str = "https://fapi.binance.com"
-    ws_base_url: str = "wss://fstream.binance.com/stream"
+    ws_base_url: str = "wss://fstream.binance.com/market/stream"
     
     # Operational Modes: Strictly PAPER / NO-ENTRY until validation gates pass
     mode: str = "PAPER"

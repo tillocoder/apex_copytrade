@@ -81,14 +81,14 @@ class BinanceFuturesWebSocketGateway:
         """
         Background loop streaming real-time bookTicker, kline_1m, and markPrice from Binance.
         """
-        stream_url = f"{DEFAULT_CONFIG.ws_base_url}?streams=ethusdt@bookTicker/ethusdt@kline_1m/ethusdt@markPrice@1s"
+        stream_url = f"{DEFAULT_CONFIG.ws_base_url}?streams=ethusdt@kline_1m/ethusdt@markPrice@1s/ethusdt@ticker"
         backoff = 1.0
 
         while self.is_running:
             try:
                 print(f"[BINANCE_WS] Connecting to {stream_url}...")
                 log_system_event("INFO", f"[BINANCE_WS] Connecting to Binance Futures stream...")
-                async with websockets.connect(stream_url, ping_interval=20, ping_timeout=10) as ws:
+                async with websockets.connect(stream_url, ping_interval=None) as ws:
                     self.is_connected_to_binance = True
                     backoff = 1.0
                     print(f"[BINANCE_WS] Connected successfully to Binance stream!")
@@ -100,8 +100,18 @@ class BinanceFuturesWebSocketGateway:
                         stream_name = raw.get("stream", "")
                         data = raw.get("data", {})
 
-                        # 1. Book Ticker (Best Bid / Ask & Spread)
-                        if "@bookTicker" in stream_name:
+                        # 1. Ticker / Book Ticker (Best Bid / Ask & Spread)
+                        if "@ticker" in stream_name:
+                            last_price = float(data.get("c") or 0)
+                            bid = float(data.get("b") or (last_price - 0.01 if last_price > 0 else 0))
+                            ask = float(data.get("a") or (last_price + 0.01 if last_price > 0 else 0))
+                            self.md.update_book_ticker(
+                                bid=bid,
+                                ask=ask,
+                                bid_qty=float(data.get("Q") or 1.0),
+                                ask_qty=float(data.get("Q") or 1.0)
+                            )
+                        elif "@bookTicker" in stream_name:
                             self.md.update_book_ticker(
                                 bid=float(data.get("b", 0)),
                                 ask=float(data.get("a", 0)),
@@ -142,7 +152,9 @@ class BinanceFuturesWebSocketGateway:
                             # Auto-Execution Gate
                             if DEFAULT_CONFIG.is_running and signal_res.get("final_signal") in ("LONG", "SHORT"):
                                 if risk_check.get("can_trade", False) and not has_open_pos:
-                                    await self.executor.execute_signal(signal_res, DEFAULT_CONFIG.live_enabled)
+                                    exec_res = await self.executor.execute_signal(signal_res, DEFAULT_CONFIG.live_enabled)
+                                    print(f"🎯 [AUTO_EXECUTION] {signal_res.get('final_signal')} -> Status: {exec_res.get('status')}")
+                                    log_system_event("INFO", f"🎯 [AUTO_EXECUTION] {signal_res.get('final_signal')} -> {exec_res}")
 
                         # Periodic Live State Reconciliation (every 10s in LIVE mode)
                         now = time.time()

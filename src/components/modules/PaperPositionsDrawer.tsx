@@ -196,7 +196,7 @@ export const PaperPositionsDrawer: React.FC<PaperPositionsDrawerProps> = ({
           ) : (
             <div className="p-4 bg-[#0A1224] border border-[#162544] rounded-xl text-center text-xs font-sans text-[#6B7280]">
               <span className="text-[#9CA3AF] font-bold block mb-0.5">⚪ Hozirda ochiq pozitsiya mavjud emas</span>
-              Bozor skanerlanmoqda: London sessiyasi (08:00–16:30 UTC), ADX(14) &ge; 22 va Score &ge; 78 kutilmoqda.
+              Bozor skanerlanmoqda: 24/7 Barcha sessiyalar (Asia, London, NY), ADX(14) &ge; 22 va Score &ge; 72 kutilmoqda.
             </div>
           )}
         </div>
@@ -323,7 +323,7 @@ export const PaperPositionsDrawer: React.FC<PaperPositionsDrawerProps> = ({
                 24-SOATLIK PAPER TEST SESSIYASIDA HALI YANGI SAVDO OCHILMADI
               </div>
               <p className="text-xs text-[#9CA3AF] max-w-md mx-auto leading-relaxed">
-                Bozor M1 filtrlari (Score &ge; 78, ADX &ge; 22, London sessiyasi) bo'yicha uzluksiz real-time skanerlanmoqda. Shartlar bajarilganda yangi ochilgan yoki yopilgan barcha pozitsiyalar shu yerda avtomatik paydo bo'ladi.
+                Bozor M1 filtrlari (Score &ge; 72, ADX &ge; 22, 24/7 sessiyalar) bo'yicha uzluksiz real-time skanerlanmoqda. Shartlar bajarilganda yangi ochilgan yoki yopilgan barcha pozitsiyalar shu yerda avtomatik paydo bo'ladi.
               </p>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[11px] font-mono">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
