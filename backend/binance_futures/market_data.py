@@ -71,17 +71,19 @@ class MarketDataManager:
                 "volume": float(k[5])
             })
         if timeframe == "1m":
-            self.klines_m1 = parsed[-500:]
+            self.klines_m1 = parsed[-600:]
             self.last_update_ts = time.time()
             self._synthesize_higher_timeframes()
         elif timeframe == "5m":
-            self.klines_m5 = parsed[-200:]
+            self.klines_m5 = parsed[-500:]
+            self.last_update_ts = time.time()
         elif timeframe == "15m":
-            self.klines_m15 = parsed[-100:]
+            self.klines_m15 = parsed[-200:]
         elif timeframe == "1h":
-            self.klines_h1 = parsed[-100:]
+            self.klines_h1 = parsed[-300:]
+            self.last_update_ts = time.time()
 
-    def update_kline_stream(self, k: Dict[str, Any]):
+    def update_kline_stream(self, k: Dict[str, Any], interval: str = "1m"):
         candle = {
             "time": int(k.get("t", 0)),
             "open": float(k.get("o", 0)),
@@ -91,18 +93,28 @@ class MarketDataManager:
             "volume": float(k.get("v", 0))
         }
         is_closed = k.get("x", False)
-        if not self.klines_m1:
-            self.klines_m1.append(candle)
+        if interval == "5m":
+            target = self.klines_m5
+            max_len = 500
+        elif interval == "1h":
+            target = self.klines_h1
+            max_len = 300
         else:
-            if self.klines_m1[-1]["time"] == candle["time"]:
-                self.klines_m1[-1] = candle
+            target = self.klines_m1
+            max_len = 600
+
+        if not target:
+            target.append(candle)
+        else:
+            if target[-1]["time"] == candle["time"]:
+                target[-1] = candle
             else:
-                self.klines_m1.append(candle)
-                if len(self.klines_m1) > 600:
-                    self.klines_m1.pop(0)
+                target.append(candle)
+                if len(target) > max_len:
+                    target.pop(0)
 
         self.last_update_ts = time.time()
-        if is_closed:
+        if interval == "1m" and is_closed:
             self._synthesize_higher_timeframes()
 
     def _synthesize_higher_timeframes(self):
@@ -208,6 +220,42 @@ class MarketDataManager:
     def get_atr_m5(self) -> float:
         return self.calculate_atr(self.klines_m5, 14)
 
+    @staticmethod
+    def calculate_supertrend(candles: List[Dict[str, Any]], period: int = 10, multiplier: float = 2.5):
+        n = len(candles)
+        if n < period + 1:
+            return [0.0] * n, [1] * n
+        highs = [c["high"] for c in candles]
+        lows = [c["low"] for c in candles]
+        closes = [c["close"] for c in candles]
+        
+        tr = [highs[0] - lows[0]]
+        for i in range(1, n):
+            tr.append(max(highs[i] - lows[i], abs(highs[i] - closes[i-1]), abs(lows[i] - closes[i-1])))
+        atr = [0.0] * n
+        atr[period-1] = sum(tr[:period]) / period
+        for i in range(period, n):
+            atr[i] = (atr[i-1] * (period - 1) + tr[i]) / period
+
+        st = [0.0] * n
+        direction = [1] * n
+        upper = [0.0] * n
+        lower = [0.0] * n
+        for i in range(period, n):
+            hl2 = (highs[i] + lows[i]) / 2.0
+            basic_upper = hl2 + multiplier * atr[i]
+            basic_lower = hl2 - multiplier * atr[i]
+            lower[i] = basic_lower if basic_lower > lower[i-1] or closes[i-1] < lower[i-1] else lower[i-1]
+            upper[i] = basic_upper if basic_upper < upper[i-1] or closes[i-1] > upper[i-1] else upper[i-1]
+            if closes[i] > upper[i-1]:
+                direction[i] = 1
+            elif closes[i] < lower[i-1]:
+                direction[i] = -1
+            else:
+                direction[i] = direction[i-1]
+            st[i] = lower[i] if direction[i] == 1 else upper[i]
+        return st, direction
+
     def get_current_session(self) -> Dict[str, Any]:
         """
         Calculates session based on UTC timestamp.
@@ -216,7 +264,10 @@ class MarketDataManager:
         now_utc = datetime.now(timezone.utc)
         hour = now_utc.hour + now_utc.minute / 60.0
 
-        # Session intervals (UTC) - 24/7 Seamless Coverage
+        # Institutional Execution Window (07:00 - 21:00 UTC)
+        is_window_active = (DEFAULT_CONFIG.session_start_hour_utc <= now_utc.hour < DEFAULT_CONFIG.session_end_hour_utc)
+
+        # Session intervals (UTC)
         is_overlap = (13.5 <= hour < 16.5)
         is_ny = (16.5 <= hour < 20.0)
         is_london = (8.0 <= hour < 13.5)
@@ -236,13 +287,12 @@ class MarketDataManager:
         tashkent_time_str = f"{tashkent_hour:02d}:{now_utc.minute:02d} Tashkent"
         utc_time_str = f"{now_utc.hour:02d}:{now_utc.minute:02d} UTC"
 
-        is_allowed = DEFAULT_CONFIG.enabled_sessions.get(session_name, True)
-        if session_name == "OUT_OF_SESSION":
-            is_allowed = False
+        is_allowed = is_window_active
 
         return {
             "session": session_name,
             "is_allowed": is_allowed,
+            "is_window_active": is_window_active,
             "utc_time": utc_time_str,
             "tashkent_time": tashkent_time_str,
             "is_overlap": is_overlap,

@@ -34,19 +34,78 @@ if os.path.exists(db_path):
         conn.close()
 "
 
-# 3. Clean logs
-echo "3. Resetting 24h logs..."
-rm -f backend/logs/soak_test_24h.log backend/logs/soak_test.stdout.log
+# 3. Clean logs and old telemetry
+echo "3. Resetting 24h logs and old telemetry..."
+rm -f backend/logs/soak_test_24h.log backend/logs/soak_test.stdout.log backend/data/soak_test_24h_telemetry.json
 mkdir -p backend/logs backend/data
 
-# 4. Restart Turbo Backend cleanly
-echo "4. Restarting Turbo Engine..."
+# 4. Initialize fresh zero-state telemetry
+python3 -c "
+import json, time, os
+from datetime import datetime, timezone, timedelta
+tashkent_tz = timezone(timedelta(hours=5))
+now_utc = datetime.now(timezone.utc)
+now_tashkent = now_utc.astimezone(tashkent_tz).strftime('%Y-%m-%d %H:%M:%S +05')
+init_tel = {
+    'status': 'RUNNING',
+    'version': 'APEX QUANT v3.4 Institutional M5 Engine',
+    'mode': 'PAPER_SIMULATION',
+    'riskModel': '1.0% Account Risk Per Trade',
+    'liveSafetyEnforced': True,
+    'liveOrdersAllowed': False,
+    'startTimeUtc': now_utc.strftime('%Y-%m-%d %H:%M:%S UTC'),
+    'startTimeTashkent': now_tashkent,
+    'currentTimeTashkent': now_tashkent,
+    'targetDurationHours': 24.0,
+    'elapsedHours': 0.0,
+    'elapsedMinutes': 0,
+    'remainingMinutes': 1440,
+    'progressPct': 0.0,
+    'barsScanned': 0,
+    'cyclesScanned': 0,
+    'market': {
+        'symbol': 'ETHUSDT',
+        'displaySymbol': 'ETHUSDT.P',
+        'currentPrice': 0.0,
+        'session': 'ACTIVE',
+        'sessionAllowed': True
+    },
+    'strategy': {
+        'name': 'M5 SuperTrend (10, 2.5) + H1 EMA 200 + Volume >= 1.3x',
+        'timeframe': '5m',
+        'tpTarget': '2.0R',
+        'minSl': '\$10.00',
+        'executionModel': 'MAKER_POST_ONLY (0.02% Fee)',
+        'currentScore': 0,
+        'currentSignal': 'NONE',
+        'rejectionReason': 'Fresh 24h paper session initialized'
+    },
+    'riskAndPerformance': {
+        'balance': 1000.0,
+        'sessionPnl': 0.0,
+        'riskPerTradePct': '1.0%',
+        'dollarRiskBudget': 10.0,
+        'sessionTargetUsd': 200.0,
+        'tradesCount': 0,
+        'consecutiveLosses': 0
+    },
+    'activePosition': None,
+    'auditGatesPassed': '14/14 FORENSIC GATES CERTIFIED',
+    'hourlyCheckpoints': []
+}
+with open('backend/data/soak_test_24h_telemetry.json', 'w') as f:
+    json.dump(init_tel, f, indent=2)
+print('✅ Initialized clean zero-state telemetry.')
+"
+
+# 5. Restart Turbo Backend cleanly
+echo "5. Restarting Turbo Engine..."
 bash scripts/start_termux_turbo.sh
 
 sleep 3
 
-# 5. Launch fresh 24h soak test daemon
-echo "5. Launching fresh 24h soak test daemon..."
+# 6. Launch fresh 24h soak test daemon
+echo "6. Launching fresh 24h soak test daemon..."
 nohup python3 -u scripts/run_24h_soak_test.py > backend/logs/soak_test.stdout.log 2>&1 &
 SOAK_PID=$!
 echo "✅ Soak test started with PID: $SOAK_PID"

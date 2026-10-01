@@ -40,10 +40,29 @@ class BinanceFuturesService:
         await self.connector.sync_server_time_async()
         await self.connector.fetch_exchange_info_async()
 
-        # Load initial M1 klines
-        raw_klines = await run_in_thread(self.backtest.fetch_historical_klines, 500)
-        formatted = [[k["time"], k["open"], k["high"], k["low"], k["close"], k["volume"]] for k in raw_klines]
-        self.md.load_initial_klines(formatted, "1m")
+        # Load historical klines for M5 SuperTrend and H1 EMA 200
+        try:
+            raw_h1 = await run_in_thread(self.backtest.fetch_historical_klines, 250, "1h")
+            formatted_h1 = [[k["time"], k["open"], k["high"], k["low"], k["close"], k["volume"]] for k in raw_h1]
+            self.md.load_initial_klines(formatted_h1, "1h")
+            print(f"[BINANCE_FUTURES_SERVICE] Loaded {len(formatted_h1)} H1 klines for macro trend filter.")
+        except Exception as e:
+            print(f"[BINANCE_FUTURES_SERVICE] H1 klines load warning: {e}")
+
+        try:
+            raw_m5 = await run_in_thread(self.backtest.fetch_historical_klines, 300, "5m")
+            formatted_m5 = [[k["time"], k["open"], k["high"], k["low"], k["close"], k["volume"]] for k in raw_m5]
+            self.md.load_initial_klines(formatted_m5, "5m")
+            print(f"[BINANCE_FUTURES_SERVICE] Loaded {len(formatted_m5)} M5 klines for SuperTrend engine.")
+        except Exception as e:
+            print(f"[BINANCE_FUTURES_SERVICE] M5 klines load warning: {e}")
+
+        try:
+            raw_m1 = await run_in_thread(self.backtest.fetch_historical_klines, 500, "1m")
+            formatted_m1 = [[k["time"], k["open"], k["high"], k["low"], k["close"], k["volume"]] for k in raw_m1]
+            self.md.load_initial_klines(formatted_m1, "1m")
+        except Exception as e:
+            print(f"[BINANCE_FUTURES_SERVICE] M1 klines load warning: {e}")
 
         if self.connector.has_credentials():
             print("[BINANCE_FUTURES_SERVICE] Live Binance credentials detected. Reconciling live account...")

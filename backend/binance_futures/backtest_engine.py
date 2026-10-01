@@ -21,20 +21,20 @@ class BinanceFuturesBacktestEngine:
         self.base_url = DEFAULT_CONFIG.rest_base_url
         self.symbol = DEFAULT_CONFIG.symbol
 
-    def fetch_historical_klines(self, total_candles: int = 5000) -> List[Dict[str, Any]]:
+    def fetch_historical_klines(self, total_candles: int = 5000, interval: str = "1m") -> List[Dict[str, Any]]:
         """
-        Pulls real historical M1 klines directly from Binance USD(S)-M Futures public REST API.
+        Pulls real historical klines directly from Binance USD(S)-M Futures public REST API.
         """
         all_candles = []
         limit_per_call = 1000
         end_time = None
 
-        print(f"[BACKTEST] Fetching {total_candles} real historical M1 candles from Binance...")
+        print(f"[BACKTEST] Fetching {total_candles} real historical {interval} candles from Binance...")
         while len(all_candles) < total_candles:
             try:
                 params = {
                     "symbol": self.symbol,
-                    "interval": "1m",
+                    "interval": interval,
                     "limit": min(limit_per_call, total_candles - len(all_candles))
                 }
                 if end_time:

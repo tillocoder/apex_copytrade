@@ -149,54 +149,37 @@ class RiskManager:
 
     def get_compounding_tier(self) -> Dict[str, Any]:
         """
-        Equity-proportional margin sizing.
-        Base margin = min(balance * max_risk_pct_balance, tier_cap)
-        At $2.71: min(2.71 * 0.12, 0.50) = $0.3252 (NOT a flat $0.50)
-
-        Tier caps (upper bound only):
-          Sub-$2.50: $0.45 cap
-          $2.50-$5.00: $0.50 cap
-          $5.00-$10.00: $0.80 cap
-          $10.00-$20.00: $1.50 cap
-          $20.00+: min(8% balance, $5.00) cap
+        Institutional 1% Risk Budgeting & Compounding Tier.
+        Calculates risk capital proportional to current account equity.
         """
         bal = self.current_balance
 
-        if bal < 2.50:
-            tier_name = 'Survival Tier (Sub-$2.50)'
-            tier_cap = 0.45
-        elif bal < 5.00:
-            tier_name = 'Tier 1 ($2.50-$5.00)'
-            tier_cap = 0.50
-        elif bal < 10.00:
-            tier_name = 'Tier 2 ($5.00-$10.00)'
-            tier_cap = 0.80
-        elif bal < 20.00:
-            tier_name = 'Tier 3 ($10.00-$20.00)'
-            tier_cap = 1.50
+        if bal < 50.0:
+            tier_name = 'Micro Tier (<$50)'
+        elif bal < 500.0:
+            tier_name = 'Standard Tier ($50-$500)'
+        elif bal < 2500.0:
+            tier_name = 'Institutional Tier 1 ($500-$2.5k)'
         else:
-            tier_name = 'Tier 4 Scaling ($20+)'
-            tier_cap = min(bal * 0.08, 5.00)
-
-        # Base margin: proportional to balance, capped at tier ceiling
-        base_margin = min(bal * DEFAULT_CONFIG.max_risk_pct_balance, tier_cap)
+            tier_name = 'Institutional Scaling Tier ($2.5k+)'
 
         # Apply DD and Loss multipliers
         dd_info = self.get_drawdown_info()
         loss_info = self.get_consecutive_loss_info()
         combined_mult = dd_info['multiplier'] * loss_info['multiplier']
 
-        # Anti-Revenge Loss Protection: if last trade was a loss, never exceed config default
-        if self.last_trade_pnl < 0:
-            base_margin = min(base_margin, DEFAULT_CONFIG.default_margin_usd)
+        # Dollar risk budget (strictly 1.0% base)
+        base_dollar_risk = bal * DEFAULT_CONFIG.max_risk_pct_balance
+        target_dollar_risk = base_dollar_risk * max(0.25, combined_mult)
 
-        # Apply multiplier, floor at $0.20 (absolute minimum to be operable)
-        target_margin = max(0.20, base_margin * max(0.25, combined_mult))
+        # Baseline margin budget (~2-10% of balance at 50x)
+        target_margin = max(1.0, bal * 0.05 * combined_mult)
 
         return {
             'tier': tier_name,
             'balance': round(bal, 4),
-            'base_margin': round(base_margin, 4),
+            'base_dollar_risk': round(base_dollar_risk, 4),
+            'target_dollar_risk': round(target_dollar_risk, 4),
             'targetMargin': round(target_margin, 4),
             'leverage': DEFAULT_CONFIG.default_leverage,
             'dd_tier': dd_info['tier'],
@@ -207,13 +190,12 @@ class RiskManager:
     def calculate_order_sizing(self, price: float, filters: Dict[str, Any],
                                 sl_distance: float = 0.0) -> Dict[str, Any]:
         """
-        Calculates position size with strict safety:
-        1. Proportional margin (balance * 12%, capped at tier ceiling)
-        2. Dynamic DD + loss de-risking multipliers
-        3. Max dollar risk cap (hard ceiling per trade)
+        Calculates position size strictly adhering to 1.0% account risk:
+        1. Base Dollar Risk = Account Balance * 0.01 (1.0% risk)
+        2. Scaled by Drawdown & Consecutive Loss Protection multipliers
+        3. Position Size Qty = Target Dollar Risk / SL Distance
         4. Binance stepSize + minQty compliance
-        5. CRITICAL: If minNotional bump causes dollar_risk > cap -> REJECT (rejected=True)
-        6. Returns is_sl_safe_from_liq based on actual liq distance estimate
+        5. Binance minNotional compliance
         """
         step_size = float(filters.get('stepSize', DEFAULT_CONFIG.step_size))
         min_qty = float(filters.get('minQty', DEFAULT_CONFIG.min_qty))
@@ -221,62 +203,43 @@ class RiskManager:
         leverage = DEFAULT_CONFIG.default_leverage
 
         tier_info = self.get_compounding_tier()
-        target_margin = tier_info['targetMargin']
-        target_notional = target_margin * leverage
+        target_dollar_risk = tier_info['target_dollar_risk']
 
-        # Raw quantity from target notional
-        raw_qty = target_notional / max(1.0, price)
+        # Ensure safe sl_distance floor
+        effective_sl_dist = max(DEFAULT_CONFIG.min_sl_dist, sl_distance)
+
+        # Exact position quantity from 1.0% dollar risk
+        raw_qty = target_dollar_risk / max(0.10, effective_sl_dist)
         decimals = max(0, int(round(-math.log10(step_size)))) if step_size > 0 else 3
         qty = round(math.floor(raw_qty / step_size) * step_size, decimals)
-
-        # Dynamic dollar risk cap with DD + Loss multipliers
-        dd_info = self.get_drawdown_info()
-        loss_info = self.get_consecutive_loss_info()
-        risk_mult = dd_info['multiplier'] * loss_info['multiplier']
-
-        base_dollar_risk = min(self.current_balance * DEFAULT_CONFIG.max_risk_pct_balance, 0.40)
-        max_allowed_dollar_risk = max(0.10, base_dollar_risk * max(0.25, risk_mult))
-
-        # Apply dollar risk cap: reduce qty if needed
-        if sl_distance > 0 and qty > 0:
-            dollar_risk = sl_distance * qty
-            if dollar_risk > max_allowed_dollar_risk:
-                capped_qty = max_allowed_dollar_risk / sl_distance
-                qty = round(math.floor(capped_qty / step_size) * step_size, decimals)
 
         # Ensure minQty
         if qty < min_qty:
             qty = min_qty
 
-        # Critical minNotional check: may need to bump qty upward
         actual_notional = qty * price
         min_notional_breached = actual_notional < min_notional
         notional_bump_rejected = False
 
         if min_notional_breached:
-            # Calculate what qty would be needed to satisfy minNotional
-            min_notional_qty = round(math.ceil(min_notional / price / step_size) * step_size, decimals)
-            min_notional_dollar_risk = sl_distance * min_notional_qty if sl_distance > 0 else 0.0
+            # Need to satisfy minNotional (Binance requirement)
+            min_notional_qty = round(math.ceil(min_notional / max(1.0, price) / step_size) * step_size, decimals)
+            min_notional_dollar_risk = effective_sl_dist * min_notional_qty
 
-            if sl_distance > 0 and min_notional_dollar_risk > max_allowed_dollar_risk:
-                # REJECT: bumping to minNotional would silently blow our dollar risk cap
+            # Only reject if bumping to minNotional exceeds 2x the 1% risk budget
+            if min_notional_dollar_risk > target_dollar_risk * 2.0:
                 notional_bump_rejected = True
-                # Keep qty at the risk-capped level anyway for logging purposes
             else:
-                # Safe to bump
                 qty = min_notional_qty
                 actual_notional = qty * price
 
         actual_margin = actual_notional / leverage
+        actual_dollar_risk = effective_sl_dist * qty
 
-        # Liquidation safety estimate (approximate for 100x isolated)
-        # Actual liq price is read from Binance after position opens
-        est_liq_pct = 1.0 / leverage - 0.005  # ~0.0050 at 100x after MMR
-        sl_pct = (sl_distance / price) if price > 0 else 0.0
-        # SL must be at least 20% inside estimated liquidation distance
-        is_sl_safe_from_liq = (sl_pct > 0) and (sl_pct <= est_liq_pct * 0.80)
-
-        actual_dollar_risk = sl_distance * qty if sl_distance > 0 else 0.0
+        # Liquidation safety estimate
+        est_liq_pct = (1.0 / leverage) - 0.005
+        sl_pct = (effective_sl_dist / price) if price > 0 else 0.0
+        is_sl_safe_from_liq = (sl_pct > 0) and (sl_pct <= est_liq_pct * 0.85)
 
         return {
             'quantity': qty,
@@ -284,10 +247,10 @@ class RiskManager:
             'margin': round(actual_margin, 4),
             'leverage': leverage,
             'tier': tier_info['tier'],
-            'base_margin': tier_info['base_margin'],
-            'target_margin': tier_info['targetMargin'],
-            'risk_mult': round(risk_mult, 2),
-            'max_dollar_risk': round(max_allowed_dollar_risk, 4),
+            'base_margin': round(actual_margin, 4),
+            'target_margin': round(actual_margin, 4),
+            'risk_mult': tier_info['combined_mult'],
+            'max_dollar_risk': round(target_dollar_risk, 4),
             'actual_dollar_risk': round(actual_dollar_risk, 4),
             'is_sl_safe_from_liq': is_sl_safe_from_liq,
             'min_notional_breached': min_notional_breached,

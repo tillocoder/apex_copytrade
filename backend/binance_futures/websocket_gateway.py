@@ -79,9 +79,9 @@ class BinanceFuturesWebSocketGateway:
 
     async def start_market_stream(self):
         """
-        Background loop streaming real-time bookTicker, kline_1m, and markPrice from Binance.
+        Background loop streaming real-time bookTicker, kline_1m, kline_5m, and markPrice from Binance.
         """
-        stream_url = f"{DEFAULT_CONFIG.ws_base_url}?streams=ethusdt@kline_1m/ethusdt@markPrice@1s/ethusdt@ticker"
+        stream_url = f"{DEFAULT_CONFIG.ws_base_url}?streams=ethusdt@kline_1m/ethusdt@kline_5m/ethusdt@markPrice@1s/ethusdt@ticker"
         backoff = 1.0
 
         while self.is_running:
@@ -125,16 +125,37 @@ class BinanceFuturesWebSocketGateway:
                                 mark=float(data.get("p", 0)),
                                 funding_rate=float(data.get("r", 0))
                             )
-                            # Evaluate active position for Paper mode TP1 / TP2 / BE / SL hit
+                            # Evaluate active position for Paper mode TP / SL hit
                             if DEFAULT_CONFIG.mode == "PAPER":
                                 closed_trade = self.paper.update_price_tick()
                                 if closed_trade:
                                     self.risk.record_trade_completion(closed_trade["pnl"])
 
-                        # 3. 1m Kline stream
+                        # 3. 5m Kline stream (Primary M5 Execution Engine)
+                        elif "@kline_5m" in stream_name:
+                            k = data.get("k", {})
+                            self.md.update_kline_stream(k, interval="5m")
+
+                            has_open_pos = bool(self.paper.current_position) if DEFAULT_CONFIG.mode == "PAPER" else bool(self.live_position_cache)
+                            risk_check = self.risk.check_preflight_risk(
+                                has_open_position=has_open_pos,
+                                is_live_mode=DEFAULT_CONFIG.live_enabled
+                            )
+
+                            signal_res = self.strategy.evaluate_setup(risk_check)
+                            self.latest_signal_cache = signal_res
+
+                            # Execute strictly on confirmed completed M5 candle flip
+                            if k.get("x", False) and DEFAULT_CONFIG.is_running and signal_res.get("final_signal") in ("LONG", "SHORT"):
+                                if risk_check.get("can_trade", False) and not has_open_pos:
+                                    exec_res = await self.executor.execute_signal(signal_res, DEFAULT_CONFIG.live_enabled)
+                                    print(f"🎯 [AUTO_EXECUTION M5] {signal_res.get('final_signal')} -> Status: {exec_res.get('status')}")
+                                    log_system_event("INFO", f"🎯 [AUTO_EXECUTION M5] {signal_res.get('final_signal')} -> {exec_res}")
+
+                        # 4. 1m Kline stream
                         elif "@kline_1m" in stream_name:
                             k = data.get("k", {})
-                            self.md.update_kline_stream(k)
+                            self.md.update_kline_stream(k, interval="1m")
                             
                             # Determine open position status
                             has_open_pos = bool(self.paper.current_position) if DEFAULT_CONFIG.mode == "PAPER" else bool(self.live_position_cache)

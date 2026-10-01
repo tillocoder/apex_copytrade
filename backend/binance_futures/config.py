@@ -35,86 +35,82 @@ class BinanceFuturesConfig:
     quote_asset: str = "USDT"
     
     # Trading Defaults
-    timeframe: str = "1m"                 # M1 Timeframe
-    default_leverage: int = 100           # 100x Leverage
-    default_margin_usd: float = 0.50      # $0.50 initial target margin
-    approx_notional_usd: float = 50.00    # ~$50 = $0.50 * 100
+    timeframe: str = "5m"                 # M5 Timeframe (5-minute execution)
+    default_leverage: int = 50            # 50x Leverage
+    default_margin_usd: float = 25.00     # Baseline margin
+    approx_notional_usd: float = 1250.00  # Target notional
     max_open_positions: int = 1           # Exactly 1 position at a time
     one_way_mode: bool = True             # One-way mode (no dual side)
     allow_long: bool = True               # LONG enabled
     allow_short: bool = True              # SHORT enabled
     
-    # Capital Growth & Compounding ($2.50 Starting Account)
-    initial_balance_usd: float = 2.50     # $2.50 starting balance
-    max_risk_pct_balance: float = 0.12    # Max 12% account risk per trade
+    # Capital Growth & Risk Management (1% Risk Model)
+    initial_balance_usd: float = 1000.00  # $1,000 Starting Account for Paper Test
+    max_risk_pct_balance: float = 0.01    # Strictly 1.0% account risk per trade
     
-    # Session Profit & Loss Targets
-    session_profit_target_usd: float = 2.00   # SESSION_PROFIT_TARGET = $2.00 (not per-trade TP)
-    max_session_loss_usd: float = 1.70        # -$1.50 max session loss limit
-    max_daily_loss_usd: float = 1.70
-    max_daily_loss_pct: float = 0.15
-    max_session_loss_pct: float = 0.15          # -$2.50 max daily loss limit
+    # Session Profit & Loss Targets (Calibrated to 1% Risk = $10/R)
+    session_profit_target_usd: float = 200.00 # Session profit target (+$200 = 20R)
+    max_session_loss_usd: float = 50.00       # -$50 (5R / 5% balance limit)
+    max_daily_loss_usd: float = 50.00         # -$50 daily loss limit
+    max_daily_loss_pct: float = 0.05          # 5% max daily drawdown
+    max_session_loss_pct: float = 0.05        # 5% max session drawdown
     max_consecutive_losses: int = 3           # 3 losses trigger extended cooldown
-    cooldown_normal_sec: int = 60             # 60s cooldown after trade
-    cooldown_loss_sec: int = 180              # 180s cooldown after loss
-    max_trades_per_session: int = 30          # Maximum trades per active session
+    cooldown_normal_sec: int = 300            # 300s (1 M5 bar) cooldown after normal trade
+    cooldown_loss_sec: int = 600              # 600s (2 M5 bars) cooldown after loss
+    max_trades_per_session: int = 3           # Max 3 trades per 24h day (institutional discipline)
+    cooldown_bars: int = 2                    # 2 M5 bars cooldown
+    
+    # M5 SuperTrend + H1 EMA200 Strategy Core Parameters
+    strategy_name: str = "M5_SUPERTREND_H1_EMA200"
+    st_period: int = 10                       # SuperTrend ATR Period (10)
+    st_multiplier: float = 2.5                # SuperTrend Multiplier (2.5)
+    h1_ema_period: int = 200                  # Macro Trend Filter: H1 EMA 200
+    volume_ratio_min: float = 1.3             # Volume >= 1.3x 10-bar average
+    session_start_hour_utc: int = 7           # 07:00 UTC (12:00 Tashkent)
+    session_end_hour_utc: int = 21            # 21:00 UTC (02:00 Tashkent)
     
     # Professional SL / TP Model
-    exit_model: str = "G"                     # Model G: Dynamic Volatility Target (v3.3 Production)
-    tp1_r: float = 2.50                       # Dynamic TP baseline R (2.5x ATR dynamic multiplier)
-    tp1_close_pct: float = 1.00              # Single full expansion target
-    tp2_r: float = 2.50                       # Secondary target
-    be_fee_buffer_pct: float = 0.0005        # 0.05% buffer over entry for Breakeven
-    min_sl_pct: float = 0.0020               # Min SL 0.20%
-    max_sl_pct: float = 0.0085               # Max SL 0.85%
-    be_mode: str = "NO_BE"                   # v3.3: Eliminate premature breakeven noise
-    tp_vol_multiplier: float = 2.5           # 2.5x dynamic ATR multiplier
+    exit_model: str = "2R_FULL_TARGET"        # Audited 2.0R Target Model
+    tp1_r: float = 2.00                       # Take Profit: 2.0R
+    tp2_r: float = 2.00                       # Full exit at 2.0R
+    tp1_close_pct: float = 1.00               # 100% exit at 2.0R target
+    min_sl_dist: float = 10.0                 # Minimum $10.00 SL distance
+    sl_buffer_atr: float = 0.20               # SuperTrend line + 0.20 ATR buffer
+    min_r_dist: float = 10.0                  # Minimum $10.00 R distance
+    be_fee_buffer_pct: float = 0.0005         # 0.05% buffer over entry for Breakeven
+    be_mode: str = "NO_BE"                    # Preserve structural stops, avoid premature BE scratches
     
-    # Strategy Scoring & Entry Quality (v3.3 Production Model)
-    min_score_threshold: int = 72            # Quality Score >= 72/100 required (calibrated for 24h institutional confluence)
-    anti_chase_max_body_atr: float = 2.5     # Skip entry if signal candle body > 2.5x ATR
-    location_filter_enabled: bool = True     # Penalize range midpoint chop
-    fee_risk_gate_ratio: float = 0.25        # Reject if fee burden > 25% of R
-    min_r_dist: float = 4.0                  # Minimum $4.00 stop distance to filter M1 micro-noise
-    
-    # M15 Macro Regime & Volatility Compression Gates
-    m15_adx_filter_enabled: bool = True
-    m15_adx_threshold: float = 22.0          # Block breakouts when M15 ADX < 22
-    m15_vol_compression_gate: bool = True
-    m15_vol_compression_ratio: float = 0.85  # Reject when M15 ATR < 85% of EMA50
-    
-    # Fee Elimination & Execution Model
-    execution_mode: str = "MAKER_ENTRY_HYBRID"
+    # Execution & Fee Model (Post-Only Maker)
+    execution_mode: str = "MAKER_POST_ONLY"
     post_only_entry: bool = True
-    entry_fee_rate: float = 0.0002           # 0.02% Maker Post-Only
-    tp_fee_rate: float = 0.0002              # 0.02% Maker Limit TP
-    sl_fee_rate: float = 0.0005              # 0.05% Taker Stop Market
+    entry_fee_rate: float = 0.0002            # 0.02% Maker Post-Only
+    tp_fee_rate: float = 0.0002               # 0.02% Maker Limit TP
+    sl_fee_rate: float = 0.0005               # 0.05% Taker Stop Market
     
     # Safety Filters
-    max_allowed_spread_usd: float = 0.15     # Spread <= $0.15 USDT
-    stale_data_timeout_sec: float = 15.0     # Ticks older than 15s rejected (prevents network jitter drops)
-    emergency_sl_timeout_sec: float = 2.0    # If SL not placed in 2s, emergency market close!
-    min_atr_m1: float = 0.25                 # Anti-chop minimum ATR (0.25 USDT)
-    max_atr_multiplier: float = 3.5          # Abnormal volatility spike filter
+    max_allowed_spread_usd: float = 0.25      # Spread <= $0.25 USDT
+    stale_data_timeout_sec: float = 30.0      # Data timeout
+    emergency_sl_timeout_sec: float = 5.0     # Emergency SL placement timeout
+    min_atr_m5: float = 1.50                  # Minimum M5 ATR
     
-    # Binance Endpoints (Updated to Official 2026 /market Architecture)
+    # Binance Endpoints (Official Futures API)
     rest_base_url: str = "https://fapi.binance.com"
     ws_base_url: str = "wss://fstream.binance.com/market/stream"
     
-    # Operational Modes: Strictly PAPER / NO-ENTRY until validation gates pass
+    # Operational Modes: Strictly PAPER
     mode: str = "PAPER"
     is_running: bool = True
-    live_enabled: bool = False               # MUST REMAIN FALSE: Paper mode until final approval
-    shadow_mode: bool = True                 # Realtime shadow calculation active
+    live_enabled: bool = False                # Strictly False for paper test
+    shadow_mode: bool = True                  # Realtime shadow calculation active
     
     # Exchange Filters (Updated dynamically from /fapi/v1/exchangeInfo)
     tick_size: float = 0.01
     step_size: float = 0.001
     min_qty: float = 0.001
-    min_notional: float = 20.0                # Binance minNotional for ETHUSDT is $20
+    min_notional: float = 20.0                 # Binance minNotional for ETHUSDT is $20
     
-    # Active Trading Sessions (24-Hour Continuous Testing Across All Major Liquidity Windows)
-    session_mode: str = "ALL_SESSIONS_24H"
+    # Active Trading Sessions (07:00 - 21:00 UTC Active Liquidity Window)
+    session_mode: str = "INSTITUTIONAL_WINDOW_07_21"
     enabled_sessions: Dict[str, bool] = field(default_factory=lambda: {
         "ASIA": True,
         "LONDON": True,

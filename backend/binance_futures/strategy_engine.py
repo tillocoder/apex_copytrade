@@ -7,44 +7,35 @@ from .config import DEFAULT_CONFIG
 from .market_data import MarketDataManager
 
 
-class ETHM1ScalpingStrategy:
+class ETHM5SuperTrendStrategy:
     """
-    APEX QUANT v3.1 — M1 High-Frequency Strategy Engine
+    APEX QUANT v3.4 Institutional M5 SuperTrend Engine
     ===================================================
-    Architecture:
-    1. Timeframe Decoupling:
-       - M15 = Macro Context Only (Bias / additive score, NOT a mandatory hard filter)
-       - M5  = Setup Context (Trend / Pullback bonus confirmation, NOT mandatory)
-       - M1  = Primary Execution Timeframe (Evaluates every completed M1 candle)
-    2. Five Independent M1 Setup Modules:
-       - Module A: Liquidity Sweep + Reclaim (Base: 45 pts)
-       - Module B: M1 Breakout + Retest (Base: 40 pts)
-       - Module C: EMA Pullback (EMA9/21/50) (Base: 35 pts)
-       - Module D: Momentum Impulse (Volume + ATR expansion) (Base: 35 pts)
-       - Module E: M5 Structure + M1 Hybrid Trigger (Base: 40 pts)
-    3. Modular Additive Scoring (0 to 100):
-       - Base Module Score (35-45 pts)
-       - M1 EMA Alignment (+15 pts)
-       - M5 Context Alignment (+15 pts)
-       - M15 Macro Context (+15 pts aligned, -10 pts counter-trend)
-       - Volume / Momentum Expansion (+10 pts)
-       - Configurable Threshold: >= 65 pts default
-    4. Structural Risk & Multi-Model Exits:
-       - Structural Stop Loss (recent swing low/high +/- 0.20x ATR buffer)
-       - Clamped between min_sl_pct (0.20%) and max_sl_pct (0.85%)
-       - 2-Stage Exits (TP1 = 1.25R, TP2 = 2.50R) with Breakeven fee buffer (Model B)
-       - Fee-Aware Trade Filter: roundtrip friction must not exceed 30% of R target
-       - Anti-Chop Floor (ATR >= 0.25 USDT) & Anti-Chase Guard (body <= 2.5x ATR)
+    Audited Parameters:
+    - Primary Execution Timeframe: M5 (5-minute completed bars)
+    - Core Engine: SuperTrend (Period: 10, Multiplier: 2.5)
+    - Macro Trend Gate: H1 EMA 200 (Long only if H1 Close > EMA200; Short only if H1 Close < EMA200)
+    - Volume Filter: M5 Volume >= 1.30x (10-bar prior average)
+    - Trading Window: 07:00 - 21:00 UTC (Institutional London & NY liquidity)
+    - Stop Loss: SuperTrend Line + 0.20 ATR buffer (Minimum $10.00 distance)
+    - Take Profit: 2.0R (Full exit at 2.0x Risk distance)
+    - Risk Model: Strictly 1.0% account equity per trade
     """
 
     def __init__(self, market_data: MarketDataManager):
         self.md = market_data
+        self.last_evaluated_candle_time: int = 0
+        self.last_triggered_flip_time: int = 0
 
     def evaluate_setup(self, risk_status: Dict[str, Any]) -> Dict[str, Any]:
         """
         Evaluates current multi-timeframe state and returns actionable signal or precise rejection reason.
         """
-        # Hard Filter 1: Risk Manager Pre-Flight Checks
+        current_price = self.md.get_current_price()
+        now_utc = datetime.now(timezone.utc)
+        current_hour = now_utc.hour
+
+        # 1. Hard Filter: Risk Manager Pre-Flight Checks
         if not risk_status.get("can_trade", False):
             return self._build_result(
                 "NONE", 0, "Risk limits active",
@@ -52,16 +43,17 @@ class ETHM1ScalpingStrategy:
                 {"risk_guard": {"pass": False, "desc": risk_status.get("reason", "Risk limits active")}}
             )
 
-        # Hard Filter 2: Session Filter (Session window check)
+        # 2. Hard Filter: Institutional Trading Window (07:00 - 21:00 UTC)
         sess_info = self.md.get_current_session()
-        if not sess_info.get("is_allowed", False):
+        is_window_active = (DEFAULT_CONFIG.session_start_hour_utc <= current_hour < DEFAULT_CONFIG.session_end_hour_utc)
+        if not is_window_active:
             return self._build_result(
                 "NONE", 0, "Out of session",
-                f"Session Filter: Current session ({sess_info.get('session')}) disabled.",
-                {"session": {"pass": False, "desc": f"Session {sess_info.get('session')} not allowed"}}
+                f"Trading Window Closed: Active 07:00-21:00 UTC (Current: {sess_info.get('utc_time', 'N/A')}).",
+                {"session": {"pass": False, "desc": f"Hour {current_hour} UTC outside [7, 21)"}}
             )
 
-        # Hard Filter 3: Spread Check
+        # 3. Hard Filter: Spread Check
         spread_info = self.md.get_spread()
         if not spread_info.get("acceptable", True):
             return self._build_result(
@@ -70,332 +62,231 @@ class ETHM1ScalpingStrategy:
                 {"spread": {"pass": False, "desc": f"Spread {spread_info.get('spread_usd', 0):.2f} USDT"}}
             )
 
-        # Hard Filter 4: Minimum Candle Buffers
-        if len(self.md.klines_m1) < 25:
+        # 4. Hard Filter: Minimum Candle Buffers
+        m5_candles = self.md.klines_m5
+        if len(m5_candles) < DEFAULT_CONFIG.st_period + 2:
             return self._build_result(
                 "NONE", 0, "Buffering candles",
-                f"Buffering M1 candles: {len(self.md.klines_m1)}/25",
-                {"buffer": {"pass": False, "desc": "Buffering candles"}}
+                f"Buffering M5 candles: {len(m5_candles)}/{DEFAULT_CONFIG.st_period + 2}",
+                {"buffer": {"pass": False, "desc": f"Need {DEFAULT_CONFIG.st_period + 2} M5 candles"}}
             )
 
-        m1_candles = self.md.klines_m1
-        m5_candles = self.md.klines_m5
-        m15_candles = self.md.klines_m15
+        h1_candles = self.md.klines_h1
+        if len(h1_candles) < 20:
+            return self._build_result(
+                "NONE", 0, "Buffering H1 candles",
+                f"Buffering H1 candles: {len(h1_candles)}/20",
+                {"buffer": {"pass": False, "desc": "Buffering H1 candles"}}
+            )
 
-        current_price = self.md.get_current_price()
-        atr_m1 = self.md.get_atr_m1() or 1.20
-
-        # Hard Filter 5: Anti-Chop Floor (Dynamic Volatility Floor)
-        if atr_m1 < DEFAULT_CONFIG.min_atr_m1:
+        # 5. Volatility Floor: Minimum M5 ATR
+        atr_m5 = self.md.get_atr_m5() or 2.50
+        if atr_m5 < DEFAULT_CONFIG.min_atr_m5:
             return self._build_result(
                 "NONE", 15, "Low volatility dead zone",
-                f"Anti-Chop: ATR M1 ({atr_m1:.2f}) < {DEFAULT_CONFIG.min_atr_m1:.2f} threshold",
-                {"anti_chop": {"pass": False, "desc": f"ATR ({atr_m1:.2f}) < {DEFAULT_CONFIG.min_atr_m1:.2f}"}}
-            )
-
-        # Hard Filter 6: Anti-Chase Filter (Blow-off candle guard)
-        curr_c = m1_candles[-1]
-        curr_body = abs(curr_c["close"] - curr_c["open"])
-        if curr_body > DEFAULT_CONFIG.anti_chase_max_body_atr * atr_m1:
-            return self._build_result(
-                "NONE", 30, "Candle overextended",
-                f"Anti-Chase: M1 candle body (${curr_body:.2f}) > {DEFAULT_CONFIG.anti_chase_max_body_atr}x ATR. Skip chasing.",
-                {"anti_chase": {"pass": False, "desc": "Candle overextended"}}
+                f"Anti-Chop: ATR M5 (${atr_m5:.2f}) < ${DEFAULT_CONFIG.min_atr_m5:.2f} threshold",
+                {"anti_chop": {"pass": False, "desc": f"ATR M5 (${atr_m5:.2f}) < ${DEFAULT_CONFIG.min_atr_m5:.2f}"}}
             )
 
         # ----------------------------------------------------------------------
-        # MULTI-TIMEFRAME CONTEXT (INFORMATIONAL / BIAS — NOT MANDATORY VETO)
+        # MACRO FILTER: H1 EMA 200
         # ----------------------------------------------------------------------
-        # M15 Macro Context
-        m15_context = "NEUTRAL"
-        m15_score_adj = 0
-        if len(m15_candles) >= 15:
-            m15_closes = [c["close"] for c in m15_candles]
-            m15_e50 = self.md.calculate_ema(m15_closes, min(50, len(m15_closes)))
-            if m15_e50:
-                if current_price > m15_e50[-1]:
-                    m15_context = "BULLISH"
-                elif current_price < m15_e50[-1]:
-                    m15_context = "BEARISH"
-
-        # M5 Setup Context
-        m5_setup = "NONE"
-        if len(m5_candles) >= 15:
-            m5_closes = [c["close"] for c in m5_candles]
-            m5_e21 = self.md.calculate_ema(m5_closes, min(21, len(m5_closes)))
-            m5_e50 = self.md.calculate_ema(m5_closes, min(50, len(m5_closes)))
-            if m5_e21 and m5_e50:
-                if m5_e21[-1] > m5_e50[-1]:
-                    m5_setup = "M5_BULL_TREND"
-                elif m5_e21[-1] < m5_e50[-1]:
-                    m5_setup = "M5_BEAR_TREND"
-
-        # M1 Indicators
-        m1_closes = [c["close"] for c in m1_candles]
-        m1_e9 = self.md.calculate_ema(m1_closes, 9)
-        m1_e21 = self.md.calculate_ema(m1_closes, 21)
-        m1_e50 = self.md.calculate_ema(m1_closes, min(50, len(m1_closes)))
-
-        if not m1_e9 or not m1_e21:
-            return self._build_result("NONE", 0, "Buffering M1 EMAs", "Insufficient M1 history", {})
-
-        # ----------------------------------------------------------------------
-        # EVALUATE 5 INDEPENDENT M1 SETUP MODULES
-        # ----------------------------------------------------------------------
-        signal_candidate = None
-        module_name = ""
-        base_score = 0
-        module_desc = ""
-
-        recent_m1_low = min(c["low"] for c in m1_candles[-12:-1])
-        recent_m1_high = max(c["high"] for c in m1_candles[-12:-1])
-
-        # --- MODULE A: LIQUIDITY SWEEP & RECLAIM ---
-        swept_low = any(c["low"] <= recent_m1_low for c in m1_candles[-2:])
-        if swept_low and current_price > recent_m1_low and curr_c["close"] >= curr_c["open"]:
-            signal_candidate = "LONG"
-            module_name = "MODULE_A_SWEEP_RECLAIM"
-            base_score = 45
-            module_desc = f"M1 Liquidity Sweep of ${recent_m1_low:.2f} & Bullish Reclaim"
+        h1_closes = [c["close"] for c in h1_candles]
+        h1_period = min(DEFAULT_CONFIG.h1_ema_period, len(h1_closes))
+        h1_ema_series = self.md.calculate_ema(h1_closes, h1_period)
+        
+        if not h1_ema_series:
+            h1_trend = "NEUTRAL"
+            h1_last_ema = current_price
         else:
-            swept_high = any(c["high"] >= recent_m1_high for c in m1_candles[-2:])
-            if swept_high and current_price < recent_m1_high and curr_c["close"] <= curr_c["open"]:
-                signal_candidate = "SHORT"
-                module_name = "MODULE_A_SWEEP_RECLAIM"
-                base_score = 45
-                module_desc = f"M1 Liquidity Sweep of ${recent_m1_high:.2f} & Bearish Reclaim"
-
-        # --- MODULE B: M1 BREAKOUT & RETEST ---
-        if not signal_candidate and len(m1_candles) >= 16:
-            prior_high = max(c["high"] for c in m1_candles[-15:-2])
-            prior_low = min(c["low"] for c in m1_candles[-15:-2])
-            range_width = prior_high - prior_low
-            if range_width <= 2.2 * atr_m1:
-                if current_price > prior_high and curr_c["close"] > curr_c["open"]:
-                    signal_candidate = "LONG"
-                    module_name = "MODULE_B_BREAKOUT"
-                    base_score = 40
-                    module_desc = f"M1 Consolidation Breakout Above ${prior_high:.2f}"
-                elif current_price < prior_low and curr_c["close"] < curr_c["open"]:
-                    signal_candidate = "SHORT"
-                    module_name = "MODULE_B_BREAKOUT"
-                    base_score = 40
-                    module_desc = f"M1 Consolidation Breakdown Below ${prior_low:.2f}"
-
-        # --- MODULE C: EMA PULLBACK ---
-        if not signal_candidate:
-            e9 = m1_e9[-1]
-            e21 = m1_e21[-1]
-            # LONG: EMA9 > EMA21, price tests EMA9/EMA21 zone and holds
-            if e9 > e21 and curr_c["low"] <= e9 * 1.0008 and current_price >= e21 * 0.9995:
-                if curr_c["close"] >= curr_c["open"]:
-                    signal_candidate = "LONG"
-                    module_name = "MODULE_C_EMA_PULLBACK"
-                    base_score = 35
-                    module_desc = "M1 EMA9/EMA21 Dynamic Pullback Support"
-            # SHORT: EMA9 < EMA21, price tests EMA9/EMA21 zone and rejects
-            elif e9 < e21 and curr_c["high"] >= e9 * 0.9992 and current_price <= e21 * 1.0005:
-                if curr_c["close"] <= curr_c["open"]:
-                    signal_candidate = "SHORT"
-                    module_name = "MODULE_C_EMA_PULLBACK"
-                    base_score = 35
-                    module_desc = "M1 EMA9/EMA21 Dynamic Pullback Resistance"
-
-        # --- MODULE D: MOMENTUM IMPULSE ---
-        if not signal_candidate and len(m1_candles) >= 11:
-            vol_avg = sum(c["volume"] for c in m1_candles[-10:-1]) / 9.0
-            if curr_c["volume"] >= 1.25 * vol_avg and curr_body >= 0.7 * atr_m1:
-                if curr_c["close"] > curr_c["open"] and m1_e9[-1] > m1_e21[-1]:
-                    signal_candidate = "LONG"
-                    module_name = "MODULE_D_MOMENTUM_IMPULSE"
-                    base_score = 35
-                    module_desc = "M1 High-Volume Bullish Momentum Impulse"
-                elif curr_c["close"] < curr_c["open"] and m1_e9[-1] < m1_e21[-1]:
-                    signal_candidate = "SHORT"
-                    module_name = "MODULE_D_MOMENTUM_IMPULSE"
-                    base_score = 35
-                    module_desc = "M1 High-Volume Bearish Momentum Impulse"
-
-        # --- MODULE E: M5 STRUCTURE + M1 TRIGGER ---
-        if not signal_candidate and m5_setup != "NONE":
-            if m5_setup == "M5_BULL_TREND" and current_price > m1_e21[-1] and curr_c["close"] > curr_c["open"]:
-                signal_candidate = "LONG"
-                module_name = "MODULE_E_M5_M1_HYBRID"
-                base_score = 40
-                module_desc = "M5 Bull Trend + M1 Confirmation Hybrid"
-            elif m5_setup == "M5_BEAR_TREND" and current_price < m1_e21[-1] and curr_c["close"] < curr_c["open"]:
-                signal_candidate = "SHORT"
-                module_name = "MODULE_E_M5_M1_HYBRID"
-                base_score = 40
-                module_desc = "M5 Bear Trend + M1 Confirmation Hybrid"
-
-        if not signal_candidate:
-            return self._build_result(
-                "NONE", 25, "Scanning for M1 setup...",
-                "Waiting for valid M1 setup: Sweep+Reclaim, Breakout, EMA Pullback, or Momentum",
-                {
-                    "m15_context": {"pass": True, "desc": f"M15 Context: {m15_context}"},
-                    "m5_setup": {"pass": m5_setup != "NONE", "desc": f"M5 Setup: {m5_setup}"},
-                    "m1_trigger": {"pass": False, "desc": "No active M1 module trigger"}
-                }
-            )
-
-        # ----------------------------------------------------------------------
-        # MODULAR ADDITIVE SCORING SYSTEM (0-100)
-        # ----------------------------------------------------------------------
-        total_score = base_score
-        matrix: Dict[str, Any] = {
-            "module": {"pass": True, "desc": f"{module_name} (+{base_score} pts)"}
-        }
-
-        # M1 EMA Alignment (+15)
-        m1_aligned = False
-        if signal_candidate == "LONG" and m1_e9[-1] > m1_e21[-1]:
-            total_score += 15
-            m1_aligned = True
-        elif signal_candidate == "SHORT" and m1_e9[-1] < m1_e21[-1]:
-            total_score += 15
-            m1_aligned = True
-        matrix["m1_alignment"] = {"pass": m1_aligned, "desc": "M1 EMA9/EMA21 Aligned (+15 pts)" if m1_aligned else "M1 EMA Misaligned"}
-
-        # M5 Context Alignment (+15)
-        m5_aligned = False
-        if signal_candidate == "LONG" and m5_setup == "M5_BULL_TREND":
-            total_score += 15
-            m5_aligned = True
-        elif signal_candidate == "SHORT" and m5_setup == "M5_BEAR_TREND":
-            total_score += 15
-            m5_aligned = True
-        matrix["m5_context"] = {"pass": m5_aligned, "desc": f"M5 Trend Aligned: {m5_setup} (+15 pts)" if m5_aligned else "M5 Neutral/Misaligned"}
-
-        # M15 Macro Context (+15 aligned, -10 opposed)
-        if signal_candidate == "LONG":
-            if m15_context == "BULLISH":
-                total_score += 15
-                matrix["m15_macro"] = {"pass": True, "desc": "M15 Bullish Context (+15 pts)"}
-            elif m15_context == "BEARISH":
-                total_score -= 10
-                matrix["m15_macro"] = {"pass": False, "desc": "M15 Counter-Trend Penalty (-10 pts)"}
+            h1_last_ema = h1_ema_series[-1]
+            last_h1_close = h1_closes[-1]
+            if last_h1_close > h1_last_ema:
+                h1_trend = "BULLISH"
+            elif last_h1_close < h1_last_ema:
+                h1_trend = "BEARISH"
             else:
-                matrix["m15_macro"] = {"pass": True, "desc": "M15 Neutral (0 pts)"}
-        else:
-            if m15_context == "BEARISH":
-                total_score += 15
-                matrix["m15_macro"] = {"pass": True, "desc": "M15 Bearish Context (+15 pts)"}
-            elif m15_context == "BULLISH":
-                total_score -= 10
-                matrix["m15_macro"] = {"pass": False, "desc": "M15 Counter-Trend Penalty (-10 pts)"}
-            else:
-                matrix["m15_macro"] = {"pass": True, "desc": "M15 Neutral (0 pts)"}
-
-        # Location Quality Filter (Penalize Range Midpoint Chop)
-        if getattr(DEFAULT_CONFIG, "location_filter_enabled", True) and len(m1_candles) >= 21:
-            loc_high = max(c["high"] for c in m1_candles[-20:-1])
-            loc_low = min(c["low"] for c in m1_candles[-20:-1])
-            range_span = max(0.50, loc_high - loc_low)
-            midpoint = (loc_high + loc_low) / 2.0
-            dist_from_mid = abs(current_price - midpoint) / range_span
-            if dist_from_mid < 0.15:
-                total_score -= 10
-                matrix["location"] = {"pass": False, "desc": "Trapped in Range Midpoint (-10 pts)"}
-            else:
-                total_score += 10
-                matrix["location"] = {"pass": True, "desc": "Structural Range Boundary (+10 pts)"}
-
-        # Volume / Momentum Bonus (+10)
-        recent_vols = [c["volume"] for c in m1_candles[-6:-1]]
-        vol_bonus = (curr_c["volume"] > sum(recent_vols) / max(1, len(recent_vols)))
-        if vol_bonus:
-            total_score += 10
-            matrix["volume"] = {"pass": True, "desc": "Volume Expansion (+10 pts)"}
-        else:
-            matrix["volume"] = {"pass": False, "desc": "Average Volume"}
-
-        total_score = max(0, min(100, total_score))
-        setup_class = "CLASS_A" if total_score >= 75 else ("CLASS_B" if total_score >= 65 else "CLASS_C")
-        matrix["setup_class"] = {"class": setup_class, "desc": f"Setup Classification: {setup_class}"}
-        matrix["score_gate"] = {
-            "pass": total_score >= DEFAULT_CONFIG.min_score_threshold,
-            "desc": f"Score {total_score}/100 ({setup_class} vs Threshold {DEFAULT_CONFIG.min_score_threshold})"
-        }
-
-        # Score Threshold Check
-        if total_score < DEFAULT_CONFIG.min_score_threshold:
-            return self._build_result(
-                "NONE", total_score, f"Score below threshold ({total_score}/100 - {setup_class})",
-                f"Confluence Score {total_score}/100 is below {DEFAULT_CONFIG.min_score_threshold} threshold",
-                matrix
-            )
+                h1_trend = "NEUTRAL"
 
         # ----------------------------------------------------------------------
-        # STOP LOSS & TARGET GEOMETRY
+        # PRIMARY ENGINE: M5 SUPERTREND (10, 2.5)
         # ----------------------------------------------------------------------
-        tp_mult = getattr(DEFAULT_CONFIG, "tp_vol_multiplier", 2.5)
-        if signal_candidate == "LONG":
-            raw_sl = recent_m1_low - 0.20 * atr_m1
-            min_sl = current_price * (1.0 - DEFAULT_CONFIG.min_sl_pct)
-            max_sl = current_price * (1.0 - DEFAULT_CONFIG.max_sl_pct)
-            sl_price = max(max_sl, min(raw_sl, min_sl))
-            r_dist = max(0.40, current_price - sl_price)
-
-            vol_mult = max(1.5, min(3.0, (atr_m1 / 1.0) * (tp_mult / 2.2)))
-            tp1_price = round(current_price + (vol_mult * r_dist), 2)
-            tp2_price = tp1_price
-            be_price = round(current_price * (1.0 + DEFAULT_CONFIG.be_fee_buffer_pct), 2) if getattr(DEFAULT_CONFIG, "be_mode", "NO_BE") != "NO_BE" else 0.0
-        else:
-            raw_sl = recent_m1_high + 0.20 * atr_m1
-            min_sl = current_price * (1.0 + DEFAULT_CONFIG.min_sl_pct)
-            max_sl = current_price * (1.0 + DEFAULT_CONFIG.max_sl_pct)
-            sl_price = min(max_sl, max(raw_sl, min_sl))
-            r_dist = max(0.40, sl_price - current_price)
-
-            vol_mult = max(1.5, min(3.0, (atr_m1 / 1.0) * (tp_mult / 2.2)))
-            tp1_price = round(current_price - (vol_mult * r_dist), 2)
-            tp2_price = tp1_price
-            be_price = round(current_price * (1.0 - DEFAULT_CONFIG.be_fee_buffer_pct), 2) if getattr(DEFAULT_CONFIG, "be_mode", "NO_BE") != "NO_BE" else 0.0
-
-        sl_price = round(sl_price, 2)
-
-        # ----------------------------------------------------------------------
-        # STRUCTURAL NOISE FLOOR PROTECTION (v3.3)
-        # ----------------------------------------------------------------------
-        min_r = getattr(DEFAULT_CONFIG, "min_r_dist", 4.0)
-        if r_dist < min_r:
-            return self._build_result(
-                "NONE", total_score, "Noise floor protection",
-                f"Noise Floor Protection: Stop distance (${r_dist:.2f}) < ${min_r:.2f} structural threshold",
-                matrix
-            )
-
-        # ----------------------------------------------------------------------
-        # MANDATORY FEE-AWARE TRADE FILTER
-        # ----------------------------------------------------------------------
-        friction_pct = 0.0005 + 0.0002 + (0.01 / current_price)
-        est_roundtrip_cost = current_price * friction_pct
-        gate_ratio = getattr(DEFAULT_CONFIG, "fee_risk_gate_ratio", 0.25)
-        if est_roundtrip_cost > gate_ratio * r_dist:
-            return self._build_result(
-                "NONE", total_score, "Fee burden excessive",
-                f"Fee Burden: Estimated roundtrip cost (${est_roundtrip_cost:.2f}) > {gate_ratio*100:.0f}% of risk R (${r_dist:.2f})",
-                matrix
-            )
-
-        reason_summary = f"{signal_candidate} {module_desc} ({setup_class} Score: {total_score}/100 | M15 {m15_context})"
-
-        return self._build_result(
-            signal_candidate,
-            total_score,
-            reason_summary,
-            f"Setup Qualified ({setup_class} Confluence {total_score}/100 >= {DEFAULT_CONFIG.min_score_threshold})",
-            matrix,
-            current_price,
-            sl_price,
-            tp1_price,
-            tp2_price,
-            be_price,
-            round(r_dist, 2),
-            module_name
+        st_vals, st_dirs = self.md.calculate_supertrend(
+            m5_candles,
+            period=DEFAULT_CONFIG.st_period,
+            multiplier=DEFAULT_CONFIG.st_multiplier
         )
+
+        curr_c = m5_candles[-1]
+        candle_close = curr_c["close"]
+        candle_time = curr_c["time"]
+        
+        curr_st_dir = st_dirs[-1]
+        prev_st_dir = st_dirs[-2]
+        curr_st_val = st_vals[-1]
+
+        # Volume Expansion Ratio (Current completed M5 volume / 10-bar average)
+        if len(m5_candles) >= 12:
+            prior_vols = [c["volume"] for c in m5_candles[-11:-1]]
+            vol_avg_10 = sum(prior_vols) / len(prior_vols)
+        else:
+            vol_avg_10 = curr_c["volume"]
+        vol_ratio = curr_c["volume"] / max(1.0, vol_avg_10)
+
+        # Telemetry Matrix
+        matrix = {
+            "timeframe": "5m",
+            "supertrend": {
+                "period": DEFAULT_CONFIG.st_period,
+                "multiplier": DEFAULT_CONFIG.st_multiplier,
+                "value": round(curr_st_val, 2),
+                "direction": "BULLISH" if curr_st_dir == 1 else "BEARISH",
+                "prev_direction": "BULLISH" if prev_st_dir == 1 else "BEARISH",
+                "flip": curr_st_dir != prev_st_dir
+            },
+            "macro_h1": {
+                "ema_period": h1_period,
+                "ema_value": round(h1_last_ema, 2),
+                "trend": h1_trend,
+                "aligned": (curr_st_dir == 1 and h1_trend == "BULLISH") or (curr_st_dir == -1 and h1_trend == "BEARISH")
+            },
+            "volume": {
+                "current_bar": round(curr_c["volume"], 2),
+                "avg_10": round(vol_avg_10, 2),
+                "ratio": round(vol_ratio, 2),
+                "passed": vol_ratio >= DEFAULT_CONFIG.volume_ratio_min
+            },
+            "atr_m5": round(atr_m5, 2),
+            "session": sess_info.get("session", "UNKNOWN"),
+            "window_utc": f"{DEFAULT_CONFIG.session_start_hour_utc:02d}:00-{DEFAULT_CONFIG.session_end_hour_utc:02d}:00 UTC",
+            "risk_pct": f"{DEFAULT_CONFIG.max_risk_pct_balance * 100:.1f}%"
+        }
+
+        # ----------------------------------------------------------------------
+        # DETECT SUPERTREND FLIP SETUP
+        # ----------------------------------------------------------------------
+        is_bull_flip = (prev_st_dir == -1 and curr_st_dir == 1)
+        is_bear_flip = (prev_st_dir == 1 and curr_st_dir == -1)
+
+        if not (is_bull_flip or is_bear_flip):
+            current_mode = "BULLISH" if curr_st_dir == 1 else "BEARISH"
+            return self._build_result(
+                "NONE", 50,
+                f"M5 SuperTrend {current_mode} (Awaiting Flip)",
+                f"Awaiting M5 SuperTrend Flip (Current: {current_mode}, H1: {h1_trend}, Vol: {vol_ratio:.2f}x)",
+                matrix
+            )
+
+        # Prevent duplicate entries on the same completed M5 bar
+        if candle_time == self.last_triggered_flip_time:
+            return self._build_result(
+                "NONE", 50,
+                "Already processed candle",
+                f"Flip on M5 candle {candle_time} already processed.",
+                matrix
+            )
+
+        # ----------------------------------------------------------------------
+        # LONG SETUP QUALIFICATION
+        # ----------------------------------------------------------------------
+        if is_bull_flip:
+            # Check 1: Macro Trend (H1 Close > EMA 200)
+            if h1_trend != "BULLISH":
+                return self._build_result(
+                    "NONE", 40, "Macro Filter Veto",
+                    f"H1 Macro Filter Veto: H1 trend is {h1_trend} (Price ${candle_close:.2f} vs H1 EMA{h1_period} ${h1_last_ema:.2f})",
+                    matrix
+                )
+
+            # Check 2: Volume Expansion >= 1.30x
+            if vol_ratio < DEFAULT_CONFIG.volume_ratio_min:
+                return self._build_result(
+                    "NONE", 45, "Volume Filter Veto",
+                    f"Volume Veto: M5 Volume ratio ({vol_ratio:.2f}x) < {DEFAULT_CONFIG.volume_ratio_min:.1f}x threshold",
+                    matrix
+                )
+
+            # Geometry Calculation: Stop Loss & 2.0R Take Profit
+            raw_sl_dist = (candle_close - curr_st_val) + (DEFAULT_CONFIG.sl_buffer_atr * atr_m5)
+            sl_dist = max(DEFAULT_CONFIG.min_sl_dist, raw_sl_dist)
+            sl_price = round(candle_close - sl_dist, 2)
+            tp_price = round(candle_close + (DEFAULT_CONFIG.tp1_r * sl_dist), 2)
+            be_price = round(candle_close * (1.0 + DEFAULT_CONFIG.be_fee_buffer_pct), 2)
+
+            self.last_triggered_flip_time = candle_time
+            score = 88
+
+            reason_summary = (
+                f"LONG M5 SuperTrend Bull Flip | H1 EMA{h1_period} Bullish | "
+                f"Vol {vol_ratio:.2f}x >= 1.3x | SL: ${sl_price:.2f} (-${sl_dist:.2f}) | TP: ${tp_price:.2f} (+2.0R)"
+            )
+
+            return self._build_result(
+                "LONG",
+                score,
+                reason_summary,
+                "Setup Qualified (M5 SuperTrend 10/2.5 Bull Flip + H1 EMA200 + Volume 1.3x)",
+                matrix,
+                entry=candle_close,
+                sl=sl_price,
+                tp1=tp_price,
+                tp2=tp_price,
+                be=be_price,
+                r_dist=round(sl_dist, 2),
+                module="M5_SUPERTREND_BULL_FLIP"
+            )
+
+        # ----------------------------------------------------------------------
+        # SHORT SETUP QUALIFICATION
+        # ----------------------------------------------------------------------
+        elif is_bear_flip:
+            # Check 1: Macro Trend (H1 Close < EMA 200)
+            if h1_trend != "BEARISH":
+                return self._build_result(
+                    "NONE", 40, "Macro Filter Veto",
+                    f"H1 Macro Filter Veto: H1 trend is {h1_trend} (Price ${candle_close:.2f} vs H1 EMA{h1_period} ${h1_last_ema:.2f})",
+                    matrix
+                )
+
+            # Check 2: Volume Expansion >= 1.30x
+            if vol_ratio < DEFAULT_CONFIG.volume_ratio_min:
+                return self._build_result(
+                    "NONE", 45, "Volume Filter Veto",
+                    f"Volume Veto: M5 Volume ratio ({vol_ratio:.2f}x) < {DEFAULT_CONFIG.volume_ratio_min:.1f}x threshold",
+                    matrix
+                )
+
+            # Geometry Calculation: Stop Loss & 2.0R Take Profit
+            raw_sl_dist = (curr_st_val - candle_close) + (DEFAULT_CONFIG.sl_buffer_atr * atr_m5)
+            sl_dist = max(DEFAULT_CONFIG.min_sl_dist, raw_sl_dist)
+            sl_price = round(candle_close + sl_dist, 2)
+            tp_price = round(candle_close - (DEFAULT_CONFIG.tp1_r * sl_dist), 2)
+            be_price = round(candle_close * (1.0 - DEFAULT_CONFIG.be_fee_buffer_pct), 2)
+
+            self.last_triggered_flip_time = candle_time
+            score = 88
+
+            reason_summary = (
+                f"SHORT M5 SuperTrend Bear Flip | H1 EMA{h1_period} Bearish | "
+                f"Vol {vol_ratio:.2f}x >= 1.3x | SL: ${sl_price:.2f} (+${sl_dist:.2f}) | TP: ${tp_price:.2f} (+2.0R)"
+            )
+
+            return self._build_result(
+                "SHORT",
+                score,
+                reason_summary,
+                "Setup Qualified (M5 SuperTrend 10/2.5 Bear Flip + H1 EMA200 + Volume 1.3x)",
+                matrix,
+                entry=candle_close,
+                sl=sl_price,
+                tp1=tp_price,
+                tp2=tp_price,
+                be=be_price,
+                r_dist=round(sl_dist, 2),
+                module="M5_SUPERTREND_BEAR_FLIP"
+            )
+
+        return self._build_result("NONE", 0, "No setup", "No setup pattern matched", matrix)
 
     def _build_result(self, direction: str, score: int, reason: str, rejection_reason: str,
                       matrix: Dict[str, Any], entry: float = 0.0, sl: float = 0.0,
@@ -417,3 +308,7 @@ class ETHM1ScalpingStrategy:
             "module": module,
             "timestamp": int(time.time() * 1000)
         }
+
+
+# Maintain backward compatibility for existing imports
+ETHM1ScalpingStrategy = ETHM5SuperTrendStrategy
