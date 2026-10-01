@@ -1,0 +1,80 @@
+{
+  "status": "RUNNING",
+  "version": "APEX QUANT v3.4 Institutional M5 Engine",
+  "mode": "PAPER_SIMULATION",
+  "riskModel": "1.0% Account Risk Per Trade",
+  "liveSafetyEnforced": true,
+  "liveOrdersAllowed": false,
+  "startTimeUtc": "2026-10-01 07:53:00 UTC",
+  "startTimeTashkent": "2026-10-01 12:53:00 +05",
+  "currentTimeTashkent": "2026-10-01 12:53:00 +05",
+  "targetDurationHours": 24.0,
+  "elapsedHours": 0.0,
+  "elapsedMinutes": 0,
+  "remainingMinutes": 1440,
+  "progressPct": 0.0,
+  "barsScanned": 0,
+  "cyclesScanned": 0,
+  "apiLatencyMs": 15.0,
+  "market": {
+    "symbol": "ETHUSDT",
+    "displaySymbol": "ETHUSDT.P",
+    "currentPrice": 2680.0,
+    "markPrice": 2680.0,
+    "spread": 0.02,
+    "spreadPct": 0.0001,
+    "atrM5": 3.2,
+    "session": "LONDON",
+    "sessionAllowed": true,
+    "sessionTashkent": "12:53 Tashkent",
+    "priceRange24h": {
+      "min": 2680.0,
+      "max": 2680.0
+    }
+  },
+  "strategy": {
+    "name": "M5 SuperTrend (10, 2.5) + H1 EMA 200 + Volume >= 1.3x",
+    "timeframe": "5m",
+    "tpTarget": "2.0R",
+    "minSl": "$10.00",
+    "executionModel": "MAKER_POST_ONLY (0.02% Fee)",
+    "currentScore": 0,
+    "currentSignal": "NONE",
+    "rejectionReason": "Fresh 24h paper session initialized (0.0h / 24h)",
+    "matrix": {
+      "timeframe": "5m",
+      "supertrend": {
+        "period": 10,
+        "multiplier": 2.5,
+        "direction": "AWAITING_FLIP"
+      },
+      "macro_h1": {
+        "ema_period": 200,
+        "trend": "MONITORING"
+      },
+      "volume": {
+        "min_ratio": 1.3
+      },
+      "risk_pct": "1.0%"
+    }
+  },
+  "riskAndPerformance": {
+    "balance": 1000.0,
+    "sessionPnl": 0.0,
+    "riskPerTradePct": "1.0%",
+    "dollarRiskBudget": 10.0,
+    "sessionTargetUsd": 200.0,
+    "tradesCount": 0,
+    "consecutiveLosses": 0,
+    "compoundingTier": "Institutional Tier 1 ($500-$2.5k)"
+  },
+  "activePosition": null,
+  "auditGatesPassed": "14/14 FORENSIC GATES CERTIFIED",
+  "hourlyCheckpoints": [],
+  "systemHealth": {
+    "connected": true,
+    "running": true,
+    "errorCount": 0,
+    "status": "EXCELLENT"
+  }
+}

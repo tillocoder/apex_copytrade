@@ -174,14 +174,14 @@ def main():
                 "matrix": sig.get("matrix", {})
             },
             "riskAndPerformance": {
-                "balance": acc.get("balance", 1000.00),
+                "balance": acc.get("balance", 20.00),
                 "sessionPnl": acc.get("sessionPnl", 0.0),
                 "riskPerTradePct": "1.0%",
-                "dollarRiskBudget": round(float(acc.get("balance", 1000.00)) * 0.01, 2),
-                "sessionTargetUsd": 200.00,
+                "dollarRiskBudget": round(float(acc.get("balance", 20.00)) * 0.01, 2),
+                "sessionTargetUsd": 4.00,
                 "tradesCount": risk.get("tradesCount", 0),
                 "consecutiveLosses": risk.get("consecutiveLosses", 0),
-                "compoundingTier": risk.get("compoundingTier", "Institutional Tier 1 ($500-$2.5k)")
+                "compoundingTier": risk.get("compoundingTier", "Micro Tier (<$50)")
             },
             "activePosition": pos,
             "auditGatesPassed": "14/14 FORENSIC GATES CERTIFIED",

@@ -81,13 +81,14 @@ init_tel = {
         'rejectionReason': 'Fresh 24h paper session initialized'
     },
     'riskAndPerformance': {
-        'balance': 1000.0,
+        'balance': 20.0,
         'sessionPnl': 0.0,
         'riskPerTradePct': '1.0%',
-        'dollarRiskBudget': 10.0,
-        'sessionTargetUsd': 200.0,
+        'dollarRiskBudget': 0.20,
+        'sessionTargetUsd': 4.0,
         'tradesCount': 0,
-        'consecutiveLosses': 0
+        'consecutiveLosses': 0,
+        'compoundingTier': 'Micro Tier (<$50)'
     },
     'activePosition': None,
     'auditGatesPassed': '14/14 FORENSIC GATES CERTIFIED',

@@ -173,13 +173,14 @@ class RiskManager:
         target_dollar_risk = base_dollar_risk * max(0.25, combined_mult)
 
         # Baseline margin budget (~2-10% of balance at 50x)
-        target_margin = max(1.0, bal * 0.05 * combined_mult)
+        target_margin = max(0.40, bal * 0.05 * combined_mult)
 
         return {
             'tier': tier_name,
             'balance': round(bal, 4),
             'base_dollar_risk': round(base_dollar_risk, 4),
             'target_dollar_risk': round(target_dollar_risk, 4),
+            'base_margin': round(target_margin, 4),
             'targetMargin': round(target_margin, 4),
             'leverage': DEFAULT_CONFIG.default_leverage,
             'dd_tier': dd_info['tier'],
@@ -226,8 +227,8 @@ class RiskManager:
             min_notional_qty = round(math.ceil(min_notional / max(1.0, price) / step_size) * step_size, decimals)
             min_notional_dollar_risk = effective_sl_dist * min_notional_qty
 
-            # Only reject if bumping to minNotional exceeds 2x the 1% risk budget
-            if min_notional_dollar_risk > target_dollar_risk * 2.0:
+            # Allow minNotional bump up to max(2.5x target_dollar_risk, $0.60) for micro accounts
+            if min_notional_dollar_risk > max(target_dollar_risk * 2.5, 0.60):
                 notional_bump_rejected = True
             else:
                 qty = min_notional_qty

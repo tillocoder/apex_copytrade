@@ -73,7 +73,10 @@ class MarketDataManager:
         if timeframe == "1m":
             self.klines_m1 = parsed[-600:]
             self.last_update_ts = time.time()
-            self._synthesize_higher_timeframes()
+            if not self.klines_m5 or len(self.klines_m5) < 20:
+                self.klines_m5 = self._aggregate_candles(self.klines_m1, 5)
+            if not self.klines_h1 or len(self.klines_h1) < 20:
+                self.klines_h1 = self._aggregate_candles(self.klines_m1, 60)
         elif timeframe == "5m":
             self.klines_m5 = parsed[-500:]
             self.last_update_ts = time.time()
@@ -120,12 +123,13 @@ class MarketDataManager:
     def _synthesize_higher_timeframes(self):
         if len(self.klines_m1) < 15:
             return
-        # Synthesize M5 from M1
-        self.klines_m5 = self._aggregate_candles(self.klines_m1, 5)
-        # Synthesize M15 from M1
-        self.klines_m15 = self._aggregate_candles(self.klines_m1, 15)
-        # Synthesize H1 from M1
-        self.klines_h1 = self._aggregate_candles(self.klines_m1, 60)
+        # Only synthesize if not already populated with real Binance historical candles
+        if not self.klines_m5 or len(self.klines_m5) < 20:
+            self.klines_m5 = self._aggregate_candles(self.klines_m1, 5)
+        if not self.klines_m15 or len(self.klines_m15) < 20:
+            self.klines_m15 = self._aggregate_candles(self.klines_m1, 15)
+        if not self.klines_h1 or len(self.klines_h1) < 20:
+            self.klines_h1 = self._aggregate_candles(self.klines_m1, 60)
 
     @staticmethod
     def _aggregate_candles(candles: List[Dict[str, Any]], interval_min: int) -> List[Dict[str, Any]]:

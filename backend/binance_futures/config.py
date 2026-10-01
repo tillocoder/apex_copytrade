@@ -37,21 +37,21 @@ class BinanceFuturesConfig:
     # Trading Defaults
     timeframe: str = "5m"                 # M5 Timeframe (5-minute execution)
     default_leverage: int = 50            # 50x Leverage
-    default_margin_usd: float = 25.00     # Baseline margin
-    approx_notional_usd: float = 1250.00  # Target notional
+    default_margin_usd: float = 1.00      # Baseline margin ($1.00 for $20 account)
+    approx_notional_usd: float = 20.00    # Target notional (Binance min notional is 20 USDT)
     max_open_positions: int = 1           # Exactly 1 position at a time
     one_way_mode: bool = True             # One-way mode (no dual side)
     allow_long: bool = True               # LONG enabled
     allow_short: bool = True              # SHORT enabled
     
-    # Capital Growth & Risk Management (1% Risk Model)
-    initial_balance_usd: float = 1000.00  # $1,000 Starting Account for Paper Test
-    max_risk_pct_balance: float = 0.01    # Strictly 1.0% account risk per trade
+    # Capital Growth & Risk Management (1% Risk Model for $20 Account)
+    initial_balance_usd: float = 20.00    # $20 Starting Account for Paper & Live Test
+    max_risk_pct_balance: float = 0.01    # Strictly 1.0% account risk per trade ($0.20 base risk)
     
-    # Session Profit & Loss Targets (Calibrated to 1% Risk = $10/R)
-    session_profit_target_usd: float = 200.00 # Session profit target (+$200 = 20R)
-    max_session_loss_usd: float = 50.00       # -$50 (5R / 5% balance limit)
-    max_daily_loss_usd: float = 50.00         # -$50 daily loss limit
+    # Session Profit & Loss Targets (Calibrated to 1% Risk = $0.20/R)
+    session_profit_target_usd: float = 4.00   # Session profit target (+$4.00 = 20R)
+    max_session_loss_usd: float = 1.00        # -$1.00 (5R / 5% balance limit)
+    max_daily_loss_usd: float = 1.00          # -$1.00 daily loss limit
     max_daily_loss_pct: float = 0.05          # 5% max daily drawdown
     max_session_loss_pct: float = 0.05        # 5% max session drawdown
     max_consecutive_losses: int = 3           # 3 losses trigger extended cooldown
