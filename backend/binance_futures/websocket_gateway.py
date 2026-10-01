@@ -170,8 +170,8 @@ class BinanceFuturesWebSocketGateway:
                             signal_res = self.strategy.evaluate_setup(risk_check)
                             self.latest_signal_cache = signal_res
 
-                            # Auto-Execution Gate
-                            if DEFAULT_CONFIG.is_running and signal_res.get("final_signal") in ("LONG", "SHORT"):
+                            # Auto-Execution Gate (1m only if configured for 1m timeframe)
+                            if DEFAULT_CONFIG.timeframe == "1m" and DEFAULT_CONFIG.is_running and signal_res.get("final_signal") in ("LONG", "SHORT"):
                                 if risk_check.get("can_trade", False) and not has_open_pos:
                                     exec_res = await self.executor.execute_signal(signal_res, DEFAULT_CONFIG.live_enabled)
                                     print(f"🎯 [AUTO_EXECUTION] {signal_res.get('final_signal')} -> Status: {exec_res.get('status')}")

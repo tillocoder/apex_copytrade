@@ -227,8 +227,8 @@ class RiskManager:
             min_notional_qty = round(math.ceil(min_notional / max(1.0, price) / step_size) * step_size, decimals)
             min_notional_dollar_risk = effective_sl_dist * min_notional_qty
 
-            # Allow minNotional bump up to max(2.5x target_dollar_risk, $0.60) for micro accounts
-            if min_notional_dollar_risk > max(target_dollar_risk * 2.5, 0.60):
+            # Allow minNotional bump up to max(5.0x target_dollar_risk, $1.00) for micro accounts
+            if min_notional_dollar_risk > max(target_dollar_risk * 5.0, 1.00):
                 notional_bump_rejected = True
             else:
                 qty = min_notional_qty

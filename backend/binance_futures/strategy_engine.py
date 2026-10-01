@@ -208,7 +208,8 @@ class ETHM5SuperTrendStrategy:
 
             # Geometry Calculation: Stop Loss & 2.0R Take Profit
             raw_sl_dist = (candle_close - curr_st_val) + (DEFAULT_CONFIG.sl_buffer_atr * atr_m5)
-            sl_dist = max(DEFAULT_CONFIG.min_sl_dist, raw_sl_dist)
+            max_sl = getattr(DEFAULT_CONFIG, "max_sl_dist", 40.0)
+            sl_dist = min(max_sl, max(DEFAULT_CONFIG.min_sl_dist, raw_sl_dist))
             sl_price = round(candle_close - sl_dist, 2)
             tp_price = round(candle_close + (DEFAULT_CONFIG.tp1_r * sl_dist), 2)
             be_price = round(candle_close * (1.0 + DEFAULT_CONFIG.be_fee_buffer_pct), 2)
@@ -258,7 +259,8 @@ class ETHM5SuperTrendStrategy:
 
             # Geometry Calculation: Stop Loss & 2.0R Take Profit
             raw_sl_dist = (curr_st_val - candle_close) + (DEFAULT_CONFIG.sl_buffer_atr * atr_m5)
-            sl_dist = max(DEFAULT_CONFIG.min_sl_dist, raw_sl_dist)
+            max_sl = getattr(DEFAULT_CONFIG, "max_sl_dist", 40.0)
+            sl_dist = min(max_sl, max(DEFAULT_CONFIG.min_sl_dist, raw_sl_dist))
             sl_price = round(candle_close + sl_dist, 2)
             tp_price = round(candle_close - (DEFAULT_CONFIG.tp1_r * sl_dist), 2)
             be_price = round(candle_close * (1.0 - DEFAULT_CONFIG.be_fee_buffer_pct), 2)

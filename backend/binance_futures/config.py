@@ -36,7 +36,7 @@ class BinanceFuturesConfig:
     
     # Trading Defaults
     timeframe: str = "5m"                 # M5 Timeframe (5-minute execution)
-    default_leverage: int = 50            # 50x Leverage
+    default_leverage: int = 20            # 20x Leverage (Optimal liquidation buffer for micro accounts)
     default_margin_usd: float = 1.00      # Baseline margin ($1.00 for $20 account)
     approx_notional_usd: float = 20.00    # Target notional (Binance min notional is 20 USDT)
     max_open_positions: int = 1           # Exactly 1 position at a time
@@ -75,6 +75,7 @@ class BinanceFuturesConfig:
     tp2_r: float = 2.00                       # Full exit at 2.0R
     tp1_close_pct: float = 1.00               # 100% exit at 2.0R target
     min_sl_dist: float = 10.0                 # Minimum $10.00 SL distance
+    max_sl_dist: float = 40.0                 # Maximum $40.00 SL distance (bounds micro-risk)
     sl_buffer_atr: float = 0.20               # SuperTrend line + 0.20 ATR buffer
     min_r_dist: float = 10.0                  # Minimum $10.00 R distance
     be_fee_buffer_pct: float = 0.0005         # 0.05% buffer over entry for Breakeven
