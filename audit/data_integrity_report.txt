@@ -1,0 +1,13 @@
+APEX QUANT DATA INTEGRITY & AUDIT REPORT
+==================================================
+file: C:\apex_copytrade\data\binance_ethusdt_m1_90d.csv
+total_candles: 129600
+expected_candles_90d: 129600
+start_time: 2026-06-29 06:38:00 UTC
+end_time: 2026-09-27 06:37:00 UTC
+span_days: 90.0
+is_strictly_monotonic: True
+timestamp_gaps_count: 0
+timestamp_gaps: []
+invalid_ohlc_count: 0
+integrity_status: PASS

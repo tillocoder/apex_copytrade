@@ -18,8 +18,17 @@ class PaperTradingEngine:
     """
     def __init__(self, market_data: MarketDataManager):
         self.md = market_data
-        self.balance = DEFAULT_CONFIG.initial_balance_usd
-        self.available_balance = DEFAULT_CONFIG.initial_balance_usd
+        
+        # Calculate balance from initial capital + accumulated realized PnL of closed paper trades
+        try:
+            from .database import get_trades
+            closed = [t for t in get_trades(limit=500) if t.get("mode") == "PAPER" and t.get("status") == "CLOSED"]
+            total_realized_pnl = sum(float(t.get("pnl", 0.0)) for t in closed)
+        except Exception:
+            total_realized_pnl = 0.0
+
+        self.balance = round(DEFAULT_CONFIG.initial_balance_usd + total_realized_pnl, 2)
+        self.available_balance = self.balance
         self.current_position: Optional[Dict[str, Any]] = None
         self.open_orders: List[Dict[str, Any]] = []
 

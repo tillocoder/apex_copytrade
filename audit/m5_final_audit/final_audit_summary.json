@@ -1,0 +1,1247 @@
+{
+  "audit_timestamp": "2026-10-01T07:37:51.345966+00:00",
+  "model_params": {
+    "st_key": "st_10_25",
+    "tp_r": 2.0,
+    "v_thresh": 1.3,
+    "h1_mode": "EMA200",
+    "min_sl": 10.0,
+    "risk_pct": 0.01,
+    "exec_mode": "MAKER_POST_ONLY"
+  },
+  "best_case": {
+    "trades": 91,
+    "wr": 46.2,
+    "net_pf": 1.47,
+    "net_pnl": 292.5,
+    "max_dd": 7.2,
+    "payoff": 1.72,
+    "sharpe": 4.34,
+    "expectancy_r": 0.29,
+    "ci_wr_95": [
+      36.3,
+      56.3
+    ],
+    "ci_exp_95": [
+      0.29,
+      0.29
+    ],
+    "missed_orders": 0
+  },
+  "base_case": {
+    "trades": 86,
+    "wr": 45.3,
+    "net_pf": 1.43,
+    "net_pnl": 248.34,
+    "max_dd": 6.56,
+    "payoff": 1.73,
+    "sharpe": 4.03,
+    "expectancy_r": 0.27,
+    "ci_wr_95": [
+      35.3,
+      55.8
+    ],
+    "ci_exp_95": [
+      0.27,
+      0.27
+    ],
+    "missed_orders": 7
+  },
+  "worst_case": {
+    "trades": 70,
+    "wr": 42.9,
+    "net_pf": 1.29,
+    "net_pnl": 136.32,
+    "max_dd": 5.47,
+    "payoff": 1.72,
+    "sharpe": 2.85,
+    "expectancy_r": 0.19,
+    "ci_wr_95": [
+      31.9,
+      54.5
+    ],
+    "ci_exp_95": [
+      0.19,
+      0.19
+    ],
+    "missed_orders": 28
+  },
+  "fill_scenarios": [
+    {
+      "fill_rate": "100%",
+      "metrics": {
+        "trades": 91,
+        "wr": 46.2,
+        "net_pf": 1.47,
+        "net_pnl": 292.5,
+        "max_dd": 7.2,
+        "payoff": 1.72,
+        "sharpe": 4.34,
+        "expectancy_r": 0.29,
+        "ci_wr_95": [
+          36.3,
+          56.3
+        ],
+        "ci_exp_95": [
+          0.29,
+          0.29
+        ],
+        "missed_orders": 0
+      }
+    },
+    {
+      "fill_rate": "95%",
+      "metrics": {
+        "trades": 88,
+        "wr": 45.5,
+        "net_pf": 1.43,
+        "net_pnl": 257.26,
+        "max_dd": 6.56,
+        "payoff": 1.72,
+        "sharpe": 4.03,
+        "expectancy_r": 0.27,
+        "ci_wr_95": [
+          35.5,
+          55.8
+        ],
+        "ci_exp_95": [
+          0.27,
+          0.27
+        ],
+        "missed_orders": 4
+      }
+    },
+    {
+      "fill_rate": "90%",
+      "metrics": {
+        "trades": 86,
+        "wr": 45.3,
+        "net_pf": 1.43,
+        "net_pnl": 248.34,
+        "max_dd": 6.56,
+        "payoff": 1.73,
+        "sharpe": 4.03,
+        "expectancy_r": 0.27,
+        "ci_wr_95": [
+          35.3,
+          55.8
+        ],
+        "ci_exp_95": [
+          0.27,
+          0.27
+        ],
+        "missed_orders": 7
+      }
+    },
+    {
+      "fill_rate": "80%",
+      "metrics": {
+        "trades": 75,
+        "wr": 44.0,
+        "net_pf": 1.35,
+        "net_pnl": 176.31,
+        "max_dd": 6.57,
+        "payoff": 1.72,
+        "sharpe": 3.4,
+        "expectancy_r": 0.23,
+        "ci_wr_95": [
+          33.3,
+          55.3
+        ],
+        "ci_exp_95": [
+          0.23,
+          0.23
+        ],
+        "missed_orders": 23
+      }
+    },
+    {
+      "fill_rate": "70%",
+      "metrics": {
+        "trades": 70,
+        "wr": 42.9,
+        "net_pf": 1.29,
+        "net_pnl": 136.32,
+        "max_dd": 5.47,
+        "payoff": 1.72,
+        "sharpe": 2.85,
+        "expectancy_r": 0.19,
+        "ci_wr_95": [
+          31.9,
+          54.5
+        ],
+        "ci_exp_95": [
+          0.19,
+          0.19
+        ],
+        "missed_orders": 28
+      }
+    },
+    {
+      "fill_rate": "60%",
+      "metrics": {
+        "trades": 60,
+        "wr": 41.7,
+        "net_pf": 1.23,
+        "net_pnl": 91.86,
+        "max_dd": 8.08,
+        "payoff": 1.73,
+        "sharpe": 2.34,
+        "expectancy_r": 0.16,
+        "ci_wr_95": [
+          30.1,
+          54.3
+        ],
+        "ci_exp_95": [
+          0.16,
+          0.16
+        ],
+        "missed_orders": 45
+      }
+    }
+  ],
+  "taker_matrix": [
+    {
+      "slip_mult": 1.0,
+      "ticks": 0.0,
+      "metrics": {
+        "trades": 91,
+        "wr": 46.2,
+        "net_pf": 1.37,
+        "net_pnl": 236.61,
+        "max_dd": 7.8,
+        "payoff": 1.6,
+        "sharpe": 3.6,
+        "expectancy_r": 0.25,
+        "ci_wr_95": [
+          36.3,
+          56.3
+        ],
+        "ci_exp_95": [
+          0.25,
+          0.25
+        ],
+        "missed_orders": 0
+      }
+    },
+    {
+      "slip_mult": 1.0,
+      "ticks": 0.01,
+      "metrics": {
+        "trades": 91,
+        "wr": 46.2,
+        "net_pf": 1.37,
+        "net_pnl": 234.98,
+        "max_dd": 7.82,
+        "payoff": 1.6,
+        "sharpe": 3.58,
+        "expectancy_r": 0.24,
+        "ci_wr_95": [
+          36.3,
+          56.3
+        ],
+        "ci_exp_95": [
+          0.24,
+          0.24
+        ],
+        "missed_orders": 0
+      }
+    },
+    {
+      "slip_mult": 1.0,
+      "ticks": 0.02,
+      "metrics": {
+        "trades": 91,
+        "wr": 46.2,
+        "net_pf": 1.37,
+        "net_pnl": 233.19,
+        "max_dd": 7.83,
+        "payoff": 1.6,
+        "sharpe": 3.55,
+        "expectancy_r": 0.24,
+        "ci_wr_95": [
+          36.3,
+          56.3
+        ],
+        "ci_exp_95": [
+          0.24,
+          0.24
+        ],
+        "missed_orders": 0
+      }
+    },
+    {
+      "slip_mult": 1.0,
+      "ticks": 0.03,
+      "metrics": {
+        "trades": 91,
+        "wr": 46.2,
+        "net_pf": 1.37,
+        "net_pnl": 231.58,
+        "max_dd": 7.85,
+        "payoff": 1.59,
+        "sharpe": 3.53,
+        "expectancy_r": 0.24,
+        "ci_wr_95": [
+          36.3,
+          56.3
+        ],
+        "ci_exp_95": [
+          0.24,
+          0.24
+        ],
+        "missed_orders": 0
+      }
+    },
+    {
+      "slip_mult": 1.0,
+      "ticks": 0.05,
+      "metrics": {
+        "trades": 91,
+        "wr": 46.2,
+        "net_pf": 1.36,
+        "net_pnl": 227.97,
+        "max_dd": 7.88,
+        "payoff": 1.59,
+        "sharpe": 3.48,
+        "expectancy_r": 0.24,
+        "ci_wr_95": [
+          36.3,
+          56.3
+        ],
+        "ci_exp_95": [
+          0.24,
+          0.24
+        ],
+        "missed_orders": 0
+      }
+    },
+    {
+      "slip_mult": 1.5,
+      "ticks": 0.0,
+      "metrics": {
+        "trades": 91,
+        "wr": 46.2,
+        "net_pf": 1.37,
+        "net_pnl": 236.61,
+        "max_dd": 7.8,
+        "payoff": 1.6,
+        "sharpe": 3.6,
+        "expectancy_r": 0.25,
+        "ci_wr_95": [
+          36.3,
+          56.3
+        ],
+        "ci_exp_95": [
+          0.25,
+          0.25
+        ],
+        "missed_orders": 0
+      }
+    },
+    {
+      "slip_mult": 1.5,
+      "ticks": 0.01,
+      "metrics": {
+        "trades": 91,
+        "wr": 46.2,
+        "net_pf": 1.37,
+        "net_pnl": 234.13,
+        "max_dd": 7.82,
+        "payoff": 1.6,
+        "sharpe": 3.57,
+        "expectancy_r": 0.24,
+        "ci_wr_95": [
+          36.3,
+          56.3
+        ],
+        "ci_exp_95": [
+          0.24,
+          0.24
+        ],
+        "missed_orders": 0
+      }
+    },
+    {
+      "slip_mult": 1.5,
+      "ticks": 0.02,
+      "metrics": {
+        "trades": 91,
+        "wr": 46.2,
+        "net_pf": 1.37,
+        "net_pnl": 231.58,
+        "max_dd": 7.85,
+        "payoff": 1.59,
+        "sharpe": 3.53,
+        "expectancy_r": 0.24,
+        "ci_wr_95": [
+          36.3,
+          56.3
+        ],
+        "ci_exp_95": [
+          0.24,
+          0.24
+        ],
+        "missed_orders": 0
+      }
+    },
+    {
+      "slip_mult": 1.5,
+      "ticks": 0.03,
+      "metrics": {
+        "trades": 91,
+        "wr": 46.2,
+        "net_pf": 1.36,
+        "net_pnl": 228.94,
+        "max_dd": 7.87,
+        "payoff": 1.59,
+        "sharpe": 3.5,
+        "expectancy_r": 0.24,
+        "ci_wr_95": [
+          36.3,
+          56.3
+        ],
+        "ci_exp_95": [
+          0.24,
+          0.24
+        ],
+        "missed_orders": 0
+      }
+    },
+    {
+      "slip_mult": 1.5,
+      "ticks": 0.05,
+      "metrics": {
+        "trades": 91,
+        "wr": 46.2,
+        "net_pf": 1.35,
+        "net_pnl": 223.91,
+        "max_dd": 7.92,
+        "payoff": 1.58,
+        "sharpe": 3.43,
+        "expectancy_r": 0.23,
+        "ci_wr_95": [
+          36.3,
+          56.3
+        ],
+        "ci_exp_95": [
+          0.23,
+          0.23
+        ],
+        "missed_orders": 0
+      }
+    },
+    {
+      "slip_mult": 2.0,
+      "ticks": 0.0,
+      "metrics": {
+        "trades": 91,
+        "wr": 46.2,
+        "net_pf": 1.37,
+        "net_pnl": 236.61,
+        "max_dd": 7.8,
+        "payoff": 1.6,
+        "sharpe": 3.6,
+        "expectancy_r": 0.25,
+        "ci_wr_95": [
+          36.3,
+          56.3
+        ],
+        "ci_exp_95": [
+          0.25,
+          0.25
+        ],
+        "missed_orders": 0
+      }
+    },
+    {
+      "slip_mult": 2.0,
+      "ticks": 0.01,
+      "metrics": {
+        "trades": 91,
+        "wr": 46.2,
+        "net_pf": 1.37,
+        "net_pnl": 233.19,
+        "max_dd": 7.83,
+        "payoff": 1.6,
+        "sharpe": 3.55,
+        "expectancy_r": 0.24,
+        "ci_wr_95": [
+          36.3,
+          56.3
+        ],
+        "ci_exp_95": [
+          0.24,
+          0.24
+        ],
+        "missed_orders": 0
+      }
+    },
+    {
+      "slip_mult": 2.0,
+      "ticks": 0.02,
+      "metrics": {
+        "trades": 91,
+        "wr": 46.2,
+        "net_pf": 1.36,
+        "net_pnl": 229.86,
+        "max_dd": 7.86,
+        "payoff": 1.59,
+        "sharpe": 3.51,
+        "expectancy_r": 0.24,
+        "ci_wr_95": [
+          36.3,
+          56.3
+        ],
+        "ci_exp_95": [
+          0.24,
+          0.24
+        ],
+        "missed_orders": 0
+      }
+    },
+    {
+      "slip_mult": 2.0,
+      "ticks": 0.03,
+      "metrics": {
+        "trades": 91,
+        "wr": 46.2,
+        "net_pf": 1.36,
+        "net_pnl": 226.45,
+        "max_dd": 7.89,
+        "payoff": 1.58,
+        "sharpe": 3.46,
+        "expectancy_r": 0.24,
+        "ci_wr_95": [
+          36.3,
+          56.3
+        ],
+        "ci_exp_95": [
+          0.24,
+          0.24
+        ],
+        "missed_orders": 0
+      }
+    },
+    {
+      "slip_mult": 2.0,
+      "ticks": 0.05,
+      "metrics": {
+        "trades": 91,
+        "wr": 46.2,
+        "net_pf": 1.35,
+        "net_pnl": 219.74,
+        "max_dd": 7.96,
+        "payoff": 1.57,
+        "sharpe": 3.37,
+        "expectancy_r": 0.23,
+        "ci_wr_95": [
+          36.3,
+          56.3
+        ],
+        "ci_exp_95": [
+          0.23,
+          0.23
+        ],
+        "missed_orders": 0
+      }
+    }
+  ],
+  "non_overlap_wf": {
+    "summary": {
+      "pct_prof": 62.5,
+      "median_pf": 1.36
+    },
+    "blocks": [
+      {
+        "block": 1,
+        "period": "06-30 to 07-10",
+        "trades": 1,
+        "wr": 0.0,
+        "net_pf": 0.0,
+        "net_pnl": -10.87,
+        "max_dd": 1.09
+      },
+      {
+        "block": 2,
+        "period": "07-10 to 07-20",
+        "trades": 16,
+        "wr": 37.5,
+        "net_pf": 1.03,
+        "net_pnl": 2.9,
+        "max_dd": 3.59
+      },
+      {
+        "block": 3,
+        "period": "07-20 to 07-30",
+        "trades": 12,
+        "wr": 50.0,
+        "net_pf": 1.69,
+        "net_pnl": 48.87,
+        "max_dd": 2.55
+      },
+      {
+        "block": 4,
+        "period": "07-30 to 08-09",
+        "trades": 11,
+        "wr": 36.4,
+        "net_pf": 0.97,
+        "net_pnl": -2.31,
+        "max_dd": 6.56
+      },
+      {
+        "block": 5,
+        "period": "08-09 to 08-19",
+        "trades": 7,
+        "wr": 57.1,
+        "net_pf": 2.25,
+        "net_pnl": 42.92,
+        "max_dd": 1.14
+      },
+      {
+        "block": 6,
+        "period": "08-19 to 08-29",
+        "trades": 10,
+        "wr": 70.0,
+        "net_pf": 4.04,
+        "net_pnl": 108.25,
+        "max_dd": 2.17
+      },
+      {
+        "block": 7,
+        "period": "08-29 to 09-08",
+        "trades": 12,
+        "wr": 33.3,
+        "net_pf": 0.84,
+        "net_pnl": -14.26,
+        "max_dd": 5.73
+      },
+      {
+        "block": 8,
+        "period": "09-08 to 09-18",
+        "trades": 9,
+        "wr": 44.4,
+        "net_pf": 1.36,
+        "net_pnl": 20.65,
+        "max_dd": 3.28
+      }
+    ]
+  },
+  "regime_results": [
+    {
+      "regime": "STRONG_UPTREND",
+      "trades": 20,
+      "net_pnl": 177.88
+    },
+    {
+      "regime": "SIDEWAYS",
+      "trades": 34,
+      "net_pnl": 45.28
+    },
+    {
+      "regime": "LOW_VOLATILITY",
+      "trades": 17,
+      "net_pnl": 52.53
+    },
+    {
+      "regime": "HIGH_VOLATILITY",
+      "trades": 10,
+      "net_pnl": 10.82
+    }
+  ],
+  "robustness_plateau": [
+    {
+      "config": "st_7_25_TP1.8_EMA50",
+      "trades": 93,
+      "wr": 39.8,
+      "net_pf": 1.01,
+      "net_pnl": 9.36,
+      "max_dd": 15.73
+    },
+    {
+      "config": "st_7_25_TP1.8_EMA100",
+      "trades": 97,
+      "wr": 41.2,
+      "net_pf": 1.08,
+      "net_pnl": 52.2,
+      "max_dd": 8.61
+    },
+    {
+      "config": "st_7_25_TP1.8_EMA200",
+      "trades": 92,
+      "wr": 45.7,
+      "net_pf": 1.29,
+      "net_pnl": 177.59,
+      "max_dd": 5.29
+    },
+    {
+      "config": "st_7_25_TP2.0_EMA50",
+      "trades": 93,
+      "wr": 38.7,
+      "net_pf": 1.08,
+      "net_pnl": 52.98,
+      "max_dd": 14.23
+    },
+    {
+      "config": "st_7_25_TP2.0_EMA100",
+      "trades": 97,
+      "wr": 39.2,
+      "net_pf": 1.1,
+      "net_pnl": 70.8,
+      "max_dd": 8.42
+    },
+    {
+      "config": "st_7_25_TP2.0_EMA200",
+      "trades": 93,
+      "wr": 43.0,
+      "net_pf": 1.29,
+      "net_pnl": 190.03,
+      "max_dd": 6.72
+    },
+    {
+      "config": "st_7_25_TP2.4_EMA50",
+      "trades": 91,
+      "wr": 35.2,
+      "net_pf": 1.11,
+      "net_pnl": 79.96,
+      "max_dd": 11.15
+    },
+    {
+      "config": "st_7_25_TP2.4_EMA100",
+      "trades": 95,
+      "wr": 33.7,
+      "net_pf": 1.04,
+      "net_pnl": 33.42,
+      "max_dd": 8.51
+    },
+    {
+      "config": "st_7_25_TP2.4_EMA200",
+      "trades": 88,
+      "wr": 36.4,
+      "net_pf": 1.17,
+      "net_pnl": 117.08,
+      "max_dd": 6.56
+    },
+    {
+      "config": "st_7_30_TP1.8_EMA50",
+      "trades": 72,
+      "wr": 41.7,
+      "net_pf": 1.1,
+      "net_pnl": 50.38,
+      "max_dd": 10.01
+    },
+    {
+      "config": "st_7_30_TP1.8_EMA100",
+      "trades": 81,
+      "wr": 39.5,
+      "net_pf": 1.01,
+      "net_pnl": 4.94,
+      "max_dd": 8.5
+    },
+    {
+      "config": "st_7_30_TP1.8_EMA200",
+      "trades": 82,
+      "wr": 41.5,
+      "net_pf": 1.09,
+      "net_pnl": 51.85,
+      "max_dd": 9.91
+    },
+    {
+      "config": "st_7_30_TP2.0_EMA50",
+      "trades": 71,
+      "wr": 39.4,
+      "net_pf": 1.12,
+      "net_pnl": 59.8,
+      "max_dd": 9.83
+    },
+    {
+      "config": "st_7_30_TP2.0_EMA100",
+      "trades": 80,
+      "wr": 37.5,
+      "net_pf": 1.03,
+      "net_pnl": 18.02,
+      "max_dd": 8.5
+    },
+    {
+      "config": "st_7_30_TP2.0_EMA200",
+      "trades": 81,
+      "wr": 39.5,
+      "net_pf": 1.12,
+      "net_pnl": 69.67,
+      "max_dd": 9.37
+    },
+    {
+      "config": "st_7_30_TP2.4_EMA50",
+      "trades": 71,
+      "wr": 35.2,
+      "net_pf": 1.12,
+      "net_pnl": 66.62,
+      "max_dd": 12.5
+    },
+    {
+      "config": "st_7_30_TP2.4_EMA100",
+      "trades": 80,
+      "wr": 33.8,
+      "net_pf": 1.05,
+      "net_pnl": 32.66,
+      "max_dd": 10.47
+    },
+    {
+      "config": "st_7_30_TP2.4_EMA200",
+      "trades": 80,
+      "wr": 36.2,
+      "net_pf": 1.17,
+      "net_pnl": 105.64,
+      "max_dd": 10.31
+    },
+    {
+      "config": "st_10_25_TP1.8_EMA50",
+      "trades": 95,
+      "wr": 41.1,
+      "net_pf": 1.07,
+      "net_pnl": 43.24,
+      "max_dd": 12.37
+    },
+    {
+      "config": "st_10_25_TP1.8_EMA100",
+      "trades": 93,
+      "wr": 44.1,
+      "net_pf": 1.21,
+      "net_pnl": 131.05,
+      "max_dd": 7.93
+    },
+    {
+      "config": "st_10_25_TP1.8_EMA200",
+      "trades": 91,
+      "wr": 47.3,
+      "net_pf": 1.38,
+      "net_pnl": 224.63,
+      "max_dd": 7.56
+    },
+    {
+      "config": "st_10_25_TP2.0_EMA50",
+      "trades": 94,
+      "wr": 40.4,
+      "net_pf": 1.15,
+      "net_pnl": 104.71,
+      "max_dd": 10.63
+    },
+    {
+      "config": "st_10_25_TP2.0_EMA100",
+      "trades": 92,
+      "wr": 42.4,
+      "net_pf": 1.27,
+      "net_pnl": 166.54,
+      "max_dd": 7.95
+    },
+    {
+      "config": "st_10_25_TP2.0_EMA200",
+      "trades": 91,
+      "wr": 46.2,
+      "net_pf": 1.47,
+      "net_pnl": 292.5,
+      "max_dd": 7.2
+    },
+    {
+      "config": "st_10_25_TP2.4_EMA50",
+      "trades": 91,
+      "wr": 35.2,
+      "net_pf": 1.11,
+      "net_pnl": 78.42,
+      "max_dd": 7.53
+    },
+    {
+      "config": "st_10_25_TP2.4_EMA100",
+      "trades": 89,
+      "wr": 34.8,
+      "net_pf": 1.1,
+      "net_pnl": 67.4,
+      "max_dd": 8.33
+    },
+    {
+      "config": "st_10_25_TP2.4_EMA200",
+      "trades": 85,
+      "wr": 37.6,
+      "net_pf": 1.24,
+      "net_pnl": 154.89,
+      "max_dd": 7.55
+    },
+    {
+      "config": "st_10_30_TP1.8_EMA50",
+      "trades": 70,
+      "wr": 40.0,
+      "net_pf": 1.03,
+      "net_pnl": 14.95,
+      "max_dd": 8.78
+    },
+    {
+      "config": "st_10_30_TP1.8_EMA100",
+      "trades": 80,
+      "wr": 37.5,
+      "net_pf": 0.93,
+      "net_pnl": -39.21,
+      "max_dd": 10.1
+    },
+    {
+      "config": "st_10_30_TP1.8_EMA200",
+      "trades": 86,
+      "wr": 39.5,
+      "net_pf": 1.01,
+      "net_pnl": 6.34,
+      "max_dd": 9.33
+    },
+    {
+      "config": "st_10_30_TP2.0_EMA50",
+      "trades": 70,
+      "wr": 40.0,
+      "net_pf": 1.15,
+      "net_pnl": 72.34,
+      "max_dd": 7.88
+    },
+    {
+      "config": "st_10_30_TP2.0_EMA100",
+      "trades": 80,
+      "wr": 37.5,
+      "net_pf": 1.03,
+      "net_pnl": 18.89,
+      "max_dd": 8.68
+    },
+    {
+      "config": "st_10_30_TP2.0_EMA200",
+      "trades": 84,
+      "wr": 39.3,
+      "net_pf": 1.11,
+      "net_pnl": 67.75,
+      "max_dd": 7.99
+    },
+    {
+      "config": "st_10_30_TP2.4_EMA50",
+      "trades": 69,
+      "wr": 36.2,
+      "net_pf": 1.17,
+      "net_pnl": 91.12,
+      "max_dd": 9.52
+    },
+    {
+      "config": "st_10_30_TP2.4_EMA100",
+      "trades": 79,
+      "wr": 34.2,
+      "net_pf": 1.07,
+      "net_pnl": 44.98,
+      "max_dd": 7.42
+    },
+    {
+      "config": "st_10_30_TP2.4_EMA200",
+      "trades": 82,
+      "wr": 34.1,
+      "net_pf": 1.07,
+      "net_pnl": 45.95,
+      "max_dd": 11.4
+    },
+    {
+      "config": "st_10_35_TP1.8_EMA50",
+      "trades": 61,
+      "wr": 42.6,
+      "net_pf": 1.15,
+      "net_pnl": 62.68,
+      "max_dd": 7.25
+    },
+    {
+      "config": "st_10_35_TP1.8_EMA100",
+      "trades": 69,
+      "wr": 40.6,
+      "net_pf": 1.06,
+      "net_pnl": 27.03,
+      "max_dd": 8.34
+    },
+    {
+      "config": "st_10_35_TP1.8_EMA200",
+      "trades": 71,
+      "wr": 39.4,
+      "net_pf": 1.01,
+      "net_pnl": 6.05,
+      "max_dd": 8.3
+    },
+    {
+      "config": "st_10_35_TP2.0_EMA50",
+      "trades": 60,
+      "wr": 41.7,
+      "net_pf": 1.23,
+      "net_pnl": 96.86,
+      "max_dd": 6.52
+    },
+    {
+      "config": "st_10_35_TP2.0_EMA100",
+      "trades": 68,
+      "wr": 39.7,
+      "net_pf": 1.13,
+      "net_pnl": 64.31,
+      "max_dd": 7.25
+    },
+    {
+      "config": "st_10_35_TP2.0_EMA200",
+      "trades": 71,
+      "wr": 39.4,
+      "net_pf": 1.13,
+      "net_pnl": 62.8,
+      "max_dd": 7.95
+    },
+    {
+      "config": "st_10_35_TP2.4_EMA50",
+      "trades": 60,
+      "wr": 36.7,
+      "net_pf": 1.2,
+      "net_pnl": 91.25,
+      "max_dd": 7.12
+    },
+    {
+      "config": "st_10_35_TP2.4_EMA100",
+      "trades": 68,
+      "wr": 35.3,
+      "net_pf": 1.13,
+      "net_pnl": 67.15,
+      "max_dd": 8.26
+    },
+    {
+      "config": "st_10_35_TP2.4_EMA200",
+      "trades": 70,
+      "wr": 32.9,
+      "net_pf": 1.02,
+      "net_pnl": 10.63,
+      "max_dd": 10.05
+    },
+    {
+      "config": "st_14_30_TP1.8_EMA50",
+      "trades": 72,
+      "wr": 40.3,
+      "net_pf": 1.04,
+      "net_pnl": 20.38,
+      "max_dd": 8.15
+    },
+    {
+      "config": "st_14_30_TP1.8_EMA100",
+      "trades": 80,
+      "wr": 37.5,
+      "net_pf": 0.93,
+      "net_pnl": -38.52,
+      "max_dd": 10.54
+    },
+    {
+      "config": "st_14_30_TP1.8_EMA200",
+      "trades": 80,
+      "wr": 40.0,
+      "net_pf": 1.03,
+      "net_pnl": 17.52,
+      "max_dd": 10.29
+    },
+    {
+      "config": "st_14_30_TP2.0_EMA50",
+      "trades": 71,
+      "wr": 39.4,
+      "net_pf": 1.12,
+      "net_pnl": 59.73,
+      "max_dd": 7.88
+    },
+    {
+      "config": "st_14_30_TP2.0_EMA100",
+      "trades": 79,
+      "wr": 36.7,
+      "net_pf": 1.0,
+      "net_pnl": 0.5,
+      "max_dd": 8.96
+    },
+    {
+      "config": "st_14_30_TP2.0_EMA200",
+      "trades": 77,
+      "wr": 39.0,
+      "net_pf": 1.1,
+      "net_pnl": 54.97,
+      "max_dd": 9.22
+    },
+    {
+      "config": "st_14_30_TP2.4_EMA50",
+      "trades": 70,
+      "wr": 35.7,
+      "net_pf": 1.14,
+      "net_pnl": 78.39,
+      "max_dd": 9.57
+    },
+    {
+      "config": "st_14_30_TP2.4_EMA100",
+      "trades": 78,
+      "wr": 33.3,
+      "net_pf": 1.04,
+      "net_pnl": 22.09,
+      "max_dd": 7.47
+    },
+    {
+      "config": "st_14_30_TP2.4_EMA200",
+      "trades": 75,
+      "wr": 33.3,
+      "net_pf": 1.04,
+      "net_pnl": 21.5,
+      "max_dd": 10.46
+    }
+  ],
+  "cost_stress_grid": [
+    {
+      "comm_mult": 1.0,
+      "slip_mult": 1.0,
+      "net_pf": 1.37,
+      "net_pnl": 233.19
+    },
+    {
+      "comm_mult": 1.0,
+      "slip_mult": 1.5,
+      "net_pf": 1.37,
+      "net_pnl": 231.58
+    },
+    {
+      "comm_mult": 1.0,
+      "slip_mult": 2.0,
+      "net_pf": 1.36,
+      "net_pnl": 229.86
+    },
+    {
+      "comm_mult": 1.25,
+      "slip_mult": 1.0,
+      "net_pf": 1.3,
+      "net_pnl": 194.95
+    },
+    {
+      "comm_mult": 1.25,
+      "slip_mult": 1.5,
+      "net_pf": 1.3,
+      "net_pnl": 193.29
+    },
+    {
+      "comm_mult": 1.25,
+      "slip_mult": 2.0,
+      "net_pf": 1.3,
+      "net_pnl": 191.66
+    },
+    {
+      "comm_mult": 1.5,
+      "slip_mult": 1.0,
+      "net_pf": 1.24,
+      "net_pnl": 157.9
+    },
+    {
+      "comm_mult": 1.5,
+      "slip_mult": 1.5,
+      "net_pf": 1.24,
+      "net_pnl": 156.35
+    },
+    {
+      "comm_mult": 1.5,
+      "slip_mult": 2.0,
+      "net_pf": 1.24,
+      "net_pnl": 154.81
+    },
+    {
+      "comm_mult": 2.0,
+      "slip_mult": 1.0,
+      "net_pf": 1.13,
+      "net_pnl": 87.21
+    },
+    {
+      "comm_mult": 2.0,
+      "slip_mult": 1.5,
+      "net_pf": 1.13,
+      "net_pnl": 85.61
+    },
+    {
+      "comm_mult": 2.0,
+      "slip_mult": 2.0,
+      "net_pf": 1.13,
+      "net_pnl": 84.12
+    }
+  ],
+  "final_holdout_15d": {
+    "trades": 18,
+    "wr": 44.4,
+    "net_pf": 1.38,
+    "net_pnl": 43.65,
+    "max_dd": 3.28,
+    "payoff": 1.73,
+    "sharpe": 3.55,
+    "expectancy_r": 0.25,
+    "ci_wr_95": [
+      24.6,
+      66.3
+    ],
+    "ci_exp_95": [
+      0.24,
+      0.26
+    ],
+    "missed_orders": 0
+  },
+  "risk_sizing": [
+    {
+      "risk_pct": "0.25%",
+      "metrics": {
+        "trades": 91,
+        "wr": 46.2,
+        "net_pf": 1.49,
+        "net_pnl": 68.29,
+        "max_dd": 1.83,
+        "payoff": 1.74,
+        "sharpe": 4.48,
+        "expectancy_r": 0.29,
+        "ci_wr_95": [
+          36.3,
+          56.3
+        ],
+        "ci_exp_95": [
+          0.29,
+          0.29
+        ],
+        "missed_orders": 0
+      }
+    },
+    {
+      "risk_pct": "0.50%",
+      "metrics": {
+        "trades": 91,
+        "wr": 46.2,
+        "net_pf": 1.48,
+        "net_pnl": 139.87,
+        "max_dd": 3.64,
+        "payoff": 1.73,
+        "sharpe": 4.43,
+        "expectancy_r": 0.29,
+        "ci_wr_95": [
+          36.3,
+          56.3
+        ],
+        "ci_exp_95": [
+          0.29,
+          0.29
+        ],
+        "missed_orders": 0
+      }
+    },
+    {
+      "risk_pct": "1.00%",
+      "metrics": {
+        "trades": 91,
+        "wr": 46.2,
+        "net_pf": 1.47,
+        "net_pnl": 292.5,
+        "max_dd": 7.2,
+        "payoff": 1.72,
+        "sharpe": 4.34,
+        "expectancy_r": 0.29,
+        "ci_wr_95": [
+          36.3,
+          56.3
+        ],
+        "ci_exp_95": [
+          0.29,
+          0.29
+        ],
+        "missed_orders": 0
+      }
+    }
+  ]
+}

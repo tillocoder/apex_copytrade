@@ -643,30 +643,30 @@ export const BinanceFuturesTrading: React.FC = () => {
           <div className="flex items-center justify-between text-[11px] text-[#9CA3AF] font-sans font-semibold">
             <span>BINANCE BALANCE</span>
             <span className="px-1.5 py-0.2 rounded text-[9.5px] font-mono font-bold bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">
-              {bot?.compoundingTier || risk?.compoundingTier || 'Tier 1 ($2.50)'}
+              {bot?.compoundingTier || risk?.compoundingTier || 'Micro Tier ($20.00)'}
             </span>
           </div>
           <div className="text-2xl font-black text-white font-mono tracking-tight">
-            ${acc?.balance ? acc.balance.toFixed(2) : '2.50'}
+            ${acc?.balance ? acc.balance.toFixed(2) : '20.00'}
             <span className="text-xs font-normal text-[#9CA3AF] ml-1">USDT</span>
           </div>
           <div className="flex justify-between items-center text-[10.5px] font-mono border-t border-[#1C2E52]/60 pt-2 text-[#9CA3AF]">
-            <div>Avail: <span className="text-cyan-400 font-bold">${acc?.availableBalance ? acc.availableBalance.toFixed(2) : '2.50'}</span></div>
+            <div>Avail: <span className="text-cyan-400 font-bold">${acc?.availableBalance ? acc.availableBalance.toFixed(2) : '20.00'}</span></div>
             <div>Margin: <span className="text-purple-400 font-bold">${acc?.usedMargin ? acc.usedMargin.toFixed(2) : '0.00'}</span></div>
           </div>
           <div className="flex justify-between items-center text-[9.5px] font-sans text-emerald-400/90 pt-0.5">
             <span className="flex items-center gap-1">
               <ShieldCheck className="w-3 h-3 text-emerald-400" />
-              <span>Max DD Guard: $1.70</span>
+              <span>Max DD Guard: ${risk?.maxDailyLoss ? risk.maxDailyLoss.toFixed(2) : '1.00'} (5%)</span>
             </span>
             <span className="text-[#6B7280] font-mono">24/7 Engine: ACTIVE</span>
           </div>
         </div>
 
-        {/* Card 2: $2 Session Target Progress */}
+        {/* Card 2: $4 Session Target Progress */}
         <div className="bg-[#0A1224] border border-[#1C2E52] rounded-xl p-4 space-y-2 relative overflow-hidden shadow-lg">
           <div className="flex items-center justify-between text-[11px] text-[#9CA3AF] font-sans font-semibold">
-            <span>$2 SESSION TARGET</span>
+            <span>${bot?.sessionTargetUsd ? bot.sessionTargetUsd.toFixed(0) : '4'} SESSION TARGET</span>
             <span className={`px-1.5 py-0.2 rounded text-[9.5px] font-mono font-bold ${
               risk?.targetReached 
                 ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 animate-pulse'
@@ -681,7 +681,7 @@ export const BinanceFuturesTrading: React.FC = () => {
             }`}>
               {(acc?.sessionPnl || 0) >= 0 ? '+' : ''}${acc?.sessionPnl ? acc.sessionPnl.toFixed(2) : '0.00'}
             </span>
-            <span className="text-xs text-[#9CA3AF] font-mono font-bold">/ ${bot?.sessionTargetUsd?.toFixed(2) || '2.00'}</span>
+            <span className="text-xs text-[#9CA3AF] font-mono font-bold">/ ${bot?.sessionTargetUsd?.toFixed(2) || '4.00'}</span>
           </div>
           {/* Progress Bar */}
           <div className="w-full h-1.5 bg-[#142340] rounded-full overflow-hidden">
@@ -1074,7 +1074,7 @@ export const BinanceFuturesTrading: React.FC = () => {
               </div>
 
               <div className="p-3 bg-cyan-500/10 border border-cyan-500/25 rounded-lg text-[11px] text-[#9CA3AF] font-sans">
-                &#128161; <span className="font-semibold text-cyan-300">Capital Protection:</span> Initial capital is $2.50. Step-based compounding ($2.50 &rarr; $5.00 &rarr; $10.00 &rarr; $20.00) ensures survivability and growth without Martingale risk.
+                &#128161; <span className="font-semibold text-cyan-300">Capital Protection:</span> Initial capital is $20.00. Institutional 1.0% risk sizing ($0.20 base risk) with 20x leverage ensures high capital survivability and growth without Martingale risk.
               </div>
             </div>
 

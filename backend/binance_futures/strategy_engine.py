@@ -27,9 +27,11 @@ class ETHM5SuperTrendStrategy:
         self.last_evaluated_candle_time: int = 0
         self.last_triggered_flip_time: int = 0
 
-    def evaluate_setup(self, risk_status: Dict[str, Any]) -> Dict[str, Any]:
+    def evaluate_setup(self, risk_status: Dict[str, Any], is_closed_bar: bool = False) -> Dict[str, Any]:
         """
         Evaluates current multi-timeframe state and returns actionable signal or precise rejection reason.
+        is_closed_bar: If True, indicates evaluation is occurring on a confirmed completed candle close.
+        Only completed candle closes can consume/record self.last_triggered_flip_time.
         """
         current_price = self.md.get_current_price()
         now_utc = datetime.now(timezone.utc)
@@ -178,7 +180,7 @@ class ETHM5SuperTrendStrategy:
             )
 
         # Prevent duplicate entries on the same completed M5 bar
-        if candle_time == self.last_triggered_flip_time:
+        if is_closed_bar and candle_time == self.last_triggered_flip_time:
             return self._build_result(
                 "NONE", 50,
                 "Already processed candle",
@@ -214,7 +216,8 @@ class ETHM5SuperTrendStrategy:
             tp_price = round(candle_close + (DEFAULT_CONFIG.tp1_r * sl_dist), 2)
             be_price = round(candle_close * (1.0 + DEFAULT_CONFIG.be_fee_buffer_pct), 2)
 
-            self.last_triggered_flip_time = candle_time
+            if is_closed_bar:
+                self.last_triggered_flip_time = candle_time
             score = 88
 
             reason_summary = (
@@ -265,7 +268,8 @@ class ETHM5SuperTrendStrategy:
             tp_price = round(candle_close - (DEFAULT_CONFIG.tp1_r * sl_dist), 2)
             be_price = round(candle_close * (1.0 - DEFAULT_CONFIG.be_fee_buffer_pct), 2)
 
-            self.last_triggered_flip_time = candle_time
+            if is_closed_bar:
+                self.last_triggered_flip_time = candle_time
             score = 88
 
             reason_summary = (

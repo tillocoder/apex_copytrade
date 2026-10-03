@@ -1,0 +1,3 @@
+Iteration,Hypothesis,Train_WR,Train_PF,Train_PnL,Val_WR,Val_PF,Val_PnL,Status
+1,Baseline_v34_Model_1,57.1,0.81,-19.8,87.5,3.87,36.3,Vulnerable_In_Val_Chop
+2,Hardened_Triple_MTF_ADX20,64.3,1.17,10.28,100.0,37594500.0,37.59,Passes_Train_Val

@@ -1,0 +1,851 @@
+{
+  "audit_timestamp": "2026-10-01T07:09:45.699702+00:00",
+  "baseline_model": {
+    "params": {
+      "tp_r": 0.8,
+      "sl_mode": "ATR_MIN",
+      "sl_atr_mult": 1.5,
+      "min_sl_usd": 8.0,
+      "session_mode": "LONDON_EXPANSION",
+      "trend_mode": "M5_M15",
+      "adx_min": 0,
+      "score_thresh": 80,
+      "exec_mode": "MAKER_POST_ONLY"
+    },
+    "train": {
+      "trades": 21,
+      "wr": 57.1,
+      "gross_pf": 1.06,
+      "net_pf": 0.81,
+      "net_pnl": -19.8,
+      "max_dd": 6.07,
+      "sharpe": -2.33,
+      "expectancy_r": -0.09,
+      "avg_win": 7.06,
+      "avg_loss": 11.61,
+      "ci_95": [
+        36.5,
+        75.5
+      ],
+      "commissions": 24.91,
+      "comm_to_net_ratio": 1.26
+    },
+    "val": {
+      "trades": 8,
+      "wr": 87.5,
+      "gross_pf": 5.47,
+      "net_pf": 3.87,
+      "net_pnl": 36.3,
+      "max_dd": 1.21,
+      "sharpe": 15.28,
+      "expectancy_r": 0.45,
+      "avg_win": 6.99,
+      "avg_loss": 12.66,
+      "ci_95": [
+        52.9,
+        97.8
+      ],
+      "commissions": 10.33,
+      "comm_to_net_ratio": 0.28
+    },
+    "locked_test": {
+      "trades": 11,
+      "wr": 63.6,
+      "gross_pf": 1.38,
+      "net_pf": 0.95,
+      "net_pnl": -2.47,
+      "max_dd": 1.78,
+      "sharpe": -0.55,
+      "expectancy_r": -0.02,
+      "avg_win": 6.68,
+      "avg_loss": 12.3,
+      "ci_95": [
+        35.4,
+        84.8
+      ],
+      "commissions": 17.95,
+      "comm_to_net_ratio": 7.27
+    }
+  },
+  "hardened_model": {
+    "params": {
+      "tp_r": 0.85,
+      "sl_mode": "ATR_MIN",
+      "sl_atr_mult": 1.5,
+      "min_sl_usd": 8.0,
+      "be_r_trigger": null,
+      "session_mode": "LONDON_EXPANSION",
+      "trend_mode": "M5_M15_H1",
+      "adx_min": 20,
+      "score_thresh": 80,
+      "exec_mode": "MAKER_POST_ONLY"
+    },
+    "train": {
+      "trades": 14,
+      "wr": 64.3,
+      "gross_pf": 1.51,
+      "net_pf": 1.17,
+      "net_pnl": 10.28,
+      "max_dd": 2.29,
+      "sharpe": 1.78,
+      "expectancy_r": 0.08,
+      "avg_win": 7.68,
+      "avg_loss": 11.76,
+      "ci_95": [
+        38.8,
+        83.7
+      ],
+      "commissions": 15.78,
+      "comm_to_net_ratio": 1.54
+    },
+    "val": {
+      "trades": 5,
+      "wr": 100.0,
+      "gross_pf": 43133700.0,
+      "net_pf": 37594500.0,
+      "net_pnl": 37.59,
+      "max_dd": 0.0,
+      "sharpe": 1593.91,
+      "expectancy_r": 0.74,
+      "avg_win": 7.52,
+      "avg_loss": 0.0,
+      "ci_95": [
+        56.6,
+        100.0
+      ],
+      "commissions": 5.54,
+      "comm_to_net_ratio": 0.15
+    },
+    "locked_test": {
+      "trades": 7,
+      "wr": 57.1,
+      "gross_pf": 1.12,
+      "net_pf": 0.78,
+      "net_pnl": -8.3,
+      "max_dd": 2.25,
+      "sharpe": -2.64,
+      "expectancy_r": -0.12,
+      "avg_win": 7.23,
+      "avg_loss": 12.41,
+      "ci_95": [
+        25.0,
+        84.2
+      ],
+      "commissions": 12.03,
+      "comm_to_net_ratio": 1.45
+    },
+    "final_holdout": {
+      "trades": 2,
+      "wr": 50.0,
+      "gross_pf": 0.84,
+      "net_pf": 0.57,
+      "net_pnl": -5.35,
+      "max_dd": 1.24,
+      "sharpe": -4.51,
+      "expectancy_r": -0.27,
+      "avg_win": 7.13,
+      "avg_loss": 12.49,
+      "ci_95": [
+        9.5,
+        90.5
+      ],
+      "commissions": 3.78,
+      "comm_to_net_ratio": 0.71
+    }
+  },
+  "tp_sensitivity": [
+    {
+      "tp_r": 0.7,
+      "train_wr": 61.9,
+      "train_pf": 0.85,
+      "train_pnl": -14.06,
+      "val_wr": 87.5,
+      "val_pf": 3.31,
+      "val_pnl": 29.12,
+      "comm_ratio": 1.72
+    },
+    {
+      "tp_r": 0.8,
+      "train_wr": 57.1,
+      "train_pf": 0.81,
+      "train_pnl": -19.8,
+      "val_wr": 87.5,
+      "val_pf": 3.87,
+      "val_pnl": 36.3,
+      "comm_ratio": 1.26
+    },
+    {
+      "tp_r": 0.9,
+      "train_wr": 57.1,
+      "train_pf": 0.92,
+      "train_pnl": -8.09,
+      "val_wr": 87.5,
+      "val_pf": 4.42,
+      "val_pnl": 43.53,
+      "comm_ratio": 3.1
+    },
+    {
+      "tp_r": 1.0,
+      "train_wr": 52.4,
+      "train_pf": 0.86,
+      "train_pnl": -16.82,
+      "val_wr": 87.5,
+      "val_pf": 4.96,
+      "val_pnl": 50.79,
+      "comm_ratio": 1.53
+    },
+    {
+      "tp_r": 1.1,
+      "train_wr": 47.6,
+      "train_pf": 0.79,
+      "train_pnl": -27.37,
+      "val_wr": 50.0,
+      "val_pf": 0.81,
+      "val_pnl": -9.4,
+      "comm_ratio": 0.96
+    },
+    {
+      "tp_r": 1.2,
+      "train_wr": 42.9,
+      "train_pf": 0.71,
+      "train_pnl": -39.74,
+      "val_wr": 50.0,
+      "val_pf": 0.89,
+      "val_pnl": -5.48,
+      "comm_ratio": 0.67
+    },
+    {
+      "tp_r": 1.4,
+      "train_wr": 28.6,
+      "train_pf": 0.45,
+      "train_pnl": -92.12,
+      "val_wr": 50.0,
+      "val_pf": 1.05,
+      "val_pnl": 2.42,
+      "comm_ratio": 0.3
+    }
+  ],
+  "sl_architecture": [
+    {
+      "config": "MinSL_$6",
+      "train_wr": 66.7,
+      "train_pf": 1.12,
+      "train_pnl": 9.93,
+      "train_dd": 3.17,
+      "val_wr": 75.0,
+      "val_pf": 1.51,
+      "val_pnl": 13.35,
+      "val_dd": 1.95
+    },
+    {
+      "config": "MinSL_$7",
+      "train_wr": 61.9,
+      "train_pf": 0.95,
+      "train_pnl": -4.71,
+      "train_dd": 4.73,
+      "val_wr": 75.0,
+      "val_pf": 1.6,
+      "val_pnl": 15.31,
+      "val_dd": 1.84
+    },
+    {
+      "config": "MinSL_$8",
+      "train_wr": 57.1,
+      "train_pf": 0.81,
+      "train_pnl": -19.8,
+      "train_dd": 6.07,
+      "val_wr": 87.5,
+      "val_pf": 3.87,
+      "val_pnl": 36.3,
+      "val_dd": 1.21
+    },
+    {
+      "config": "MinSL_$9",
+      "train_wr": 66.7,
+      "train_pf": 1.25,
+      "train_pnl": 20.29,
+      "train_dd": 3.83,
+      "val_wr": 87.5,
+      "val_pf": 4.01,
+      "val_pnl": 37.36,
+      "val_dd": 1.19
+    },
+    {
+      "config": "MinSL_$10",
+      "train_wr": 66.7,
+      "train_pf": 1.28,
+      "train_pnl": 22.42,
+      "train_dd": 5.54,
+      "val_wr": 87.5,
+      "val_pf": 4.13,
+      "val_pnl": 38.26,
+      "val_dd": 1.17
+    },
+    {
+      "config": "ATR_1.2",
+      "train_wr": 57.1,
+      "train_pf": 0.81,
+      "train_pnl": -19.8,
+      "train_dd": 6.07,
+      "val_wr": 87.5,
+      "val_pf": 3.85,
+      "val_pnl": 36.14,
+      "val_dd": 1.22
+    },
+    {
+      "config": "ATR_1.4",
+      "train_wr": 57.1,
+      "train_pf": 0.81,
+      "train_pnl": -19.8,
+      "train_dd": 6.07,
+      "val_wr": 87.5,
+      "val_pf": 3.86,
+      "val_pnl": 36.23,
+      "val_dd": 1.21
+    },
+    {
+      "config": "ATR_1.6",
+      "train_wr": 57.1,
+      "train_pf": 0.81,
+      "train_pnl": -19.8,
+      "train_dd": 6.07,
+      "val_wr": 87.5,
+      "val_pf": 3.87,
+      "val_pnl": 36.36,
+      "val_dd": 1.21
+    },
+    {
+      "config": "ATR_1.8",
+      "train_wr": 57.1,
+      "train_pf": 0.81,
+      "train_pnl": -19.71,
+      "train_dd": 6.06,
+      "val_wr": 87.5,
+      "val_pf": 3.88,
+      "val_pnl": 36.44,
+      "val_dd": 1.21
+    },
+    {
+      "config": "Fixed_$8",
+      "train_wr": 57.1,
+      "train_pf": 0.81,
+      "train_pnl": -19.8,
+      "train_dd": 6.07,
+      "val_wr": 87.5,
+      "val_pf": 3.85,
+      "val_pnl": 36.14,
+      "val_dd": 1.22
+    },
+    {
+      "config": "Fixed_$10",
+      "train_wr": 66.7,
+      "train_pf": 1.28,
+      "train_pnl": 22.42,
+      "train_dd": 5.54,
+      "val_wr": 87.5,
+      "val_pf": 4.13,
+      "val_pnl": 38.26,
+      "val_dd": 1.17
+    },
+    {
+      "config": "Swing30",
+      "train_wr": 65.0,
+      "train_pf": 1.09,
+      "train_pnl": 7.04,
+      "train_dd": 3.88,
+      "val_wr": 62.5,
+      "val_pf": 0.89,
+      "val_pnl": -4.17,
+      "val_dd": 3.13
+    },
+    {
+      "config": "Swing30+0.5ATR",
+      "train_wr": 55.0,
+      "train_pf": 0.79,
+      "train_pnl": -20.76,
+      "train_dd": 6.94,
+      "val_wr": 75.0,
+      "val_pf": 1.85,
+      "val_pnl": 19.65,
+      "val_dd": 1.17
+    }
+  ],
+  "breakeven_results": [
+    {
+      "be_mode": "NO_BE",
+      "train_wr": 57.1,
+      "train_pf": 0.81,
+      "train_pnl": -19.8,
+      "train_r": -0.09,
+      "val_wr": 87.5,
+      "val_pf": 3.87,
+      "val_pnl": 36.3,
+      "val_r": 0.45
+    },
+    {
+      "be_mode": "BE_0.25R",
+      "train_wr": 4.8,
+      "train_pf": 0.1,
+      "train_pnl": -58.99,
+      "train_r": -0.29,
+      "val_wr": 25.0,
+      "val_pf": 1.27,
+      "val_pnl": 2.95,
+      "val_r": 0.04
+    },
+    {
+      "be_mode": "BE_0.5R",
+      "train_wr": 42.9,
+      "train_pf": 0.72,
+      "train_pnl": -24.29,
+      "train_r": -0.11,
+      "val_wr": 37.5,
+      "val_pf": 2.31,
+      "val_pnl": 11.69,
+      "val_r": 0.15
+    },
+    {
+      "be_mode": "BE_0.75R",
+      "train_wr": 47.6,
+      "train_pf": 0.73,
+      "train_pnl": -26.13,
+      "train_r": -0.12,
+      "val_wr": 62.5,
+      "val_pf": 2.19,
+      "val_pnl": 18.73,
+      "val_r": 0.24
+    }
+  ],
+  "mtf_adx_results": [
+    {
+      "config": "M5_M15 (Base)",
+      "train_trades": 21,
+      "train_wr": 57.1,
+      "train_pf": 0.81,
+      "train_pnl": -19.8,
+      "train_dd": 6.07,
+      "val_trades": 8,
+      "val_wr": 87.5,
+      "val_pf": 3.87,
+      "val_pnl": 36.3,
+      "val_dd": 1.21,
+      "train_ci": [
+        36.5,
+        75.5
+      ],
+      "val_ci": [
+        52.9,
+        97.8
+      ]
+    },
+    {
+      "config": "M5_M15_H1 (Triple)",
+      "train_trades": 18,
+      "train_wr": 61.1,
+      "train_pf": 0.96,
+      "train_pnl": -3.63,
+      "train_dd": 3.85,
+      "val_trades": 6,
+      "val_wr": 100.0,
+      "val_pf": 42013800.0,
+      "val_pnl": 42.01,
+      "val_dd": 0.0,
+      "train_ci": [
+        38.6,
+        79.7
+      ],
+      "val_ci": [
+        61.0,
+        100.0
+      ]
+    },
+    {
+      "config": "M5_M15 + ADX18",
+      "train_trades": 18,
+      "train_wr": 66.7,
+      "train_pf": 1.22,
+      "train_pnl": 15.21,
+      "train_dd": 2.72,
+      "val_trades": 7,
+      "val_wr": 85.7,
+      "val_pf": 3.34,
+      "val_pnl": 29.36,
+      "val_dd": 1.21,
+      "train_ci": [
+        43.7,
+        83.7
+      ],
+      "val_ci": [
+        48.7,
+        97.4
+      ]
+    },
+    {
+      "config": "M5_M15 + ADX20",
+      "train_trades": 15,
+      "train_wr": 66.7,
+      "train_pf": 1.22,
+      "train_pnl": 12.88,
+      "train_dd": 2.29,
+      "val_trades": 7,
+      "val_wr": 85.7,
+      "val_pf": 3.34,
+      "val_pnl": 29.36,
+      "val_dd": 1.21,
+      "train_ci": [
+        41.7,
+        84.8
+      ],
+      "val_ci": [
+        48.7,
+        97.4
+      ]
+    },
+    {
+      "config": "M5_M15 + ADX22",
+      "train_trades": 13,
+      "train_wr": 61.5,
+      "train_pf": 0.97,
+      "train_pnl": -1.46,
+      "train_dd": 2.95,
+      "val_trades": 7,
+      "val_wr": 85.7,
+      "val_pf": 3.34,
+      "val_pnl": 29.36,
+      "val_dd": 1.21,
+      "train_ci": [
+        35.5,
+        82.3
+      ],
+      "val_ci": [
+        48.7,
+        97.4
+      ]
+    },
+    {
+      "config": "M5_M15 + ADX24",
+      "train_trades": 13,
+      "train_wr": 61.5,
+      "train_pf": 0.97,
+      "train_pnl": -1.46,
+      "train_dd": 2.95,
+      "val_trades": 6,
+      "val_wr": 83.3,
+      "val_pf": 2.8,
+      "val_pnl": 22.46,
+      "val_dd": 1.22,
+      "train_ci": [
+        35.5,
+        82.3
+      ],
+      "val_ci": [
+        43.6,
+        97.0
+      ]
+    },
+    {
+      "config": "M5_M15 + ADX26",
+      "train_trades": 9,
+      "train_wr": 66.7,
+      "train_pf": 1.22,
+      "train_pnl": 7.77,
+      "train_dd": 2.29,
+      "val_trades": 3,
+      "val_wr": 66.7,
+      "val_pf": 1.14,
+      "val_pnl": 1.72,
+      "val_dd": 1.21,
+      "train_ci": [
+        35.4,
+        87.9
+      ],
+      "val_ci": [
+        20.8,
+        93.9
+      ]
+    },
+    {
+      "config": "M5_M15_H1 + ADX20",
+      "train_trades": 14,
+      "train_wr": 64.3,
+      "train_pf": 1.1,
+      "train_pnl": 5.79,
+      "train_dd": 2.29,
+      "val_trades": 5,
+      "val_wr": 100.0,
+      "val_pf": 35024200.0,
+      "val_pnl": 35.02,
+      "val_dd": 0.0,
+      "train_ci": [
+        38.8,
+        83.7
+      ],
+      "val_ci": [
+        56.6,
+        100.0
+      ]
+    },
+    {
+      "config": "M5_M15_H1 + ADX22",
+      "train_trades": 12,
+      "train_wr": 58.3,
+      "train_pf": 0.85,
+      "train_pnl": -8.46,
+      "train_dd": 2.95,
+      "val_trades": 5,
+      "val_wr": 100.0,
+      "val_pf": 35024200.0,
+      "val_pnl": 35.02,
+      "val_dd": 0.0,
+      "train_ci": [
+        32.0,
+        80.7
+      ],
+      "val_ci": [
+        56.6,
+        100.0
+      ]
+    }
+  ],
+  "execution_fill_results": [
+    {
+      "fill_rate": 1.0,
+      "trades": 26,
+      "wr": 69.2,
+      "net_pf": 1.4,
+      "net_pnl": 39.56,
+      "max_dd": 2.29
+    },
+    {
+      "fill_rate": 0.95,
+      "trades": 24,
+      "wr": 70.8,
+      "net_pf": 1.51,
+      "net_pnl": 44.2,
+      "max_dd": 2.95
+    },
+    {
+      "fill_rate": 0.9,
+      "trades": 23,
+      "wr": 69.6,
+      "net_pf": 1.42,
+      "net_pnl": 36.4,
+      "max_dd": 2.95
+    },
+    {
+      "fill_rate": 0.8,
+      "trades": 21,
+      "wr": 66.7,
+      "net_pf": 1.24,
+      "net_pnl": 20.81,
+      "max_dd": 2.95
+    },
+    {
+      "fill_rate": 0.7,
+      "trades": 18,
+      "wr": 66.7,
+      "net_pf": 1.24,
+      "net_pnl": 17.61,
+      "max_dd": 2.95
+    }
+  ],
+  "taker_slippage_results": [
+    {
+      "slip_ticks": 0.0,
+      "trades": 26,
+      "wr": 69.2,
+      "net_pf": 1.18,
+      "net_pnl": 18.95,
+      "max_dd": 2.73
+    },
+    {
+      "slip_ticks": 0.01,
+      "trades": 26,
+      "wr": 69.2,
+      "net_pf": 1.18,
+      "net_pnl": 18.3,
+      "max_dd": 2.75
+    },
+    {
+      "slip_ticks": 0.02,
+      "trades": 26,
+      "wr": 69.2,
+      "net_pf": 1.17,
+      "net_pnl": 17.63,
+      "max_dd": 2.76
+    },
+    {
+      "slip_ticks": 0.03,
+      "trades": 26,
+      "wr": 69.2,
+      "net_pf": 1.16,
+      "net_pnl": 16.99,
+      "max_dd": 2.77
+    }
+  ],
+  "cost_multiplier_results": [
+    {
+      "fee_mult": 1.0,
+      "trades": 26,
+      "wr": 69.2,
+      "net_pf": 1.4,
+      "net_pnl": 39.56,
+      "commissions": 33.98
+    },
+    {
+      "fee_mult": 1.25,
+      "trades": 26,
+      "wr": 69.2,
+      "net_pf": 1.31,
+      "net_pnl": 30.99,
+      "commissions": 42.31
+    },
+    {
+      "fee_mult": 1.5,
+      "trades": 26,
+      "wr": 69.2,
+      "net_pf": 1.22,
+      "net_pnl": 22.54,
+      "commissions": 50.57
+    },
+    {
+      "fee_mult": 2.0,
+      "trades": 26,
+      "wr": 69.2,
+      "net_pf": 1.05,
+      "net_pnl": 5.72,
+      "commissions": 66.9
+    }
+  ],
+  "market_regimes": [
+    {
+      "regime": "STRONG_UPTREND",
+      "trades": 14,
+      "net_pnl": 47.69
+    },
+    {
+      "regime": "NORMAL_VOLATILITY",
+      "trades": 5,
+      "net_pnl": -0.59
+    },
+    {
+      "regime": "HIGH_VOLATILITY",
+      "trades": 4,
+      "net_pnl": -10.03
+    },
+    {
+      "regime": "STRONG_DOWNTREND",
+      "trades": 1,
+      "net_pnl": 7.28
+    }
+  ],
+  "walk_forward_summary": {
+    "profitable_windows_pct": 37.5,
+    "median_test_pf": 0.88,
+    "worst_test_pf": 0.57,
+    "best_test_pf": 22699800.0,
+    "windows": [
+      {
+        "window": 1,
+        "period": "2026-07-29 to 2026-08-08",
+        "train_wr": 66.7,
+        "train_pf": 1.31,
+        "test_trades": 2,
+        "test_wr": 50.0,
+        "test_pf": 0.64,
+        "test_pnl": -4.2,
+        "test_dd": 1.17
+      },
+      {
+        "window": 2,
+        "period": "2026-08-05 to 2026-08-15",
+        "train_wr": 57.1,
+        "train_pf": 0.86,
+        "test_trades": 0,
+        "test_wr": 0.0,
+        "test_pf": 0.0,
+        "test_pnl": 0.0,
+        "test_dd": 0.0
+      },
+      {
+        "window": 3,
+        "period": "2026-08-12 to 2026-08-22",
+        "train_wr": 60.0,
+        "train_pf": 0.96,
+        "test_trades": 3,
+        "test_wr": 100.0,
+        "test_pf": 22699800.0,
+        "test_pnl": 22.7,
+        "test_dd": 0.0
+      },
+      {
+        "window": 4,
+        "period": "2026-08-19 to 2026-08-29",
+        "train_wr": 50.0,
+        "train_pf": 0.64,
+        "test_trades": 3,
+        "test_wr": 100.0,
+        "test_pf": 22385200.0,
+        "test_pnl": 22.39,
+        "test_dd": 0.0
+      },
+      {
+        "window": 5,
+        "period": "2026-08-26 to 2026-09-05",
+        "train_wr": 83.3,
+        "train_pf": 3.21,
+        "test_trades": 3,
+        "test_wr": 100.0,
+        "test_pf": 21951600.0,
+        "test_pnl": 21.95,
+        "test_dd": 0.0
+      },
+      {
+        "window": 6,
+        "period": "2026-09-02 to 2026-09-12",
+        "train_wr": 100.0,
+        "train_pf": 37594500.0,
+        "test_trades": 5,
+        "test_wr": 60.0,
+        "test_pf": 0.88,
+        "test_pnl": -2.95,
+        "test_dd": 1.73
+      },
+      {
+        "window": 7,
+        "period": "2026-09-09 to 2026-09-19",
+        "train_wr": 87.5,
+        "train_pf": 4.11,
+        "test_trades": 2,
+        "test_wr": 50.0,
+        "test_pf": 0.58,
+        "test_pnl": -5.14,
+        "test_dd": 1.23
+      },
+      {
+        "window": 8,
+        "period": "2026-09-16 to 2026-09-26",
+        "train_wr": 80.0,
+        "train_pf": 2.34,
+        "test_trades": 2,
+        "test_wr": 50.0,
+        "test_pf": 0.57,
+        "test_pnl": -5.35,
+        "test_dd": 1.24
+      }
+    ]
+  },
+  "monte_carlo_stress": {
+    "p05_equity": 954.01,
+    "p25_equity": 997.11,
+    "median_equity": 1026.51,
+    "p75_equity": 1055.08,
+    "p95_equity": 1097.11,
+    "median_max_dd": 3.48,
+    "p95_max_dd": 7.52,
+    "max_losing_streak": 8,
+    "prob_10_loss_streak": 0.0,
+    "prob_20_pct_dd": 0.0,
+    "prob_ruin": 0.0
+  }
+}

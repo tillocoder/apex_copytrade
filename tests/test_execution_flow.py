@@ -68,9 +68,12 @@ async def run_test():
     md.best_ask = 2650.01
     md.spread = 0.02
     
+    DEFAULT_CONFIG.session_start_hour_utc = 0
+    DEFAULT_CONFIG.session_end_hour_utc = 24
+
     # 4. Evaluate strategy
     print(f"\n3. Evaluating Strategy on simulated setup...")
-    signal_res = strategy.evaluate_setup(risk_check)
+    signal_res = strategy.evaluate_setup(risk_check, is_closed_bar=True)
     print(f"   Final Signal : {signal_res.get('final_signal')}")
     print(f"   Score        : {signal_res.get('score')}")
     print(f"   Reason       : {signal_res.get('reason')}")
@@ -140,7 +143,7 @@ async def run_test():
     md.best_ask = 2645.01
     
     risk_check_short = risk.check_preflight_risk(has_open_position=False, is_live_mode=False)
-    signal_short = strategy.evaluate_setup(risk_check_short)
+    signal_short = strategy.evaluate_setup(risk_check_short, is_closed_bar=True)
     print(f"   Final Signal : {signal_short.get('final_signal')}")
     print(f"   Reason       : {signal_short.get('reason')}")
     print(f"   SL           : ${signal_short.get('sl')}")

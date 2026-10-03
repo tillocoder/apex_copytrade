@@ -1,0 +1,3 @@
+Execution_Model,Win_Rate_Pct,Gross_PF,Net_PF,Gross_PnL,Commissions,Slippage,Net_PnL
+MAKER_POST_ONLY,67.2,1.62,1.19,281.11,181.48,0.0,99.63
+REALISTIC_TAKER,67.2,1.61,0.98,264.75,275.76,1.63,-12.65

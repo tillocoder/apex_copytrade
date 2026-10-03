@@ -101,7 +101,7 @@ export const PaperPositionsDrawer: React.FC<PaperPositionsDrawerProps> = ({
                 </span>
               </div>
               <p className="text-xs text-[#9CA3AF] font-sans mt-0.5">
-                Binance Futures ETHUSDT M1 24-soatlik jonli paper test sessiyasida ochilgan pozitsiyalar
+                Binance Futures ETHUSDT M5 24-soatlik jonli paper test sessiyasida ochilgan pozitsiyalar
               </p>
             </div>
           </div>
@@ -323,7 +323,7 @@ export const PaperPositionsDrawer: React.FC<PaperPositionsDrawerProps> = ({
                 24-SOATLIK PAPER TEST SESSIYASIDA HALI YANGI SAVDO OCHILMADI
               </div>
               <p className="text-xs text-[#9CA3AF] max-w-md mx-auto leading-relaxed">
-                Bozor M1 filtrlari (Score &ge; 72, ADX &ge; 22, 24/7 sessiyalar) bo'yicha uzluksiz real-time skanerlanmoqda. Shartlar bajarilganda yangi ochilgan yoki yopilgan barcha pozitsiyalar shu yerda avtomatik paydo bo'ladi.
+                Bozor M5 filtrlari (SuperTrend 10/2.5 + H1 EMA 200 + Breakout Hajmi &ge; 1.3x) bo'yicha uzluksiz real-time skanerlanmoqda. Shartlar to'liq mos kelganda yangi ochilgan yoki yopilgan barcha pozitsiyalar shu yerda avtomatik paydo bo'ladi.
               </p>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[11px] font-mono">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>

@@ -1,0 +1,310 @@
+{
+  "timestamp": "2026-10-01T05:54:06.124487+00:00",
+  "total_combinations_tested": 13392,
+  "computation_time_seconds": 684.79,
+  "cpu_cores_utilized": 8,
+  "qualifying_models_count": 13392,
+  "high_winrate_models_count": 0,
+  "top_10_candidates": [
+    {
+      "params": {
+        "allowed_modules": [
+          "MODULE_E_M5_M1_HYBRID"
+        ],
+        "trend_filter": "STRICT_HTF",
+        "sl_model": "M5_SWING",
+        "sl_mult": 2.2,
+        "min_sl_usd": 5.0,
+        "tp_mode": "SINGLE_TP",
+        "tp_r": 1.4,
+        "tp2_r": 1.4,
+        "be_after_r": 0.0,
+        "score_threshold": 80,
+        "adx_threshold": 18,
+        "rsi_filter": true,
+        "session_mode": "ALL_24H"
+      },
+      "total_trades": 389,
+      "trades_per_day": 4.3,
+      "win_rate_pct": 41.6,
+      "net_pf": 0.84,
+      "net_pnl": -328.89,
+      "max_dd_pct": 41.0,
+      "oos_trades": 129,
+      "oos_win_rate_pct": 43.4,
+      "oos_pf": 0.91,
+      "oos_pnl": -52.15,
+      "composite_score": 38.2
+    },
+    {
+      "params": {
+        "allowed_modules": [
+          "MODULE_E_M5_M1_HYBRID"
+        ],
+        "trend_filter": "STRICT_HTF",
+        "sl_model": "M5_SWING",
+        "sl_mult": 2.2,
+        "min_sl_usd": 5.0,
+        "tp_mode": "SINGLE_TP",
+        "tp_r": 1.4,
+        "tp2_r": 1.4,
+        "be_after_r": 0.8,
+        "score_threshold": 70,
+        "adx_threshold": 18,
+        "rsi_filter": false,
+        "session_mode": "ALL_24H"
+      },
+      "total_trades": 549,
+      "trades_per_day": 6.1,
+      "win_rate_pct": 27.7,
+      "net_pf": 0.74,
+      "net_pnl": -515.5,
+      "max_dd_pct": 55.64,
+      "oos_trades": 182,
+      "oos_win_rate_pct": 28.6,
+      "oos_pf": 0.83,
+      "oos_pnl": -73.51,
+      "composite_score": 0.7
+    },
+    {
+      "params": {
+        "allowed_modules": [
+          "MODULE_E_M5_M1_HYBRID"
+        ],
+        "trend_filter": "STRICT_HTF",
+        "sl_model": "M5_SWING",
+        "sl_mult": 2.2,
+        "min_sl_usd": 5.0,
+        "tp_mode": "SINGLE_TP",
+        "tp_r": 1.4,
+        "tp2_r": 1.4,
+        "be_after_r": 0.8,
+        "score_threshold": 70,
+        "adx_threshold": 18,
+        "rsi_filter": true,
+        "session_mode": "ALL_24H"
+      },
+      "total_trades": 565,
+      "trades_per_day": 6.3,
+      "win_rate_pct": 28.3,
+      "net_pf": 0.75,
+      "net_pnl": -510.41,
+      "max_dd_pct": 56.54,
+      "oos_trades": 187,
+      "oos_win_rate_pct": 28.3,
+      "oos_pf": 0.72,
+      "oos_pnl": -139.01,
+      "composite_score": 0.9
+    },
+    {
+      "params": {
+        "allowed_modules": [
+          "MODULE_E_M5_M1_HYBRID"
+        ],
+        "trend_filter": "STRICT_HTF",
+        "sl_model": "M5_SWING",
+        "sl_mult": 2.2,
+        "min_sl_usd": 5.0,
+        "tp_mode": "SINGLE_TP",
+        "tp_r": 1.4,
+        "tp2_r": 1.4,
+        "be_after_r": 0.8,
+        "score_threshold": 75,
+        "adx_threshold": 18,
+        "rsi_filter": false,
+        "session_mode": "ALL_24H"
+      },
+      "total_trades": 567,
+      "trades_per_day": 6.3,
+      "win_rate_pct": 26.8,
+      "net_pf": 0.72,
+      "net_pnl": -546.53,
+      "max_dd_pct": 58.51,
+      "oos_trades": 188,
+      "oos_win_rate_pct": 26.1,
+      "oos_pf": 0.74,
+      "oos_pnl": -107.82,
+      "composite_score": -3.9
+    },
+    {
+      "params": {
+        "allowed_modules": [
+          "MODULE_E_M5_M1_HYBRID"
+        ],
+        "trend_filter": "STRICT_HTF",
+        "sl_model": "M5_SWING",
+        "sl_mult": 2.2,
+        "min_sl_usd": 5.0,
+        "tp_mode": "SINGLE_TP",
+        "tp_r": 1.4,
+        "tp2_r": 1.4,
+        "be_after_r": 0.8,
+        "score_threshold": 75,
+        "adx_threshold": 18,
+        "rsi_filter": true,
+        "session_mode": "ALL_24H"
+      },
+      "total_trades": 590,
+      "trades_per_day": 6.6,
+      "win_rate_pct": 26.9,
+      "net_pf": 0.74,
+      "net_pnl": -550.4,
+      "max_dd_pct": 58.29,
+      "oos_trades": 195,
+      "oos_win_rate_pct": 27.2,
+      "oos_pf": 0.71,
+      "oos_pnl": -139.98,
+      "composite_score": -3.1
+    },
+    {
+      "params": {
+        "allowed_modules": [
+          "MODULE_E_M5_M1_HYBRID"
+        ],
+        "trend_filter": "STRICT_HTF",
+        "sl_model": "M5_SWING",
+        "sl_mult": 2.2,
+        "min_sl_usd": 5.0,
+        "tp_mode": "SINGLE_TP",
+        "tp_r": 1.4,
+        "tp2_r": 1.4,
+        "be_after_r": 0.8,
+        "score_threshold": 80,
+        "adx_threshold": 18,
+        "rsi_filter": false,
+        "session_mode": "ALL_24H"
+      },
+      "total_trades": 577,
+      "trades_per_day": 6.4,
+      "win_rate_pct": 26.7,
+      "net_pf": 0.72,
+      "net_pnl": -559.08,
+      "max_dd_pct": 60.49,
+      "oos_trades": 191,
+      "oos_win_rate_pct": 25.1,
+      "oos_pf": 0.7,
+      "oos_pnl": -124.81,
+      "composite_score": -6.0
+    },
+    {
+      "params": {
+        "allowed_modules": [
+          "MODULE_E_M5_M1_HYBRID"
+        ],
+        "trend_filter": "STRICT_HTF",
+        "sl_model": "M5_SWING",
+        "sl_mult": 2.2,
+        "min_sl_usd": 5.0,
+        "tp_mode": "SINGLE_TP",
+        "tp_r": 1.4,
+        "tp2_r": 1.4,
+        "be_after_r": 0.8,
+        "score_threshold": 80,
+        "adx_threshold": 18,
+        "rsi_filter": true,
+        "session_mode": "ALL_24H"
+      },
+      "total_trades": 587,
+      "trades_per_day": 6.5,
+      "win_rate_pct": 27.6,
+      "net_pf": 0.75,
+      "net_pnl": -531.66,
+      "max_dd_pct": 58.15,
+      "oos_trades": 194,
+      "oos_win_rate_pct": 27.3,
+      "oos_pf": 0.74,
+      "oos_pnl": -118.31,
+      "composite_score": -1.7
+    },
+    {
+      "params": {
+        "allowed_modules": [
+          "MODULE_E_M5_M1_HYBRID"
+        ],
+        "trend_filter": "STRICT_HTF",
+        "sl_model": "M5_SWING",
+        "sl_mult": 2.2,
+        "min_sl_usd": 5.0,
+        "tp_mode": "SINGLE_TP",
+        "tp_r": 1.6,
+        "tp2_r": 1.6,
+        "be_after_r": 0.0,
+        "score_threshold": 70,
+        "adx_threshold": 18,
+        "rsi_filter": false,
+        "session_mode": "ALL_24H"
+      },
+      "total_trades": 341,
+      "trades_per_day": 3.8,
+      "win_rate_pct": 38.1,
+      "net_pf": 0.85,
+      "net_pnl": -295.18,
+      "max_dd_pct": 38.94,
+      "oos_trades": 113,
+      "oos_win_rate_pct": 41.6,
+      "oos_pf": 0.99,
+      "oos_pnl": -5.36,
+      "composite_score": 35.2
+    },
+    {
+      "params": {
+        "allowed_modules": [
+          "MODULE_E_M5_M1_HYBRID"
+        ],
+        "trend_filter": "STRICT_HTF",
+        "sl_model": "M5_SWING",
+        "sl_mult": 2.2,
+        "min_sl_usd": 5.0,
+        "tp_mode": "SINGLE_TP",
+        "tp_r": 1.6,
+        "tp2_r": 1.6,
+        "be_after_r": 0.0,
+        "score_threshold": 70,
+        "adx_threshold": 18,
+        "rsi_filter": true,
+        "session_mode": "ALL_24H"
+      },
+      "total_trades": 344,
+      "trades_per_day": 3.8,
+      "win_rate_pct": 38.1,
+      "net_pf": 0.84,
+      "net_pnl": -311.05,
+      "max_dd_pct": 36.51,
+      "oos_trades": 114,
+      "oos_win_rate_pct": 38.6,
+      "oos_pf": 0.86,
+      "oos_pnl": -76.83,
+      "composite_score": 37.4
+    },
+    {
+      "params": {
+        "allowed_modules": [
+          "MODULE_E_M5_M1_HYBRID"
+        ],
+        "trend_filter": "STRICT_HTF",
+        "sl_model": "M5_SWING",
+        "sl_mult": 2.2,
+        "min_sl_usd": 5.0,
+        "tp_mode": "SINGLE_TP",
+        "tp_r": 1.6,
+        "tp2_r": 1.6,
+        "be_after_r": 0.0,
+        "score_threshold": 75,
+        "adx_threshold": 18,
+        "rsi_filter": false,
+        "session_mode": "ALL_24H"
+      },
+      "total_trades": 345,
+      "trades_per_day": 3.8,
+      "win_rate_pct": 37.4,
+      "net_pf": 0.82,
+      "net_pnl": -343.61,
+      "max_dd_pct": 40.01,
+      "oos_trades": 114,
+      "oos_win_rate_pct": 40.4,
+      "oos_pf": 0.94,
+      "oos_pnl": -28.33,
+      "composite_score": 32.5
+    }
+  ]
+}

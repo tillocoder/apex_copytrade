@@ -1,0 +1,80 @@
+{
+  "timestamp": "2026-10-01T07:30:18.091523+00:00",
+  "winner_strategy": "Strategy_B_Trend_Pullback",
+  "params": {
+    "tp_r": 1.8,
+    "sl_atr_mult": 1.0,
+    "min_sl_usd": 10.0,
+    "exec_mode": "MAKER"
+  },
+  "train": {
+    "trades": 134,
+    "wr": 41.0,
+    "net_pf": 1.05,
+    "net_pnl": 44.46,
+    "dd": 15.24,
+    "payoff": 1.5
+  },
+  "validation": {
+    "trades": 67,
+    "wr": 37.3,
+    "net_pf": 0.87,
+    "net_pnl": -59.57,
+    "dd": 13.77,
+    "payoff": 1.46
+  },
+  "locked_test": {
+    "trades": 93,
+    "wr": 39.8,
+    "gross_pf": 1.17,
+    "net_pf": 0.95,
+    "net_pnl": -32.84,
+    "max_dd": 10.05,
+    "sharpe": -0.59,
+    "expectancy_r": -0.03,
+    "avg_win": 16.81,
+    "avg_loss": 11.7,
+    "payoff_ratio": 1.44,
+    "ci_95": [
+      30.4,
+      49.9
+    ],
+    "commissions": 128.77
+  },
+  "full_90d_maker": {
+    "trades": 294,
+    "wr": 39.8,
+    "gross_pf": 1.17,
+    "net_pf": 0.98,
+    "net_pnl": -50.15,
+    "max_dd": 21.76,
+    "sharpe": -0.28,
+    "expectancy_r": -0.01,
+    "avg_win": 17.18,
+    "avg_loss": 11.64,
+    "payoff_ratio": 1.48,
+    "ci_95": [
+      34.4,
+      45.5
+    ],
+    "commissions": 357.8
+  },
+  "full_90d_taker": {
+    "trades": 294,
+    "wr": 39.8,
+    "gross_pf": 1.16,
+    "net_pf": 0.88,
+    "net_pnl": -231.37,
+    "max_dd": 33.14,
+    "sharpe": -1.43,
+    "expectancy_r": -0.08,
+    "avg_win": 14.99,
+    "avg_loss": 11.22,
+    "payoff_ratio": 1.34,
+    "ci_95": [
+      34.4,
+      45.5
+    ],
+    "commissions": 489.03
+  }
+}

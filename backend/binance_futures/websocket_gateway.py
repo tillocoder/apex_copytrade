@@ -142,11 +142,12 @@ class BinanceFuturesWebSocketGateway:
                                 is_live_mode=DEFAULT_CONFIG.live_enabled
                             )
 
-                            signal_res = self.strategy.evaluate_setup(risk_check)
+                            is_closed_5m = bool(k.get("x", False))
+                            signal_res = self.strategy.evaluate_setup(risk_check, is_closed_bar=is_closed_5m)
                             self.latest_signal_cache = signal_res
 
                             # Execute strictly on confirmed completed M5 candle flip
-                            if k.get("x", False) and DEFAULT_CONFIG.is_running and signal_res.get("final_signal") in ("LONG", "SHORT"):
+                            if is_closed_5m and DEFAULT_CONFIG.is_running and signal_res.get("final_signal") in ("LONG", "SHORT"):
                                 if risk_check.get("can_trade", False) and not has_open_pos:
                                     exec_res = await self.executor.execute_signal(signal_res, DEFAULT_CONFIG.live_enabled)
                                     print(f"🎯 [AUTO_EXECUTION M5] {signal_res.get('final_signal')} -> Status: {exec_res.get('status')}")
@@ -167,11 +168,12 @@ class BinanceFuturesWebSocketGateway:
                             )
 
                             # Evaluate Strategy Engine
-                            signal_res = self.strategy.evaluate_setup(risk_check)
+                            is_closed_1m = bool(k.get("x", False))
+                            signal_res = self.strategy.evaluate_setup(risk_check, is_closed_bar=(DEFAULT_CONFIG.timeframe == "1m" and is_closed_1m))
                             self.latest_signal_cache = signal_res
 
                             # Auto-Execution Gate (1m only if configured for 1m timeframe)
-                            if DEFAULT_CONFIG.timeframe == "1m" and DEFAULT_CONFIG.is_running and signal_res.get("final_signal") in ("LONG", "SHORT"):
+                            if DEFAULT_CONFIG.timeframe == "1m" and is_closed_1m and DEFAULT_CONFIG.is_running and signal_res.get("final_signal") in ("LONG", "SHORT"):
                                 if risk_check.get("can_trade", False) and not has_open_pos:
                                     exec_res = await self.executor.execute_signal(signal_res, DEFAULT_CONFIG.live_enabled)
                                     print(f"🎯 [AUTO_EXECUTION] {signal_res.get('final_signal')} -> Status: {exec_res.get('status')}")
@@ -229,7 +231,7 @@ class BinanceFuturesWebSocketGateway:
             has_open_position=has_open_pos,
             is_live_mode=DEFAULT_CONFIG.live_enabled
         )
-        current_signal = self.strategy.evaluate_setup(risk_check)
+        current_signal = self.strategy.evaluate_setup(risk_check, is_closed_bar=False)
         self.latest_signal_cache = current_signal
 
         # Bot status determination

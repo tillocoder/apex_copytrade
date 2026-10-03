@@ -57,6 +57,16 @@ class RiskManager:
         stats = get_session_stats(self.session_key)
         self.session_pnl = float(stats.get('session_pnl', 0.0))
         self.trades_count = int(stats.get('trades_count', 0))
+        if self.trades_count == 0:
+            try:
+                from .database import get_trades
+                today_utc = time.strftime('%Y-%m-%d', time.gmtime())
+                today_trades = [t for t in get_trades(limit=100) if t.get("closed_at", "").startswith(today_utc) and t.get("status") == "CLOSED"]
+                if today_trades:
+                    self.session_pnl = round(sum(float(t.get("pnl", 0.0)) for t in today_trades), 4)
+                    self.trades_count = len(today_trades)
+            except Exception:
+                pass
         if self.session_pnl >= DEFAULT_CONFIG.session_profit_target_usd:
             self.target_reached = True
 

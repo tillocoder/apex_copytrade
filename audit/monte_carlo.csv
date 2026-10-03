@@ -1,0 +1,12 @@
+Metric,Value
+num_simulations,10000
+median_ending_equity,1100.69
+p05_ending_equity,923.05
+p95_ending_equity,1274.12
+median_max_dd_pct,7.77
+p95_max_dd_pct,15.97
+median_loss_streak,4
+p95_loss_streak,6
+prob_ruin_pct,0.0
+prob_dd_ge_20pct,1.44
+prob_streak_ge_10,0.1
