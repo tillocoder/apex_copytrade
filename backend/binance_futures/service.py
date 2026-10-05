@@ -144,10 +144,51 @@ async def control_bot(payload: ControlPayload):
 
 @router.post("/close-position")
 async def close_position_endpoint():
-    service_instance.paper.active_position = None
+    service_instance.paper.reset_position()
     if DEFAULT_CONFIG.mode == "LIVE":
         await service_instance.executor.emergency_stop()
-    return {"status": "SUCCESS", "message": "Active position force closed"}
+    return {"status": "SUCCESS", "message": "Active position force closed and reset"}
+
+@router.get("/health")
+async def get_futures_health():
+    """
+    Institutional Health Status:
+    Checks WebSocket connection, data staleness, active position age, and memory state.
+    """
+    now = time.time()
+    last_tick_elapsed = now - (service_instance.md.last_update_ts or now)
+    is_stale = service_instance.md.is_data_stale(max_seconds=5.0)
+    pos = service_instance.paper.current_position if DEFAULT_CONFIG.mode == "PAPER" else service_instance.gateway.live_position_cache
+    pos_age_min = 0.0
+    if pos:
+        opened_ts = pos.get("openedAtTs") or now
+        pos_age_min = round((now - opened_ts) / 60.0, 1)
+
+    overall_status = "HEALTHY"
+    if is_stale or not service_instance.gateway.is_connected_to_binance:
+        overall_status = "STALE" if is_stale else "RECONNECTING"
+
+    return {
+        "status": overall_status,
+        "is_connected": service_instance.gateway.is_connected_to_binance,
+        "is_stale": is_stale,
+        "last_tick_seconds_ago": round(last_tick_elapsed, 2),
+        "current_price": service_instance.md.get_current_price(),
+        "mark_price": service_instance.md.mark_price,
+        "reconnect_count": service_instance.gateway.reconnect_count,
+        "has_position": bool(pos),
+        "position_age_minutes": pos_age_min if pos else None,
+        "time_stop_limit_hours": getattr(DEFAULT_CONFIG, "max_position_lifetime_hours", 6.0),
+        "system_running": DEFAULT_CONFIG.is_running
+    }
+
+@router.post("/self-heal")
+async def trigger_self_heal():
+    """
+    Executes autonomous self-healing:
+    Forces REST sync, verifies candle breaches, evaluates time-stops, and kicks hanging sockets.
+    """
+    return await service_instance.gateway.self_heal()
 
 class ModePayload(BaseModel):
     mode: str                          # "PAPER" or "LIVE"

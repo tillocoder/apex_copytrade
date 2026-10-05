@@ -34,6 +34,9 @@ class BinanceFuturesWebSocketGateway:
         self.client_connections: Set[websockets.WebSocketServerProtocol] = set()
         self.is_running = True
         self.is_connected_to_binance = False
+        self.active_ws = None
+        self.reconnect_count: int = 0
+        self.last_rest_sync_ts: float = 0.0
         self.last_broadcast_ts = 0.0
         self.last_reconcile_ts = 0.0
         self.latest_signal_cache: Dict[str, Any] = {}
@@ -79,14 +82,21 @@ class BinanceFuturesWebSocketGateway:
 
     async def start_rest_fallback_loop(self):
         """
-        Safety watchdog: if WebSocket market data is stale (> 4.0s),
-        immediately fetches current ticker & mark price from Binance REST API,
-        updates market memory, and evaluates paper position exits.
+        Safety watchdog: if WebSocket market data is stale (> 4.0s) or every 60s,
+        fetches current ticker & mark price from Binance REST API,
+        updates market memory, evaluates paper position exits (including time-stop),
+        and forcefully kills zombie sockets if stale > 15s.
         """
+        poll_sec = getattr(DEFAULT_CONFIG, "watchdog_interval_sec", 3.0)
         while self.is_running:
             try:
-                await asyncio.sleep(3.0)
-                if self.md.is_data_stale(max_seconds=4.0):
+                await asyncio.sleep(poll_sec)
+                now = time.time()
+                is_stale = self.md.is_data_stale(max_seconds=4.0)
+                needs_periodic_sync = (now - self.last_rest_sync_ts) >= 60.0
+
+                if is_stale or needs_periodic_sync:
+                    self.last_rest_sync_ts = now
                     p_info = await self.connector.fetch_symbol_price_async(DEFAULT_CONFIG.symbol)
                     m_info = await self.connector.fetch_mark_price_async(DEFAULT_CONFIG.symbol)
                     
@@ -103,16 +113,70 @@ class BinanceFuturesWebSocketGateway:
                         closed_trade = self.paper.update_price_tick()
                         if closed_trade:
                             self.risk.record_trade_completion(closed_trade["pnl"])
-                            log_system_event("INFO", f"[REST_FALLBACK] Closed paper trade: {closed_trade.get('id')} PnL: ${closed_trade.get('pnl')}")
+                            log_system_event("INFO", f"[REST_WATCHDOG] Closed paper trade: {closed_trade.get('id')} PnL: ${closed_trade.get('pnl')}")
 
-                    # Refresh M5 klines if needed
-                    if not self.md.klines_m5 or (time.time() - self.md.klines_m5[-1]["time"]/1000.0) > 360:
+                    # Refresh M5 klines if missing or older than 6 mins
+                    if not self.md.klines_m5 or (now - self.md.klines_m5[-1]["time"]/1000.0) > 360:
                         raw_k = await self.connector.fetch_recent_klines_async(DEFAULT_CONFIG.symbol, "5m", 30)
                         if raw_k:
                             formatted = [[k[0], k[1], k[2], k[3], k[4], k[5]] for k in raw_k]
                             self.md.load_initial_klines(formatted, "5m")
+
+                # Zombie Socket Breaker: if data is stale for > 15s, kick active socket
+                if self.md.is_data_stale(max_seconds=15.0):
+                    if self.active_ws and not getattr(self.active_ws, "closed", True):
+                        print("[WATCHDOG_ZOMBIE_BREAKER] Market data stale > 15s. Force-closing zombie WebSocket.")
+                        log_system_event("WARNING", "[WATCHDOG] Market data stale > 15s. Force-closing zombie WebSocket.")
+                        try:
+                            await asyncio.wait_for(self.active_ws.close(), timeout=2.0)
+                        except Exception:
+                            pass
             except Exception:
                 pass
+
+    async def self_heal(self) -> Dict[str, Any]:
+        """
+        Executes immediate self-repair pipeline:
+        - Pulls Binance REST ticker & mark price
+        - Re-evaluates active paper position (including time-stop & candle checks)
+        - Kicks stale websocket to trigger clean reconnect
+        """
+        actions = []
+        try:
+            p_info = await self.connector.fetch_symbol_price_async(DEFAULT_CONFIG.symbol)
+            m_info = await self.connector.fetch_mark_price_async(DEFAULT_CONFIG.symbol)
+            price = float(p_info.get("price", 0.0))
+            mark = float(m_info.get("markPrice", price))
+            if price > 0:
+                self.md.update_book_ticker(bid=price - 0.01, ask=price + 0.01, bid_qty=1.0, ask_qty=1.0)
+                actions.append(f"Price updated to ${price:.2f}")
+            if mark > 0:
+                self.md.update_mark_price(mark=mark, funding_rate=float(m_info.get("lastFundingRate", 0.0)))
+                actions.append(f"Mark price updated to ${mark:.2f}")
+
+            if DEFAULT_CONFIG.mode == "PAPER":
+                closed = self.paper.update_price_tick()
+                if closed:
+                    self.risk.record_trade_completion(closed["pnl"])
+                    actions.append(f"Closed active trade {closed['id']} via {closed['close_reason']}")
+
+            if self.md.is_data_stale(max_seconds=5.0):
+                if self.active_ws and not getattr(self.active_ws, "closed", True):
+                    try:
+                        await asyncio.wait_for(self.active_ws.close(), timeout=2.0)
+                        actions.append("Kicked stale WebSocket to force auto-reconnect")
+                    except Exception:
+                        pass
+        except Exception as e:
+            actions.append(f"Self-heal warning: {e}")
+
+        return {
+            "status": "HEALED",
+            "actions": actions,
+            "is_stale": self.md.is_data_stale(max_seconds=4.0),
+            "reconnect_count": self.reconnect_count,
+            "has_open_position": bool(self.paper.current_position if DEFAULT_CONFIG.mode == "PAPER" else self.live_position_cache)
+        }
 
     async def start_market_stream(self):
         """
@@ -126,10 +190,12 @@ class BinanceFuturesWebSocketGateway:
                 print(f"[BINANCE_WS] Connecting to {stream_url}...")
                 log_system_event("INFO", f"[BINANCE_WS] Connecting to Binance Futures stream...")
                 async with websockets.connect(stream_url, ping_interval=20, ping_timeout=10) as ws:
+                    self.active_ws = ws
+                    self.reconnect_count += 1
                     self.is_connected_to_binance = True
                     backoff = 1.0
-                    print(f"[BINANCE_WS] Connected successfully to Binance stream!")
-                    log_system_event("INFO", f"[BINANCE_WS] Connected to Binance Futures stream.")
+                    print(f"[BINANCE_WS] Connected successfully to Binance stream! (Session #{self.reconnect_count})")
+                    log_system_event("INFO", f"[BINANCE_WS] Connected to Binance Futures stream (Session #{self.reconnect_count}).")
 
                     while self.is_running:
                         msg = await asyncio.wait_for(ws.recv(), timeout=12.0)
@@ -173,6 +239,12 @@ class BinanceFuturesWebSocketGateway:
                             k = data.get("k", {})
                             self.md.update_kline_stream(k, interval="5m")
 
+                            # Safety: Check candle high/low extremes for SL/TP breach
+                            if DEFAULT_CONFIG.mode == "PAPER" and getattr(DEFAULT_CONFIG, "candle_breach_check", True):
+                                closed_candle_trade = self.paper.evaluate_candle_extremes(k)
+                                if closed_candle_trade:
+                                    self.risk.record_trade_completion(closed_candle_trade["pnl"])
+
                             has_open_pos = bool(self.paper.current_position) if DEFAULT_CONFIG.mode == "PAPER" else bool(self.live_position_cache)
                             risk_check = self.risk.check_preflight_risk(
                                 has_open_position=has_open_pos,
@@ -194,6 +266,12 @@ class BinanceFuturesWebSocketGateway:
                         elif "@kline_1m" in stream_name:
                             k = data.get("k", {})
                             self.md.update_kline_stream(k, interval="1m")
+                            
+                            # Safety: Check candle high/low extremes on 1m bars as well
+                            if DEFAULT_CONFIG.mode == "PAPER" and getattr(DEFAULT_CONFIG, "candle_breach_check", True):
+                                closed_m1_trade = self.paper.evaluate_candle_extremes(k)
+                                if closed_m1_trade:
+                                    self.risk.record_trade_completion(closed_m1_trade["pnl"])
                             
                             # Determine open position status
                             has_open_pos = bool(self.paper.current_position) if DEFAULT_CONFIG.mode == "PAPER" else bool(self.live_position_cache)

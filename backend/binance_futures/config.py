@@ -88,11 +88,14 @@ class BinanceFuturesConfig:
     tp_fee_rate: float = 0.0002               # 0.02% Maker Limit TP
     sl_fee_rate: float = 0.0005               # 0.05% Taker Stop Market
     
-    # Safety Filters
+    # Safety Filters & Anti-Deadlock Guard
     max_allowed_spread_usd: float = 0.25      # Spread <= $0.25 USDT
     stale_data_timeout_sec: float = 30.0      # Data timeout
     emergency_sl_timeout_sec: float = 5.0     # Emergency SL placement timeout
     min_atr_m5: float = 1.50                  # Minimum M5 ATR
+    max_position_lifetime_hours: float = 6.0  # Max hold time before automated Time-Stop exit (Prevents zombie positions)
+    watchdog_interval_sec: float = 3.0        # Background REST fallback polling interval
+    candle_breach_check: bool = True          # Checks High/Low of incoming candles for SL/TP breaches
     
     # Binance Endpoints (Official Futures API)
     rest_base_url: str = "https://fapi.binance.com"

@@ -32,6 +32,21 @@ class PaperTradingEngine:
         self.current_position: Optional[Dict[str, Any]] = None
         self.open_orders: List[Dict[str, Any]] = []
 
+    @property
+    def active_position(self) -> Optional[Dict[str, Any]]:
+        return self.current_position
+
+    @active_position.setter
+    def active_position(self, val: Optional[Dict[str, Any]]):
+        self.current_position = val
+
+    def reset_position(self):
+        """Cleanly wipes active position and restores margin to available balance."""
+        if self.current_position:
+            self.available_balance = self.balance
+            self.current_position = None
+            log_system_event("INFO", "[PAPER] Active position forcefully reset and cleared.")
+
     def open_position(self, side: str, qty: float, sl: float, tp1: float, tp2: float, be_price: float, signal_matrix: Dict[str, Any]) -> Dict[str, Any]:
         """
         Opens a position at Best Ask (LONG) or Best Bid (SHORT) + 1-tick slippage.
@@ -53,6 +68,7 @@ class PaperTradingEngine:
         # Liquidation price for 100x (approx 0.8% away accounting for maintenance margin)
         liq_distance = entry_price * 0.008
         liq_price = round(entry_price - liq_distance if side == "LONG" else entry_price + liq_distance, 2)
+        now_ts = time.time()
 
         self.current_position = {
             "id": pos_id,
@@ -80,6 +96,7 @@ class PaperTradingEngine:
             "roi": 0.0,
             "fee": entry_fee,
             "openedAt": time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime()),
+            "openedAtTs": now_ts,
             "signalSnapshot": signal_matrix
         }
 
@@ -87,9 +104,94 @@ class PaperTradingEngine:
         log_system_event("INFO", f"[PAPER] Opened {side} {qty} {DEFAULT_CONFIG.symbol} @ ${entry_price:.2f} | TP1(1R): ${tp1:.2f} | TP2(2R): ${tp2:.2f} | SL: ${sl:.2f}")
         return self.current_position
 
+    def check_lifetime_expiry(self) -> Optional[Dict[str, Any]]:
+        """
+        Anti-Deadlock Guard:
+        If a position has been held longer than max_position_lifetime_hours (default 6h),
+        force closes the position at current mark price so it never sits frozen for days.
+        """
+        if not self.current_position:
+            return None
+        pos = self.current_position
+        opened_ts = pos.get("openedAtTs")
+        if not opened_ts:
+            try:
+                opened_ts = time.mktime(time.strptime(pos["openedAt"], "%Y-%m-%d %H:%M:%S"))
+            except Exception:
+                opened_ts = time.time()
+            pos["openedAtTs"] = opened_ts
+
+        elapsed_sec = time.time() - opened_ts
+        max_sec = getattr(DEFAULT_CONFIG, "max_position_lifetime_hours", 6.0) * 3600.0
+        if elapsed_sec >= max_sec:
+            mark = self.md.mark_price or self.md.get_current_price()
+            log_system_event(
+                "WARNING",
+                f"[POSITION_TIMEOUT] Position held {elapsed_sec/3600:.1f}h >= {getattr(DEFAULT_CONFIG, 'max_position_lifetime_hours', 6.0)}h. Auto-closing at ${mark:.2f}."
+            )
+            return self.close_position(mark, "TIME_STOP_MAX_HOLD")
+        return None
+
+    def evaluate_candle_extremes(self, candle: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """
+        Safety net: evaluates high and low of completed or incoming candles.
+        Prevents missed stop-loss or take-profit events during brief network blips or wick spikes.
+        """
+        if not self.current_position:
+            return None
+
+        # Check lifetime first
+        expired = self.check_lifetime_expiry()
+        if expired:
+            return expired
+
+        high = float(candle.get("h") or candle.get("high") or 0.0)
+        low = float(candle.get("l") or candle.get("low") or 0.0)
+        if high <= 0 or low <= 0:
+            return None
+
+        pos = self.current_position
+        side = pos["side"]
+        sl = pos["sl"]
+        tp1 = pos["tp1"]
+        tp2 = pos["tp2"]
+        be_price = pos["bePrice"]
+        tp1_hit = pos["tp1Hit"]
+
+        if side == "LONG":
+            # Check Stop Loss first (conservative risk safety)
+            if pos["beActive"] and low <= be_price:
+                return self.close_position(be_price, "BREAKEVEN_CANDLE_BREACH")
+            elif low <= sl:
+                return self.close_position(sl, "STOP_LOSS_CANDLE_BREACH")
+            # Check TP
+            if not tp1_hit and high >= tp1:
+                close_pct = getattr(DEFAULT_CONFIG, "tp1_close_pct", 0.5)
+                if close_pct >= 1.0 or tp1 == tp2:
+                    return self.close_position(tp1, "TAKE_PROFIT_CANDLE_BREACH")
+            if high >= tp2:
+                return self.close_position(tp2, "TAKE_PROFIT_2_CANDLE_BREACH")
+
+        elif side == "SHORT":
+            # Check Stop Loss first
+            if pos["beActive"] and high >= be_price:
+                return self.close_position(be_price, "BREAKEVEN_CANDLE_BREACH")
+            elif high >= sl:
+                return self.close_position(sl, "STOP_LOSS_CANDLE_BREACH")
+            # Check TP
+            if not tp1_hit and low <= tp1:
+                close_pct = getattr(DEFAULT_CONFIG, "tp1_close_pct", 0.5)
+                if close_pct >= 1.0 or tp1 == tp2:
+                    return self.close_position(tp1, "TAKE_PROFIT_CANDLE_BREACH")
+            if low <= tp2:
+                return self.close_position(tp2, "TAKE_PROFIT_2_CANDLE_BREACH")
+
+        return None
+
     def update_price_tick(self) -> Optional[Dict[str, Any]]:
         """
         Evaluates active position on each price tick:
+        0. Checks Max Lifetime Expiry (Time-Stop anti-deadlock)
         1. Checks TP1 (50% partial exit & shift to Breakeven + fee buffer)
         2. Checks TP2 (full remaining exit)
         3. Checks Breakeven exit (if TP1 was already hit)
@@ -98,6 +200,11 @@ class PaperTradingEngine:
         """
         if not self.current_position:
             return None
+
+        # 0. Anti-Deadlock Lifetime check
+        expired = self.check_lifetime_expiry()
+        if expired:
+            return expired
 
         mark = self.md.mark_price or self.md.get_current_price()
         pos = self.current_position
