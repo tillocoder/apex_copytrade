@@ -77,6 +77,43 @@ class BinanceFuturesWebSocketGateway:
         self.cached_state_ts = now
         return state
 
+    async def start_rest_fallback_loop(self):
+        """
+        Safety watchdog: if WebSocket market data is stale (> 4.0s),
+        immediately fetches current ticker & mark price from Binance REST API,
+        updates market memory, and evaluates paper position exits.
+        """
+        while self.is_running:
+            try:
+                await asyncio.sleep(3.0)
+                if self.md.is_data_stale(max_seconds=4.0):
+                    p_info = await self.connector.fetch_symbol_price_async(DEFAULT_CONFIG.symbol)
+                    m_info = await self.connector.fetch_mark_price_async(DEFAULT_CONFIG.symbol)
+                    
+                    price = float(p_info.get("price", 0.0))
+                    mark = float(m_info.get("markPrice", price))
+                    funding = float(m_info.get("lastFundingRate", 0.0))
+                    
+                    if price > 0:
+                        self.md.update_book_ticker(bid=price - 0.01, ask=price + 0.01, bid_qty=1.0, ask_qty=1.0)
+                    if mark > 0:
+                        self.md.update_mark_price(mark=mark, funding_rate=funding)
+                        
+                    if DEFAULT_CONFIG.mode == "PAPER":
+                        closed_trade = self.paper.update_price_tick()
+                        if closed_trade:
+                            self.risk.record_trade_completion(closed_trade["pnl"])
+                            log_system_event("INFO", f"[REST_FALLBACK] Closed paper trade: {closed_trade.get('id')} PnL: ${closed_trade.get('pnl')}")
+
+                    # Refresh M5 klines if needed
+                    if not self.md.klines_m5 or (time.time() - self.md.klines_m5[-1]["time"]/1000.0) > 360:
+                        raw_k = await self.connector.fetch_recent_klines_async(DEFAULT_CONFIG.symbol, "5m", 30)
+                        if raw_k:
+                            formatted = [[k[0], k[1], k[2], k[3], k[4], k[5]] for k in raw_k]
+                            self.md.load_initial_klines(formatted, "5m")
+            except Exception:
+                pass
+
     async def start_market_stream(self):
         """
         Background loop streaming real-time bookTicker, kline_1m, kline_5m, and markPrice from Binance.
@@ -88,14 +125,14 @@ class BinanceFuturesWebSocketGateway:
             try:
                 print(f"[BINANCE_WS] Connecting to {stream_url}...")
                 log_system_event("INFO", f"[BINANCE_WS] Connecting to Binance Futures stream...")
-                async with websockets.connect(stream_url, ping_interval=None) as ws:
+                async with websockets.connect(stream_url, ping_interval=20, ping_timeout=10) as ws:
                     self.is_connected_to_binance = True
                     backoff = 1.0
                     print(f"[BINANCE_WS] Connected successfully to Binance stream!")
                     log_system_event("INFO", f"[BINANCE_WS] Connected to Binance Futures stream.")
 
                     while self.is_running:
-                        msg = await ws.recv()
+                        msg = await asyncio.wait_for(ws.recv(), timeout=12.0)
                         raw = json.loads(msg)
                         stream_name = raw.get("stream", "")
                         data = raw.get("data", {})

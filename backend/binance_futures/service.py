@@ -80,6 +80,10 @@ class BinanceFuturesService:
         stream_task = asyncio.create_task(self.gateway.start_market_stream())
         self.background_tasks.append(stream_task)
 
+        # Start background REST fallback watchdog (prevents silent WS stale disconnects)
+        fallback_task = asyncio.create_task(self.gateway.start_rest_fallback_loop())
+        self.background_tasks.append(fallback_task)
+
         # Start background listenKey keepalive loop
         listen_task = asyncio.create_task(self._listenkey_keepalive_loop())
         self.background_tasks.append(listen_task)
@@ -110,7 +114,7 @@ async def get_connection_status():
     return service_instance.connector.get_public_connection_status()
 
 class ControlPayload(BaseModel):
-    action: str  # "run", "pause", "reset_session", "emergency_stop"
+    action: str  # "run", "pause", "reset_session", "emergency_stop", "close_position"
 
 @router.post("/control")
 async def control_bot(payload: ControlPayload):
@@ -126,12 +130,24 @@ async def control_bot(payload: ControlPayload):
         service_instance.risk.reset_session()
         DEFAULT_CONFIG.is_running = True
         return {"status": "SUCCESS", "message": "Session PnL and $2 target reset"}
+    elif action in ("close_position", "reset_position"):
+        service_instance.paper.active_position = None
+        if DEFAULT_CONFIG.mode == "LIVE":
+            await service_instance.executor.emergency_stop()
+        return {"status": "SUCCESS", "message": "Active position closed and cleared"}
     elif action == "emergency_stop":
         res = await service_instance.executor.emergency_stop()
         DEFAULT_CONFIG.is_running = False
         return res
     else:
         raise HTTPException(status_code=400, detail="Unknown action")
+
+@router.post("/close-position")
+async def close_position_endpoint():
+    service_instance.paper.active_position = None
+    if DEFAULT_CONFIG.mode == "LIVE":
+        await service_instance.executor.emergency_stop()
+    return {"status": "SUCCESS", "message": "Active position force closed"}
 
 class ModePayload(BaseModel):
     mode: str                          # "PAPER" or "LIVE"

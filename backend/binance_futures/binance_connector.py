@@ -377,3 +377,43 @@ class BinanceFuturesConnector:
             return r.status_code == 200
         except Exception:
             return False
+
+    def fetch_symbol_price(self, symbol: str = "ETHUSDT") -> Dict[str, Any]:
+        """Fetches latest real-time symbol price directly via Binance REST API."""
+        try:
+            r = self.session.get(f"{self.base_url}/fapi/v1/ticker/price?symbol={symbol}", timeout=4)
+            if r.status_code == 200:
+                return r.json()
+        except Exception:
+            pass
+        return {}
+
+    async def fetch_symbol_price_async(self, symbol: str = "ETHUSDT") -> Dict[str, Any]:
+        return await run_in_thread(self.fetch_symbol_price, symbol)
+
+    def fetch_mark_price(self, symbol: str = "ETHUSDT") -> Dict[str, Any]:
+        """Fetches latest mark price & funding rate via Binance REST API."""
+        try:
+            r = self.session.get(f"{self.base_url}/fapi/v1/premiumIndex?symbol={symbol}", timeout=4)
+            if r.status_code == 200:
+                return r.json()
+        except Exception:
+            pass
+        return {}
+
+    async def fetch_mark_price_async(self, symbol: str = "ETHUSDT") -> Dict[str, Any]:
+        return await run_in_thread(self.fetch_mark_price, symbol)
+
+    def fetch_recent_klines(self, symbol: str = "ETHUSDT", interval: str = "5m", limit: int = 50) -> List[Any]:
+        """Fetches latest klines via Binance REST API as WebSocket fallback."""
+        try:
+            r = self.session.get(f"{self.base_url}/fapi/v1/klines?symbol={symbol}&interval={interval}&limit={limit}", timeout=5)
+            if r.status_code == 200:
+                return r.json()
+        except Exception:
+            pass
+        return []
+
+    async def fetch_recent_klines_async(self, symbol: str = "ETHUSDT", interval: str = "5m", limit: int = 50) -> List[Any]:
+        return await run_in_thread(self.fetch_recent_klines, symbol, interval, limit)
+
