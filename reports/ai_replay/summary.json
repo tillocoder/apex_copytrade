@@ -1,0 +1,242 @@
+{
+  "summary": {
+    "total_hourly_evaluations": 1440,
+    "total_no_trades": 1331,
+    "no_trade_rate_pct": 92.4,
+    "total_signals_discovered": 109,
+    "total_trades_executed": 109,
+    "win_rate_pct": 29.357798165137616,
+    "loss_rate_pct": 70.64220183486239,
+    "breakeven_rate_pct": 0.0,
+    "avg_gross_r": -0.019,
+    "avg_net_r": -0.339,
+    "median_net_r": -0.303,
+    "total_net_r": -36.93,
+    "profit_factor": 0.38,
+    "gross_profit_r": 23.07,
+    "gross_loss_r": 60.0,
+    "max_drawdown_r": 38.94700000000002,
+    "avg_drawdown_r": 15.11,
+    "avg_mfe_r": 0.7,
+    "avg_mae_r": 0.64,
+    "avg_holding_minutes": 50.8,
+    "tp1_hit_rate_pct": 0.9,
+    "tp2_hit_rate_pct": 0.9,
+    "sl_hit_rate_pct": 24.8,
+    "sample_size_rating": "ADEQUATE_SAMPLE",
+    "production_decision": "NOT_SUPPORTED_BY_DATA",
+    "production_decision_reason": "Net expectancy (-0.339R) after friction does not demonstrate repeatable mathematical edge."
+  },
+  "bootstrap_intervals_95": {
+    "expectancy_mean": -0.341,
+    "expectancy_ci_lower": -0.516,
+    "expectancy_ci_upper": -0.164,
+    "win_rate_mean": 29.4,
+    "win_rate_ci_lower": 21.1,
+    "win_rate_ci_upper": 37.6
+  },
+  "confidence_calibration": {
+    "50-60": {
+      "count": 0,
+      "win_rate": 0.0,
+      "expectancy_net_r": 0.0,
+      "total_net_r": 0
+    },
+    "60-70": {
+      "count": 0,
+      "win_rate": 0.0,
+      "expectancy_net_r": 0.0,
+      "total_net_r": 0
+    },
+    "70-75": {
+      "count": 0,
+      "win_rate": 0.0,
+      "expectancy_net_r": 0.0,
+      "total_net_r": 0
+    },
+    "75-80": {
+      "count": 50,
+      "win_rate": 26.0,
+      "expectancy_net_r": -0.242,
+      "total_net_r": -12.12
+    },
+    "80-85": {
+      "count": 34,
+      "win_rate": 20.6,
+      "expectancy_net_r": -0.639,
+      "total_net_r": -21.74
+    },
+    "85-90": {
+      "count": 25,
+      "win_rate": 48.0,
+      "expectancy_net_r": -0.123,
+      "total_net_r": -3.07
+    },
+    "90-95": {
+      "count": 0,
+      "win_rate": 0.0,
+      "expectancy_net_r": 0.0,
+      "total_net_r": 0
+    },
+    "95-100": {
+      "count": 0,
+      "win_rate": 0.0,
+      "expectancy_net_r": 0.0,
+      "total_net_r": 0
+    }
+  },
+  "confidence_validity": "UNRELIABLE_OR_INVERTED",
+  "setup_breakdown": {
+    "LIQUIDITY_SWEEP_REVERSAL": {
+      "count": 59,
+      "win_rate": 32.2,
+      "expectancy_net_r": -0.421,
+      "total_net_r": -24.81
+    },
+    "PULLBACK": {
+      "count": 6,
+      "win_rate": 33.3,
+      "expectancy_net_r": -0.338,
+      "total_net_r": -2.03
+    },
+    "TREND_CONTINUATION": {
+      "count": 44,
+      "win_rate": 25.0,
+      "expectancy_net_r": -0.229,
+      "total_net_r": -10.09
+    }
+  },
+  "regime_breakdown": {
+    "REVERSAL": {
+      "count": 60,
+      "win_rate": 31.7,
+      "expectancy_net_r": -0.415,
+      "total_net_r": -24.89
+    },
+    "LOW_VOLATILITY": {
+      "count": 5,
+      "win_rate": 40.0,
+      "expectancy_net_r": -0.391,
+      "total_net_r": -1.95
+    },
+    "TRENDING_UP": {
+      "count": 22,
+      "win_rate": 22.7,
+      "expectancy_net_r": -0.329,
+      "total_net_r": -7.24
+    },
+    "TRENDING_DOWN": {
+      "count": 22,
+      "win_rate": 27.3,
+      "expectancy_net_r": -0.13,
+      "total_net_r": -2.85
+    }
+  },
+  "symbol_breakdown": {
+    "BTCUSDT": {
+      "count": 109,
+      "win_rate": 29.4,
+      "expectancy_net_r": -0.339,
+      "total_net_r": -36.93
+    },
+    "ETHUSDT": {
+      "count": 0,
+      "win_rate": 0.0,
+      "expectancy_net_r": 0.0,
+      "total_net_r": 0
+    },
+    "SOLUSDT": {
+      "count": 0,
+      "win_rate": 0.0,
+      "expectancy_net_r": 0.0,
+      "total_net_r": 0
+    }
+  },
+  "direction_breakdown": {
+    "LONG": {
+      "count": 59,
+      "win_rate": 30.5,
+      "expectancy_net_r": -0.376,
+      "total_net_r": -22.2
+    },
+    "SHORT": {
+      "count": 50,
+      "win_rate": 28.0,
+      "expectancy_net_r": -0.295,
+      "total_net_r": -14.73
+    }
+  },
+  "session_breakdown": {
+    "ASIA": {
+      "count": 26,
+      "win_rate": 23.1,
+      "expectancy_net_r": -0.571,
+      "total_net_r": -14.85
+    },
+    "LONDON": {
+      "count": 20,
+      "win_rate": 35.0,
+      "expectancy_net_r": -0.273,
+      "total_net_r": -5.46
+    },
+    "NEW_YORK": {
+      "count": 55,
+      "win_rate": 30.9,
+      "expectancy_net_r": -0.25,
+      "total_net_r": -13.77
+    },
+    "LONDON_NY_OVERLAP": {
+      "count": 40,
+      "win_rate": 25.0,
+      "expectancy_net_r": -0.322,
+      "total_net_r": -12.89
+    },
+    "OTHER": {
+      "count": 8,
+      "win_rate": 25.0,
+      "expectancy_net_r": -0.355,
+      "total_net_r": -2.84
+    }
+  },
+  "mtf_breakdown": {
+    "ALIGNED": {
+      "count": 52,
+      "win_rate": 23.1,
+      "expectancy_net_r": -0.507
+    },
+    "CONFLICTED": {
+      "count": 57,
+      "win_rate": 35.1,
+      "expectancy_net_r": -0.185
+    }
+  },
+  "no_trade_quality": {
+    "total_no_trades": 1331,
+    "no_trade_rate_pct": 92.4,
+    "avoided_choppy_regimes_count": 703,
+    "selectivity_index": 12.2,
+    "no_trade_discipline_status": "EXCELLENT_SELECTIVITY"
+  },
+  "baselines_comparison": {
+    "buy_and_hold_benchmark": {
+      "win_rate": 50.0,
+      "expectancy_net_r": -0.02,
+      "pf": 0.98
+    },
+    "random_direction_benchmark": {
+      "win_rate": 48.0,
+      "expectancy_net_r": -0.08,
+      "pf": 0.89
+    },
+    "simple_ema_cross_benchmark": {
+      "win_rate": 38.5,
+      "expectancy_net_r": -0.04,
+      "pf": 0.95
+    },
+    "old_deterministic_engine_benchmark": {
+      "win_rate": 25.2,
+      "expectancy_net_r": -0.22,
+      "pf": 0.74
+    }
+  }
+}

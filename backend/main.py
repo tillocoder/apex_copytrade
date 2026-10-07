@@ -1,6 +1,7 @@
 import re
 import os
 import sys
+import csv
 import json
 import time
 from datetime import datetime, timezone, timedelta
@@ -14,7 +15,7 @@ PARENT_DIR = os.path.dirname(BASE_DIR)
 if BASE_DIR not in sys.path: sys.path.insert(0, BASE_DIR)
 if PARENT_DIR not in sys.path: sys.path.insert(0, PARENT_DIR)
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Query, HTTPException, Header, BackgroundTasks
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Query, HTTPException, Header, BackgroundTasks, Body
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse, FileResponse
@@ -34,6 +35,8 @@ from backend.live_execution_manager import (
 )
 from backend.shadow_engine import shadow_tracker
 from backend.telegram_bot import telegram_notifier
+from backend.ai_market_discovery.service import AIMarketDiscoveryService
+from backend.ai_market_discovery.replay_engine import HistoricalReplayEngine
 # Backtest report handler
 
 app = FastAPI(
@@ -41,6 +44,15 @@ app = FastAPI(
     version="4.5.0",
     description="Enterprise-grade AI Quantitative Trading Engine with SMC Strategy, Real Execution, and Full CRUD"
 )
+
+@app.on_event("startup")
+async def startup_ai_discovery():
+    try:
+        discovery_svc = AIMarketDiscoveryService.get_instance()
+        discovery_svc.start_hourly_scheduler()
+        print("[AI_MARKET_DISCOVERY] Autonomous Hourly Engine successfully initialized.")
+    except Exception as e:
+        print(f"[AI_MARKET_DISCOVERY] Startup error: {e}")
 
 # Unlock OS file descriptor limits (up to 4096 on Termux)
 try:
@@ -448,6 +460,115 @@ async def get_signals_history():
     all_sigs = SignalsRepository.get_all(limit=100)
     sigs = all_sigs if all_sigs else get_latest_signals()
     return [format_signal_for_api(s) for s in sigs]
+
+# =====================================================================
+# 2.1 AUTONOMOUS AI MARKET DISCOVERY (BTCUSDT, ETHUSDT, SOLUSDT)
+# =====================================================================
+@app.get("/api/v1/ai/market-discovery/cards")
+async def get_ai_market_discovery_cards():
+    """Returns the latest autonomous hourly market discovery cards for BTC, ETH, and SOL."""
+    svc = AIMarketDiscoveryService.get_instance()
+    cards = svc.get_cards()
+    return {"status": "SUCCESS", "timestamp": int(time.time() * 1000), "cards": cards}
+
+@app.get("/api/v1/ai/market-discovery/history")
+async def get_ai_market_discovery_history(limit: int = 50):
+    """Returns historical paper trades and signal performance logs."""
+    svc = AIMarketDiscoveryService.get_instance()
+    return {"status": "SUCCESS", "history": svc.get_history(limit)}
+
+@app.get("/api/v1/ai/market-discovery/analytics")
+async def get_ai_market_discovery_analytics():
+    """Returns performance analytics, win rate, expectancy, and confidence bucket correlation."""
+    svc = AIMarketDiscoveryService.get_instance()
+    return {"status": "SUCCESS", "analytics": svc.get_analytics()}
+
+@app.post("/api/v1/ai/market-discovery/run-now")
+async def run_ai_market_discovery_now():
+    """Triggers an on-demand full analysis cycle across all 3 assets."""
+    svc = AIMarketDiscoveryService.get_instance()
+    res = await run_async(svc.run_full_analysis_cycle, True)
+    return res
+
+# ============================================================================
+# HISTORICAL REPLAY & FORENSIC STATISTICAL VALIDATION LAB ENDPOINTS
+# ============================================================================
+_replay_engine_instance = None
+
+def get_replay_engine():
+    global _replay_engine_instance
+    if _replay_engine_instance is None:
+        _replay_engine_instance = HistoricalReplayEngine()
+    return _replay_engine_instance
+
+@app.get("/api/v1/ai/replay/report")
+async def get_ai_replay_report():
+    """Returns the comprehensive forensic statistical replay report and walk-forward results."""
+    rep_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "reports", "ai_replay")
+    sum_path = os.path.join(rep_dir, "summary.json")
+    oos_path = os.path.join(rep_dir, "oos_report.json")
+    
+    summary_data = {}
+    if os.path.exists(sum_path):
+        try:
+            with open(sum_path, "r", encoding="utf-8") as f:
+                summary_data = json.load(f)
+        except Exception as e:
+            print(f"[REPLAY_API] Failed to read summary.json: {e}")
+
+    oos_data = {}
+    if os.path.exists(oos_path):
+        try:
+            with open(oos_path, "r", encoding="utf-8") as f:
+                oos_data = json.load(f)
+        except Exception as e:
+            print(f"[REPLAY_API] Failed to read oos_report.json: {e}")
+
+    return {
+        "status": "SUCCESS",
+        "timestamp": int(time.time() * 1000),
+        "report": summary_data,
+        "oos_report": oos_data
+    }
+
+@app.post("/api/v1/ai/replay/run")
+async def run_ai_replay(payload: dict = Body(default={})):
+    """Triggers an on-demand historical replay across Binance Futures data."""
+    symbol = payload.get("symbol", "BTCUSDT")
+    days = int(payload.get("days", 60))
+    mode = payload.get("mode", "CACHED_GEMINI_REPLAY")
+    policy = payload.get("same_bar_policy", "STOP_FIRST")
+    is_wf = bool(payload.get("walk_forward", False))
+
+    eng = get_replay_engine()
+    eng.same_bar_policy = policy
+
+    if is_wf:
+        res = await run_async(eng.walk_forward_evaluation, symbol, days, 60, 30)
+    else:
+        res = await run_async(eng.run_historical_replay, symbol, days, 1, mode)
+
+    return {"status": "SUCCESS", "result": res}
+
+@app.get("/api/v1/ai/replay/signals")
+async def get_ai_replay_signals(limit: int = 50, symbol: Optional[str] = None):
+    """Returns historical replayed signal logs from CSV."""
+    rep_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "reports", "ai_replay")
+    csv_path = os.path.join(rep_dir, "signals.csv")
+    signals = []
+    if os.path.exists(csv_path):
+        try:
+            with open(csv_path, "r", encoding="utf-8") as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    if symbol and row.get("symbol", "").upper() != symbol.replace("/", "").upper():
+                        continue
+                    signals.append(row)
+        except Exception as e:
+            print(f"[REPLAY_API] Failed to read signals.csv: {e}")
+
+    # Return latest signals first up to limit
+    return {"status": "SUCCESS", "count": len(signals), "signals": signals[-limit:][::-1]}
 
 @app.get("/api/v1/positions/live")
 async def get_live_positions():

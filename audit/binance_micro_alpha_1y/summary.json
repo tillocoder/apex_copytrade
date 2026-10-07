@@ -1,0 +1,92 @@
+{
+  "generated_at": "2026-10-03T05:58:25.845006+00:00",
+  "assumptions": {
+    "initial_balance": 20.0,
+    "leverage": 20,
+    "minimum_notional": 20.0,
+    "taker_fee_per_side": 0.0005,
+    "slippage_bps_per_fill": 1.0,
+    "risk_pct_target": 0.01,
+    "max_trades_day": 3,
+    "selection": "60% train only; top 30 then validation 20% and locked test 20%"
+  },
+  "grid_per_symbol": 1080,
+  "shortlisted": [
+    {
+      "symbol": "BTCUSDT",
+      "family": "rsi_revert",
+      "params": [
+        14,
+        35,
+        100,
+        2.0,
+        1.5,
+        1.1
+      ],
+      "train": {
+        "trades": 27,
+        "pnl": 0.3614,
+        "return_pct": 1.81,
+        "pf": 1.109,
+        "win_rate": 55.56,
+        "max_dd_pct": 4.66
+      },
+      "validation": {
+        "trades": 14,
+        "pnl": -0.5433,
+        "return_pct": -2.72,
+        "pf": 0.735,
+        "win_rate": 50.0,
+        "max_dd_pct": 8.62
+      },
+      "test": {
+        "trades": 11,
+        "pnl": -0.5781,
+        "return_pct": -2.89,
+        "pf": 0.672,
+        "win_rate": 54.55,
+        "max_dd_pct": 5.83
+      },
+      "robust_score": -28.58
+    },
+    {
+      "symbol": "BTCUSDT",
+      "family": "rsi_revert",
+      "params": [
+        14,
+        35,
+        100,
+        2.0,
+        1.5,
+        0.0
+      ],
+      "train": {
+        "trades": 29,
+        "pnl": 0.3416,
+        "return_pct": 1.71,
+        "pf": 1.094,
+        "win_rate": 55.17,
+        "max_dd_pct": 5.79
+      },
+      "validation": {
+        "trades": 18,
+        "pnl": -0.7319,
+        "return_pct": -3.66,
+        "pf": 0.722,
+        "win_rate": 50.0,
+        "max_dd_pct": 7.49
+      },
+      "test": {
+        "trades": 15,
+        "pnl": -1.7717,
+        "return_pct": -8.86,
+        "pf": 0.395,
+        "win_rate": 40.0,
+        "max_dd_pct": 9.66
+      },
+      "robust_score": -37.84
+    }
+  ],
+  "survivors": [],
+  "verdict": "NO ROBUST CANDIDATE"
+}

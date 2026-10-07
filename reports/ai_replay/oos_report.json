@@ -1,0 +1,41 @@
+{
+  "symbol": "BTCUSDT",
+  "total_days_evaluated": 180,
+  "train_days": 60,
+  "test_days": 30,
+  "windows": [
+    {
+      "window": "WF_Window_1",
+      "train_period": "60d",
+      "test_period": "30d",
+      "test_signals": 89,
+      "test_win_rate": 29.2,
+      "test_net_expectancy": -0.373
+    },
+    {
+      "window": "WF_Window_2",
+      "train_period": "60d",
+      "test_period": "30d",
+      "test_signals": 41,
+      "test_win_rate": 43.9,
+      "test_net_expectancy": -0.225
+    },
+    {
+      "window": "WF_Window_3",
+      "train_period": "60d",
+      "test_period": "30d",
+      "test_signals": 64,
+      "test_win_rate": 29.7,
+      "test_net_expectancy": -0.282
+    },
+    {
+      "window": "WF_Window_4",
+      "train_period": "60d",
+      "test_period": "30d",
+      "test_signals": 45,
+      "test_win_rate": 28.9,
+      "test_net_expectancy": -0.419
+    }
+  ],
+  "walk_forward_robustness": "REGIME_DEPENDENT"
+}

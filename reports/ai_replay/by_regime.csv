@@ -1,0 +1,5 @@
+regime,count,win_rate_pct,expectancy_net_r,total_net_r
+REVERSAL,60,31.7,-0.415,-24.89
+LOW_VOLATILITY,5,40.0,-0.391,-1.95
+TRENDING_UP,22,22.7,-0.329,-7.24
+TRENDING_DOWN,22,27.3,-0.13,-2.85

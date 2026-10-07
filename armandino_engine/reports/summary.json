@@ -1,0 +1,81 @@
+{
+  "scenario_a": {
+    "scenario": "Scenario A (Armandino Aggressive - No Hard SL)",
+    "initial_balance": 20.0,
+    "final_equity": 1.82,
+    "total_roi_pct": -90.89,
+    "is_liquidated": false,
+    "liquidation_time": null,
+    "total_trades": 114,
+    "winning_trades": 66,
+    "losing_trades": 48,
+    "win_rate_pct": 57.89,
+    "profit_factor": 0.71,
+    "gross_profit": 44.7,
+    "gross_loss": 62.88,
+    "total_pnl": -18.18,
+    "total_commissions": 4.63,
+    "max_drawdown_pct": 91.71,
+    "avg_holding_hours": 16.75,
+    "eth_trades_count": 56,
+    "zec_trades_count": 58,
+    "eth_volume_share_pct": 49.1,
+    "zec_volume_share_pct": 50.9,
+    "tp1_hits_count": 79,
+    "tp2_hits_count": 51,
+    "exit_reasons": {
+      "TP2": 51,
+      "DRAWDOWN_CUT": 39,
+      "TIME_EXPIRED": 24
+    }
+  },
+  "scenario_b": {
+    "scenario": "Scenario B (Protected Variant - 1.8% Hard SL)",
+    "initial_balance": 20.0,
+    "final_equity": 1.95,
+    "total_roi_pct": -90.26,
+    "is_liquidated": false,
+    "liquidation_time": null,
+    "total_trades": 126,
+    "winning_trades": 45,
+    "losing_trades": 81,
+    "win_rate_pct": 35.71,
+    "profit_factor": 0.67,
+    "gross_profit": 37.27,
+    "gross_loss": 55.33,
+    "total_pnl": -18.05,
+    "total_commissions": 5.3,
+    "max_drawdown_pct": 91.99,
+    "avg_holding_hours": 11.48,
+    "eth_trades_count": 49,
+    "zec_trades_count": 77,
+    "eth_volume_share_pct": 38.9,
+    "zec_volume_share_pct": 61.1,
+    "tp1_hits_count": 74,
+    "tp2_hits_count": 45,
+    "exit_reasons": {
+      "TP2": 45,
+      "STOP_LOSS": 81
+    }
+  },
+  "monte_carlo_a": {
+    "num_runs": 1000,
+    "survival_rate_pct": 33.6,
+    "ruin_rate_pct": 66.4,
+    "median_final_balance": 0.0,
+    "p5_drawdown_pct": 91.46,
+    "p50_drawdown_pct": 100.0,
+    "p95_drawdown_pct": 100.0,
+    "worst_drawdown_pct": 100.0
+  },
+  "monte_carlo_b": {
+    "num_runs": 1000,
+    "survival_rate_pct": 48.2,
+    "ruin_rate_pct": 51.8,
+    "median_final_balance": 0.0,
+    "p5_drawdown_pct": 90.26,
+    "p50_drawdown_pct": 100.0,
+    "p95_drawdown_pct": 100.0,
+    "worst_drawdown_pct": 100.0
+  }
+}
